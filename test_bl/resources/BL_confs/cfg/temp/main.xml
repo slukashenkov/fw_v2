@@ -1,0 +1,91 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+    
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <config-path>/usr/bin/dolphin/</config-path>
+    </plugin-parameters>
+
+    <plugins>
+        <plugin name="Ariadna"          mode="off" application="" />
+        <plugin name="KtsClient"        mode="off" application="" />
+        <plugin name="GammaVideoProxy"  mode="off" application="" />
+        <plugin name="MomentumClient"   mode="off" application="" />
+        <plugin name="MServerWrapper"   mode="off" application="" />
+        <plugin name="Platan"           mode="off" application="platan-app" />
+        <plugin name="Purga"            mode="off" application="" />
+        <plugin name="Trassa"           mode="off" application="" />
+        <plugin name="Journals"         mode="off" application="" />
+        <plugin name="Astk"             mode="off" application="astk-application" />
+    </plugins>
+
+    <objects>
+
+        <slot name="navdata-slot">
+            <max-size>65535</max-size>
+        </slot>
+
+        <slot name="astd-slot">
+           <max-size>1024</max-size>
+           <update-time>00:00:00:100</update-time>
+           <type>reliable</type>
+           <max-buffer-length>100</max-buffer-length>
+        </slot>
+
+        <slot name="zda-slot">
+           <max-size>65535</max-size>
+        </slot>
+
+        <slot name="seaproject-navdata-slot">
+           <max-size>65535</max-size>
+        </slot>
+
+        <slot name="ariadna-slot">
+           <max-size>65535</max-size>
+        </slot>
+
+        <slot name="arpa-b-slot">
+           <max-size>65535</max-size>
+        </slot>
+
+        <slot name="gamma-oa-slot">
+           <max-size>65535</max-size>
+        </slot>
+
+        <slot name="gamma-pa-slot">
+           <max-size>65535</max-size>
+        </slot>
+
+        <slot name="oks-slot">
+           <max-size>65535</max-size>
+        </slot>
+
+        <slot name="ees-slot">
+           <max-size>65535</max-size>
+        </slot>
+
+        <slot name="apz-slot">
+           <max-size>65535</max-size>
+        </slot>
+
+        <slot name="ais-slot">
+           <max-size>65535</max-size>
+        </slot>        
+    </objects>
+    
+    <applications>
+      <application name="astk-application">
+        
+        <watchdog aliveTimeout="00:00:03:000" terminationTime="00:00:00:500"/>
+                
+        <zda-notifier name="zda-gen" period="00:00:01:000"/>
+        <data-flow notifier="zda-gen" subscriber="zda-probe"/>
+      
+      </application>
+    </applications>
+    
+</configuration>
+

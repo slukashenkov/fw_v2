@@ -1,0 +1,67 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+
+    <objects>                 
+        <slot name="astd">
+            <max-size>192</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>discarding</type>
+        </slot>
+
+        <converter name="op-mode-astd-proxy">
+            <type>op-mode-22100-to-astd</type>
+        </converter>
+
+        <ascii-extractor type="nmea" name="op-mode-mnea-extr"/>
+
+        <file-output name="op-mode-22100-saver">
+            <filename>op-mode-22100-saved</filename>
+            <append>false</append>
+            <format>raw</format> <!-- default is "trace"; also "astd", "raw", "hex", "timestamp"-->
+        </file-output>
+
+	<udp-connection name="sa-in-udp">
+            <source-address>10.10.76.156</source-address>
+            <source-port>59001</source-port>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+        <udp-connection name="sa-out-udp">
+            <source-address>10.10.76.156</source-address>
+            <destination-address>10.10.76.156</destination-address>
+            <destination-port>59002</destination-port>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+
+    </objects>
+
+    <applications>
+        <application name="app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+
+            <op-mode-server-22100>
+               <sa-data name="sa-in"/>
+               <data-to-arms name="arms-out"/>
+               <data-to-sa name="sa-out"/>
+               <saved-state-file>op-mode-22100-saved</saved-state-file>
+            </op-mode-server-22100> 
+
+
+            <data-flow notifier="sa-in-udp" subscriber="op-mode-22100-saver"/>
+
+            <data-flow notifier="sa-in-udp" subscriber="op-mode-mnea-extr"/>
+            <data-flow notifier="op-mode-mnea-extr" subscriber="sa-in"/>
+
+            <data-flow notifier="arms-out" subscriber="op-mode-astd-proxy"/>
+            <data-flow notifier="op-mode-astd-proxy" subscriber="astd"/>
+
+            <data-flow notifier="sa-out" subscriber="sa-out-udp"/>   
+        </application>
+    </applications>
+    
+</configuration>

@@ -1,0 +1,63 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <!--config-path>d:\Baselibraries\bin2\config\</config-path-->
+        <config-path>/etc/dolphin/22160/</config-path>
+    </plugin-parameters>
+ 
+    <plugins>
+
+    </plugins>
+		
+    <objects>
+        <!-- #################### COMMON slots,etc #################### -->
+
+	</objects>
+
+<!-- TEST CONFIGURATION 12.0 -->
+	<objects>
+
+		<serial-port-connection name="serial-port-test-io">
+            <port>/dev/ttyRTS15</port>
+            <speed>9600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+        </serial-port-connection>
+		
+		<file-output name="test-from-serial-port-probe">
+            <filename>/var/log/dolphin/test/test-12.0-from-serial-port-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+
+        <file-output name="test-from-nmea-renamer-probe">
+            <filename>/var/log/dolphin/test/test-12.0-from-nmea-renamer-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+		
+		<ascii-extractor type="nmea" name="test-ascii-extractor"/>
+		
+		<nmea-renamer name="test-nmea-renamer" oldTalkerId="TE" newTalkerId="ET" oldMsgType="ZDA" newMsgType="ADZ" passOther="false"/>
+</objects>
+
+	<applications>	
+        <application name="test-app">
+			<watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="40"/> 
+
+			
+			<data-flow notifier="serial-port-test-io" subscriber="test-ascii-extractor"/>
+			<data-flow notifier="test-ascii-extractor" subscriber="test-nmea-renamer"/>
+            <data-flow notifier="serial-port-test-io" subscriber="test-from-serial-port-probe"/>
+
+			<data-flow notifier="test-nmea-renamer" subscriber="test-from-nmea-renamer-probe"/>
+
+        </application>
+    </applications>
+</configuration>

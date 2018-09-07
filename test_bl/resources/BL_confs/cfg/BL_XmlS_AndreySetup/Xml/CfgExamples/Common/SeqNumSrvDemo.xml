@@ -1,0 +1,43 @@
+<configuration>
+    <objects>
+		<slot name="targets-out-slot">
+			<max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+			<type>reliable</type>
+		</slot>
+    </objects>
+
+    <applications>
+        <application name="seqnumsrv">
+            <watchdog aliveTimeout="00:00:01:000"/>
+
+            <seqnumsrv>
+				<data-to-client>data-out</data-to-client>
+				<data-from-client>data-in</data-from-client>
+				
+				<targets-out>targets-out</targets-out>
+                <port>43210</port>
+				
+				<delete-target-timeout>11</delete-target-timeout>
+				
+				<targets-out-interval>1</targets-out-interval>
+				
+                <delta-bearing>100</delta-bearing>
+                <delta-distance>6000</delta-distance>
+                <delta-speed>200</delta-speed>                
+                <coord-trust-coeff>0.99</coord-trust-coeff>
+                <speed-trust-coeff>0.99</speed-trust-coeff>
+                <stable-count>12</stable-count>
+				<required-tracking-time>20</required-tracking-time>
+				<max-target-speed>5000</max-target-speed>
+				
+				<first-dist-filter>100000</first-dist-filter>
+				<first-bearing-filter>1500</first-bearing-filter>
+				<first-bearing-filter-min-dist>100000</first-bearing-filter-min-dist>
+            </seqnumsrv>
+			
+			<data-flow notifier="targets-out" subscriber="targets-out-slot"/>
+        </application>
+    </applications>
+</configuration>
+    

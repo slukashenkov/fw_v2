@@ -1,0 +1,90 @@
+
+'''
+    def test_sonata_messages02(self):
+        """
+        :return:
+        """
+
+        '''
+         #DO AN ACTION ASSUMED TO BE DONE BY EQUPMENT
+         #MESSAGES HAVE BEING FORMED DURING CONFIGURATION STAGE
+        #LISTENER HAS BEEN SETUP THEN AS WELL
+        '''
+
+        self.curr_logger.info("02 sonata message send send via udp")
+        self.conf.messages_dir="C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\bl_frame_work\\test_bl\\test_sonata_plugin\\resources_sonata\\sonata_fields02.txt"
+        self.conf.reset_test_messages_received()
+        self.conf.reset_test_messages_to_sent()
+        self.conf.load_test_messages()
+
+        self.sr.set_udp_sender()
+        self.sr.udp_send_to()
+
+        '''
+        #Actual messages being sent
+        '''
+        res01 = self.conf.msgs_to_send[0]
+        self.curr_logger.info(res01)
+
+        '''
+        #DATA used in messages
+        '''
+        res02 = self.conf.data_received[0]
+        self.curr_logger.info(res02)
+        res03 = self.conf.data_sent
+        self.curr_logger.info(res03)
+
+        '''
+            #CONTENT PROCESSING IS A STARTING POINT for
+            #ALL DATA content MANIPULATIONS IN TEST.
+            #IT DOES:
+                #1) Parse RAW data received from BL (router out)
+                #2) Possesses knowledge of data been sent initially
+                #3) Makes comparisons
+        '''
+        snmea = sonata_nmea_msgs_content_process.SonataNmeaMsgsContentProcessing(self.conf.data_received,
+                                                                                 self.conf.data_sent)
+
+        '''
+        #PARSE one of the received
+        #messages into a structure
+        #ready for comparison
+        '''
+        snmea.packet_indx = 0
+        snmea.parse_nmea()
+
+        '''
+        #Non optimal way
+        #TOO FAR REMOVED FROM THE TEST
+        #comparison can be done inside
+        #enveloping class
+        #for
+        #CONTENT PROCESSING
+        '''
+        snmea.key_sent = "sonata_id"
+        snmea.key_received = "label2"
+
+        snmea.compare_fields()
+
+        '''
+        #GET VALUES ONLY
+        '''
+        result01 = int(snmea.get_field_in())
+        result02 = snmea.get_field_out()
+
+        '''
+        #TODO:
+        #Comparison is should be as selective as possible
+        '''
+        # snmea.compare_with
+
+        self.curr_logger.debug("INIT_VAL sent to Sonata: --->>>" + res01)
+        self.curr_logger.debug("RES_VAL Nmea from Sonata: --->>>" + res02)
+
+        self.curr_logger.debug("Field " + str(snmea.key_sent) + " sent to Sonata: --->>>" + str(result01))
+        self.curr_logger.debug(
+            "Field " + str(snmea.key_received) + "received in Nmea message from Sonata: --->>>" + str(result02))
+
+        self.assertEqual(result01,
+                         result02)
+'''

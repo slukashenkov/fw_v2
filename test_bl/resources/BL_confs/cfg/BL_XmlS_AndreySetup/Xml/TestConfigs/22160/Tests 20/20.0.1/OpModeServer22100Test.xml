@@ -1,0 +1,92 @@
+<configuration>
+	<objects>
+	    <udp-connection name="op-mode-sync-udp-from-bd">
+            <local-address>10.7.1.2</local-address>
+            <local-port>59118</local-port>
+        </udp-connection>
+		
+		<tcp-connection name="op-mode-ctrl-tcp-from-sa" mode="server">
+            <local-address>10.7.1.2</local-address>
+            <local-port>53118</local-port>
+        </tcp-connection>
+		
+        <udp-connection name="op-mode-sync-udp-to-bd">
+            <remote-address>10.7.1.1</remote-address>
+            <remote-port>59118</remote-port>
+        </udp-connection>
+        
+		<udp-connection name="op-mode-udp-to-arms">
+            <remote-address>239.254.1.4</remote-address>
+            <remote-port>52118</remote-port>
+        </udp-connection>		
+		
+		<!-- TEST CONFIGURATION 20.0.1 -->		
+		<file-output name="test-from-udp-bd-probe">
+            <filename>/var/log/dolphin/test/test-20.0.1-from-udp-bd-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>10</max-files-index>
+        </file-output>
+		
+		<file-output name="test-from-tcp-sa-probe">
+            <filename>/var/log/dolphin/test/test-20.0.1-from-tcp-sa-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>10</max-files-index>
+        </file-output>	
+
+        <file-output name="test-from-converter-op-mode-22100-to-astd-probe">
+            <filename>/var/log/dolphin/test/test-20.0.1-from-converter-op-mode-22100-to-astd-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>10</max-files-index>
+        </file-output>
+		
+		<ascii-extractor type="nmea" name="op-mode-nmea-extractor"/>
+	
+        <converter name="op-mode-converter">
+            <type>op-mode-22100-to-astd</type>
+        </converter>
+		
+		<file-output name="test-from-astd-format-astd-probe">
+            <filename>/var/log/dolphin/test/test-20.0.1-from-astd-format-astd-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>10</max-files-index>
+			<format>astd</format>
+        </file-output>	
+		
+		<converter name="astd-ascii-converter">
+            <type>astd-ascii</type>
+        </converter>
+		
+		<file-output name="test-from-astd-ascii-converter-probe">
+            <filename>/var/log/dolphin/test/test-20.0.1-from-astd-ascii-converter-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>10</max-files-index>
+        </file-output>		
+	</objects>
+
+    <applications>
+        <application name="op-mode-test-app">
+            <op-mode-server-22100>
+               <data-in name="sa-data-in"/>
+               <data-out name="arms-data-out"/>
+               <saved-state-file>/etc/dolphin/22160/op-mode-22160-saved</saved-state-file>
+            </op-mode-server-22100>
+            
+            <data-flow notifier="op-mode-sync-udp-from-bd" subscriber="sa-data-in"/>
+            <data-flow notifier="op-mode-sync-udp-from-bd" subscriber="test-from-udp-bd-probe"/>
+            
+            <data-flow notifier="op-mode-ctrl-tcp-from-sa" subscriber="sa-data-in"/>
+            <data-flow notifier="op-mode-ctrl-tcp-from-sa" subscriber="test-from-tcp-sa-probe"/>
+			
+			<data-flow notifier="arms-data-out" subscriber="op-mode-converter"/>
+            <data-flow notifier="arms-data-out" converter="op-mode-nmea-extractor" subscriber="op-mode-converter"/>
+            
+            <data-flow notifier="op-mode-converter" subscriber="test-from-converter-op-mode-22100-to-astd-probe"/>
+            <data-flow notifier="op-mode-converter" subscriber="test-from-astd-format-astd-probe"/>
+			<data-flow notifier="op-mode-converter" converter="astd-ascii-converter" subscriber="test-from-astd-ascii-converter-probe"/>
+
+            <data-flow notifier="arms-data-out" subscriber="op-mode-sync-udp-to-bd"/>
+			<data-flow notifier="arms-data-out" subscriber="op-mode-udp-to-arms"/>
+           
+        </application>
+    </applications>
+</configuration>

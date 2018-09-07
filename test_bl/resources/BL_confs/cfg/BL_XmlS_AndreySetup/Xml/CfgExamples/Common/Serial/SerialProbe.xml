@@ -1,0 +1,74 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <serial-port-connection name="serial-ttyS0">
+            <port>/dev/ttyS0</port>
+            <speed>9600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:02:000</period-of-reading>
+        </serial-port-connection>
+        
+        <serial-port-connection name="serial-ttyS1">
+            <port>/dev/ttyS1</port>
+            <speed>9600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:02:000</period-of-reading>
+        </serial-port-connection>
+        
+        <serial-port-connection name="serial-ttyS2">
+            <port>/dev/ttyS2</port>
+            <speed>9600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:02:000</period-of-reading>
+        </serial-port-connection>
+        
+        <serial-port-connection name="serial-ttyS3">
+            <port>/dev/ttyS3</port>
+            <speed>9600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:02:000</period-of-reading>
+        </serial-port-connection>
+
+        <slot name="serial-in-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+
+        <file-output name="serial-in-ttyS0-probe">
+            <filename>/var/log/dolphin/serial-in-ttyS0</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyS1-probe">
+            <filename>/var/log/dolphin/serial-in-ttyS1</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyS2-probe">
+            <filename>/var/log/dolphin/serial-in-ttyS2</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyS3-probe">
+            <filename>/var/log/dolphin/serial-in-ttyS3</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="serial-test-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <data-flow notifier="serial-ttyS0" subscriber="serial-in-ttyS0-probe"/>
+            <data-flow notifier="serial-ttyS1" subscriber="serial-in-ttyS1-probe"/>
+            <data-flow notifier="serial-ttyS2" subscriber="serial-in-ttyS2-probe"/>
+            <data-flow notifier="serial-ttyS3" subscriber="serial-in-ttyS3-probe"/>
+
+            <data-flow notifier="serial-ttyS1" subscriber="serial-in-slot"/>
+            <data-flow notifier="serial-ttyS0" subscriber="serial-in-slot"/>
+            <data-flow notifier="serial-ttyS2" subscriber="serial-in-slot"/>
+            <data-flow notifier="serial-ttyS3" subscriber="serial-in-slot"/>
+        </application>
+    </applications>
+</configuration>
+    

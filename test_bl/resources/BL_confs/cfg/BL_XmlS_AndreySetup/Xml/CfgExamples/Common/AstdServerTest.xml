@@ -1,0 +1,96 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <astd-client name="astd-client" report-period="00:00:01:000"/>
+
+        <file-output name="astd-events-log">
+            <filename>/var/log/dolphin/astd-events-log</filename>
+        </file-output>
+
+        <file-output name="astd-server-probe">
+            <filename>/var/log/dolphin/astd-server-out</filename>
+            <format>astd</format>
+        </file-output>
+
+        
+        <file-output name="astd-slot-probe">
+            <filename>/var/log/dolphin/astd-slot-in</filename>
+        </file-output>
+
+        <file-output name="astd-extr-probe">
+            <filename>/var/log/dolphin/astd-extr-in</filename>
+        </file-output>
+
+        <file-output name="astd-conv-to-ascii-probe">
+            <filename>/var/log/dolphin/astd-conv-to-ascii</filename>
+            <format>trace</format>
+        </file-output>
+        
+        <ascii-extractor type="astd" name="astd-extr"/>
+        
+        <!-- Ïðåîáðàçóåò ïîñòóïàþùèå äàííûå ìåæäó Astd::DevicesStateTable è òåêñòîâûì ôîðìàòîì (è íàîáîðîò) -->
+        <converter name="astd-converter">
+            <type>astd-ascii</type>
+        </converter>
+
+        <slot name="astd-slot">
+            <type>posix-pipe</type>
+        </slot>
+    </objects>
+
+    <applications>
+        <application name="astd-server-application">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <astd-server name="astd-server">
+                <reset-period>00:00:10:000</reset-period>
+                <report-period>00:00:02:000</report-period>
+                <first-delay-period>00:00:10:000</first-delay-period>
+                <converter-rules-cfg>./xml/astd-rules.cfg</converter-rules-cfg>
+                <converter-defaults-cfg>./xml/astd-defaults.cfg</converter-defaults-cfg>
+                <events-notifier name="astd-srv-events-notifier"/>
+                <!-- Ð—Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ Ð¿Ð¾ ÑƒÐ¼Ð¾Ð»Ñ‡Ð°Ð½Ð¸ÑŽ 100 Ð¼ÑÐµÐº, Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ñ Ð² Ð´Ð¸Ð°Ð¿Ð°Ð·Ð¾Ð½Ðµ (0, 100] Ð¼ÑÐµÐº ÑƒÐ²ÐµÐ»Ð¸Ð²Ð¸Ð²Ð°ÑŽÑ‚ÑÑ Ð´Ð¾ 100 Ð¼ÑÐµÐº --> 
+                <history-depth>20</history-depth>
+                <interval-between-sending>00:00:00:100</interval-between-sending>
+                <database name="dummy">
+                   <host>127.0.0.1</host>
+                   <port>12345</port>
+                   <dbname>astd</dbname>
+                   <user>root</user>
+                   <password>root</password>
+                </database>
+            </astd-server>
+
+            <data-flow notifier="astd-slot" converter="astd-slot-probe"/>
+            <data-flow notifier="astd-slot" converter="astd-extr"/>
+
+            <data-flow notifier="astd-extr" converter="astd-converter" subscriber="astd-server"/>
+            <data-flow notifier="astd-extr" subscriber="astd-extr-probe"/>
+
+            <data-flow notifier="astd-srv-events-notifier" subscriber="astd-events-log" />
+            <data-flow notifier="astd-server" subscriber="astd-server-probe"/>
+        </application>
+
+        <application name="pinger-application">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <pinger-input-manager>
+                <state-notifier name="LAN-state-notifier" />
+                <timeout>00:00:05:000</timeout>
+                <interface address="10.10.201.211">
+                    <target address="10.10.201.211" name="L.KD1"/>
+                    <target address="10.10.201.212" name="L.IMS1"/>
+                </interface>
+            </pinger-input-manager>
+
+            <data-flow notifier="LAN-state-notifier" subscriber="astd-converter"/>
+            <data-flow notifier="astd-converter" subscriber="astd-slot" />
+            <data-flow notifier="astd-converter" subscriber="astd-conv-to-ascii-probe" />
+        </application>
+
+    </applications>
+</configuration>

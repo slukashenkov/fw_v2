@@ -1,0 +1,18 @@
+#! /bin/sh
+# chkconfig: 345 95 05
+# description: Creates character devices for EMM8P/RS485 serial ports
+
+case "$1" in
+  start)
+    mknod /dev/ttyE0 c 249 0
+    mknod /dev/ttyE1 c 249 1
+	exit 0
+    ;;
+  stop)
+    exit 0
+    ;;
+  *)
+    echo "Usage: $SCRIPTNAME {start|stop}" >&2
+    exit 3
+    ;;
+esac

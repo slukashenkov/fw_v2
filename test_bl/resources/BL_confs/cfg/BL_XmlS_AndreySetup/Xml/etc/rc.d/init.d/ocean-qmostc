@@ -1,0 +1,21 @@
+#!/bin/sh
+# chkconfig: 3 97 03
+# description: Starts/stops  qmostc
+case "$1" in
+  start)
+        cd /usr/bin/dolphin/
+        HOME="/root"
+        PATH="/bin:/usr/bin:/usr/local/bin:/etc:/sbin:/usr/bin/dolphin"
+        ./qmostc 1> /var/log/dolphin/stdout_qmostc.txt 2> /var/log/dolphin/stderr_qmostc.txt &
+        exit 0
+        ;;
+  stop)
+        cd /usr/bin/dolphin/
+        killall qmostc
+        exit 0
+        ;;
+  *)
+        echo "Usage: $SCRIPTNAME {start|stop}" >&2
+        exit 3
+        ;;
+esac

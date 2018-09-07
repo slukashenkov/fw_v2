@@ -1,0 +1,71 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+    </objects>
+
+    <applications>
+        <!-- 
+            Эта конфигурация только записывает поток multicast-а с радарным видео, 
+            который передается устройством RIB-6, управляемым от MFD
+        --> 
+        <application name="rib6-proxy-minimum-app">
+            <watchdog aliveTimeout="00:00:02:000" terminationTime="00:00:01:000" startupDuration="00:00:00:100"/>
+
+            <rib6-proxy>
+                <rib6-interface>10.131.1.1</rib6-interface>
+                <rib6-multicast-ep>232.213.104.70:51709</rib6-multicast-ep>
+
+                <rib6-port>4172</rib6-port>
+                <proxy-port>4172</proxy-port>
+
+                <raw-directory>/var/backup/radar131-1/</raw-directory>
+                <raw-store-period>120</raw-store-period>
+            </rib6-proxy>
+        </application>
+
+        <!-- 
+            Эта конфигурация записывает поток multicast-а с радарным видео, 
+            а также должна управлять устройством RIB, транслируя 
+            поток служебных команд между ним и MFD; сейчас управление RIB-ом не работает.
+        --> 
+        <application name="rib6-proxy-full-app">
+            <watchdog aliveTimeout="00:00:02:000" terminationTime="00:00:01:000" startupDuration="00:00:00:100"/>
+
+            <rib6-proxy>
+                <!--  Параметры, необходимые для управления RIB-ами -->
+                <link>
+                    <rib6-address>10.10.75.20</rib6-address>
+                    <rs-interface>192.168.1.10</rs-interface>
+                </link>
+                <link>
+                    <rib6-address>10.10.76.20</rib6-address>
+                    <rs-interface>192.168.2.10</rs-interface>
+                </link>
+
+                <primary-subnet>192.168.1.0/24</primary-subnet>
+                <primary-subnet>192.168.3.0/24</primary-subnet>
+                <device-state-file>/var/dolphin/rib6roxy.state</device-state-file>
+
+                <!--  Параметры ниже необходимы для записи потока радарного видео, 
+                      без соединения с RIB-ами или RadarServer-ами -->
+                <rib6-interface>10.10.75.1</rib6-interface>
+                <rib6-interface>10.10.76.1</rib6-interface>
+
+                <rib6-multicast-ep>232.213.104.70:51709</rib6-multicast-ep>
+
+                <!-- Необходимо устанавливать, но при записи потока радарного видео не используются -->     
+                <rib6-port>8888</rib6-port>    
+                <proxy-port>6789</proxy-port>
+
+                <raw-directory>/var/dolphin/raw/</raw-directory>
+                <raw-store-period>120</raw-store-period>
+            </rib6-proxy>
+        </application>
+
+    </applications>
+</configuration>
+    

@@ -1,0 +1,105 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <!-- ################## Positive ##############-->
+        <serial-port-connection name="positive-sp-in">
+            <port>/dev/ttyMXUSB4</port>
+            <speed>38400</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+        </serial-port-connection>
+
+        <udp-connection name="positive-udp-in">
+            <source-address>10.161.1.1</source-address>
+            <source-port>20011</source-port>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+        <udp-connection name="positive-to-dev-udp-out">
+            <destination-address>10.161.1.11</destination-address>
+            <destination-port>20101</destination-port>
+        </udp-connection>
+
+        <udp-connection name="positive-to-arms-udp-out-prim">
+            <destination-address>10.0.1.255</destination-address>
+            <destination-port>53010</destination-port>
+        </udp-connection>
+
+        <udp-connection name="positive-to-arms-udp-out-sec">
+            <destination-address>10.0.2.255</destination-address>
+            <destination-port>53010</destination-port>
+        </udp-connection>
+
+        <slot name="positive-in-slot">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+
+        <slot name="astd-server-in-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+            <type>reliable</type>
+            <max-buffer-length>100</max-buffer-length>
+        </slot>
+
+        <file-output name="positive-in-probe">
+            <filename>/var/log/dolphin/11661/positive-in</filename>
+        </file-output>
+
+        <file-output name="positive-to-dev-probe">
+            <filename>/var/log/dolphin/11661/positive-to-dev</filename>
+        </file-output>
+        
+        <file-output name="positive-to-arms-probe">
+            <filename>/var/log/dolphin/11661/positive-to-arms</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="positive-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="2"/>
+
+            <positive-dispatcher>
+                <!--
+                    Бинарщина, приходящая от Позитива
+                -->
+                <data-in name="data-from-positive"/>
+
+                <!--
+                    Данные для АРМ`ов
+                -->
+                <data-out name="positive-data-to-layer"/>
+
+                <!--
+                    АСТД параметр, генерируемый аппликейшном
+                -->
+                <astd-out name="positive-astd-out"/>
+
+                <!--
+                    Бинарщина, отправляемая Позитиву
+                -->
+                <response-out name="data-to-positive"/>
+                <astd-param name="D.POZITIV.-.KK4" timeout="00:00:02:000"/>
+            </positive-dispatcher>
+
+            <data-flow notifier="positive-sp-in" subscriber="positive-in-slot"/>
+            <data-flow notifier="positive-sp-in" subscriber="positive-in-probe"/>
+
+            <data-flow notifier="positive-sp-in" subscriber="data-from-positive"/>
+            
+            <data-flow notifier="positive-astd-out" subscriber="astd-server-in-slot"/>
+
+            <data-flow notifier="positive-data-to-layer" subscriber="positive-to-arms-udp-out-prim"/>
+            <data-flow notifier="positive-data-to-layer" subscriber="positive-to-arms-udp-out-sec"/>
+            <data-flow notifier="positive-data-to-layer" subscriber="positive-to-arms-probe"/>
+
+            <data-flow notifier="data-to-positive" subscriber="positive-to-dev-udp-out"/>
+            <data-flow notifier="data-to-positive" subscriber="positive-to-dev-probe"/>
+        </application>
+    </applications>
+</configuration>

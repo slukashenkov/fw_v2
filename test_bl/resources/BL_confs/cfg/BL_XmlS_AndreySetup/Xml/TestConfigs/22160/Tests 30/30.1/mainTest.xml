@@ -1,0 +1,78 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <!--config-path>d:\Baselibraries\bin2\config\</config-path-->
+        <config-path>/etc/dolphin/22160/</config-path>
+    </plugin-parameters>
+ 
+    <plugins>
+
+    </plugins>
+		
+    <objects>
+        <!-- #################### COMMON slots,etc #################### -->
+
+</objects>
+
+
+
+<!-- TEST CONFIGURATION 30.0 -->
+	<objects>
+        <serial-port-connection name="supu-serial-io">
+            <port>/dev/ttyRTS22</port>
+            <speed>9600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+        </serial-port-connection>
+		
+		<file-output name="test-from-nmea-notifier-probe">
+            <filename>/var/log/dolphin/test/test-30.0-from-nmea-notifier-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>	
+		
+		<file-output name="test-from-serial-io-probe">
+            <filename>/var/log/dolphin/test/test-30.0-from-serial-io-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>	
+		
+		<file-output name="test-from-reallab-client-probe">
+            <filename>/var/log/dolphin/test/test-30.0-from-reallab-client-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>	
+
+</objects>
+
+	<applications>	
+        <application name="test-app">
+			<watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="40"/> 
+            
+            <reallab-client>
+                <nmea-notifier name="supu-nmea-notifier"/>
+                <reallab-cmd-io name="supu-io"/>
+                <reallab-device cmd="101" nmeaId="SUPUD"/> 
+                <reallab-device cmd="#02" nmeaId="SUPUA"/> 
+
+                <report-period>00:00:01:000</report-period>
+            </reallab-client>
+			
+            <data-flow notifier="supu-nmea-notifier" subscriber="test-from-nmea-notifier-probe"/>
+
+            <data-flow notifier="supu-io" subscriber="supu-serial-io"/>
+            <data-flow notifier="supu-io" subscriber="test-from-serial-io-probe"/>
+
+            <data-flow notifier="supu-serial-io" subscriber="supu-io"/>
+            <data-flow notifier="supu-serial-io" subscriber="test-from-reallab-client-probe"/>
+
+        </application>
+		
+		
+    </applications>
+</configuration>

@@ -1,0 +1,767 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <!--plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <config-path>d:\Baselibraries\bin2\config\</config-path>
+        <config-path>/etc/dolphin/22160/</config-path>
+    </plugin-parameters-->
+
+    <!--plugins>      
+
+    </plugins-->
+	
+
+<!-- #################### COMMON slots,etc #################### -->
+<objects>   
+        <slot name="astd-slot">
+           <max-size>65535</max-size>
+           <update-time>00:00:00:100</update-time>
+           <type>reliable</type>
+           <max-buffer-length>100</max-buffer-length>
+        </slot>
+</objects>
+ 
+<!-- ##################################### UV450-LEFT #########################################-->
+<!-- REAL UV450 data IN configuration -->
+<objects>
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<!-- Real Control data from UV450 device sent over serial interface. Left side of a vessel. -->
+        <!--serial-port-connection name="serial-port-uv450-left-io">
+            <port>/dev/ttyRTS8</port>
+            <speed>38400</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+        </serial-port-connection-->
+
+<!-- Control data conversion from IN-coming DATA read on Serial-port into pure nmea string -->
+        <ascii-extractor type="nmea" name="uv450-left-nmea-extractor"/> <!--For send to ARM-->
+		
+<!-- Connecton status monitor for ASTD. Based on IN-coming traffic from UV450-->		
+        <connection-monitor name="uv450-left-conn-monitor">
+            <link-state-id>D.UV450LB.RS.KD1</link-state-id>
+            <timeout>00:00:02:000</timeout>
+        </connection-monitor>
+		
+<!-- IN coming data trimming for ASTD -->
+        <stream-thinner name="uv450-left-astd-1hz-thinner" minInterval="00:00:01:000"/>
+
+<!-- Configuration for IN-coming traffic LOG file. Direction to ARM  -->		
+        <file-output name="uv450-left-from-dev-probe">
+            <filename>/var/log/dolphin/22160/uv450-left-from-dev-probe</filename>
+			<max-size>10M</max-size>
+            <rotate>true</rotate>
+            <max-files-index>3</max-files-index>            
+        </file-output>	
+
+</objects>		
+<!-- END OF REAL UV450 data IN configuration LEFT-->
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<!-- UV450 REAL data OUT configuration -->
+<objects>
+<!-- Address of primary ARM to recive extracted data via UDP -->
+        <!--udp-connection name="uv450-left-udp-to-arm-pri">
+            <destination-address>239.254.1.1</destination-address>
+            <destination-port>50104</destination-port>
+        </udp-connection-->
+		
+<!-- Address of secondary ARM to recive extracted data via UDP -->
+<!-- Commented out for configuration file`s clarity -->
+        <!--udp-connection name="uv450-left-udp-to-arm-sec">
+            <destination-address>239.254.1.2</destination-address>
+            <destination-port>50204</destination-port>
+        </udp-connection-->
+</objects>		
+<!-- END of REAL UV450 data OUT configuration -->
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+
+
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<!-- Control data IN from primary ARM configuration. KD ip address to recieve control messages from ARM. LEFT -->	
+<!--objects>	
+        <tcp-connection name="tcp-uv450-left-ctrl-from-arm-in-pri" mode="server">
+            <source-address>10.10.10.101</source-address>
+            <source-port>51304</source-port>
+        </tcp-connection-->
+
+<!--Control data IN from secondary ARM configuration-->
+<!--Commented out for configuration file`s clarity-->	
+        <!--tcp-connection name="tcp-uv450-left-ctrl-from-arm-in-sec" mode="server">
+            <source-address>10.10.10.101</source-address>
+            <source-port>51204</source-port>
+        </tcp-connection-->
+
+<!-- Logging control data recieved from ARM going OUT to UV450 -->		
+        <!--file-output name="uv450-left-ctrl-sel-out-probe">
+            <filename>/var/log/dolphin/22160/uv450-left-to-dev-probe</filename>
+			<max-size>10M</max-size>
+            <rotate>true</rotate>
+            <max-files-index>3</max-files-index>
+        </file-output>
+</objects-->
+<!-- END OF Control data IN from primary ARM configuration. LEFT-->		
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+
+	
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<!-- tren UV450-LEFT -->
+<!-- Emulated UV450 data IN configuration -->
+<objects>
+<!-- Emulated Control data from UV450 device sent over UDP by NTpro. Left side of a vessel. -->
+<!--  TO CLARIFY with AS usage of secondary imitator-->
+
+        <udp-connection name="uv450-left-udp-from-imitator-pri">
+            <source-address>10.10.10.101</source-address>
+	    <!-- Corresponding port or rather the same port for traffic to be sent to -->
+	    <!-- to be configured on the box running an immitator-->
+	    <!-- On the old version there is config param in NtPro obj prefs pointing to the config file-->
+	    <!-- Where this preference is made -->
+	    <!-- @parameters (e.x. ocean.xml) for taskprodID NTPro.ocean22100.Main -->
+	    <!-- the preference itself in <device> section named UV 450 --> 
+	    <!-- in udp-out section which incidentally also should be set to true in order to start functioning -->		    
+            <source-port>47904</source-port>
+        </udp-connection>
+
+        <!--udp-connection name="uv450-left-udp-from-imitator-sec">
+            <source-address>10.10.10.101</source-address>
+            <source-port>47404</source-port>
+        </udp-connection-->
+		
+<!-- Control data conversion from IN-coming DATA read on Serial-port into pure nmea string -->		
+        <ascii-extractor type="nmea" name="uv450-left-tren-nmea-extractor"/> <!--For send to ARM-->
+		
+<!--  TO CLARIFY with AS HOW this part works -->		
+	<udp-connection name="uv450-left-udp-to-imitator-pri">
+            <destination-address>10.10.10.109</destination-address>
+            <destination-port>48304</destination-port>
+        </udp-connection>
+
+        <udp-connection name="uv450-left-udp-to-imitator-sec">
+            <destination-address>10.10.10.110</destination-address>
+            <destination-port>48404</destination-port>
+        </udp-connection>
+
+<!-- Address of primary ARM to recieve extracted data via UDP -->
+        <udp-connection name="uv450-left-tren-udp-to-arm-pri">
+	    <!-- Current configuration  on the ARM expected multicast-->
+            <destination-address>239.254.1.1</destination-address>
+            <destination-port>50304</destination-port>
+        </udp-connection>
+
+<!-- COMMENTED OUT FOR CLARITY -->		
+<!-- Address of secondary ARM to recieve extracted data via UDP -->
+        <udp-connection name="uv450-left-tren-udp-to-arm-sec">
+            <destination-address>239.254.1.2</destination-address>
+            <destination-port>50404</destination-port>
+        </udp-connection>
+		
+<!-- Configuration for OUT-put LOG file. Direction to ARM  -->	
+        <file-output name="uv450-left-from-tren-probe">
+            <filename>/var/log/dolphin/22160/tren/uv450-left-from-tren-probe</filename>
+			<max-size>10M</max-size>
+            <rotate>true</rotate>
+            <max-files-index>3</max-files-index>
+        </file-output>
+		
+<!-- Control from ARM  -->	
+        <tcp-connection name="tcp-uv450-left-tren-ctrl-from-arm-in-pri" mode="server">
+            <source-address>10.10.10.101</source-address>
+            <source-port>51304</source-port>
+        </tcp-connection>
+		
+<!-- COMMENTED OUT FOR CLARITY -->
+        <!--tcp-connection name="tcp-uv450-left-tren-ctrl-from-arm-in-sec" mode="server">
+            <source-address>10.10.10.101</source-address>
+            <source-port>51404</source-port>
+        </tcp-connection -->
+		
+<!-- Configuration BL control data recieved from ARM going OUT to emulated by immitator  UV450 -->	
+        <file-output name="uv450-left-tren-ctrl-sel-out-probe">
+            <filename>/var/log/dolphin/22160/tren/uv450-left-to-tren-probe</filename>
+			<max-size>10M</max-size>
+            <rotate>true</rotate>
+            <max-files-index>3</max-files-index>
+        </file-output>
+
+</objects>
+<!-- END OF (tren) EMULATED UV450-LEFT -->
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<!-- real data from serial UV450-LEFT -->
+<!-- UV450 application config to recieve data over serial -->
+<applications>
+	
+        <!--application name="uv450-left-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="12"/>
+
+            <selectorN name="uv450-left-ctrl-sel-out">
+                <channel priority="1" name="uv450-left-ctrl-sel-in-1"/>
+                <channel priority="2" name="uv450-left-ctrl-sel-in-2"/>
+              <timeout>00:00:02:500</timeout>
+            </selectorN>
+
+            <data-flow notifier="serial-port-uv450-left-io" subscriber="uv450-left-nmea-extractor"/>
+            <data-flow notifier="uv450-left-nmea-extractor" subscriber="uv450-left-udp-to-arm-pri"/>
+            <data-flow notifier="uv450-left-nmea-extractor" subscriber="uv450-left-udp-to-arm-sec"/>
+            <data-flow notifier="uv450-left-nmea-extractor" subscriber="uv450-left-from-dev-probe"/>
+
+            <data-flow notifier="tcp-uv450-left-ctrl-from-arm-in-pri" subscriber="uv450-left-ctrl-sel-in-1"/>
+            <data-flow notifier="tcp-uv450-left-ctrl-from-arm-in-sec" subscriber="uv450-left-ctrl-sel-in-2"/>
+            <data-flow notifier="uv450-left-ctrl-sel-out" subscriber="serial-port-uv450-left-io"/>
+            <data-flow notifier="uv450-left-ctrl-sel-out" subscriber="uv450-left-ctrl-sel-out-probe"/>
+
+            <data-flow notifier="uv450-left-nmea-extractor" converter="uv450-left-conn-monitor" subscriber="uv450-left-astd-1hz-thinner"/>
+            <data-flow notifier="uv450-left-astd-1hz-thinner" subscriber="astd-slot"/>
+
+        </application-->
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<!-- tren (data emulated from NTPro imitator and sent over udp) UV450-LEFT -->
+<!-- UV450 application config to recieve data over UDP from imitator -->
+        <application name="uv450-left-tren-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="35"/>
+
+            <selectorN name="uv450-left-tren-ctrl-sel-out">
+                <channel priority="1" name="uv450-left-tren-ctrl-sel-in-1"/>
+                <channel priority="2" name="uv450-left-tren-ctrl-sel-in-2"/>
+              <timeout>00:00:02:500</timeout>
+            </selectorN>
+
+            <selectorN name="uv450-left-tren-sel-out">
+                <channel priority="1" name="uv450-left-tren-sel-in-1"/>
+                <channel priority="2" name="uv450-left-tren-sel-in-2"/>
+              <timeout>00:00:02:500</timeout>
+            </selectorN>
+
+            <data-flow notifier="uv450-left-udp-from-imitator-pri" subscriber="uv450-left-tren-sel-in-1"/>
+            <data-flow notifier="uv450-left-udp-from-imitator-sec" subscriber="uv450-left-tren-sel-in-2"/>
+            <data-flow notifier="uv450-left-tren-sel-out" subscriber="uv450-left-tren-nmea-extractor"/>
+            <data-flow notifier="uv450-left-tren-sel-out" subscriber="uv450-left-tren-udp-to-arm-pri"/>
+            <data-flow notifier="uv450-left-tren-sel-out" subscriber="uv450-left-tren-udp-to-arm-sec"/>
+            <data-flow notifier="uv450-left-tren-nmea-extractor" subscriber="uv450-left-from-tren-probe"/>
+
+
+            <data-flow notifier="tcp-uv450-left-tren-ctrl-from-arm-in-pri" subscriber="uv450-left-tren-ctrl-sel-in-1"/>
+            <data-flow notifier="tcp-uv450-left-tren-ctrl-from-arm-in-sec" subscriber="uv450-left-tren-ctrl-sel-in-2"/>
+            <data-flow notifier="uv450-left-tren-ctrl-sel-out" subscriber="uv450-left-udp-to-imitator-pri"/>
+            <data-flow notifier="uv450-left-tren-ctrl-sel-out" subscriber="uv450-left-udp-to-imitator-sec"/>
+            <data-flow notifier="uv450-left-tren-ctrl-sel-out" subscriber="uv450-left-tren-ctrl-sel-out-probe"/>
+        </application>
+
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+</applications>
+
+<!-- ##################################### UV450-LETF OB #########################################-->
+
+<objects>
+<!-- Need explanations from A/Sysoev -->
+        <udp-connection name="uv450-ob-left-udp-to-arm-pri">
+            <destination-address>10.10.10.103</destination-address>
+            <destination-port>50139</destination-port>
+        </udp-connection>
+
+        <udp-connection name="uv450-ob-left-udp-to-arm-sec">
+            <destination-address>10.10.10.104</destination-address>
+            <destination-port>50239</destination-port>
+        </udp-connection>
+
+        <udp-connection name="uv450-ob-left-udp-from-arm-in-pri">
+            <source-address>10.10.10.101</source-address>
+            <source-port>51139</source-port>
+        </udp-connection>
+
+        <udp-connection name="uv450-ob-left-udp-from-arm-in-sec">
+            <source-address>10.10.10.101</source-address>
+            <source-port>51239</source-port>
+        </udp-connection>
+
+        <file-output name="uv450-ob-left-sel-out-probe">
+            <filename>/var/log/dolphin/22160/uv450-ob-left-probe</filename>
+			<max-size>10M</max-size>
+            <rotate>true</rotate>
+            <max-files-index>3</max-files-index>
+        </file-output>
+
+		
+<!-- tren UV450-LEFT-OB -->
+<!-- Need explanations.Explained OB stands for Optical bearing (position in relation to magnetic north)-->
+<!--In order to be used on actual ARMS this section assumes REAL uv450 commected and delivering navigational data-->
+        <udp-connection name="uv450-ob-left-tren-udp-to-arm-pri">
+            <destination-address>10.10.10.103</destination-address>
+            <destination-port>50339</destination-port>
+        </udp-connection>
+
+        <udp-connection name="uv450-ob-left-tren-udp-to-arm-sec">
+            <destination-address>10.10.10.104</destination-address>
+            <destination-port>50439</destination-port>
+        </udp-connection>
+
+        <udp-connection name="uv450-ob-left-tren-udp-from-arm-in-pri">
+            <source-address>10.10.10.101</source-address>
+            <source-port>51339</source-port>
+        </udp-connection>
+
+        <udp-connection name="uv450-ob-left-tren-udp-from-arm-in-sec">
+            <source-address>10.10.10.101</source-address>
+            <source-port>51439</source-port>
+        </udp-connection>
+
+        <file-output name="uv450-ob-left-tren-sel-out-probe">
+            <filename>/var/log/dolphin/22160/tren/uv450-ob-tren-left-probe</filename>
+			<max-size>10M</max-size>
+            <rotate>true</rotate>
+            <max-files-index>3</max-files-index>
+        </file-output>    
+</objects>
+
+<applications>
+        <application name="uv450-left-ob-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="13"/>
+
+            <selectorN name="uv450-left-ob-sel-out">
+                <channel priority="1" name="uv450-left-ob-sel-in-1"/>
+                <channel priority="2" name="uv450-left-ob-sel-in-2"/>
+              <timeout>00:00:02:500</timeout>
+            </selectorN>
+
+            <data-flow notifier="uv450-ob-left-udp-from-arm-in-pri" subscriber="uv450-left-ob-sel-in-1"/>
+            <data-flow notifier="uv450-ob-left-udp-from-arm-in-sec" subscriber="uv450-left-ob-sel-in-2"/>
+            <data-flow notifier="uv450-left-ob-sel-out" subscriber="uv450-ob-left-udp-to-arm-pri"/>
+            <data-flow notifier="uv450-left-ob-sel-out" subscriber="uv450-ob-left-udp-to-arm-sec"/>
+            <data-flow notifier="uv450-left-ob-sel-out" subscriber="uv450-ob-left-sel-out-probe"/>
+        </application>
+
+<!-- tren UV450-LEFT-OB -->
+
+        <application name="uv450-left-tren-ob-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="36"/>
+
+            <selectorN name="uv450-left-tren-ob-sel-out">
+                <channel priority="1" name="uv450-left-tren-ob-sel-in-1"/>
+                <channel priority="2" name="uv450-left-tren-ob-sel-in-2"/>
+              <timeout>00:00:02:500</timeout>
+            </selectorN>
+
+            <data-flow notifier="uv450-ob-left-tren-udp-from-arm-in-pri" subscriber="uv450-left-tren-ob-sel-in-1"/>
+            <data-flow notifier="uv450-ob-left-tren-udp-from-arm-in-sec" subscriber="uv450-left-tren-ob-sel-in-2"/>
+
+            <data-flow notifier="uv450-left-tren-ob-sel-out" subscriber="uv450-ob-left-tren-udp-to-arm-pri"/>
+            <data-flow notifier="uv450-left-tren-ob-sel-out" subscriber="uv450-ob-left-tren-udp-to-arm-sec"/>
+            <data-flow notifier="uv450-left-tren-ob-sel-out" subscriber="uv450-ob-left-tren-sel-out-probe"/>
+
+        </application>
+</applications>
+
+<!-- ##################################### UV450-RIGHT #########################################-->
+<!-- REAL UV450 data IN configuration -->
+<objects>
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<!-- Real Control data from UV450 device sent over serial interface. Right side of a vessel. -->
+        <!--serial-port-connection name="serial-port-uv450-right-io">
+            <port>/dev/ttyRTS9</port>
+            <speed>38400</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+        </serial-port-connection-->
+		
+<!-- Control data conversion from IN-coming DATA read on Serial-port into pure nmea string -->
+        <ascii-extractor type="nmea" name="uv450-right-nmea-extractor"/> <!--For send to ARM-->
+		
+<!-- Connecton status monitor for ASTD. Based on IN-coming traffic from UV450-->
+        <connection-monitor name="uv450-right-conn-monitor">
+            <link-state-id>D.UV450PB.RS.KD1</link-state-id>
+            <timeout>00:00:02:000</timeout>
+        </connection-monitor>
+		
+<!-- IN coming data trimming for ASTD -->		
+		<stream-thinner name="uv450-right-astd-1hz-thinner" minInterval="00:00:01:000"/>
+	
+<!-- Logging incoming data from device UV450 -->	
+		<file-output name="uv450-right-from-dev-probe">
+            <filename>/var/log/dolphin/22160/uv450-right-from-dev-probe</filename>
+			<max-size>10M</max-size>
+            <rotate>true</rotate>
+            <max-files-index>3</max-files-index>            
+        </file-output>	
+</objects>	
+<!-- END OF REAL UV450 data IN configuration. RIGHT -->
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+
+
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<!-- UV450 REAL data OUT configuration. RIGHT -->
+<objects>  
+<!-- Control sent out to ARM-->
+	<!--udp-connection name="uv450-right-udp-to-arm-pri">
+            <destination-address>10.10.10.103</destination-address>
+            <destination-port>50105</destination-port>
+        </udp-connection-->
+		
+<!-- Commented out for clarity -->
+        <!--udp-connection name="uv450-right-udp-to-arm-sec">
+            <destination-address>10.10.10.104</destination-address>
+            <destination-port>50105</destination-port>
+        </udp-connection-->
+</objects>
+<!-- END OF UV450 REAL data OUT configuration. RIGHT -->
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<!--Control from ARM REAL data setup. RIGHT --> 
+<objects>  
+        <!--tcp-connection name="tcp-uv450-right-ctrl-from-arm-in-pri" mode="server">
+            <source-address>10.10.10.101</source-address>
+            <source-port>51105</source-port>
+        </tcp-connection-->
+
+<!-- Commented out for clarity -->
+        <!--tcp-connection name="tcp-uv450-right-ctrl-from-arm-in-sec" mode="server">
+		<source-address>10.10.10.101</source-address>
+            <source-port>51205</source-port>
+        </tcp-connection>			
+		
+        <file-output name="uv450-right-ctrl-sel-out-probe">
+            <filename>/var/log/dolphin/22160/uv450-right-to-dev-probe</filename>
+			<max-size>10M</max-size>
+            <rotate>true</rotate>
+            <max-files-index>3</max-files-index>
+        </file-output-->
+</objects>  
+<!--END OF Control from ARM REAL data setup. RIGHT --> 
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+
+		
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<!-- Emulated data IN (tren) UV450. RIGHT -->	
+<objects>
+<!-- tren UV450-RIGHT -->
+  <udp-connection name="uv450-right-udp-from-imitator-pri">
+            <source-address>10.10.10.101</source-address>
+            <source-port>47905</source-port>
+        </udp-connection>
+		
+<!-- Commented out for clarity  --> 
+        <udp-connection name="uv450-right-udp-from-imitator-sec">
+            <source-address>10.10.10.101</source-address>
+            <source-port>47405</source-port>
+        </udp-connection>
+		
+<!-- Control data conversion from IN-coming DATA read on Serial-port into pure nmea string -->	
+		<ascii-extractor type="nmea" name="uv450-right-tren-nmea-extractor"/> <!--For send to ARM-->
+		
+<!-- Connecton status monitor for ASTD. Based on IN-coming traffic from UV450-->		
+
+<!-- IN coming data trimming for ASTD -->	
+
+<!-- Logging incoming data from EMULATED device UV450 -->
+        <file-output name="uv450-right-from-tren-probe">
+            <filename>/var/log/dolphin/22160/tren/uv450-right-from-tren-probe</filename>
+			<max-size>10M</max-size>
+            <rotate>true</rotate>
+            <max-files-index>3</max-files-index>            
+        </file-output>
+		
+</objects>
+<!-- END OF Emulated data IN (tren) UV450. RIGHT -->	
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+
+	
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<!-- Emulated data OUT to ARM (tren) UV450-RIGHT -->
+<objects>
+  <udp-connection name="uv450-right-tren-udp-to-arm-pri">
+            <destination-address>239.254.1.1</destination-address>
+            <destination-port>50505</destination-port>
+        </udp-connection>
+
+        <udp-connection name="uv450-right-tren-udp-to-arm-sec">
+            <destination-address>239.254.1.2</destination-address>
+            <destination-port>50605</destination-port>
+        </udp-connection>
+</objects>
+<!-- END OF Emulated data OUT to ARTM (tren) UV450-RIGHT -->	
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+ <!-- NOT clear what that does to clarify -->
+<objects>
+
+        <udp-connection name="uv450-right-udp-to-imitator-pri">
+            <destination-address>10.10.10.109</destination-address>
+            <destination-port>48305</destination-port>
+        </udp-connection>
+
+        <udp-connection name="uv450-right-udp-to-imitator-sec">
+            <destination-address>10.10.10.110</destination-address>
+            <destination-port>48405</destination-port>
+        </udp-connection>
+</objects>
+      
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<!-- Control from ARM -RIGHT -->
+<objects>
+        <tcp-connection name="tcp-uv450-right-tren-ctrl-from-arm-in-pri" mode="server">
+            <source-address>10.10.10.101</source-address>
+            <source-port>51305</source-port>
+        </tcp-connection>
+
+        <tcp-connection name="tcp-uv450-right-tren-ctrl-from-arm-in-sec" mode="server">
+            <source-address>10.10.10.101</source-address>
+            <source-port>51405</source-port>
+        </tcp-connection>
+
+        <file-output name="uv450-right-tren-ctrl-sel-out-probe">
+            <filename>/var/log/dolphin/22160/tren/uv450-right-to-tren-probe</filename>
+			<max-size>10M</max-size>
+            <rotate>true</rotate>
+            <max-files-index>3</max-files-index>
+        </file-output>
+</objects>
+<!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+<!-- END OF Control from ARM -RIGHT -->
+
+<applications>
+<!-- REAL UV450 APP-RIGHT -->
+        <!--application name="uv450-right-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="14"/>
+
+            <selectorN name="uv450-right-ctrl-sel-out">
+                <channel priority="1" name="uv450-right-ctrl-sel-in-1"/>
+                <channel priority="2" name="uv450-right-ctrl-sel-in-2"/>
+              <timeout>00:00:02:500</timeout>
+            </selectorN>
+
+            <data-flow notifier="serial-port-uv450-right-io" subscriber="uv450-right-nmea-extractor"/>
+            <data-flow notifier="uv450-right-nmea-extractor" subscriber="uv450-right-udp-to-arm-pri"/>
+            <data-flow notifier="uv450-right-nmea-extractor" subscriber="uv450-right-udp-to-arm-sec"/>
+            <data-flow notifier="uv450-right-nmea-extractor" subscriber="uv450-right-from-dev-probe"/>
+            <data-flow notifier="tcp-uv450-right-ctrl-from-arm-in-pri" subscriber="uv450-right-ctrl-sel-in-1"/>
+            <data-flow notifier="tcp-uv450-right-ctrl-from-arm-in-sec" subscriber="uv450-right-ctrl-sel-in-2"/>
+            <data-flow notifier="uv450-right-ctrl-sel-out" subscriber="serial-port-uv450-right-io"/>
+            <data-flow notifier="uv450-right-ctrl-sel-out" subscriber="uv450-right-ctrl-sel-out-probe"/>
+            <data-flow notifier="uv450-right-nmea-extractor" converter="uv450-right-conn-monitor" subscriber="uv450-right-astd-1hz-thinner"/>
+            <data-flow notifier="uv450-right-astd-1hz-thinner" subscriber="astd-slot"/>
+        </applicationi-->
+
+<!-- tren UV450-RIGHT -->
+        <application name="uv450-right-tren-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="37"/>
+
+            <selectorN name="uv450-right-tren-ctrl-sel-out">
+                <channel priority="1" name="uv450-right-tren-ctrl-sel-in-1"/>
+                <channel priority="2" name="uv450-right-tren-ctrl-sel-in-2"/>
+              <timeout>00:00:02:500</timeout>
+            </selectorN>
+
+            <selectorN name="uv450-right-tren-sel-out">
+                <channel priority="1" name="uv450-right-tren-sel-in-1"/>
+                <channel priority="2" name="uv450-right-tren-sel-in-2"/>
+              <timeout>00:00:02:500</timeout>
+            </selectorN>
+
+            <data-flow notifier="uv450-right-udp-from-imitator-pri" subscriber="uv450-right-tren-sel-in-1"/>
+            <data-flow notifier="uv450-right-udp-from-imitator-sec" subscriber="uv450-right-tren-sel-in-2"/>
+            <data-flow notifier="uv450-right-tren-sel-out" subscriber="uv450-right-tren-nmea-extractor"/>
+            <data-flow notifier="uv450-right-tren-nmea-extractor" subscriber="uv450-right-tren-udp-to-arm-pri"/>
+            <data-flow notifier="uv450-right-tren-nmea-extractor" subscriber="uv450-right-tren-udp-to-arm-sec"/>
+            <data-flow notifier="uv450-right-tren-nmea-extractor" subscriber="uv450-right-from-tren-probe"/>
+
+
+            <data-flow notifier="tcp-uv450-right-tren-ctrl-from-arm-in-pri" subscriber="uv450-right-tren-ctrl-sel-in-1"/>
+            <data-flow notifier="tcp-uv450-right-tren-ctrl-from-arm-in-sec" subscriber="uv450-right-tren-ctrl-sel-in-2"/>
+            <data-flow notifier="uv450-right-tren-ctrl-sel-out" subscriber="uv450-right-udp-to-imitator-pri"/>
+            <data-flow notifier="uv450-right-tren-ctrl-sel-out" subscriber="uv450-right-udp-to-imitator-sec"/>
+            <data-flow notifier="uv450-right-tren-ctrl-sel-out" subscriber="uv450-right-tren-ctrl-sel-out-probe"/>
+        </application>
+    </applications>
+
+<!-- ##################################### UV450-RIGHT OB #########################################-->
+
+<objects>
+        <udp-connection name="uv450-ob-right-udp-to-arm-pri">
+            <destination-address>10.10.10.103</destination-address>
+            <destination-port>50140</destination-port>
+        </udp-connection>
+
+        <udp-connection name="uv450-ob-right-udp-to-arm-sec">
+            <destination-address>10.10.10.104</destination-address>
+            <destination-port>50240</destination-port>
+        </udp-connection>
+
+        <udp-connection name="uv450-ob-right-udp-from-arm-in-pri">
+            <source-address>10.10.10.101</source-address>
+            <source-port>51140</source-port>
+        </udp-connection>
+
+        <udp-connection name="uv450-ob-right-udp-from-arm-in-sec">
+            <source-address>10.10.10.101</source-address>
+
+            <source-port>51240</source-port>
+        </udp-connection>
+        
+        <file-output name="uv450-ob-right-sel-out-probe">
+            <filename>/var/log/dolphin/22160/uv450-ob-right-probe</filename>
+			<max-size>10M</max-size>
+            <rotate>true</rotate>
+            <max-files-index>3</max-files-index>
+        </file-output>
+
+<!-- tren UV450-RIGHT-OB -->
+
+        <udp-connection name="uv450-ob-right-tren-udp-to-arm-pri">
+            <destination-address>10.10.10.103</destination-address>
+            <destination-port>50340</destination-port>
+        </udp-connection>
+
+        <udp-connection name="uv450-ob-right-tren-udp-to-arm-sec">
+            <destination-address>10.10.10.104</destination-address>
+            <destination-port>50440</destination-port>
+        </udp-connection>
+
+        <udp-connection name="uv450-ob-right-tren-udp-from-arm-in-pri">
+            <source-address>10.10.10.101</source-address>
+            <source-port>51340</source-port>
+        </udp-connection>
+
+        <udp-connection name="uv450-ob-right-tren-udp-from-arm-in-sec">
+            <source-address>10.10.10.101</source-address>
+            <source-port>51440</source-port>
+        </udp-connection>
+
+        <file-output name="uv450-ob-right-tren-sel-out-probe">
+            <filename>/var/log/dolphin/22160/tren/uv450-ob-tren-right-probe</filename>
+			<max-size>10M</max-size>
+            <rotate>true</rotate>
+            <max-files-index>3</max-files-index>
+        </file-output>
+
+</objects>
+
+<applications>
+        <application name="uv450-right-ob-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="15"/>
+
+            <selectorN name="uv450-right-ob-sel-out">
+                <channel priority="1" name="uv450-right-ob-sel-in-1"/>
+                <channel priority="2" name="uv450-right-ob-sel-in-2"/>
+                <timeout>00:00:02:500</timeout>
+            </selectorN>
+
+            <data-flow notifier="uv450-ob-right-udp-from-arm-in-pri" subscriber="uv450-right-ob-sel-in-1"/>
+            <data-flow notifier="uv450-ob-right-udp-from-arm-in-sec" subscriber="uv450-right-ob-sel-in-2"/>
+            <data-flow notifier="uv450-right-ob-sel-out" subscriber="uv450-ob-right-udp-to-arm-pri"/>
+            <data-flow notifier="uv450-right-ob-sel-out" subscriber="uv450-ob-right-udp-to-arm-sec"/>
+            <data-flow notifier="uv450-right-ob-sel-out" subscriber="uv450-ob-right-sel-out-probe"/>
+
+        </application>
+
+<!-- tren UV450-RIGHT-OB -->
+
+        <application name="uv450-right-tren-ob-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="38"/>
+
+            <selectorN name="uv450-right-tren-ob-sel-out">
+                <channel priority="1" name="uv450-right-tren-ob-sel-in-1"/>
+                <channel priority="2" name="uv450-right-tren-ob-sel-in-2"/>
+                <timeout>00:00:02:500</timeout>
+            </selectorN>
+
+            <data-flow notifier="uv450-ob-right-tren-udp-from-arm-in-pri" subscriber="uv450-right-tren-ob-sel-in-1"/>
+            <data-flow notifier="uv450-ob-right-tren-udp-from-arm-in-sec" subscriber="uv450-right-tren-ob-sel-in-2"/>
+
+            <data-flow notifier="uv450-right-tren-ob-sel-out" subscriber="uv450-ob-right-tren-udp-to-arm-pri"/>
+            <data-flow notifier="uv450-right-tren-ob-sel-out" subscriber="uv450-ob-right-tren-udp-to-arm-sec"/>
+            <data-flow notifier="uv450-right-tren-ob-sel-out" subscriber="uv450-ob-right-tren-sel-out-probe"/>
+
+        </application>
+</applications>      
+
+
+<objects>
+        <udp-connection name="astd-udp-to-bd-out-pri">
+            <destination-address>10.10.10.101</destination-address>
+            <destination-port>56121</destination-port>
+        </udp-connection>
+  
+        <!--udp-connection name="astd-udp-to-bd-out-sec">
+            <destination-address>10.10.10.101</destination-address>
+            <destination-port>56221</destination-port>
+        </udp-connection-->
+
+        <file-output name="astd-probe">
+            <filename>/var/log/dolphin/22160/astd-probe</filename>
+            <format>astd</format>
+			<max-size>10M</max-size>
+            <rotate>true</rotate>
+            <max-files-index>3</max-files-index>
+        </file-output>
+</objects>
+
+<!--applications>
+        <application name="astd-sender-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200" startupDuration="00:00:00:200" startOrder="30"/>
+
+            <data-flow notifier="astd-slot" subscriber="astd-udp-to-bd-out-pri"/>
+            <data-flow notifier="astd-slot" subscriber="astd-udp-to-bd-out-sec"/>
+            <data-flow notifier="astd-slot" subscriber="astd-probe"/>
+
+        </application>
+        <application name="pinger-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200" startupDuration="00:00:00:100" startOrder="3"/>
+            <pinger-input-manager>
+                <timeout>00:00:05:000</timeout>
+                <state-notifier name="LAN-state-notifier"/>
+                <interface address="10.7.1.3">
+                    <target address="10.7.1.1" name="L.BD1.IMS1.KD1"/>
+                    <target address="10.7.1.2" name="L.BD2.IMS1.KD1"/>
+                    <target address="10.7.1.4" name="L.KD2.IMS1.KD1"/>
+                    <target address="10.7.1.5" name="L.VD1.IMS1.KD1"/>
+                    <target address="10.7.1.6" name="L.VD2.IMS1.KD1"/>
+                    <target address="10.7.1.8" name="L.KLVS.IMS1.KD1"/>
+                    <target address="10.7.1.9" name="L.BT.IMS1.KD1"/>
+                </interface>
+                <interface address="10.7.131.3">
+                    <target address="10.7.131.1" name="L.BD1.IMS2.KD1"/>
+                    <target address="10.7.131.2" name="L.BD2.IMS2.KD1"/>
+                    <target address="10.7.131.4" name="L.KD2.IMS2.KD1"/>
+                    <target address="10.7.131.5" name="L.VD1.IMS2.KD1"/>
+                    <target address="10.7.131.6" name="L.VD2.IMS2.KD1"/>
+                    <target address="10.7.131.8" name="L.KLVS.IMS2.KD1"/>
+                    <target address="10.7.131.9" name="L.BT.IMS2.KD1"/>
+                </interface>
+                <interface address="192.168.11.3">
+                    <target address="192.168.11.11" name="L.SHRSLB.FE.KD1"/>
+                    <target address="192.168.11.251" name="L.A14.PV1MAIN.KD1"/>
+                </interface>
+                <interface address="192.168.12.3">
+                    <target address="192.168.12.11" name="L.ARIADNA.FE.KD1"/>
+                </interface>
+                <interface address="192.168.13.3">
+                    <target address="192.168.13.11" name="L.PURGALB.FE.KD1"/>
+                </interface>
+                <interface address="192.168.14.3">
+                    <target address="192.168.14.11" name="L.PLATAN.FE.KD1"/>
+                </interface>
+                <interface address="192.168.201.100">
+                    <target address="192.168.201.10" name="L.TRASSA.FE.KD1"/>
+                </interface>
+                <interface address="192.168.141.3">
+                    <target address="192.168.141.11" name="L.SHRSPB.FE.KD1"/>
+                    <target address="192.168.141.251" name="L.A14.PV1BACKUP.KD1"/>
+                </interface>
+                <interface address="192.168.143.3">
+                    <target address="192.168.143.11" name="L.PURGAPB.FE.KD1"/>
+                </interface>
+            </pinger-input-manager>
+            <data-flow notifier="LAN-state-notifier" subscriber="astd-slot"/>
+         </application>
+</applications-->
+
+</configuration>

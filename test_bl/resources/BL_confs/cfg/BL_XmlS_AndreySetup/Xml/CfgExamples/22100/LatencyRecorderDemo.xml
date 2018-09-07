@@ -1,0 +1,33 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <converter name="converter-sjuzhet">
+            <type>sjuzhet</type>
+        </converter>
+
+        <file-output name="zda-probe">
+            <filename>/var/log/dolphin/some_log</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="latency-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+
+            <latency-recorder name="conv-latency" startName="conv-latency-start" endName="conv-latency-end"/>
+
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+
+            <data-flow notifier="zda-gen" subscriber="conv-latency-start"/>
+            <data-flow notifier="converter-sjuzhet" subscriber="conv-latency-start"/>
+
+            <data-flow notifier="zda-gen" subscriber="converter-sjuzhet"/>
+            <data-flow notifier="converter-sjuzhet" subscriber="zda-probe"/>
+        </application>
+    </applications>
+    
+</configuration>

@@ -1,0 +1,46 @@
+<configuration>
+
+    <objects>
+        <udp-connection name="udp-in-1">
+            <source-address>10.7.131.12</source-address>
+            <source-port>24021</source-port>
+            <destination-address>10.7.131.10</destination-address>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+        <udp-connection name="udp-in-2">
+            <source-address>10.7.131.12</source-address>
+            <source-port>24022</source-port>
+            <destination-address>10.7.131.10</destination-address>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+	<udp-connection name="udp-out">
+            <source-address>10.7.131.12</source-address>
+            <destination-address>10.7.131.10</destination-address>
+            <destination-port>24123</destination-port>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+        <slot name="SECTOR_DATA">
+            <max-size>65536</max-size>
+            <mode>reliable</mode>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+
+        <slot name="SECTOR_REQUEST">
+            <max-size>65536</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+
+    </objects>
+
+    <applications>
+        <application name="app">
+            <data-flow notifier="udp-in-1" subscriber="SECTOR_DATA"/>
+            <data-flow notifier="udp-in-2" subscriber="SECTOR_DATA"/>
+            <data-flow notifier="SECTOR_REQUEST" subscriber="udp-out"/>
+        </application>
+    </applications>
+</configuration>
+    

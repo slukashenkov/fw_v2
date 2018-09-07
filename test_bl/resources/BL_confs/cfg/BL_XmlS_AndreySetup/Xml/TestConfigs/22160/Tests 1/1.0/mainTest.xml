@@ -1,0 +1,68 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <!--config-path>d:\Baselibraries\bin2\config\</config-path-->
+        <config-path>/etc/dolphin/22160/</config-path>
+    </plugin-parameters>
+ 
+    <plugins>
+
+    </plugins>
+		
+    <objects>
+        <!-- #################### COMMON slots,etc #################### -->
+
+        <slot name="test-slot">
+            <!--	<max-size>65535</max-size> 					Test 1.1-1.2 default is 64K -->
+			<!--	<update-time>00:00:00:100</update-time> 	default is 00:00:00:100 -->
+			<!--	<type>reliable</type> 						Test 1.3 discarding (default), reliable -->
+			<!--	<max-buffer-length>100</max-buffer-length> 	Test 1.4 default is 10 -->
+        </slot>
+
+</objects>
+
+
+
+<!-- TEST CONFIGURATION 1.0 -->
+	<objects>
+
+		<udp-connection name="test-udp-from-notebook" mode="server">
+            <source-address>10.7.1.3</source-address>
+            <source-port>51111</source-port>
+        </udp-connection>
+		
+		<udp-connection name="test-udp-to-notebook">
+            <destination-address>10.7.1.70</destination-address>
+            <destination-port>51112</destination-port>
+        </udp-connection>
+		
+		<file-output name="test-from-udp-probe">
+            <filename>/var/log/dolphin/test/test-1.0-from-udp-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+
+        <file-output name="test-from-slot-probe">
+            <filename>/var/log/dolphin/test/test-1.0-from-slot-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+</objects>
+
+	<applications>	
+        <application name="test-app">
+			<watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="40"/> 
+                       
+            <data-flow notifier="test-udp-from-notebook" subscriber="test-slot"/>
+            <data-flow notifier="test-udp-from-notebook" subscriber="test-from-udp-probe"/>
+            <data-flow notifier="test-slot" subscriber="test-from-slot-probe"/>
+            <data-flow notifier="test-slot" subscriber="test-udp-to-notebook"/>
+
+        </application>
+    </applications>
+</configuration>

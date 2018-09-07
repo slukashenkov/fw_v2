@@ -1,0 +1,28 @@
+<configuration>
+
+    <objects>
+        <slot name="slot-in">
+            <max-size>1024</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>discarding</type>
+        </slot>
+
+        <udp-connection name="udp-out">
+            <destination-address>10.10.73.105</destination-address>
+            <destination-port>20200</destination-port>
+        </udp-connection>
+
+       <file-output name="slot-in-probe">
+           <filename>/tmp/slot-in</filename>
+           <format>trace</format>
+       </file-output>
+    </objects>
+
+    <applications>
+        <application name="app">
+            <data-flow notifier="slot-in" subscriber="udp-out"/>
+            <data-flow notifier="slot-in" subscriber="slot-in-probe"/>
+        </application>
+
+    </applications>
+</configuration>

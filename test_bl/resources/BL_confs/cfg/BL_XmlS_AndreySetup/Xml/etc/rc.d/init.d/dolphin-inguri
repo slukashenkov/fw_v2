@@ -1,0 +1,21 @@
+#! /bin/sh
+# chkconfig: 345 96 04
+# description: Starts/stops the services for Inguri System of Coordinated Control (SCC)
+
+case "$1" in
+  start)
+        cd /usr/bin/dolphin/
+        LOGNAME=dummy_for_jrtplib TMP=/tmp ./WatchDogServer --start --conf=/etc/dolphin/Inguri/Inguri.xml >/var/log/dolphin/stdout.txt 2>/var/log/dolphin/stderr.txt
+
+	exit 0
+	;;
+  stop)
+        cd /usr/bin/dolphin/
+        TMP=/tmp ./WatchDogServer --stop
+	exit 0
+	;;
+  *)
+	echo "Usage: $SCRIPTNAME {start|stop}" >&2
+	exit 3
+	;;
+esac

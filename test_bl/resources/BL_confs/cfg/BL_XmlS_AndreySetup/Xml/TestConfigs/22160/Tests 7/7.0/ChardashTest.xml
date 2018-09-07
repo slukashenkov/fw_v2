@@ -1,0 +1,172 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+	
+
+<objects>
+        <serial-port-connection name="serial-port-chardash-io">
+            <port>/dev/ttyRTS15</port>
+            <speed>9600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+        </serial-port-connection>
+		
+		<!-- TEST CONFIGURATION 11.0 -->
+		<file-output name="test-from-manchester-probe">
+            <filename>/var/log/dolphin/test/test-data-from-manchester-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+		
+		<file-output name="test-from-serial-port-probe">
+            <filename>/var/log/dolphin/test/test-data-from-serial-port-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+		
+		<!-- TEST CONFIGURATION 11.1.1 -->		
+		<file-output name="test-from-data-notifier-probe1">
+            <filename>/var/log/dolphin/test/test-11.1.1-from-data-notifier-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+		
+		<file-output name="test-from-state-notifier-probe1">
+            <filename>/var/log/dolphin/test/test-11.1.1-from-state-notifier-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+		
+		<!-- TEST CONFIGURATION 11.1.2 -->
+        <file-output name="test-from-data-notifier-probe2">
+            <filename>/var/log/dolphin/test/test-11.1.2-from-data-notifier-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+		
+		<file-output name="test-from-state-notifier-probe2">
+            <filename>/var/log/dolphin/test/test-11.1.2-from-state-notifier-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+
+		<!-- TEST CONFIGURATION 11.1.3 -->
+        <file-output name="test-from-data-notifier-probe3">
+            <filename>/var/log/dolphin/test/test-11.1.3-from-data-notifier-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+		
+		<file-output name="test-from-state-notifier-probe3">
+            <filename>/var/log/dolphin/test/test-11.1.3-from-state-notifier-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>	
+		
+		<!-- TEST CONFIGURATION 7.0 -->		
+		<stream-thinner name="chardash-manchester-thinner" minInterval="00:00:01:000"/>
+
+		<!-- TEST CONFIGURATION 7.1.1 -->
+		<file-output name="test-converter-chardash-probe">
+            <filename>/var/log/dolphin/test/test-7.1.1-from-converter-chardash-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>	
+		
+		<converter name="chardash-converter">
+            <type>chardash</type>
+        </converter>	
+
+		<!-- TEST CONFIGURATION 7.1.2 -->		
+		<file-output name="test-converter-chardash-for-seaproject-probe">
+            <filename>/var/log/dolphin/test/test-7.1.2-from-converter-chardash-for-seaproject-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>	
+		
+		<converter name="chardash-for-seaproject-conv">
+            <type>chardash-for-sea-project</type>
+        </converter>
+	</objects>
+
+    <applications>
+        <application name="chardash-test-app">
+            <manchester-reader name="chardash-manchester-in">
+                <card-no>0</card-no>
+                <address>10</address>
+                <max-wait-duration>00:00:01:000</max-wait-duration>
+                <mode>rt</mode>
+            </manchester-reader>			
+			
+			<data-flow notifier="chardash-manchester-in" subscriber="chardash-data-subscriber1"/>
+			<data-flow notifier="chardash-manchester-in" subscriber="chardash-data-subscriber2"/>
+			<data-flow notifier="serial-port-chardash-io" subscriber="chardash-data-subscriber3"/>			
+            <data-flow notifier="chardash-manchester-in" subscriber="test-from-manchester-probe"/>	
+			<data-flow notifier="serial-port-chardash-io" subscriber="test-from-serial-port-probe"/>				
+			
+			<!--TEST CONFIGURATION 11.1.1 -->
+			<input-manager>
+                <type>chardash</type>
+                <talker-id>GP</talker-id>
+                <data-subscriber name="chardash-data-subscriber1"/>
+                <data-notifier name="chardash-data-notifier1"/>
+                <state-notifier name="chardash-state-notifier1"/>
+                <link-state-id name="L.CHARDASH.TEST.KD1"/>
+                <data-available-id name="D.CHARDASH.TEST.KD1"/>
+                <data-correct-id name="V.CHARDASH.TEST.KD1"/>
+                <timeout>00:00:01:000</timeout>
+            </input-manager>
+			
+			<data-flow notifier="chardash-data-notifier1" subscriber="test-from-data-notifier-probe1"/>
+            <data-flow notifier="chardash-state-notifier1" subscriber="test-from-state-notifier-probe1"/>			
+			
+			<!--TEST CONFIGURATION 11.1.2 -->
+            <input-manager>
+                <type>chardashNotToWgs84</type>
+                <talker-id>GP</talker-id>
+                <data-subscriber name="chardash-data-subscriber2"/>
+                <data-notifier name="chardash-data-notifier2"/>
+                <state-notifier name="chardash-state-notifier2"/>
+                <link-state-id name="L.CHARDASH.TEST.KD1"/>
+                <data-available-id name="D.CHARDASH.TEST.KD1"/>
+                <data-correct-id name="V.CHARDASH.TEST.KD1"/>
+                <timeout>00:00:01:000</timeout>
+            </input-manager>
+
+			<data-flow notifier="chardash-data-notifier2" subscriber="test-from-data-notifier-probe2"/>
+            <data-flow notifier="chardash-state-notifier2" subscriber="test-from-state-notifier-probe2"/>
+			
+			<!--TEST CONFIGURATION 11.1.3 -->
+			<input-manager>
+                <type>chardash</type>
+                <talker-id>GP</talker-id>
+                <data-subscriber name="chardash-data-subscriber3"/>
+                <data-notifier name="chardash-data-notifier3"/>
+                <state-notifier name="chardash-state-notifier3"/>
+                <link-state-id name="L.CHARDASH.TEST.KD1"/>
+                <data-available-id name="D.CHARDASH.TEST.KD1"/>
+                <data-correct-id name="V.CHARDASH.TEST.KD1"/>
+                <timeout>00:00:01:000</timeout>
+            </input-manager>
+			
+			<data-flow notifier="chardash-data-notifier3" subscriber="test-from-data-notifier-probe3"/>
+            <data-flow notifier="chardash-state-notifier3" subscriber="test-from-state-notifier-probe3"/>	
+
+			<!-- TEST CONFIGURATION 7.0 -->			
+			<data-flow notifier="chardash-manchester-in" subscriber="chardash-manchester-thinner"/>			
+			
+			<!-- TEST CONFIGURATION 7.1.1 -->
+			<data-flow notifier="chardash-manchester-thinner" subscriber="chardash-converter"/>
+            <data-flow notifier="chardash-converter" subscriber="test-converter-chardash-probe"/>
+			
+			<!-- TEST CONFIGURATION 7.1.2 -->
+			<data-flow notifier="chardash-manchester-thinner" subscriber="chardash-for-seaproject-conv"/>
+            <data-flow notifier="chardash-for-seaproject-conv" subscriber="test-converter-chardash-for-seaproject-probe"/>
+			
+			
+        </application>
+    </applications>
+</configuration> 

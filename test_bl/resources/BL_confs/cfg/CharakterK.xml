@@ -1,0 +1,31 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+
+<objects>
+
+
+
+
+</objects>
+
+<applications>
+    <application name="character-app">
+        <character-wind-converter name="character-mwv"/> <!-- For wind to MFD -->
+        <data-flow notifier="serial-port-character-io" subscriber="character-nmea-extractor"/>
+        <data-flow notifier="character-nmea-extractor" subscriber="character-mwv"/>
+        <data-flow notifier="character-mwv" subscriber="character-udp-out-pri"/>
+        <data-flow notifier="character-mwv" subscriber="character-udp-out-sec"/>
+        <data-flow notifier="character-mwv" subscriber="character-from-from-mwv-filter-probe"/>
+        <data-flow notifier="serial-port-character-io" subscriber="character-udp-xdr-out-pri"/>
+        <data-flow notifier="serial-port-character-io" subscriber="character-udp-xdr-out-sec"/>
+        <data-flow notifier="serial-port-character-io" subscriber="character-from-xdr-filter-probe"/>
+        <data-flow notifier="character-nmea-extractor" converter="character-conn-monitor" subscriber="astd-slot"/>
+    </application>
+</applications>
+
+
+</configuration>    

@@ -1,0 +1,67 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <slot name="in-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+            <type>win-pipe</type>
+        </slot>
+
+        <slot name="out-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+            <type>win-pipe</type>
+        </slot>
+    </objects>
+
+    <applications>
+        <application name="vapp">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:200" startupDuration="00:00:00:500"/>
+
+            <mserver-client>
+                <!--Конфигурация для записи в MServer-->
+                <sender>
+                    <!--Время после которого все параметры не имеющие тега "timeout" устареют-->
+                    <!--Параметр не является обязательным.-->
+                    <!--Необходим если хотябы у одного из параметров не описан тег "timeout"-->
+                    <default-timeout>00:00:10.000</default-timeout>
+                    <!--Параметры по умочанию-->
+                    <!--Также не являются обязательными-->
+                    <!--Необходимо указать значения по умолчанию лишь для тех параметров которые не имеют тега "default-value"-->
+                    <default-values>
+                        <int>7</int>
+                        <double>7.5</double>
+                        <bool>true</bool>
+                        <string>"???"</string>
+                    </default-values>
+                    <!--Список параметро которые будут писаться в MServer-->
+                    <params>
+                        <!--аттрибуты name и type являются обязательными-->
+                        <!--аттрибуты timeout и default-value необходимо указать если время устаревания или значение по умолчанию у данного параметра отличается от значений в default-values>-->
+                        <param name="pkotni1" type="int" />
+                        <param name="pkotni2" type="int" default-value="2"/>
+                        <param name="test_param" type="double" timeout="00:00:20.000" default-value="100"/>
+                    </params>
+                </sender>
+                <!--Конфигурация для чтения из MServer`a-->
+                <receiver>
+                    <!--Период чтения-->
+                    <period>00:00:10.000</period>
+                    <!--Список параметров которые будут считаны из MServer`a-->
+                    <params>
+                        <!--Описание параметра-->
+                        <!--аттрибут name и type обязятельны к заполнению-->
+                        <param name="test_param" type="int" />
+                    </params>
+                </receiver>
+            </mserver-client>
+            <data-flow notifier="in-slot" subscriber="test_param"/>
+            <data-flow notifier="test_param" subscriber="out-slot"/>
+        </application>
+    </applications>
+
+</configuration>

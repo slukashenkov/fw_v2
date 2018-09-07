@@ -1,0 +1,52 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+    
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <config-path>/usr/bin/dolphin/cfg/</config-path>
+    </plugin-parameters>
+
+    <plugins>
+        <plugin name="Ariadna"          mode="on" application="ariadna-app">
+             <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+        </plugin>
+
+        <plugin name="CharakterK"       mode="on" application="character-app">
+             <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+        </plugin>
+
+        <plugin name="Chardash"         mode="on" application="chardash-app">
+             <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+        </plugin>
+
+        <plugin name="Purga"            mode="on" application="purga-app">
+             <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+        </plugin>
+
+        <plugin name="SeqNumSrv"        mode="on" application="seqnum-app">
+             <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+        </plugin>
+
+        <plugin name="Platan"           mode="on" application="platan-app">
+             <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+        </plugin>
+
+        <plugin name="Trassa"           mode="on" application="trassa-app">
+             <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+        </plugin>
+        
+    </plugins>
+
+    <objects>
+    </objects>
+
+<applications>        
+
+</applications>
+
+    
+</configuration>
+

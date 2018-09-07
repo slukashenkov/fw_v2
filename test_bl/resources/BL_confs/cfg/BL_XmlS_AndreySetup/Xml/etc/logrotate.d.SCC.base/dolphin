@@ -1,0 +1,44 @@
+/var/log/dolphin/*
+{
+    #Log files are rotated 10 times before being removed
+    rotate 3
+
+    #Log files are rotated when they grow bigger then size bytes.
+    size 10M
+
+    #postrotate script will only be run once (after the old logs have been  compressed)
+    sharedscripts
+
+    #If the log file is missing, go on to the next one without  issuing an error message
+    missingok
+
+    #New  log  files  are  not  created
+    nocreate
+
+    #Do not truncate the original log file in place after creating  a copy
+    nocopytruncate
+
+    # Do not postpone compression of the previous log file to the next rotation cycle
+    nodelaycompress
+
+    # Don’t mail old log files to any address.
+    nomail
+
+    #Do not rotate the log if it is empty
+    notifempty
+
+    #Logs are rotated in the same directory the log normally resides in 
+    noolddir
+
+    #Old  versions  of log files are compressed with bzip2 (not gzip !) by default
+    compress
+
+    #The lines between postrotate and endscript are executed after the log file is rotated
+    postrotate
+        killall -SIGUSR1 MainApplication
+
+        #On a production system, the rotated logfiles should not be moved from 
+        #the logs directory, since this prevents removal of the logfiles by logrotate
+        #mv /var/log/ocean/*.gz /var/log/ocean/archive/
+    endscript
+}

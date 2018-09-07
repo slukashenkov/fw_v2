@@ -1,0 +1,87 @@
+<configuration>
+
+    <global-parameters>
+        <path>/usr/bin/dolphin/MainApplication</path>
+    </global-parameters>
+
+    <objects>
+	<file-output name="op-mode-astd-probe">
+	    <filename>/var/log/dolphin/op-mode-astd</filename>
+	    <format>astd</format>
+	    <append>true</append>
+	</file-output>
+
+	<file-output name="op-mode-nmea-probe">
+	    <filename>/var/log/dolphin/op-mode-nmea</filename>
+            <timestamped-filename>false</timestamped-filename>
+	    <append>false</append>
+	    <format>raw</format>
+	</file-output>
+
+       <tcp-connection name="op-mode-sync-tcp">
+           <destination-address>10.10.201.213</destination-address>
+           <destination-port>52401</destination-port>
+           <source-address>10.10.201.206</source-address>
+           <source-port>52401</source-port>
+       </tcp-connection>
+
+       <tcp-connection name="op-mode-sync-req-tcp">
+           <destination-address>10.10.201.213</destination-address>
+           <destination-port>52400</destination-port>
+           <source-address>10.10.201.206</source-address>
+           <source-port>52400</source-port>
+       </tcp-connection>
+       
+       <converter name="op-mode-nmea-conv">
+           <type>op-mode</type>
+       </converter>
+       
+       <converter name="op-mode-nmea-conv-2">
+           <type>op-mode</type>
+       </converter>
+
+       <converter name="op-mode-astd-conv">
+           <type>op-mode-to-astd</type>
+       </converter>
+
+       <ascii-extractor type="nmea" name="op-mode-sync-extr"/>
+    </objects>
+
+    <applications>
+        <application name="op-mode-server-app">
+           <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+           <op-mode-server>
+               <admin-side-local address="10.10.201.206" port="52000"/>
+               <commander-side-remote address="10.10.201.203" port="52200"/>
+	       
+               <op-mode-notifier name="op-mode-notifier"/>
+               <op-mode-periodic-notifier name="op-mode-periodic-notifier"/>
+
+               <sync-req-subscriber name="sync-req-in"/>
+               <sync-req-notifier name="sync-req-out"/>
+               <sync-subscriber name="sync-in"/>
+
+               <saved-state-file>/etc/dolphin/op-mode-saved</saved-state-file>
+           </op-mode-server>
+	   
+           <data-flow notifier="op-mode-notifier" subscriber="op-mode-astd-conv"/>
+           <data-flow notifier="op-mode-astd-conv" subscriber="op-mode-astd-probe"/>
+           <data-flow notifier="op-mode-astd-conv" subscriber="op-mode-astd-slot"/>
+	    
+           <data-flow notifier="op-mode-periodic-notifier" subscriber="op-mode-nmea-conv"/>
+           <data-flow notifier="op-mode-nmea-conv" subscriber="op-mode-nmea-probe"/>
+           <data-flow notifier="op-mode-nmea-conv" subscriber="op-mode-nmea-slot"/>
+                    
+           <data-flow notifier="op-mode-notifier" 
+                    converter="op-mode-nmea-conv-2" subscriber="op-mode-sync-tcp"/>
+           
+           <data-flow notifier="op-mode-sync-req-tcp" subscriber="sync-req-in"/>
+           <data-flow notifier="op-mode-sync-tcp" 
+                    converter="op-mode-sync-extr" subscriber="sync-in"/>
+           <data-flow notifier="sync-req-out" subscriber="op-mode-sync-req-tcp"/>
+        </application>
+
+    </applications>
+
+</configuration>

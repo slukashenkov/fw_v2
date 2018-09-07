@@ -1,0 +1,99 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+
+      <ascii-extractor type="nmea" name="tcs-extr"/>
+	
+      <tcp-connection name="astk-tcp-out" mode="server">
+        <source-address>10.10.74.195</source-address>
+        <source-port>1234</source-port>
+      </tcp-connection>
+
+      <tcp-connection name="astk-tcp-in" mode="server">
+        <source-address>10.10.74.195</source-address>
+        <source-port>5555</source-port>
+      </tcp-connection>
+
+      <udp-connection name="astk-udp-out">
+        <destination-address>10.10.74.195</destination-address>
+        <destination-port>5551</destination-port>
+      </udp-connection>
+
+      <udp-connection name="astk-udp-in" mode="server">
+        <source-address>10.10.74.195</source-address>
+        <source-port>20002</source-port>
+      </udp-connection>
+
+	<database-connection name ="replay-db-conn">
+		<host>localhost</host>
+		<port>5432</port>
+		<dbname>replay22100</dbname>
+		<user>replay22100adm</user>
+		<password></password>
+	</database-connection>
+	  
+	<slot name="most-replay-slot">
+		<max-size>19200</max-size>
+		<update-time>00:00:01:000</update-time>
+		<type>reliable</type>
+	</slot>
+
+	<slot name="td-replay-slot">
+		<max-size>192000</max-size>
+		<update-time>00:00:01:000</update-time>
+		<type>reliable</type>
+	</slot>
+	  
+    </objects>
+
+    <applications>
+      <application name="astk-application">
+        
+        <watchdog aliveTimeout="00:00:03:000" terminationTime="00:00:00:500"/>
+
+        <data-flow notifier="astk-tcp-in" subscriber="tcs-extr"/>		
+        <data-flow notifier="tcs-extr" subscriber="TcpSubscriber"/>		
+        
+        <astk-dispatcher radarSN="11.0.0.2" aisSN="11.0.0.3">
+          <tcp-subscriber name="TcpSubscriber"/>
+          <serial-subscriber name="SerialSubscriber"/>
+          <tcp-notifier name="TcpNotifier"/>
+          <serial-notifier name="SerialNotifier"/>         
+        </astk-dispatcher>
+
+        <data-flow notifier="TcpNotifier" subscriber="astk-tcp-out"/>
+
+        <data-flow notifier="astk-udp-in" subscriber="SerialSubscriber"/>
+        <data-flow notifier="SerialNotifier" subscriber="astk-udp-out"/>
+
+        <data-flow notifier="astk-udp-in" subscriber="most-replay-slot"/> 
+        <data-flow notifier="astk-tcp-in" subscriber="td-replay-slot"/> 		
+		 
+      </application>
+
+        <application name="astk-replaydb-writer-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200" startupDuration="00:00:00:500" startOrder="1"/>
+
+            <db-writer name="most-replay-subscriber">
+                <database-connection name="replay-db-conn"/>
+                <sensorId>2</sensorId>
+            </db-writer>
+
+            <db-writer name="td-replay-subscriber">
+                <database-connection name="replay-db-conn"/>
+                <sensorId>1</sensorId>
+            </db-writer>
+			
+         <data-flow notifier="most-replay-slot" subscriber="most-replay-subscriber"/> 
+         <data-flow notifier="td-replay-slot" subscriber="td-replay-subscriber"/> 		
+			
+			
+		</application>
+	  
+    </applications>
+</configuration>
+    

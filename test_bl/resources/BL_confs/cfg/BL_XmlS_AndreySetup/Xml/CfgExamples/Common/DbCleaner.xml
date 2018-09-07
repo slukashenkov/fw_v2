@@ -1,0 +1,16 @@
+<configuration>
+    <objects>    
+    </objects>
+
+    <applications>        
+        <application name="db-cleaner-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200" startupDuration="00:00:00:500" startOrder="1"/>
+            <db-cleaner>
+                <database-connection name="replay-db-conn"/>
+                <period>24:00:00:000</period>
+                <ageing-time>720:00:00:000</ageing-time>
+            </db-cleaner>
+        </application>
+
+    </applications>
+</configuration>

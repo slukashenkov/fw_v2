@@ -1,0 +1,61 @@
+{
+  "test_bl_configuration": {
+    "local_vbox_dirs": {
+      "windows": {
+        "vbox_dir": "C:\\Program Files\\Oracle\\VirtualBox\\",
+        "vbox_dir_manage": "C:\\Program Files\\Oracle\\VirtualBox\\VBoxManage.exe"
+      },
+      "linux": {
+        "vbox_dir": "/usr/bin",
+        "vbox_dir_manage": "/usr/bin/VBoxManage"
+      }
+    },
+    "clean_vm_img": {
+      "alt": {
+        "clean_alt_img": "alt7_KD_BL2.0_10.11.10.11",
+        "clean_alt_snap": "CleanALTSnap"
+      },
+      "astra": {
+        "clean_astra_img": "",
+        "clean_astra_snap": ""
+      }
+    },
+    "sut_ssh_prefs": {
+      "sut_ssh_host": "10.11.10.11",
+      "sut_ssh_port": "22",
+      "sut_ssh_user": "root",
+      "sut_ssh_passwd": "root",
+      "sut_ssh_target_dir": "/usr/bin/dolphin"
+    },
+
+    "sut_config_files": {
+      "linux": {"sut_config_files":"resources/bl_tests_sonata.tar.gz"},
+      "windows":{"sut_config_files":"resources\\bl_tests_sonata.tar.gz"}
+    },
+
+     "sut_logging_config": {
+       "windows": {"log_srv_exec":"C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\ext_tools\\apache-chainsaw-2.0.0-standalone\\apache-chainsaw-2.0.0\\bin\\chainsaw.bat",
+                "log_srv_dir":"C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\ext_tools\\apache-chainsaw-2.0.0-standalone\\apache-chainsaw-2.0.0\\bin",
+                "log_file_dir":"C:\\data\\kronshtadt\\QA\\BL\\BL_logs\\kd_LogFile.log"
+                },
+       "linux":{"log_srv_exec":"/home/slon/BL_tests_project/ext_tools/apache-chainsaw-2.0.0-standalone/apache-chainsaw-2.0.0/bin/chainsaw",
+                "log_srv_dir":"/home/slon/BL_tests_project/ext_tools/apache-chainsaw-2.0.0-standalone/apache-chainsaw-2.0.0/bin",
+                  "log_file_dir":"/home/slon/BL_tests_project/logs/kd_LogFile.log"
+                   }
+     },
+     "send_receive_prefs": {
+              "udp_ip_to": "10.11.10.11",
+               "udp_port_to": "55555",
+               "udp_ip_from": "10.11.10.12",
+               "udp_port_from": 55556,
+               "udp_buffsize_from": "4096"
+     },
+     "proj_dir_pttrn":{"windows":".*test_bl\\\\",
+                      "linux":".r'.*test_bl/"
+     },
+      "test_suite_conf":{}
+
+  }
+}
+
+

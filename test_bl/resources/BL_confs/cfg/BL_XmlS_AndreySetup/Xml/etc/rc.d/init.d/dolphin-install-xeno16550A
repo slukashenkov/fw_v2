@@ -1,0 +1,20 @@
+#! /bin/sh
+# chkconfig: 345 90 10
+# description: disables vanilla serial port driver for /dev/ttyS0 and installs xeno_16550A.ko kernel driver module
+
+case "$1" in
+  start)
+        setserial /dev/ttyS0 uart none
+        insmod /lib/modules/2.6.32-adeos-2.7-03/kernel/drivers/xenomai/serial/xeno_16550A.ko io=0x3f8 irq=4 tx_fifo=10 start_index=0
+        exit 0
+        ;;
+  stop)
+        rmmod xeno_16550A.ko
+        setserial /dev/ttyS0 uart 16550A
+        exit 0
+        ;;
+  *)
+        echo "Usage: $SCRIPTNAME {start|stop}" >&2
+        exit 3
+        ;;
+esac

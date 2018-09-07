@@ -1,0 +1,30 @@
+<configuration>
+    <objects>
+        
+        <slot name="SLOT">
+            <max-size>65536</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+        
+        <slot name="SLOT-IN">
+            <max-size>65536</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+        
+        <traffic-analyzer name="ta">
+            <talker-id>U0</talker-id>
+            <nmea-type>RSS</nmea-type>
+            <timeout>00:00:02:000</timeout>
+            <period>00:00:02:000</period>
+        </traffic-analyzer>
+        
+    </objects>
+
+    <applications>
+        <application name="app1">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+            <data-flow notifier="ta" subscriber="SLOT"/>
+            <data-flow notifier="SLOT-IN" subscriber="ta"/>
+        </application>
+    </applications>
+</configuration>

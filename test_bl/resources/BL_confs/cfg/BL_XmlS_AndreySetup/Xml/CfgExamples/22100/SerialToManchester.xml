@@ -1,0 +1,76 @@
+<configuration>
+
+    <global-parameters>
+	<path>MainApplication</path>
+    </global-parameters>
+
+   <plugin-parameters>
+       <module-path>/usr/local/lib</module-path>
+       <config-path>/usr/local</config-path>
+   </plugin-parameters>
+                                           
+    <plugins>
+    </plugins>
+
+<!-- #################### Pkotni #################### -->
+    <objects>
+        <serial-port-connection name="serial-port-bekar-in">
+            <port>/dev/ser2</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <timeout>0</timeout>
+<!--            
+            <rx-trigger-level>1</rx-trigger-level>
+-->            
+            <period-of-reading>00:00:00:00001</period-of-reading>
+        </serial-port-connection>
+
+        <bekar-data-accumulator name="2_bekar-acc"/>
+    </objects>
+
+    <applications>
+        <application name="manchester-app">
+
+            <latency-recorder name="direct" startName="10_latency-start" endName="12_latency-end"/>
+<!--
+            <latency-recorder name="bekar-acc" startName="1_bekar-acc-start" endName="3_bekar-acc-end"/>
+-->
+
+            <manchester-writer name="11_manchester-out">
+                <card-no>0</card-no>
+                <address>31</address>
+                <subaddress>2</subaddress>
+                <max-wait-duration>00:00:00:020</max-wait-duration>
+                <mode>bc-no-irq</mode>
+                <switch-timeout>00:00:01:500</switch-timeout>
+            </manchester-writer>
+
+             <data-flow notifier="serial-port-bekar-in" subscriber="2_bekar-acc"/>
+             <data-flow notifier="2_bekar-acc" subscriber="10_latency-start"/>
+             <data-flow notifier="2_bekar-acc" subscriber="11_manchester-out"/>
+             <data-flow notifier="2_bekar-acc" subscriber="12_latency-end"/>
+
+<!--      latency of bekar-data-accumulator
+             <data-flow notifier="serial-port-bekar-in" subscriber="1_bekar-acc-start"/>
+             <data-flow notifier="serial-port-bekar-in" subscriber="2_bekar-acc"/>
+             <data-flow notifier="2_bekar-acc" subscriber="3_bekar-acc-end"/>
+             <data-flow notifier="2_bekar-acc" subscriber="11_manchester-out"/>
+-->       
+
+<!--
+             <data-flow notifier="serial-port-bekar-in" subscriber="2_bekar-acc"/>
+             <data-flow notifier="2_bekar-acc" subscriber="10_latency-start"/>
+             <data-flow notifier="2_bekar-acc" subscriber="11_manchester-out"/>
+             <data-flow notifier="2_bekar-acc" subscriber="12_latency-end"/>
+-->             
+<!--
+             <data-flow notifier="serial-port-bekar-in" subscriber="10_latency-start"/>
+             <data-flow notifier="serial-port-bekar-in" subscriber="11_manchester-out"/>
+             <data-flow notifier="serial-port-bekar-in" subscriber="12_latency-end"/>
+-->             
+<!--
+            <data-flow notifier="zda-gen" subscriber="11_manchester-out"/>
+-->            
+        </application>
+    </applications>
+</configuration>

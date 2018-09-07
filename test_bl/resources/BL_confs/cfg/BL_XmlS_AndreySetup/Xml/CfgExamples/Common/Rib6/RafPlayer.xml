@@ -1,0 +1,46 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+
+      <tcp-connection name="raf-player-tcp-in" mode="server">
+        <source-address>0.0.0.0</source-address>
+        <source-port>6666</source-port>
+      </tcp-connection>
+
+      <udp-connection name="raf-player-multicast-out">
+          <multicast-address>232.113.104.70</multicast-address>
+          <remote-port>51709</remote-port>
+          <source-address>10.10.74.21</source-address>
+      </udp-connection>
+
+      <raf-player name="raf-player">
+          <directory>/home/dolphin/raf</directory>
+          <period>1</period>
+      </raf-player>
+      <!--
+      <file-output name="raf-file">
+          <filename>/home/dolphin/raf/out.raf</filename>
+          <format>raw</format>
+      </file-output>
+      -->
+    </objects>
+
+    <applications>
+      <application name="raf-player-application">
+
+        <watchdog aliveTimeout="00:00:03:000" terminationTime="00:00:00:500" />
+
+        <data-flow notifier="raf-player-tcp-in" subscriber="raf-player" />
+        <data-flow notifier="raf-player" subscriber="raf-player-multicast-out" />
+        <!--
+        <data-flow notifier="raf-player" subscriber="raf-file" />
+        -->
+
+      </application>
+    </applications>
+</configuration>
+

@@ -1,0 +1,19 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <!--config-path>d:\Baselibraries\bin2\config\</config-path-->
+	<config-path>/usr/bin/dolphin/sonata_confs</config-path>
+    </plugin-parameters>
+
+    <plugins>
+        <plugin name="Sonata" cfgName="sonata_only.xml"     mode="on" application="sonata-app" xenomailnit="false">
+             <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+        </plugin>
+    </plugins>
+
+</configuration>

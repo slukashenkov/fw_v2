@@ -1,0 +1,48 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <!--config-path>d:\Baselibraries\bin2\config\</config-path-->
+        <config-path>/etc/dolphin/22160/</config-path>
+    </plugin-parameters>
+
+<plugins>
+    
+</plugins>
+
+<objects>
+        <!-- #################### COMMON slots,etc #################### -->
+
+</objects>
+
+<!-- TEST CONFIGURATION 7.3.3 -->
+	<objects>
+
+		<file-output name="test-from-manchester-probe">
+            <filename>/var/log/dolphin/test/test-7.3.3-from-manchester-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>10</max-files-index>
+        </file-output>
+
+</objects>
+
+	<applications>	
+        <application name="test-app">
+			<watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="40"/> 
+
+            <manchester-reader name="test-manchester-in">
+                <card-no>0</card-no>
+                <address>10</address>
+                <max-wait-duration>00:00:01:000</max-wait-duration>
+                <mode>bc</mode>
+            </manchester-reader>
+			
+            <data-flow notifier="test-manchester-in" subscriber="test-from-manchester-probe"/>
+			
+        </application>
+    </applications>
+</configuration>

@@ -1,0 +1,27 @@
+<configuration>
+
+    <objects>
+	
+        <udp-connection name="udp-in">
+            <source-address>127.0.0.1</source-address>
+            <source-port>23456</source-port>
+        </udp-connection>
+
+		<file-output name="wind-probe">
+			<filename>/logs/wind.txt</filename>
+		</file-output>
+	   
+    </objects>
+
+    <applications>
+        <application name="app">
+			
+			<character-wind-converter name="character-wind-converter"/>
+		
+            <data-flow notifier="udp-in" subscriber="character-wind-converter"/>
+            <data-flow notifier="character-wind-converter" subscriber="wind-probe"/>
+			
+        </application>
+
+    </applications>
+</configuration>

@@ -1,0 +1,41 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <file-output name="posix-pipe-probe">
+            <filename>./log/from-posix-pipe</filename>
+        </file-output>
+        
+        <file-output name="posix-pipe-writer">
+            <filename>/tmp/posix-pipe</filename>
+        </file-output>
+
+        <file-input name="posix-pipe-reader">
+            <filename>/tmp/posix-pipe</filename>
+            <buffer-size>128</buffer-size>
+        </file-input>
+    </objects>
+
+    <applications>
+
+        <application name="writer-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200" 
+                startupDuration="00:00:01:000" startOrder="1"/>
+
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" subscriber="posix-pipe-writer"/>
+        </application>
+    
+        <application name="reader-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200" 
+                startupDuration="00:00:01:000" startOrder="2"/>
+
+            <data-flow notifier="posix-pipe-reader" subscriber="posix-pipe-probe"/>
+        </application>
+
+    </applications>
+</configuration>
+    

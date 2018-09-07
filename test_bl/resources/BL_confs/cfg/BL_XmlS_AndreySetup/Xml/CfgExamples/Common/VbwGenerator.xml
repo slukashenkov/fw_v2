@@ -1,0 +1,44 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+
+        <tcp-connection name="nte-in" timeout="01:00:00">
+            <destination-address>127.0.0.1</destination-address>
+            <destination-port>54502</destination-port>
+        </tcp-connection>
+
+        <slot name="out-slot">
+            <type>win-pipe</type>
+        </slot>
+
+        <slot name="in-slot">
+            <type>win-pipe</type>
+        </slot>
+
+		<vbw-generator name="vbwGenerator">
+            <min-interval>00:00:01:000</min-interval>
+            <timeout>00:00:03:000</timeout>
+            <talker-id>VM</talker-id>
+        </vbw-generator>
+
+    </objects>
+
+    <applications>
+        <application name="vapp">
+            <watchdog aliveTimeout="00:01:01:000" terminationTime="00:01:01:200" startupDuration="00:01:00:500"/>
+
+
+            <data-flow notifier="nte-in" subscriber="vbwGenerator"/>
+			<data-flow notifier="vbwGenerator" subscriber="out-slot"/>
+
+			<data-flow notifier="in-slot" subscriber="out-slot"/>
+
+
+        </application>
+    </applications>
+
+</configuration>

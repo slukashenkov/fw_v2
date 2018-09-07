@@ -1,0 +1,60 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+
+      <udp-connection name="etna-udp-in" mode="server">
+        <source-address>10.10.72.214</source-address>
+        <source-port>3002</source-port>
+      </udp-connection>
+
+      <udp-connection name="etna-udp-out">
+        <destination-address>10.10.72.214</destination-address> 
+        <destination-port>3001</destination-port>
+      </udp-connection>
+
+      <udp-connection name="nmea-udp-out">
+        <destination-address>10.10.72.214</destination-address> 
+        <destination-port>20002</destination-port>
+      </udp-connection>
+
+      <udp-connection name="astd-udp-out">
+        <destination-address>10.10.72.214</destination-address> 
+        <destination-port>20003</destination-port>
+      </udp-connection>
+      
+
+    </objects>
+
+    <applications>
+      <application name="etna-application">
+        
+        <watchdog aliveTimeout="00:00:03:000" terminationTime="00:00:00:500"/>
+
+        <etna-dispatcher >
+            <!-- входные данные от Етна -->
+            <data-from-etna-subscriber name="EtnaSubscriber"/>
+            <!-- выходные данные для Етна (сообщение типа 1) -->
+            <data-to-etna-notifier name="EtnaNotifier"/>
+            <!-- выходные данные для АРМов -->
+            <data-to-arms-notifier name="NmeaNotifier"/>
+            <!-- выходные данные для  rhbjz (ретрансляция сообщения 3 "как есть") -->
+            <data-msg3-to-rhbjz-notifier name="msg3Notifier"/>
+            <!-- нотификация АСТД -->
+            <astd-out name="AstdNotifier" />
+            <astd-param name="param name" timeout="00:00:05.000"/>
+        </etna-dispatcher>
+
+        <data-flow notifier="etna-udp-in" subscriber="EtnaSubscriber"/>
+        <data-flow notifier="EtnaNotifier" subscriber="etna-udp-out"/>
+        <data-flow notifier="NmeaNotifier" subscriber="nmea-udp-out"/>
+        <data-flow notifier="AstdNotifier" subscriber="astd-udp-out"/>      
+         
+      </application>
+
+    </applications>
+</configuration>
+    

@@ -1,0 +1,56 @@
+<configuration>
+
+    <objects>
+        <serial-port-connection name="reallab-serial-io">
+            <port>/dev/ttyCTI4</port>
+            <speed>9600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+        </serial-port-connection>
+
+        <file-output name="reallab-in-probe">
+           <filename>/var/log/dolphin/reallab-in</filename>
+        </file-output>
+
+        <file-output name="reallab-out-probe">
+           <filename>/var/log/dolphin/reallab-out</filename>
+        </file-output>
+
+        <file-output name="reallab-nmea-probe">
+           <filename>/var/log/dolphin/reallab-nmea</filename>
+        </file-output>
+    </objects>
+
+<!--=========================================================================-->
+    <applications>
+        <application name="reallab-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <reallab-client>
+                <!-- Notifier, передающий NMEA, сформированное из прочитанных значений -->
+                <nmea-notifier name="reallab-nmea-notifier"/>
+                <!-- Notifier, передающий команды для устройств Reallab, 
+                     и Subscriber, принимающий ответы от них -->
+                <reallab-cmd-io name="reallab-io"/>
+                
+                <!-- 
+                    cmd - команда для устройства Reallab
+                    nmeaId - id nmea-предложения, сформированного из ответа устройства
+                -->
+                <reallab-device cmd="#01" nmeaId="NL8AI"/> 
+                <reallab-device cmd="@01" nmeaId="NL6DI"/> 
+                
+                <!-- Интервал передачи команд -->
+                <report-period>00:00:01:000</report-period>
+            </reallab-client>
+
+            <data-flow notifier="reallab-nmea-notifier" subscriber="reallab-nmea-probe"/>
+            <data-flow notifier="reallab-io" subscriber="reallab-out-probe"/>
+<!--
+            <data-flow notifier="reallab-io" subscriber="reallab-serial-io"/>
+            <data-flow notifier="reallab-serial-io" subscriber="reallab-io"/>
+-->
+        </application>
+    </applications>
+
+</configuration>

@@ -1,0 +1,91 @@
+<configuration>
+
+    <objects>
+	   <file-output name="replay-chardash-log">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>C:\tmp\replay-chardash.log</filename>
+       </file-output>
+
+       <file-output name="replay-syuzhet-log">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>C:\tmp\replay-syuzhet.log</filename>
+       </file-output>
+
+       <database-connection name ="replay-db-conn">
+            <host>10.10.72.110</host>
+            <port>5432</port>
+            <dbname>replaydb</dbname>
+            <user>replaydbadmin</user>
+        </database-connection>
+
+        <slot name="replay-cmd-slot">
+            <max-size>1024</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+
+        <slot name="replay-chardash-slot">
+            <max-size>1024</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+
+        <slot name="replay-syuzhet-slot">
+            <max-size>1024</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+    </objects>
+
+    <applications>
+        <application name="replay-reader-app">
+            <watchdog aliveTimeout="00:00:05:000" terminationTime="00:00:01:000"/>
+
+            <replay-db-reader name="ARM-K-1">
+                <database-connection name="replay-db-conn"/>
+                <cmd-subscriber name="replay-cmd-subscriber"/>
+                <period-of-reading>00:00:01:000</period-of-reading>
+                <sensors>
+                    <sensor id="1" name="replay-notifier-chardash"/>
+                    <sensor id="2" name="replay-notifier-syuzhet"/>
+                    <sensor id="5" name="replay-notifier-livadia" type="livadia"/>
+                </sensors>
+                <mode>replay</mode>
+            </replay-db-reader>
+            
+            <db-writer name="syuzhet-replay-subscriber">
+                <database-connection name="replay-db-conn"/>
+                <sensorId>2</sensorId>
+                <type>livadia</type>
+                <commit-period>00:00:05:000</commit-period>
+            </db-writer>
+            
+            <db-reader name="syuzhet-replay-subscriber">
+                <database-connection name="replay-db-conn"/>
+                <period-of-reading>00:00:01:000</period-of-reading>
+                <type>livadia</type>
+            </db-reader>
+
+            <db-archiver>
+                <database-connection name="replay-db-conn"/>
+		        <period>01:00:00:000</period>
+		        <phase>00:00:00:000</phase>
+		        <dump-filename-base>/tmp/db-dump</dump-filename-base>
+	        </db-archiver>
+
+            <db-sync>
+                <database-connection name="replay-db-conn"/>
+                <remote-database-connection name="replay-db-conn"/>
+		        <period>01:00:00:000</period>
+		        <phase>00:30:00:000</phase>
+	        </db-sync>
+            
+
+            <data-flow notifier="replay-cmd-slot" subscriber="replay-cmd-subscriber"/>
+
+            <data-flow notifier="replay-notifier-chardash" subscriber="replay-chardash-log"/>
+			<data-flow notifier="replay-notifier-chardash" subscriber="replay-chardash-slot"/>
+
+            <data-flow notifier="replay-notifier-syuzhet" subscriber="replay-syuzhet-log"/>
+            <data-flow notifier="replay-notifier-syuzhet" subscriber="replay-syuzhet-slot"/>
+        </application>
+    </applications>
+
+</configuration>

@@ -1,0 +1,71 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+<!-- TEST CONFIGURATION 8.0.1 -->
+	<objects> 
+		<udp-connection name="test-udp-from-imitator" mode="server">
+            <source-address>192.168.14.3</source-address>
+            <source-port>47103</source-port>
+        </udp-connection>
+		
+		<file-output name="test-format-from-platan-probe">
+            <filename>/var/log/dolphin/test/test-8.0.1-format-from-platan-probe</filename>
+            <rotate>true</rotate>
+			<format>from-platan</format>
+            <max-files-index>10</max-files-index>
+        </file-output>
+		
+		<file-output name="test-from-platan-probe">
+            <filename>/var/log/dolphin/test/test-8.0.1-from-platan-probe</filename>
+            <rotate>true</rotate>
+			<max-files-index>10</max-files-index>
+        </file-output>
+		
+		<file-output name="test-format-to-platan-probe">
+            <filename>/var/log/dolphin/test/test-8.0.1-format-to-platan-probe</filename>
+            <rotate>true</rotate>
+			<format>to-platan</format>
+            <max-files-index>10</max-files-index>
+        </file-output>
+
+		<file-output name="test-format-from-platan-dispatcher-out-probe">
+            <filename>/var/log/dolphin/test/test-8.0.1-format-from-platan-dispatcher-out-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>10</max-files-index>
+        </file-output>
+		
+		<file-output name="test-format-from-platan-dispatcher-state-probe">
+            <filename>/var/log/dolphin/test/test-8.0.1-format-from-platan-dispatcher-state-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>10</max-files-index>
+        </file-output>	
+				
+	</objects>
+
+    <applications>
+        <application name="platan-test-app">
+			<platan-dispatcher>
+                <data-in name="data-in"/>           <!-- data from platan -->
+                <data-out name="data-out"/>         <!-- data to arms -->
+                <state-out name="state-out"/>       <!-- state of platan -->
+                <request-out name="request-out"/>   <!-- request to platan -->
+            </platan-dispatcher>
+			
+            <data-flow notifier="test-udp-from-imitator" subscriber="data-in"/>
+            <data-flow notifier="test-udp-from-imitator" subscriber="test-format-from-platan-probe"/>
+            <data-flow notifier="test-udp-from-imitator" subscriber="test-from-platan-probe"/>
+			
+            <data-flow notifier="data-out" subscriber="test-format-from-platan-dispatcher-out-probe"/>
+			
+            <data-flow notifier="state-out" subscriber="test-format-from-platan-dispatcher-state-probe"/>
+			
+            <data-flow notifier="request-out" subscriber="test-udp-to-notebook"/>
+			<data-flow notifier="request-out" subscriber="test-format-to-platan-probe"/>
+
+		</application>
+    </applications>
+
+</configuration>

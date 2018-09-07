@@ -1,0 +1,56 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+<!-- TEST CONFIGURATION 14.0.2 -->
+<objects>
+
+        <serial-port-connection name="serial-port-character-io">
+            <port>/dev/ttyRTS10</port>
+            <speed>9600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+        </serial-port-connection>
+
+        <ascii-extractor type="nmea" name="character-nmea-extractor"/>
+
+		<file-output name="test-from-serial-port-probe">
+            <filename>/var/log/dolphin/test/test-14.0.2-from-serial-port-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+		
+        <file-output name="test-from-nmea-extractor-probe">
+            <filename>/var/log/dolphin/test/test-14.0.2-from-nmea-extractor-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>		
+
+        <file-output name="test-from-wind-converter-probe">
+            <filename>/var/log/dolphin/test/test-14.0.2-from-wind-converter-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+
+</objects>
+
+    <applications>
+        <application name="character-test-app">
+            <character-wind-converter name="character-mwv"/> 
+            <data-flow notifier="serial-port-character-io" subscriber="character-nmea-extractor"/>
+			<data-flow notifier="serial-port-character-io" subscriber="test-from-serial-port-probe"/>
+			
+            <data-flow notifier="character-nmea-extractor" subscriber="character-mwv"/>
+			<data-flow notifier="character-nmea-extractor" subscriber="test-from-nmea-extractor-probe"/>
+			
+            <data-flow notifier="character-mwv" subscriber="test-from-wind-converter-probe"/>
+
+		</application>
+
+    </applications>
+
+
+</configuration>

@@ -1,0 +1,106 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <udp-connection name="avrora-udp-in">
+            <source-address>127.0.0.1</source-address>
+            <source-port>56000</source-port>
+            <packet-max-size>1400</packet-max-size>
+        </udp-connection>
+
+        <udp-connection name = "avrora-udp-out">
+            <source-address>127.0.0.1</source-address>
+            <source-port>58000</source-port>
+            <destination-address>127.0.0.1</destination-address>
+            <destination-port>57000</destination-port>
+            <packet-max-size>1400</packet-max-size>
+        </udp-connection>
+
+        <slot name="avrora-bridge-in-slot"/>
+
+        <slot name="folklor-in-slot"/>
+        
+       <file-output name="bridge-out-probe">
+            <filename>bridge-out</filename>
+            <timestamped-filename>false</timestamped-filename>
+       </file-output>
+
+       <file-output name="bridge-in-probe">
+            <filename>C:\tmp\bridge-in</filename>
+            <timestamped-filename>false</timestamped-filename>
+       </file-output>
+
+       <file-output name="avrora-out-probe">
+            <filename>C:\tmp\avrora-out</filename>
+            <timestamped-filename>false</timestamped-filename>
+       </file-output>
+
+       <file-output name="avrora-in-probe">
+            <filename>C:\tmp\avrora-in</filename>
+            <timestamped-filename>false</timestamped-filename>
+       </file-output>
+
+       <file-output name="avrora-astd-probe">
+            <filename>/var/log/dolphin/avrora-astd</filename>
+            <timestamped-filename>false</timestamped-filename>
+            <format>astd</format>
+       </file-output>
+       
+       <file-output name="inotify-events-probe">
+            <filename>/var/log/dolphin/inotify-events</filename>
+            <timestamped-filename>false</timestamped-filename>
+       </file-output>
+       
+    </objects>
+
+    <applications>
+        <application name="avrora-application">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200" startupDuration="00:00:00:100"/>
+
+            <avrora-dispatcher>
+                <bridge-message-notifier name="bridge-notifier"/>
+                <bridge-message-subscriber name="bridge-subscriber"/>
+                <avrora-message-notifier name="avrora-notifier"/>
+                <avrora-message-subscriber name="avrora-subscriber"/>
+                
+                <vector-file-subscriber name="inotify-subscriber"/>
+                <vector-max-depth>10</vector-max-depth>
+                <state-notifier name="avrora-state-notifier"/>
+                
+                <link-state-id name="L.CKSU.FAKE.TS1"/>
+                <data-available-id name="D.CKSU.-.TS1"/>
+                <data-correct-id name="V.CKSU.-.TS1"/>
+
+                <reliable-msg retrInterval="00:00:01:000" retrMax="3"/>
+                <folklor-subscriber name="folklor-subscriber"/>
+            </avrora-dispatcher>
+            
+            <inotify>
+                <path>/var/ftp/vector/</path>
+                <events-notifier name="inotify-notifier"/>
+                <read-timeout>00:00:01:000</read-timeout>
+            </inotify>
+             
+            <data-flow notifier="inotify-notifier" subscriber="inotify-subscriber"/>
+            <data-flow notifier="inotify-notifier" subscriber="inotify-events-probe"/>
+            
+            <data-flow notifier="bridge-notifier" subscriber="bridge-out-probe"/>
+
+            <data-flow notifier="avrora-bridge-in-slot" subscriber="bridge-subscriber"/>
+            <data-flow notifier="avrora-bridge-in-slot" subscriber="bridge-in-probe"/>
+
+            <data-flow notifier="avrora-state-notifier" subscriber="avrora-astd-probe"/>
+            
+            <data-flow notifier="avrora-notifier" subscriber="avrora-udp-out"/>
+            <data-flow notifier="avrora-notifier" subscriber="avrora-out-probe"/>
+            <data-flow notifier="avrora-udp-in" subscriber="avrora-subscriber"/>
+            <data-flow notifier="avrora-udp-in" subscriber="avrora-in-probe"/>
+            
+            <data-flow notifier="folklor-in-slot" subscriber="folklor-subscriber"/>
+        </application>
+     </applications>
+</configuration>
+    

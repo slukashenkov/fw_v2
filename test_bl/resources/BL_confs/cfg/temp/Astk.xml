@@ -1,0 +1,114 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+    
+    <objects>
+
+      <ascii-extractor type="nmea" name="tcs-extr-prim"/> <!-- valid types are modbus-ascii, nmea (default) -->
+      <ascii-extractor type="nmea" name="tcs-extr-sec"/> <!-- valid types are modbus-ascii, nmea (default) -->
+
+      <tcp-connection name="astk-tcp-out" mode="server">
+        <source-address>10.8.2.1</source-address>
+        <source-port>4444</source-port>
+      </tcp-connection>
+
+      <tcp-connection name="astk-tcp-in" mode="server">
+        <source-address>10.8.2.1</source-address>
+        <source-port>4445</source-port>
+      </tcp-connection>
+
+      <udp-connection name="astk-udp-out">
+        <!-- <destination-address>10.10.74.195</destination-address> -->
+        <destination-address>127.0.0.1</destination-address>
+        <destination-port>5553</destination-port>
+      </udp-connection>
+
+      <udp-connection name="astk-data-udp-out-prim">
+          <destination-address>10.8.1.255</destination-address>
+          <destination-port>53019</destination-port>
+      </udp-connection>
+
+      <udp-connection name="astk-data-udp-out-sec">
+          <destination-address>10.8.2.255</destination-address>
+          <destination-port>53019</destination-port>
+      </udp-connection>
+
+      <udp-connection name="astk-udp-in">
+        <source-address>127.0.0.1</source-address>
+        <source-port>20002</source-port>
+      </udp-connection>
+
+      <udp-connection name="astk-tgt-udp-in-prim">
+        <source-address>10.8.1.1</source-address>
+        <source-port>53027</source-port>
+      </udp-connection>
+
+      <udp-connection name="astk-tgt-udp-in-sec">
+        <source-address>10.8.2.1</source-address>
+        <source-port>53027</source-port>
+      </udp-connection>
+
+      <file-output name="astk-tgt-udp-in-probe">
+            <filename>/var/log/ocean/astk-tgt-udp-in</filename>
+      </file-output>
+
+      <file-output name="astk-data-udp-out-probe">
+            <filename>/var/log/ocean/astk-data-udp-out</filename>
+      </file-output>
+
+      <file-output name="astk-tgt-udp-in-prim-probe">
+            <filename>/var/log/ocean/astk-tgt-udp-in-prim</filename>
+      </file-output>
+
+      <file-output name="astk-tgt-udp-in-sec-probe">
+            <filename>/var/log/ocean/astk-tgt-udp-in-sec</filename>
+      </file-output>
+
+      <file-output name="qmostik-out-probe">
+            <filename>/var/log/ocean/qmostik-out</filename>
+      </file-output>
+
+      <file-output name="qmostik-in-probe">
+            <filename>/var/log/ocean/qmostik-in</filename>
+      </file-output>
+
+    </objects>
+    
+    <applications>
+      <application name="astk-application">
+
+        <watchdog aliveTimeout="00:00:03:000" terminationTime="00:00:00:500"/>
+
+        <!--<data-flow notifier="astk-tcp-in" subscriber="tcs-extr"/>-->
+        <data-flow notifier="astk-tgt-udp-in-prim" subscriber="tcs-extr-prim"/>
+        <data-flow notifier="astk-tgt-udp-in-sec" subscriber="tcs-extr-sec"/>
+        <data-flow notifier="astk-tgt-udp-in-prim" subscriber="astk-tgt-udp-in-prim-probe"/>
+        <data-flow notifier="astk-tgt-udp-in-sec" subscriber="astk-tgt-udp-in-sec-probe"/>
+        <data-flow notifier="tcs-extr-prim" subscriber="TcpSubscriber"/>
+        <data-flow notifier="tcs-extr-sec" subscriber="TcpSubscriber"/>
+
+        <astk-dispatcher radarSN="11.0.0.2" aisSN="11.0.0.3">
+          <tcp-subscriber name="TcpSubscriber"/>
+          <serial-subscriber name="SerialSubscriber"/>
+          <tcp-notifier name="TcpNotifier"/>
+          <serial-notifier name="SerialNotifier"/>
+          <db-notifier name="DbNotifier"/>
+        </astk-dispatcher>
+
+        <!--<data-flow notifier="TcpNotifier" subscriber="astk-tcp-out"/>-->
+        <data-flow notifier="TcpNotifier" subscriber="astk-data-udp-out-prim"/>
+        <data-flow notifier="TcpNotifier" subscriber="astk-data-udp-out-sec"/>
+        <data-flow notifier="TcpNotifier" subscriber="astk-data-udp-out-probe"/>
+
+        <data-flow notifier="astk-udp-in" subscriber="SerialSubscriber"/>
+        <data-flow notifier="SerialNotifier" subscriber="astk-udp-out"/>
+        <data-flow notifier="astk-udp-in" subscriber="qmostik-in-probe"/>
+        <data-flow notifier="SerialNotifier" subscriber="qmostik-out-probe"/>
+
+
+      </application>
+    </applications>
+    
+</configuration>

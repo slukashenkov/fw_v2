@@ -1,0 +1,55 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+    
+    <objects>
+        <udp-connection name="udp-from-trassa-imit">
+            <source-address>127.0.0.1</source-address>
+            <source-port>47902</source-port>
+        </udp-connection>
+		
+		<udp-connection name = "udp-to-trassa-imit">
+			<destination-address>127.0.0.1</destination-address>
+			<destination-port>48902</destination-port>
+		</udp-connection>
+		
+		<file-output name="file-trassa-disp-to-astd">
+			<filename>trassa-to-astd.log</filename>
+			<rotate>true</rotate>
+			<max-files-index>0</max-files-index>
+		</file-output>							
+    </objects>
+	
+    <applications>
+        <application name="trassa-app">
+		
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="2"/>
+
+			<!-- Диспетчер Трассы -->
+            <trassa-dispatcher name="trassa">
+				<!-- Название выходного параметра АСТД: --> 
+				<astd-param name = 'trassa_state'/>
+				
+				<!-- Выход в АСТД -->
+				<astd-notifier name = 'trassa-astd-notifier'/>
+				
+				<!-- Выход в Трассу -->
+				<trassa-notifier name = 'trassa-notifier'/>
+				
+				<!-- Вход из Трассы -->
+				<subscriber name = 'trassa-subscriber'/>
+			</trassa-dispatcher>
+										
+			<!-- Из имитатора Трассы в диспетчер -->
+			<data-flow notifier="udp-from-trassa-imit" subscriber="trassa-subscriber"/>					
+			<!-- Из диспетчера в АСТД --> 
+			<data-flow notifier="trassa-astd-notifier" subscriber="file-trassa-disp-to-astd"/>			
+			<!-- Из диспетчера в имитатор Трассы -->
+			<data-flow notifier="trassa-notifier" subscriber="udp-to-trassa-imit"/>
+			
+        </application>
+    </applications>
+
+</configuration>

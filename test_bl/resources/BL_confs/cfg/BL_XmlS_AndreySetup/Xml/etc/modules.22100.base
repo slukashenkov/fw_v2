@@ -1,0 +1,19 @@
+# /etc/modules: kernel modules to load at boot time.
+#
+# This file should contain the names of kernel modules that are
+# to be loaded at boot time, one per line.  Comments begin with
+# a `#', and everything on the line after them are ignored.
+
+# Xenomai 
+xeno_native
+xeno_nucleus
+xeno_rtdm
+xeno_16550A start_index=0
+
+# CTI serial adaptors
+cti_serial_core
+cti_8250 nr_uarts=24
+cti_8250_pci
+
+# Elcus TA4-PCI
+tmk1553b misc=1 d0=1 e0=1 t0="TAI" d1=1 e1=2 t1="TAI" d2=1 e2=3 t2="TAI" d3=1 e3=4 t3="TAI"

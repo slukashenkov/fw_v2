@@ -1,0 +1,9 @@
+{
+  "tests01":{
+    "builds_ids": [1,2],
+    "tests_dir": "/KD_distr/t01/"
+  },
+   "tests02":{"builds_ids": [3],
+              "tests_dir": "/KD_distr/t02/"
+    }
+}

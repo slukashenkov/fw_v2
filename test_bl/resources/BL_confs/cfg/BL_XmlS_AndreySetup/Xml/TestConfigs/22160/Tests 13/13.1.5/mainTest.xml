@@ -1,0 +1,62 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <!--config-path>d:\Baselibraries\bin2\config\</config-path-->
+        <config-path>/etc/dolphin/22160/</config-path>
+    </plugin-parameters>
+ 
+    <plugins>
+
+    </plugins>
+		
+    <objects>
+        <!-- #################### COMMON slots,etc #################### -->
+	</objects>
+
+
+
+<!-- TEST CONFIGURATION 13.1.5 -->
+	<objects>
+
+		<tcp-connection name="test-tcp-from-notebook" mode="server">
+            <source-address>10.7.1.3</source-address>
+            <source-port>51111</source-port>
+        </tcp-connection>
+
+		<file-output name="test-from-tcp-probe">
+            <filename>/var/log/dolphin/test/test-13.1.5-from-tcp-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+
+		<database-connection name ="test-db-conn">
+            <host>10.7.1.70</host>
+            <port>5432</port>
+            <dbname>replaydb</dbname>
+            <user>replaydbadmin</user>
+			<password>1</password>
+        </database-connection>
+		
+</objects>
+
+	<applications>	
+        <application name="test-app">
+			<watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="40"/> 
+            
+			<db-writer name="test-db-subscriber">
+                <database-connection name="replay-db-conn"/>
+                <sensorId>2</sensorId>
+                <commit-period>00:00:05:000</commit-period>
+            </db-writer>
+			
+			<data-flow notifier="test-tcp-from-notebook" subscriber="test-db-subscriber"/>
+            <data-flow notifier="test-tcp-from-notebook" subscriber="test-from-tcp-probe"/>
+
+        </application>
+    </applications>
+</configuration>

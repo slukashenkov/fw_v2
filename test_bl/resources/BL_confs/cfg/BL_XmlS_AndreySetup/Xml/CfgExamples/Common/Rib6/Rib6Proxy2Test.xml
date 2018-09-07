@@ -1,0 +1,36 @@
+<configuration>
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>        
+        <file-output name="rib-serial-data-probe">
+            <filename>/var/log/dolphin/RibSerialData</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500"/>
+            <rib6proxy2-dispatcher>
+                <serial-data-out name="rib-serial-data"/>
+
+			    <!--RIB address-->
+                <remote-address checkTimer="00:00:10:000" readBufferSize="2048">10.8.1.210</remote-address>
+                <remote-port>4172</remote-port>
+				
+				<!--RS address-->
+                <local-address checkTimer="00:00:10:000" readBufferSize="2048">10.8.1.1</local-address>
+                <local-port>4172</local-port>
+
+                <multicast-interface>10.8.1.1</multicast-interface>
+                <raw-directory>/var/backup/radar1</raw-directory>
+                <raw-store-period>120</raw-store-period>
+            </rib6proxy2-dispatcher>
+
+			<data-flow notifier="rib-serial-data" subscriber="rib-serial-data-probe"/>
+
+        </application>
+    </applications>
+
+</configuration>

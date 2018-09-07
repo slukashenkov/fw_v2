@@ -1,0 +1,41 @@
+# System profile for basic ALT Linux system.
+#
+# It is recommended that this file be left unchanged to ease upgrades,
+# and any local additions go into /etc/profile.d/ directory.
+
+# See also /etc/security/limits.conf
+ulimit -Sc 0 >/dev/null 2>&1
+
+umask 022
+
+[ -n "$PATH" ] || PATH="/bin:/usr/bin:/usr/local/bin"
+[ "$PATH" = "$HOME/bin" -o -z "${PATH##$HOME/bin:*}" -o \
+  -z "${PATH%%*:$HOME/bin}" -o -z "${PATH##*:$HOME/bin:*}" ] ||
+	PATH="$HOME/bin:$PATH"
+[ "$PATH" = "/usr/X11R6/bin" -o -z "${PATH##/usr/X11R6/bin:*}" -o \
+  -z "${PATH%%*:/usr/X11R6/bin}" -o -z "${PATH##*:/usr/X11R6/bin:*}" ] ||
+	PATH="$PATH:/usr/X11R6/bin"
+[ "$PATH" = "/usr/games" -o -z "${PATH##/usr/games:*}" -o \
+  -z "${PATH%%*:/usr/games}" -o -z "${PATH##*:/usr/games:*}" ] ||
+	PATH="$PATH:/usr/games"
+PATH="$PATH:/sbin"
+PATH="$PATH:/usr/bin/dolphin"
+export PATH
+
+[ -n "$USER" ] || USER="`/usr/bin/id -un`"
+[ -n "$LOGNAME" ] || LOGNAME="$USER"
+[ -n "$MAIL" ] || MAIL="/var/mail/$LOGNAME"
+export USER LOGNAME MAIL
+
+HOSTNAME=`/bin/hostname`
+HISTSIZE=999
+HISTFILESIZE=9999
+export HOSTNAME HISTSIZE HISTFILESIZE
+
+for f in /etc/profile.d/*.sh; do
+	if [ -f "$f" -a -r "$f" -a -x "$f" -a -s "$f" -a ! -L "$f" ]; then
+		. "$f"
+	fi
+done
+
+unset f

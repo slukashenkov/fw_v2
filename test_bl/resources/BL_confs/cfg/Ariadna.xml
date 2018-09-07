@@ -1,0 +1,40 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+<objects>
+        
+        <udp-connection name="ariadna-udp-from-dev">
+            <source-address>127.0.0.1</source-address>
+            <source-port>47114</source-port>
+        </udp-connection>
+        
+        <udp-connection name="ariadna-udp-to-dev">
+            <source-address>127.0.0.1</source-address>
+            <source-port>49114</source-port>
+        </udp-connection>
+
+        
+
+        <file-output name="ariadna-udp-from-dev-probe">
+            <filename>/var/log/dolphin/22160/ariadna-udp-from-dev-probe</filename>
+            <rotate>true</rotate>
+            <format>from-ariadna</format>
+            <max-files-index>0</max-files-index>
+        </file-output>
+
+        
+
+</objects>
+    <applications>
+        <application name="ariadna-app">
+            <ariadna-dispatcher name="ariadna-disp"/>
+            <data-flow notifier="ariadna-udp-from-dev" subscriber="ariadna-udp-from-dev-probe"/>
+            <data-flow notifier="ariadna-udp-from-dev" subscriber="ariadna-disp"/>
+            <data-flow notifier="ariadna-disp" subscriber="ariadna-udp-to-dev"/> <!-- Answers for Ariadna dev-->
+        </application>
+    </applications>
+
+</configuration> 

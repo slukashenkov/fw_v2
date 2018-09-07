@@ -1,0 +1,43 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+
+        <!-- 
+        type list:
+        - chardash
+        - chardash-for-sea-project
+        - date-time
+        - anapa
+        - op-mode-22100-to-astd
+        - astd-ascii
+        -->
+    
+        <converter name="date-time-conv">
+            <type>date-time</type>
+            <timeout>00:00:01:000</timeout> <!-- optional (kama type only), default timeduration is 5 sec -->
+            <talker-id>GP</talker-id> <!-- optional, default GP -->
+        </converter>
+
+        <converter name="converter">
+            <type>kama</type>
+            <talker-id>GP</talker-id> <!-- optional, default GP -->
+        </converter>
+        
+        <slot name="zda-in-slot"/>  <!-- unstable date time zda input -->
+        <slot name="zda-out-slot"/> <!-- stable date time zda output -->
+        
+    </objects>
+
+    <applications>
+        <application name="data-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+            
+            <data-flow notifier="zda-in-slot" converter="date-time-conv" subscriber="zda-out-slot"/>
+            
+        </application>
+    </applications>
+</configuration>

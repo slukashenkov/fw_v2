@@ -1,0 +1,70 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+<!-- TEST CONFIGURATION 21.1.1 -->
+<objects> 
+
+		<tcp-connection name="test-tcp1-from-imitator">
+            <remote-address>192.168.13.11</remote-address>
+            <remote-port>47229</remote-port>
+        </tcp-connection>
+		
+		<tcp-connection name="test-tcp2-from-imitator">
+            <remote-address>192.168.13.11</remote-address>
+            <remote-port>47230</remote-port>
+        </tcp-connection>		
+
+		<file-output name="test-from-imitator-purga-left-probe">
+            <filename>/var/log/dolphin/test/test-21.1.1-from-imitator-purga-left-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+		
+		<file-output name="test-from-imitator-purga-right-probe">
+            <filename>/var/log/dolphin/test/test-21.1.1-from-imitator-purga-right-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+			<format>from-purga</format>
+        </file-output>		
+		
+		<file-output name="test-from-purga-to-arm-probe">
+            <filename>/var/log/dolphin/test/test-21.1.1-from-purga-to-arm-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+		
+        <stream-thinner name="purga-out-to-astd-1hz-thinner" minInterval="00:00:01:000"/>
+</objects>
+
+    <applications>
+        <application name="purga-test-app">
+			<!--watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="40"/-->
+            
+            <purga-dispatcher name="purga-test">                 
+                <purga-leftboard-subscriber name = "purga_in_left-test"/>
+                <purga-rightboard-subscriber name = "purga_in_right-test"/>
+                <nmea-notifier name = "purga-nmea-out-test"/>
+                <astd-validity-param-left name = "V.PURGALB.TEST.KD1"/>
+                <astd-link-param-left name = "D.PURGALB.TEST.KD1"/>
+                <astd-validity-param-right name = "V.PURGAPB.TEST.KD1"/>
+                <astd-link-param-right name = "D.PURGAPB.TEST.KD1"/>
+                <astd-notifier name = "purga-astd-notifier-test"/>
+            </purga-dispatcher>
+			
+			<data-flow notifier="test-tcp1-from-imitator" subscriber="purga_in_left-test"/>
+            <data-flow notifier="test-tcp1-from-imitator" subscriber="test-from-imitator-purga-left-probe"/>
+			
+			<data-flow notifier="test-tcp2-from-imitator" subscriber="purga_in_right-test"/>
+            <data-flow notifier="test-tcp2-from-imitator" subscriber="test-from-imitator-purga-right-probe"/>			
+			
+            <data-flow notifier="purga-nmea-out-test" subscriber="test-from-purga-to-arm-probe"/>
+            <data-flow notifier="purga-astd-notifier-test" subscriber="purga-out-to-astd-1hz-thinner"/>			
+			<data-flow notifier="purga-out-to-astd-1hz-thinner" subscriber="test-slot"/>
+
+		</application>
+    </applications>
+
+</configuration>

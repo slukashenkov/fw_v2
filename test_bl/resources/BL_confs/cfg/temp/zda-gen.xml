@@ -1,0 +1,21 @@
+<configuration>
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+   <objects>
+        <udp-connection name="pak-ilp">
+            <destination-address>10.7.1.100</destination-address>
+            <destination-port>50999</destination-port>
+        </udp-connection>
+	</objects>
+
+
+     <applications>
+        <application name="udp-sender-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" subscriber="pak-ilp"/>
+        </application>
+     </applications>
+ </configuration>

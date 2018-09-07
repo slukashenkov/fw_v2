@@ -1,0 +1,70 @@
+<root testing = '0'>
+
+	<name>Trassa-22160</name>
+    <transport>        		
+		
+		<!-- передача НМЕА -->
+        <channel protocol="UDP" name="NMEA.out.1" enabled="true">
+            <address>127.0.0.1</address>
+            <port>47902</port>
+        </channel>
+		
+		<!-- передача НМЕА -->
+		<!-- <channel protocol="UDP" name="NMEA.out.2" enabled="true">
+            <address>10.0.2.15</address>
+            <port>47902</port>
+        </channel> -->
+		
+		<!-- прием НМЕА, канал #1. -->		
+		<channel protocol="UdpReceiver" name="NMEA.1" enabled="true">
+            <address>127.0.0.1</address>
+            <port>48902</port>
+        </channel>
+		
+		<!-- прием НМЕА, канал #2. -->		
+		<!-- <channel protocol="UdpReceiver" name="NMEA.2" enabled="true">
+            <address>127.0.0.1</address>
+            <port>48902</port>
+        </channel> -->
+		
+		<!-- прием Ариадна, канал #3. -->		
+		<channel protocol="UdpReceiver" name="Ariadna.3" enabled="true">
+            <address>127.0.0.1</address>
+            <port>48927</port>
+        </channel>
+		
+		<!-- прием Ариадна, канал #4. -->		
+		<!-- <channel protocol="UdpReceiver" name="Ariadna.4" enabled="true">
+            <address>127.0.0.1</address>
+            <port>23700</port>
+        </channel> -->
+		
+    </transport>
+	
+	<!-- конфигурация фильтров для вкладки "Протоколы" -->
+	<filters>	
+		<widget font-family = "Lucida console" font-size = '8'/>									
+		<group name = 'Каналы' icon = 'plugins/icons/connection.png'> 
+			<filter name = 'NMEA 1' icon = 'plugins/icons/channel.png' exp = '1*'/> <!-- 1 - это номер канала из name="NMEA.1" -->
+			<!-- <filter name = 'NMEA 2' icon = 'plugins/icons/channel.png' exp = '2*'/> -->
+			<filter name = 'Ariadna 1' icon = 'plugins/icons/channel.png' exp = '3*'/> <!-- 3 - это номер канала из name="Ariadna.3" -->
+			<!-- <filter name = 'Ariadna 2' icon = 'plugins/icons/channel.png' exp = '4*'/> -->
+		</group>		
+		<group name = 'ИМС' icon = 'plugins/icons/ims.png'>
+			<filter name = 'Состояние' exp = '*$PEIST*' icon = 'plugins/icons/status.png'/>			
+			<filter name = 'Квитанции' exp = '*$PEIEV*' icon = 'plugins/icons/ticket.png'/>	
+			<filter name = 'ZDA' icon = 'plugins/icons/time.png' exp = '*$KSZDA*'/>
+		</group>
+		<group name = 'НРЛС' icon = 'plugins/icons/rls.png'>
+			<filter name = 'Состояние' exp = '*$RARSS*' icon = 'plugins/icons/status.png'/>
+			<filter name = 'Формуляры' exp = '*$RATTM*' icon = 'plugins/icons/formular.png'/>			
+		</group>		
+		<group name = 'АИС' icon = 'plugins/icons/ais.png'>
+			<filter name = 'Статические данные' exp = '*$PAISD*' icon = 'plugins/icons/static-data.png'/>
+			<filter name = 'Динамические данные' exp = '*$PAIDD*' icon = 'plugins/icons/dynamic-data.png'/>
+			<filter name = 'Неисправности' exp = '*$AIALR*' icon = 'plugins/icons/problem.png'/>
+			<filter name = 'Состояние' exp = '*$AITXT*' icon = 'plugins/icons/status.png'/>
+		</group>		
+		
+	</filters>
+</root>

@@ -1,0 +1,141 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <udp-connection name="fcm-emu-udp-receiver">
+            <source-address>10.141.1.1</source-address>
+            <source-port>1234</source-port>
+        </udp-connection>
+        
+        <udp-connection name="fcm-emu-udp-sender">
+            <destination-address>10.141.1.11</destination-address>
+            <destination-port>1234</destination-port>
+        </udp-connection>
+
+        <slot name="tgt-des-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>reliable</type>
+        </slot>
+
+        <slot name="arpa-tgt-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+        
+        <slot name="uv450-in-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+
+        <ascii-extractor type="nmea" name="tgt-des-extr"/>
+        <ascii-extractor type="nmea" name="arpa-tgt-extr"/>
+        <ascii-extractor type="nmea" name="uv450-extr"/>
+
+        <file-output name="fcm-to-layers-probe">
+            <filename>/var/log/ocean/fcm-to-layers</filename>
+        </file-output>
+        
+        <file-output name="fcm-to-uv450-probe">
+            <filename>/var/log/ocean/fcm-to-uv450</filename>
+        </file-output>
+
+        <file-output name="from-fcm-emu-in-probe">
+            <filename>/var/log/ocean/from-fcm-emu-in</filename>
+        </file-output>
+
+        <file-output name="to-fcm-emu-out-probe">
+            <filename>/var/log/ocean/to-fcm-emu-out</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="fcm-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <fcm-dispatcher>
+                <arpa-targets-subscriber name="fcm-dispatcher-arpa-tgt-in"/>
+                <from-uv450-subscriber name="fcm-dispatcher-uv450-in"/>
+                <to-uv450-notifier name="fcm-dispatcher-to-uv450"/>
+                <from-layers-subscriber name="fcm-dispatcher-tgt-des-in"/>
+                <to-layers-notifier name="fcm-dispatcher-to-layers"/>
+
+                <manchester-connection>
+                    <card-no>0</card-no>
+                    <!-- Адрес МУС как ОУ --> 
+                    <address>2</address>
+                    <!-- Сдвиг MII-подадреса (16 для установки верхнего бита) -->
+                    <subaddress>0</subaddress>
+                    
+                    <!-- Максимальная длительность ожидания ОС от МУС-->
+                    <max-wait-duration>00:00:01:000</max-wait-duration>
+
+                    <!-- Таймаут до переключения из режима МК в КК -->
+                    <switch-timeout>00:00:02:000</switch-timeout>
+
+                    <line-control bus="auto" period="00:00:01:000" timeout="00:00:03:000">
+                        <astd-notifier name="FCM-astd-notifier"/>
+                        <!-- Адрес МУС как ОУ; используем для формирования АСТД-параметра 
+                             и переключения между основным и резервным каналами--> 
+                        <remote-terminal address="2" astd-name="L.MUS11.-.aKD1"/>
+                    </line-control>
+                </manchester-connection>
+
+                <!-- Интервал повторения сеансов обмена с МУС--> 
+                <session-period>00:00:00:020</session-period>
+                <!-- 
+                    Таймаут на недоступность МУС, по истечении которого 
+                    начинается трансляция команд УВ450-ОЭСУ между 
+                    from-uv450-subscriber и to-uv450-notifier, независимо
+                    от заданного МУС режима управления УВ450-ОЭСУ)
+                -->
+                <offline-timeout>00:00:01:000</offline-timeout>
+            </fcm-dispatcher>
+
+            <data-flow notifier="uv450-in-slot" converter="uv450-extr" subscriber="fcm-dispatcher-uv450-in"/>
+            <data-flow notifier="tgt-des-slot" converter="tgt-des-extr" subscriber="fcm-dispatcher-tgt-des-in"/>
+            <data-flow notifier="arpa-tgt-slot" converter="arpa-tgt-extr" subscriber="fcm-dispatcher-arpa-tgt-in"/>
+
+            <data-flow notifier="fcm-dispatcher-to-layers" subscriber="fcm-to-layers-probe"/>
+            <data-flow notifier="fcm-dispatcher-to-uv450" subscriber="fcm-to-uv450-probe"/>
+        </application>
+        
+        <application name="fcm-emu-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <fcm-emu-dispatcher>
+                <arpa-targets-subscriber name="fcm-dispatcher-arpa-tgt-in"/>
+                <from-uv450-subscriber name="fcm-dispatcher-uv450-in"/>
+                <to-uv450-notifier name="fcm-dispatcher-to-uv450"/>
+                <from-layers-subscriber name="fcm-dispatcher-tgt-des-in"/>
+                <to-layers-notifier name="fcm-dispatcher-to-layers"/>
+                <from-fcm-subscriber name="from-fcm-emu-in"/>
+                <to-fcm-notifier name="to-fcm-emu-out"/>
+
+                <!-- Интервал повторения сеансов обмена (передачи ИП1,2,3 имитатору МУС) --> 
+                <session-period>00:00:01:000</session-period>
+                <offline-timeout>00:00:02:000</offline-timeout>                
+                <arpa-tgt-timeout>00:00:05:000</arpa-tgt-timeout>
+                <tgt-des-timeout>00:00:02:000</tgt-des-timeout>
+            </fcm-emu-dispatcher>
+
+            <data-flow notifier="uv450-in-slot" converter="uv450-extr" subscriber="fcm-dispatcher-uv450-in"/>
+            <data-flow notifier="tgt-des-slot" converter="tgt-des-extr" subscriber="fcm-dispatcher-tgt-des-in"/>
+            <data-flow notifier="arpa-tgt-slot" converter="arpa-tgt-extr" subscriber="fcm-dispatcher-arpa-tgt-in"/>
+
+            <data-flow notifier="fcm-dispatcher-to-layers" subscriber="fcm-to-layers-probe"/>
+            <data-flow notifier="fcm-dispatcher-to-uv450" subscriber="fcm-to-uv450-probe"/>
+
+            <data-flow notifier="fcm-emu-udp-receiver" subscriber="from-fcm-emu-in"/>
+            <data-flow notifier="to-fcm-emu-out" subscriber="fcm-emu-udp-sender"/>
+
+            <data-flow notifier="fcm-emu-udp-receiver" subscriber="from-fcm-emu-in-probe"/>
+            <data-flow notifier="to-fcm-emu-out" subscriber="to-fcm-emu-out-probe"/>
+        </application>
+        
+    </applications>
+</configuration>
+    

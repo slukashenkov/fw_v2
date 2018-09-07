@@ -1,0 +1,58 @@
+<configuration>
+    <objects>
+       
+        <slot name="PRIM_SLOT">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+        </slot>
+        <slot name="SEC_SLOT">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+        </slot>
+        <slot name="TRE_SLOT">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+        </slot>
+
+        <slot name="OUT_SLOT">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+        </slot>
+    </objects>
+    
+
+    <applications>
+        <!-- 
+            Forwards each notification of its active subscriber to the notifier.
+            
+            primary subscriber becomes active on startup AND (immediately) when a notification is received.
+            primary subscriber remains active for timeout after last notification was received.
+            secondary subscriber becomes active after timeout.
+        -->
+        <application name="selector2-app">
+            <selector2 name="sel2">
+                <primary-subscriber-name>sel2-prim</primary-subscriber-name>
+                <secondary-subscriber-name>sel2-sec</secondary-subscriber-name>
+                <timeout>00:00:02:000</timeout>
+            </selector2>
+            
+            <data-flow notifier="PRIM_SLOT" subscriber="sel2-prim"/>
+            <data-flow notifier="SEC_SLOT" subscriber="sel2-sec"/>
+            <data-flow notifier="sel2" subscriber="OUT_SLOT"/>
+        </application>
+
+        <application name="selectorN-app">
+            <selectorN name="sel-out">
+                <channel priority="1" name="sel-in-1"/>
+                <channel priority="2" name="sel-in-2"/>
+                <channel priority="20" name="sel-in-3"/>
+                <timeout>00:00:02:000</timeout>
+            </selectorN>
+
+            <data-flow notifier="PRIM_SLOT" subscriber="sel-in-1"/>
+            <data-flow notifier="SEC_SLOT" subscriber="sel-in-2"/>
+            <data-flow notifier="TRE_SLOT" subscriber="sel-in-3"/>
+            <data-flow notifier="sel-out" subscriber="OUT_SLOT"/>
+        </application>
+    </applications>
+</configuration>

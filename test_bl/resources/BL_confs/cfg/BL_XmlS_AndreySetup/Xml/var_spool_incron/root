@@ -1,0 +1,20 @@
+#Pack RIB/RAF archives into FTP directory
+/var/backup/radar131-1 IN_CLOSE_WRITE,IN_NO_LOOP tar --create --gzip --remove-files --directory=$@ --file=/var/ftp/backup/radar131-1/$#.tar.gz $#
+/var/backup/radar131-2 IN_CLOSE_WRITE,IN_NO_LOOP tar --create --gzip --remove-files --directory=$@ --file=/var/ftp/backup/radar131-2/$#.tar.gz $#
+/var/backup/radar132-1 IN_CLOSE_WRITE,IN_NO_LOOP tar --create --gzip --remove-files --directory=$@ --file=/var/ftp/backup/radar132-1/$#.tar.gz $#
+/var/backup/radar132-2 IN_CLOSE_WRITE,IN_NO_LOOP tar --create --gzip --remove-files --directory=$@ --file=/var/ftp/backup/radar132-2/$#.tar.gz $#
+
+#Pack astdbase archives into FTP directory
+/var/backup/astdbase IN_CLOSE_WRITE,IN_NO_LOOP tar --create --gzip --remove-files --directory=/var/backup/astdbase  --file=/var/ftp/backup/astd/$#.tar.gz $#
+
+#Pack replaydb archives into FTP directory
+/var/backup/replaydb IN_CLOSE_WRITE,IN_NO_LOOP tar --create --gzip --remove-files --directory=/var/backup/replaydb  --file=/var/ftp/backup/replay/$#.tar.gz $#
+
+#chown everything in FTP subdirectories
+/var/ftp/backup/astd IN_CLOSE_WRITE,IN_NO_LOOP chown ftp:ftpadmin $@/$#
+/var/ftp/backup/replay IN_CLOSE_WRITE,IN_NO_LOOP chown ftp:ftpadmin $@/$#
+/var/ftp/radar131-1 IN_CLOSE_WRITE,IN_NO_LOOP chown ftp:ftpadmin $@/$#
+/var/ftp/radar131-2 IN_CLOSE_WRITE,IN_NO_LOOP chown ftp:ftpadmin $@/$#
+/var/ftp/radar132-1 IN_CLOSE_WRITE,IN_NO_LOOP chown ftp:ftpadmin $@/$#
+/var/ftp/radar132-2 IN_CLOSE_WRITE,IN_NO_LOOP chown ftp:ftpadmin $@/$#
+

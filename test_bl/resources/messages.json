@@ -1,0 +1,83 @@
+{
+    "test_sonata_messages01":{
+      "t01_m01":{"mtype":3,
+                 "sonata_id":1,
+                 "lat": {
+                          "deg":89,
+                          "min":59,
+                          "sec":59,
+                          "tens_sec":9
+                        },
+                 "lon": {
+                          "deg":179,
+                          "min":59,
+                          "sec":59,
+                          "tens_sec":9
+                        },
+                 "vel": {"hkm_h":7,
+                         "km_h":99
+                        },
+                 "course": {
+                          "deg":3,
+                          "tens_deg":59
+                          },
+                 "state": 1,
+                 "tail": 17,
+                 "signal_lvl": 15
+      },
+
+      "t01_m02":{"mtype":3,
+                 "sonata_id":3,
+                 "lat": {
+                          "deg":89,
+                          "min":59,
+                          "sec":59,
+                          "tens_sec":9
+                        },
+                 "lon": {
+                          "deg":179,
+                          "min":59,
+                          "sec":59,
+                          "tens_sec":9
+                        },
+                 "vel": {"hkm_h":7,
+                         "km_h":99
+                        },
+                 "course": {
+                          "deg":3,
+                          "tens_deg":59
+                          },
+                 "state": 1,
+                 "tail": 17,
+                 "signal_lvl": 15
+      }
+
+    },
+     "test_sonata_messages02": {
+       "t02_m01":{"mtype":3,
+                 "sonata_id":1,
+                 "lat": {
+                          "deg":89,
+                          "min":59,
+                          "sec":59,
+                          "tens_sec":9
+                        },
+                 "lon": {
+                          "deg":179,
+                          "min":59,
+                          "sec":59,
+                          "tens_sec":9
+                        },
+                 "vel": {"hkm_h":7,
+                         "km_h":99
+                        },
+                 "course": {
+                          "deg":3,
+                          "tens_deg":59
+                          },
+                 "state": 1,
+                 "tail": 17,
+                 "signal_lvl": 15
+              }
+     }
+}

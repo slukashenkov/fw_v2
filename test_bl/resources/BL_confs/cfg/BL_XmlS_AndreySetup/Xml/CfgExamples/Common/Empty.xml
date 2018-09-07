@@ -1,0 +1,13 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+    </objects>
+
+    <applications>
+    </applications>
+</configuration>
+    

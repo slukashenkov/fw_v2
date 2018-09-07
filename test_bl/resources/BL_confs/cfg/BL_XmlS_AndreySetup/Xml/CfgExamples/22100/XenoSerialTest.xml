@@ -1,0 +1,72 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <serial-port-connection name="rtser-first">
+            <port>rtser3</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <rx-trigger-level>1</rx-trigger-level>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="rtser-sec">
+            <port>rtser5</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <rx-trigger-level>14</rx-trigger-level>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <slot name="xeno-serial-pipe-0">
+            <max-size>1024</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+
+        <slot name="xeno-serial-pipe-1">
+            <max-size>1024</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+    </objects>
+
+    <applications>
+        <application name="xeno-serial-to-pipe">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <data-flow notifier="rtser-first" subscriber="xeno-serial-pipe-0"/>
+            <data-flow notifier="rtser-sec"   subscriber="xeno-serial-pipe-1"/>
+        </application>
+
+        <application name="xeno-pipe-to-serial">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <data-flow notifier="xeno-serial-pipe-0" subscriber="rtser-first"/>
+        </application>
+
+        <application name="xeno-serial-RW">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <data-flow notifier="xeno-serial-pipe-0" subscriber="rtser-first"/>
+            <data-flow notifier="rtser-first" subscriber="xeno-serial-pipe-1"/>
+        </application>
+
+        <application name="serial-latency-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <latency-recorder startName="latency-start" endName="latency-end"/>
+
+            <data-flow notifier="xeno-serial-pipe-0" subscriber="latency-start"/>
+            <data-flow notifier="xeno-serial-pipe-0" subscriber="rtser-first"/>
+
+            <data-flow notifier="rtser-sec" subscriber="latency-end"/>
+        </application>
+    </applications>
+</configuration>
+    

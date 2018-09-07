@@ -1,0 +1,56 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <!--config-path>d:\Baselibraries\bin2\config\</config-path-->
+        <config-path>/etc/dolphin/22160/</config-path>
+    </plugin-parameters>
+ 
+    <plugins>
+
+    </plugins>
+		
+    <objects>
+        <!-- #################### COMMON slots,etc #################### -->
+
+</objects>
+
+<!-- TEST CONFIGURATION 29.0 -->
+	<objects>
+
+		<file-output name="test-from-modbus-tcp-client-probe">
+            <filename>/var/log/dolphin/test/test-29.0-from-modbus-tcp-client-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>	
+
+</objects>
+
+	<applications>	
+        <application name="test-app">
+			<watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="40"/>
+            
+             <modbus-tcp-client slaveId="1" regStart="0" regQnty="6">
+                <nmea-notifier name="modbus-nmea-notifier"/>
+                <nmea-format floatByteOrder="ABCD">    
+                    <nmea-sentence-float id="SLXD1" regStart="1" regQnty="2"/> <!-- истинное положение руля -->
+                    <nmea-sentence-float id="SLXD2" regStart="3" regQnty="2"/> <!-- заданное положение руля (одно на два борта) -->
+                </nmea-format>
+                <report-period>00:00:01:000</report-period>
+                <modbus-tcp>
+                    <remote-port>502</remote-port>
+                    <remote-address>192.168.11.11</remote-address>
+                </modbus-tcp>
+            </modbus-tcp-client>
+			
+			<data-flow notifier="modbus-nmea-notifier" subscriber="test-from-modbus-tcp-client-probe"/>
+
+        </application>
+		
+		
+    </applications>
+</configuration>

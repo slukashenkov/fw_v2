@@ -1,0 +1,685 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <database-connection name ="replay-db-conn">
+            <host>localhost</host>
+            <port>5432</port>
+            <dbname>replaydb</dbname>
+            <user>replaydbadmin</user>
+        </database-connection>
+
+        <udp-connection name="syuzhet-udp-in">
+            <source-address>10.142.1.1</source-address>
+            <source-port>59000</source-port>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+        <udp-connection name="rtpa-udp-in">
+            <source-address>10.142.1.1</source-address>
+            <source-port>59001</source-port>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+        <udp-connection name="tnpa-udp-in">
+            <source-address>10.142.1.1</source-address>
+            <source-port>59002</source-port>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+        <udp-connection name="linkquest-udp-in">
+            <source-address>10.142.1.1</source-address>
+            <source-port>59003</source-port>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+        <udp-connection name="livadia-data-udp">
+            <source-address>192.168.172.1</source-address>
+            <source-port>2101</source-port>
+            <packet-max-size>1470</packet-max-size>
+        </udp-connection>
+
+        <udp-connection name="livadia-request-udp">
+            <source-address>192.168.172.1</source-address>
+            <!--<source-port>2102</source-port>-->
+            <destination-address>192.168.172.212</destination-address>
+            <destination-port>2102</destination-port>
+            <packet-max-size>1470</packet-max-size>
+        </udp-connection>
+
+        <astd-client name="astd-client" report-period="00:00:01:000"/>
+
+        <rtp-connection name="syuzhet-rtp-prim">
+            <address>239.254.0.1</address>
+            <local-port>55002</local-port>
+            <destination-port>56002</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="syuzhet-rtp-sec">
+            <address>239.253.0.1</address>
+            <local-port>55102</local-port>
+            <destination-port>56102</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="chardash-rtp-prim">
+            <address>239.254.0.1</address>
+            <local-port>55004</local-port>
+            <destination-port>56004</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="chardash-rtp-sec">
+            <address>239.253.0.1</address>
+            <local-port>55104</local-port>
+            <destination-port>56104</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="folklor-rtp-prim">
+            <address>239.254.0.1</address>
+            <local-port>55006</local-port>
+            <destination-port>56006</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="folklor-rtp-sec">
+            <address>239.253.0.1</address>
+            <local-port>55106</local-port>
+            <destination-port>56106</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="anapa-targets-rtp-prim">
+            <address>239.254.0.1</address>
+            <local-port>55008</local-port>
+            <destination-port>56008</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="anapa-targets-rtp-sec">
+            <address>239.253.0.1</address>
+            <local-port>55108</local-port>
+            <destination-port>56108</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="anapa-screens-rtp-prim">
+            <address>239.254.0.1</address>
+            <local-port>55010</local-port>
+            <destination-port>56010</destination-port>
+            <timestamp>0.0001</timestamp>
+        </rtp-connection>
+        
+        <rtp-connection name="anapa-screens-rtp-sec">
+            <address>239.253.0.1</address>
+            <local-port>55110</local-port>
+            <destination-port>56110</destination-port>
+            <timestamp>0.0001</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="anapa-request-rtp-prim">
+            <multicast-address>239.254.0.1</multicast-address>
+            <local-port>55200</local-port>
+            <destination-port>56200</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="anapa-request-rtp-sec">
+            <multicast-address>239.253.0.1</multicast-address>
+            <local-port>55300</local-port>
+            <destination-port>56300</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="livadia-data-rtp-prim">
+            <address>239.254.0.1</address>
+            <local-port>55026</local-port>
+            <destination-port>56026</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+        
+        <rtp-connection name="livadia-data-rtp-sec">
+            <address>239.253.0.1 </address>
+            <local-port>55126</local-port>
+            <destination-port>56126</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+        
+        <rtp-connection name="livadia-request-rtp-prim">
+            <multicast-address>239.254.0.1</multicast-address>
+            <local-port>55306</local-port>
+            <destination-port>55306</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+        
+        <rtp-connection name="livadia-request-rtp-sec">
+            <multicast-address>239.253.0.1</multicast-address>
+            <local-port>55206</local-port>
+            <destination-port>55206</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="livadia-screens-rtp-prim">
+            <address>239.254.0.1</address>
+            <local-port>55028</local-port>
+            <destination-port>56028</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="livadia-screens-rtp-sec">
+            <address>239.254.0.1</address>
+            <local-port>55128</local-port>
+            <destination-port>56128</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="r764-rtp-prim">
+            <address>239.254.0.1</address>
+            <local-port>55012</local-port>
+            <destination-port>56012</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="r764-rtp-sec">
+            <address>239.253.0.1</address>
+            <local-port>55112</local-port>
+            <destination-port>56112</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="rtpa-rtp-prim">
+            <address>239.254.0.1</address>
+            <local-port>55014</local-port>
+            <destination-port>56014</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="rtpa-rtp-sec">
+            <address>239.253.0.1</address>
+            <local-port>55114</local-port>
+            <destination-port>56114</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="linkquest-rtp-prim">
+            <address>239.254.0.1</address>
+            <local-port>55016</local-port>
+            <destination-port>56016</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="linkquest-rtp-sec">
+            <address>239.253.0.1</address>
+            <local-port>55116</local-port>
+            <destination-port>56116</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="tnpa-rtp-prim">
+            <address>239.254.0.1</address>
+            <local-port>55018</local-port>
+            <destination-port>56018</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="tnpa-rtp-sec">
+            <address>239.253.0.1</address>
+            <local-port>55118</local-port>
+            <destination-port>56118</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="vector-rtp-prim">
+            <address>239.254.0.1</address>
+            <local-port>55020</local-port>
+            <destination-port>56020</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="vector-rtp-sec">
+            <address>239.253.0.1</address>
+            <local-port>55120</local-port>
+            <destination-port>56120</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="mtk-rtp-out-prim">
+            <address>10.2.2.8</address>
+            <local-port>55024</local-port>
+            <destination-port>56024</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="mtk-rtp-out-sec">
+            <address>239.253.0.1</address>
+            <local-port>55124</local-port>
+            <destination-port>56124</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <!-- MTK cameras state to video servers -->
+        <tcp-connection name="mtk-tcp-out-prim">
+            <destination-address>10.4.0.5</destination-address>
+            <destination-port>56130</destination-port>
+        </tcp-connection>
+
+        <tcp-connection name="mtk-tcp-out-sec">
+            <destination-address>10.4.0.6</destination-address>
+            <destination-port>56130</destination-port>
+        </tcp-connection>
+
+        <tcp-connection name="mtk-targeting-in-prim">
+            <source-address>10.2.2.4</source-address>
+            <source-port>55204</source-port>
+        </tcp-connection>
+
+        <tcp-connection name="mtk-targeting-in-sec">
+            <source-address>10.4.0.4</source-address>
+            <source-port>55304</source-port>
+        </tcp-connection>
+
+        <tcp-connection name="mtk-video-ctrl-in">
+            <source-address>10.4.0.4</source-address>
+            <source-port>55214</source-port>
+        </tcp-connection>
+
+        <rtp-connection name="astd-rtp-prim">
+            <address>239.254.0.1</address>
+            <local-port>57400</local-port>
+            <destination-port>58400</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <rtp-connection name="astd-rtp-sec">
+            <address>239.255.0.1</address>
+            <local-port>57500</local-port>
+            <destination-port>58500</destination-port>
+            <timestamp>0.1</timestamp>
+        </rtp-connection>
+
+        <udp-connection name="r764-conn-in">
+            <packet-max-size>131072</packet-max-size>
+            <source-address>10.142.1.1</source-address>
+            <source-port>23350</source-port>
+        </udp-connection>
+
+        <udp-connection name="rtpa-conn-out-nmea">
+            <source-address>10.142.1.1</source-address>
+            <source-port>24250</source-port>
+            <destination-address>10.142.1.11</destination-address>
+            <destination-port>24150</destination-port>
+        </udp-connection>
+
+        <udp-connection name="rtpa-conn-out-nmea-2">
+            <source-address>10.142.1.1</source-address>
+            <source-port>24251</source-port>
+            <destination-address>10.142.1.11</destination-address>
+            <destination-port>24151</destination-port>
+        </udp-connection>
+
+        <udp-connection name="rtpa-conn-out-tilt">
+            <source-address>10.142.1.1</source-address>
+            <source-port>24252</source-port>
+            <destination-address>10.142.1.11</destination-address>
+            <destination-port>24152</destination-port>
+        </udp-connection>
+        
+        <slot name="anapa-request-slot">
+            <max-size>1024</max-size>
+            <update-time>00:00:00:100</update-time>
+        </slot>
+	
+        <slot name="anapa-screens-slot">
+            <max-size>300000</max-size>
+            <update-time>00:00:00:100</update-time>
+        </slot>
+
+        <slot name="anapa-in-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+            <type>reliable</type>
+        </slot>
+
+       <slot name="astd-slot">
+           <max-size>1024</max-size>
+           <update-time>00:00:00:100</update-time>
+           <type>reliable</type>
+           <max-buffer-length>100</max-buffer-length>
+       </slot>
+
+       <slot name="chardash-in-slot">
+           <max-size>65536</max-size>
+           <update-time>00:00:00:100</update-time>
+           <type>reliable</type>
+	   <max-buffer-length>50</max-buffer-length>
+       </slot>
+
+       <slot name="chardash-conv-slot">
+           <max-size>65536</max-size>
+           <update-time>00:00:00:100</update-time>
+           <type>reliable</type>
+       </slot>
+
+       <slot name="syuzhet-in-slot">
+           <max-size>65536</max-size>
+           <update-time>00:00:00:100</update-time>
+           <type>reliable</type>
+       </slot>
+
+       <slot name="syuzhet-conv-slot">
+	   <max-size>65536</max-size>
+	   <update-time>00:00:00:100</update-time>
+	   <type>reliable</type>
+	   <max-buffer-length>50</max-buffer-length>
+       </slot>
+
+        <slot name="folklor-in-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+            <type>reliable</type>
+	    <max-buffer-length>50</max-buffer-length>
+        </slot>
+
+        <slot name="r764-in-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+            <type>reliable</type>
+            <max-buffer-length>50</max-buffer-length>
+        </slot>
+
+        <slot name="linkquest-in-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+            <type>reliable</type>
+            <max-buffer-length>50</max-buffer-length>
+        </slot>
+
+        <slot name="rtpa-in-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+            <type>reliable</type>
+        </slot>
+
+        <slot name="livadia-in-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+            <type>reliable</type>
+        </slot>
+
+        <slot name="tnpa-in-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+            <type>reliable</type>
+        </slot>
+
+        <slot name="vector-astd-slot">
+            <max-size>1024</max-size>
+            <update-time>00:00:00:100</update-time>
+        </slot>
+
+        <slot name="mtk-targets-in-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+            <type>reliable</type>
+        </slot>
+
+        <slot name="mtk-state-in-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+            <type>reliable</type>
+        </slot>
+
+        <slot name="mtk-debug-ctrl-slot">
+            <max-size>1024</max-size>
+            <update-time>00:00:00:100</update-time>
+        </slot>
+
+        <converter name="chardash-to-linkquest-conv">
+            <type>chardash-to-linkquest</type>
+        </converter>
+
+        <converter name="mtk-targets-conv">
+            <type>mtk-targets</type>
+        </converter>
+
+        <converter name="mtk-state-conv">
+            <type>mtk-state</type>
+        </converter>
+
+        <converter name="mtk-targeting-conv">
+            <type>mtk-targeting</type>
+        </converter>
+
+        <converter name="mtk-video-ctrl-conv">
+            <type>mtk-video-ctrl</type>
+        </converter>
+        
+        <stream-thinner name="chardash-1hz-thinner" minInterval="00:00:01:000"/>
+        
+        <stream-thinner name="chardash-2hz-thinner" minInterval="00:00:00:500"/>
+
+        <stream-thinner name="chardash-10hz-thinner" minInterval="00:00:00:100"/>
+
+       <file-output name="anapa-req-probe">
+           <filename>/var/log/dolphin/anapa-req-in</filename>
+       </file-output>
+
+       <file-output name="anapa-tgt-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/anapa-tgt-in</filename>
+       </file-output>
+
+       <file-output name="anapa-tgt-conv-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/anapa-tgt-conv</filename>
+       </file-output>
+
+       <file-output name="anapa-scr-probe">
+           <filename>/var/log/dolphin/anapa-scr-in</filename>
+           <append>false</append>
+           <format>raw</format>
+       </file-output>
+
+       <file-output name="anapa-scr-log">
+           <filename>/var/log/dolphin/anapa-scr-log</filename>
+           <append>true</append>
+           <format>timestamp</format>
+       </file-output>
+
+       <file-output name="chardash-in-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/chardash-in</filename>
+       </file-output>
+
+       <file-output name="chardash-conv-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/chardash-conv</filename>
+       </file-output>
+
+       <file-output name="chardash-to-linkquest-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/chardash-to-linkquest</filename>
+       </file-output>
+
+       <file-output name="syuzhet-in-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/syuzhet-in</filename>
+       </file-output>
+
+       <file-output name="syuzhet-conv-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/syuzhet-conv</filename>
+       </file-output>
+
+       <file-output name="folklor-in-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/folklor-in</filename>
+       </file-output>
+
+       <file-output name="folklor-conv-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/folklor-conv</filename>
+       </file-output>
+
+       <file-output name="rtpa-in-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/rtpa-in</filename>
+       </file-output>
+
+       <file-output name="rtpa-conv-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/rtpa-conv</filename>
+       </file-output>
+
+       <file-output name="tnpa-in-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/tnpa-in</filename>
+       </file-output>
+
+       <file-output name="tnpa-conv-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/tnpa-conv</filename>
+       </file-output>
+
+       <file-output name="linkquest-in-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/linkquest-in</filename>
+       </file-output>
+
+       <file-output name="linkquest-conv-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/linkquest-conv</filename>
+       </file-output>
+
+       <file-output name="r764-in-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/r764-in</filename>
+       </file-output>
+
+       <file-output name="r764-conv-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/r764-conv</filename>
+       </file-output>
+
+       <file-output name="astd-client-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/astd-client-probe</filename>
+           <format>astd</format>
+       </file-output>
+
+       <file-output name="vector-conv-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/vector-conv</filename>
+       </file-output>
+
+       <file-output name="mtk-conv-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/mtk-conv</filename>
+       </file-output>
+
+       <file-output name="mtk-targeting-probe-prim">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/mtk-tgt-designation-prim</filename>
+       </file-output>
+
+       <file-output name="mtk-targeting-probe-sec">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/mtk-tgt-designation-sec</filename>
+       </file-output>
+
+       <file-output name="mtk-video-ctrl-probe">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/mtk-video-ctrl</filename>
+       </file-output>
+
+       <file-output name="File_out_msg_from_livadia">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/livadia-in</filename>
+       </file-output>
+        
+       <file-output name="File_out_msg_to_livadia">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/livadia-out</filename>
+       </file-output>
+        
+       <file-output name="File_out_astd_livadia">
+           <timestamped-filename>false</timestamped-filename>
+           <filename>/var/log/dolphin/livadia-astd</filename>
+       </file-output>
+
+       <file-output name="livadia-scr-probe">
+           <filename>/var/log/dolphin/livadia-scr-in</filename>
+           <append>false</append>
+           <format>raw</format>
+       </file-output>
+
+       <file-output name="livadia-scr-log">
+           <filename>/var/log/dolphin/livadia-scr-log</filename>
+           <append>true</append>
+           <format>timestamp</format>
+       </file-output>
+    </objects>
+
+    <applications>
+
+         <application name="mtk-application">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:150" startupDuration="00:00:00:100"/>
+
+             <mtk-input-manager>
+                <dual-manchester-connection>
+                    <address>2</address>
+                    <peer-address>30</peer-address>
+                    <card-no>3</card-no>
+                    <!--
+                    <card-no>2</card-no>
+                    -->
+                    <max-wait-duration>00:00:01:000</max-wait-duration>
+                    <switch-timeout>00:00:05:000</switch-timeout>
+                </dual-manchester-connection>
+
+                <data-notifier name="mtk-data-notifier"/>
+                <state-notifier name="mtk-astd-state-notifier"/>
+                <targeting-subscriber name="mtk-targeting-ctrl"/>
+                <video-ctrl-subscriber name="mtk-video-ctrl"/>
+                <mtk-state-notifier name="mtk-device-state-notifier"/>
+                <link-state-id name="L.MTK201.-.KD1"/>
+                <data-available-id name="D.MTK201.-.KD1"/>
+                <data-correct-id name="V.MTK201.-.KD1"/>
+                <timeout>00:00:05:000</timeout>
+            </mtk-input-manager>
+
+            <data-flow notifier="mtk-data-notifier" subscriber="mtk-targets-conv"/>
+            <data-flow notifier="mtk-data-notifier" subscriber="mtk-targets-in-slot"/>
+            <data-flow notifier="mtk-targets-conv" subscriber="mtk-conv-probe"/>
+            <data-flow notifier="mtk-targets-conv" subscriber="mtk-rtp-out-prim"/>
+            <data-flow notifier="mtk-targets-conv" subscriber="mtk-rtp-out-sec"/>
+
+            <data-flow notifier="mtk-device-state-notifier" subscriber="mtk-state-conv"/>
+            <data-flow notifier="mtk-device-state-notifier" subscriber="mtk-state-in-slot"/>
+            <data-flow notifier="mtk-state-conv" subscriber="mtk-conv-probe"/>
+            <data-flow notifier="mtk-state-conv" subscriber="mtk-rtp-out-prim"/>
+            <data-flow notifier="mtk-state-conv" subscriber="mtk-rtp-out-sec"/>
+            <data-flow notifier="mtk-state-conv" subscriber="mtk-tcp-out-prim"/>
+            <data-flow notifier="mtk-state-conv" subscriber="mtk-tcp-out-sec"/>
+
+            <data-flow notifier="mtk-astd-state-notifier" subscriber="astd-slot"/>
+
+            <data-flow notifier="mtk-debug-ctrl-slot" converter="mtk-targeting-conv" subscriber="mtk-targeting-ctrl"/>
+            <data-flow notifier="mtk-debug-ctrl-slot" converter="mtk-video-ctrl-conv" subscriber="mtk-video-ctrl"/>
+
+            <data-flow notifier="mtk-video-ctrl-in" converter="mtk-video-ctrl-conv" subscriber="mtk-video-ctrl"/>
+            <data-flow notifier="mtk-video-ctrl-in" subscriber="mtk-video-ctrl-probe"/>
+
+            <data-flow notifier="mtk-targeting-in-prim" converter="mtk-targeting-conv" subscriber="mtk-targeting-ctrl"/>
+            <data-flow notifier="mtk-targeting-in-sec" converter="mtk-targeting-conv" subscriber="mtk-targeting-ctrl"/>
+            <data-flow notifier="mtk-targeting-in-prim" subscriber="mtk-targeting-probe-prim"/>
+            <data-flow notifier="mtk-targeting-in-sec" subscriber="mtk-targeting-probe-sec"/>
+        </application>
+    </applications>
+
+</configuration>

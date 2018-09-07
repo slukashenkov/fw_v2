@@ -1,0 +1,76 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <!--config-path>d:\Baselibraries\bin2\config\</config-path-->
+        <config-path>/etc/dolphin/22160/</config-path>
+    </plugin-parameters>
+ 
+    <plugins>
+
+    </plugins>
+		
+    <objects>
+        <!-- #################### COMMON slots,etc #################### -->
+
+</objects>
+
+
+
+<!-- TEST CONFIGURATION 25.0.1 -->
+	<objects>
+
+		<tcp-connection name="test-tcp-from-notebook" mode="server">
+            <source-address>10.7.1.3</source-address>
+            <source-port>51111</source-port>
+        </tcp-connection>
+
+		<file-output name="test-from-tcp-probe">
+            <filename>/var/log/dolphin/test/test-25.0.1-from-tcp-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+
+		<file-output name="test-from-astd-server-probe">
+            <filename>/var/log/dolphin/test/test-25.0.1-from-astd-server-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>		
+
+</objects>
+
+	<applications>	
+        <application name="test-app">
+			<watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="40"/>
+            
+            <astd-server name="astd-server-bd2">
+                <reset-period>00:00:25:000</reset-period>
+                <report-period>00:00:02:000</report-period>
+                <converter-rules-cfg>/etc/dolphin/22160/astd-rules.cfg</converter-rules-cfg>
+                <converter-defaults-cfg>/etc/dolphin/22160/astd-defaults.cfg</converter-defaults-cfg>
+                <events-notifier name="astd-events-notifier"/>
+                <database name="dummy">
+                    <host>127.0.0.1</host>
+                    <port>5432</port>
+                    <dbname>astdbase</dbname>
+                    <user>astdadmin</user>
+                </database>
+                <max-buf-size>1200</max-buf-size>
+                <interval-between-sending>00:00:00:020</interval-between-sending>
+                <first-delay-period>00:00:15:000</first-delay-period>
+            </astd-server>
+			
+			<data-flow notifier="test-tcp-from-notebook" subscriber="astd-server-bd2"/>
+            <data-flow notifier="test-tcp-from-notebook" subscriber="test-from-tcp-probe"/>
+			
+			<data-flow notifier="astd-events-notifier" subscriber="test-from-astd-server-probe"/>
+
+        </application>
+		
+		
+    </applications>
+</configuration>

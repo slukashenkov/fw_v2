@@ -1,0 +1,43 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <slot name="in-slot1">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+            <type>win-pipe</type>
+        </slot>
+
+        <slot name="out-slot1">
+            <max-size>65536</max-size>
+            <update-time>00:00:00:100</update-time>
+            <type>win-pipe</type>
+        </slot>
+    </objects>
+
+    <applications>
+        <application name="gspu-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:200" startupDuration="00:00:00:500"/>
+
+            <gspu-dispatcher>
+                <!--Данные от ГСПУ-->
+                <data-in name="data-in"/>
+				<!--Данные для ГСПУ (пинговые пустые сообщения)-->
+                <data-out name="data-out"/>
+				<!--Выход данных для АСТД-->
+                <astd-out name="astd-out"/>
+				<!--Выход сконвертированных данных для АРМов-->
+                <response-out name="response-out"/>
+				<!--свой-ства АСТД параметра-->
+                <astd-param name="name" timeout="00:00:01:000"/>
+            </gspu-dispatcher>
+            
+            <data-flow notifier="data-out" subscriber="out-slot1"/>
+            <data-flow notifier="in-slot1" subscriber="data-in"/>
+        </application>
+    </applications>
+
+</configuration>

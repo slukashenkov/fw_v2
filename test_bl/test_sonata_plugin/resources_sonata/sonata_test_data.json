@@ -1,0 +1,168 @@
+{
+  "test_sonata_messages01": {
+    "skip": false,
+    "t01_m01": {
+      "pass": [
+        "sonata_id",
+        "lat",
+        "lon",
+        "vel",
+        "course",
+        "vel_knots"
+      ],
+      "mtype": 3,
+      "sonata_id": 3,
+      "lat": {
+        "deg": 89,
+        "min": 59,
+        "sec": 59,
+        "tens_sec": 9
+      },
+      "lon": {
+        "deg": 179,
+        "min": 59,
+        "sec": 59,
+        "tens_sec": 9
+      },
+      "vel": {
+        "hkm_h": 7,
+        "km_h": 34
+      },
+      "course": {
+        "deg": 3,
+        "tens_deg": 59
+      },
+      "state": 1,
+      "tail": 17,
+      "signal_lvl": 15
+    },
+    "t01_m02": {
+      "pass": [
+        "sonata_id",
+        "lat",
+        "lon",
+        "vel",
+        "course",
+        "vel_knots"
+      ],
+      "mtype": 3,
+      "sonata_id": 5,
+      "lat": {
+        "deg": 89,
+        "min": 59,
+        "sec": 59,
+        "tens_sec": 9
+      },
+      "lon": {
+        "deg": 179,
+        "min": 59,
+        "sec": 59,
+        "tens_sec": 9
+      },
+      "vel": {
+        "hkm_h": 7,
+        "km_h": 34
+      },
+      "course": {
+        "deg": 3,
+        "tens_deg": 59
+      },
+      "state": 1,
+      "tail": 17,
+      "signal_lvl": 15
+    }
+  },
+  "test_sonata_messages02": {
+    "skip": false,
+    "t02_m01": {
+      "fail": "bad_chsum",
+      "log_pttrn": "Wrong message CRC",
+      "mtype": 3,
+      "sonata_id": 4,
+      "lat": {
+        "deg": 89,
+        "min": 59,
+        "sec": 59,
+        "tens_sec": 9
+      },
+      "lon": {
+        "deg": 179,
+        "min": 59,
+        "sec": 59,
+        "tens_sec": 9
+      },
+      "vel": {
+        "hkm_h": 7,
+        "km_h": 99
+      },
+      "course": {
+        "deg": 3,
+        "tens_deg": 59
+      },
+      "state": 1,
+      "tail": 17,
+      "signal_lvl": 15
+    },
+    "t02_m02": {
+      "fail": "no_$",
+      "log_pttrn": "Message does not start",
+      "mtype": 3,
+      "sonata_id": 4,
+      "lat": {
+        "deg": 89,
+        "min": 59,
+        "sec": 59,
+        "tens_sec": 9
+      },
+      "lon": {
+        "deg": 179,
+        "min": 59,
+        "sec": 59,
+        "tens_sec": 9
+      },
+      "vel": {
+        "hkm_h": 7,
+        "km_h": 99
+      },
+      "course": {
+        "deg": 3,
+        "tens_deg": 59
+      },
+      "state": 1,
+      "tail": 17,
+      "signal_lvl": 15
+    },
+    "t02_m03": {
+      "fail": "no_tail",
+      "log_pttrn": "Message too short",
+      "mtype": 3,
+      "sonata_id": 4,
+      "lat": {
+        "deg": 89,
+        "min": 59,
+        "sec": 59,
+        "tens_sec": 9
+      },
+      "lon": {
+        "deg": 179,
+        "min": 59,
+        "sec": 59,
+        "tens_sec": 9
+      },
+      "vel": {
+        "hkm_h": 7,
+        "km_h": 99
+      },
+      "course": {
+        "deg": 3,
+        "tens_deg": 59
+      },
+      "state": 1,
+      "tail": 17,
+      "signal_lvl": 15
+    }
+  }
+}
+
+
+

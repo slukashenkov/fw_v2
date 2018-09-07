@@ -1,0 +1,378 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <serial-port-connection name="serial-ttyS0">
+            <port>/dev/ttyS0</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <timeout>10</timeout>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI0">
+            <port>/dev/ttyCTI0</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI1">
+            <port>/dev/ttyCTI1</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI2">
+            <port>/dev/ttyCTI2</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI3">
+            <port>/dev/ttyCTI3</port>
+            <speed>57600</speed>
+            <timeout>10</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI4">
+            <port>/dev/ttyCTI4</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI5">
+            <port>/dev/ttyCTI5</port>
+            <speed>57600</speed>
+            <!--
+            <speed>9600</speed>
+            <speed>57600</speed>
+            <speed>9600</speed>
+            -->
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI6">
+            <port>/dev/ttyCTI6</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <timeout>5</timeout>
+            <period-of-reading>00:00:00:500</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI7">
+            <port>/dev/ttyCTI7</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <timeout>5</timeout>
+            <period-of-reading>00:00:00:500</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI8">
+            <port>/dev/ttyCTI8</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI9">
+            <port>/dev/ttyCTI9</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI10">
+            <port>/dev/ttyCTI10</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI11">
+            <port>/dev/ttyCTI11</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI12">
+            <port>/dev/ttyCTI12</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI13">
+            <port>/dev/ttyCTI13</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI14">
+            <port>/dev/ttyCTI14</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI15">
+            <port>/dev/ttyCTI15</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI16">
+            <port>/dev/ttyCTI16</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI17">
+            <port>/dev/ttyCTI17</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <timeout>5</timeout>
+            <period-of-reading>00:00:00:500</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI18">
+            <port>/dev/ttyCTI18</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI19">
+            <port>/dev/ttyCTI19</port>
+            <speed>19200</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI20">
+            <port>/dev/ttyCTI20</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI21">
+            <port>/dev/ttyCTI21</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI22">
+            <port>/dev/ttyCTI22</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-ttyCTI23">
+            <port>/dev/ttyCTI23</port>
+            <speed>57600</speed>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+        <slot name="serial-in-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+
+        <file-output name="serial-in-ttyS0-probe">
+            <filename>/var/log/dolphin/serial-in-ttyS0</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyS1-probe">
+            <filename>/var/log/dolphin/serial-in-ttyS1</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyS2-probe">
+            <filename>/var/log/dolphin/serial-in-ttyS2</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyS3-probe">
+            <filename>/var/log/dolphin/serial-in-ttyS3</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI0-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI0</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI1-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI1</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI2-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI2</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI3-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI3</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI4-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI4</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI5-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI5</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI6-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI6</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI7-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI7</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI8-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI8</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI9-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI9</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI10-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI10</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI11-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI11</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI12-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI12</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI13-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI13</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI14-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI14</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI15-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI15</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI16-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI16</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI17-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI17</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI18-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI18</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI19-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI19</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI20-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI20</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI21-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI21</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI22-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI22</filename>
+        </file-output>
+
+        <file-output name="serial-in-ttyCTI23-probe">
+            <filename>/var/log/dolphin/serial-in-ttyCTI23</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+
+        <application name="serial-flush-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+        <application name="serial-probe-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <data-flow notifier="serial-ttyS0" subscriber="serial-in-ttyS0-probe"/>
+
+            <data-flow notifier="serial-ttyCTI0" subscriber="serial-in-ttyCTI0-probe"/>
+            <data-flow notifier="serial-ttyCTI1" subscriber="serial-in-ttyCTI1-probe"/>
+            <data-flow notifier="serial-ttyCTI2" subscriber="serial-in-ttyCTI2-probe"/>
+            <data-flow notifier="serial-ttyCTI3" subscriber="serial-in-ttyCTI3-probe"/>
+            <data-flow notifier="serial-ttyCTI4" subscriber="serial-in-ttyCTI4-probe"/>
+            <data-flow notifier="serial-ttyCTI5" subscriber="serial-in-ttyCTI5-probe"/>
+            <data-flow notifier="serial-ttyCTI6" subscriber="serial-in-ttyCTI6-probe"/>
+            <data-flow notifier="serial-ttyCTI7" subscriber="serial-in-ttyCTI7-probe"/>
+            <data-flow notifier="serial-ttyCTI8" subscriber="serial-in-ttyCTI8-probe"/>
+            <data-flow notifier="serial-ttyCTI9" subscriber="serial-in-ttyCTI9-probe"/>
+            <data-flow notifier="serial-ttyCTI10" subscriber="serial-in-ttyCTI10-probe"/>
+            <data-flow notifier="serial-ttyCTI11" subscriber="serial-in-ttyCTI11-probe"/>
+            <data-flow notifier="serial-ttyCTI12" subscriber="serial-in-ttyCTI12-probe"/>
+            <data-flow notifier="serial-ttyCTI13" subscriber="serial-in-ttyCTI13-probe"/>
+            <data-flow notifier="serial-ttyCTI14" subscriber="serial-in-ttyCTI14-probe"/>
+            <data-flow notifier="serial-ttyCTI15" subscriber="serial-in-ttyCTI15-probe"/>
+            <data-flow notifier="serial-ttyCTI16" subscriber="serial-in-ttyCTI16-probe"/>
+            <data-flow notifier="serial-ttyCTI17" subscriber="serial-in-ttyCTI17-probe"/>
+            <data-flow notifier="serial-ttyCTI18" subscriber="serial-in-ttyCTI18-probe"/>
+            <data-flow notifier="serial-ttyCTI19" subscriber="serial-in-ttyCTI19-probe"/>
+            <data-flow notifier="serial-ttyCTI20" subscriber="serial-in-ttyCTI20-probe"/>
+            <data-flow notifier="serial-ttyCTI21" subscriber="serial-in-ttyCTI21-probe"/>
+            <data-flow notifier="serial-ttyCTI22" subscriber="serial-in-ttyCTI22-probe"/>
+            <data-flow notifier="serial-ttyCTI23" subscriber="serial-in-ttyCTI23-probe"/>
+        </application>
+
+        <application name="serial-writer-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI9"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI1"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI2"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI3"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI4"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI5"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI6"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI7"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI8"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI9"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI10"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI11"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI12"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI13"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI14"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI15"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI16"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI17"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI18"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI19"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI20"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI21"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI22"/>
+            <data-flow notifier="zda-gen" subscriber="serial-ttyCTI23"/>
+        </application>
+    </applications>
+</configuration>
+    

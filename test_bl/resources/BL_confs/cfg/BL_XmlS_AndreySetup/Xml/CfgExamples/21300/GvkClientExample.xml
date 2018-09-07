@@ -1,0 +1,42 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <udp-connection name="udp-out">
+            <destination-address>127.0.0.1</destination-address>
+            <destination-port>59001</destination-port>
+        </udp-connection>
+    </objects>
+
+    <applications>
+
+        <application name="GvkClientApplication2">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <gvk-client connectTimeout="00:00:00:100" 
+                        pollPeriod="00:00:01:000"
+                        regOffset="30001"
+                        channelsQnty="8">
+                <nmea-notifier name="gvk-nmea-out-1"/>
+                <address>10.7.200.2:502</address>
+                <nmea-sentence valuesId="KSGP1"/>
+            </gvk-client>
+
+            <gvk-client connectTimeout="00:00:00:100" 
+                        pollPeriod="00:00:01:000"                
+                        regOffset="30001"
+                        channelsQnty="8">
+                <nmea-notifier name="gvk-nmea-out-2"/>
+                <address>10.7.200.2:502</address>
+                <nmea-sentence valuesId="KSGP2"/>
+            </gvk-client>
+            
+            <data-flow notifier="gvk-nmea-out-1" subscriber="udp-out"/>
+            <data-flow notifier="gvk-nmea-out-2" subscriber="udp-out"/>
+        </application>
+    </applications>
+
+</configuration>

@@ -1,0 +1,61 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <!--config-path>d:\Baselibraries\bin2\config\</config-path-->
+        <config-path>/etc/dolphin/22160/</config-path>
+    </plugin-parameters>
+
+<plugins>
+    
+</plugins>
+
+<objects>
+        <!-- #################### COMMON slots,etc #################### -->
+
+</objects>
+
+<!-- TEST CONFIGURATION 5.1 -->
+	<objects>
+
+		<udp-connection name="test-udp-from-notebook" mode="server">
+            <multicast-address>239.254.1.1</multicast-address>
+			<source-address>10.7.1.3</source-address>
+            <source-port>51111</source-port>
+		</udp-connection>
+
+		<file-output name="test-from-udp-probe">
+            <filename>/var/log/dolphin/test/test-5.1-from-udp-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>10</max-files-index>
+        </file-output>
+
+        <file-output name="test-from-traffic-analyzer-probe">
+            <filename>/var/log/dolphin/test/test-5.1-from-traffic-analyzer-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>10</max-files-index>
+        </file-output>
+		
+		<traffic-analyzer name="test-traffic-analyzer">		<!-- Test 5.0 --> 
+            <talker-id>ET</talker-id>						<!-- Test 5.1 --> 
+            <nmea-type>ZDA</nmea-type>						<!-- Test 5.1 --> 
+            <timeout>00:00:02:000</timeout>					<!-- Test 5.2 --> 
+            <period>00:00:01:000</period>					<!-- Test 5.2 --> 
+        </traffic-analyzer>
+</objects>
+
+	<applications>	
+        <application name="test-app">
+			<watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="40"/> 
+                       
+            <data-flow notifier="test-udp-from-notebook" subscriber="test-traffic-analyzer"/>
+            <data-flow notifier="test-udp-from-notebook" subscriber="test-from-udp-probe"/>
+            <data-flow notifier="test-traffic-analyzer" subscriber="test-from-traffic-analyzer-probe"/>
+
+        </application>
+    </applications>
+</configuration>

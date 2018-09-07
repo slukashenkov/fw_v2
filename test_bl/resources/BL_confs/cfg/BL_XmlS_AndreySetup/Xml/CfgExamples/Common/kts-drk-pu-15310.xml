@@ -1,0 +1,77 @@
+<configuration>
+    <objects>
+        <udp-connection name="kts-drk-right-udp">
+            <source-address>127.0.0.1</source-address>
+            <source-port>23501</source-port>
+        </udp-connection>
+        <udp-connection name="kts-drk-left-udp">
+            <source-address>127.0.0.1</source-address>
+            <source-port>23502</source-port>
+        </udp-connection>
+        <udp-connection name="kts-pu-1-udp">
+            <source-address>127.0.0.1</source-address>
+            <source-port>23601</source-port>
+        </udp-connection>
+        <udp-connection name="kts-pu-2-udp">
+            <source-address>127.0.0.1</source-address>
+            <source-port>23602</source-port>
+        </udp-connection>
+    </objects>
+
+    <applications>
+        <application name="kts-drk-pu-15310-app">
+
+            <!--
+                Параметр param-prefix задает префикс, который добавляется к имени параметра.
+                Параметр validate-nmea опциональный, включает валидацию типов полей  nmea на основе документации 
+            -->
+            <kts-drk-right-data-subscriber name="kts-drk-right" param-prefix="drk-right-" validate-nmea="true"/>
+            <kts-drk-left-data-subscriber name="kts-drk-left" param-prefix="drk-left-" validate-nmea="true"/>
+            <kts-pu1-data-subscriber name="kts-pu-1"  param-prefix="pu1-" validate-nmea="true"/>
+            <kts-pu2-data-subscriber name="kts-pu-2"  param-prefix="pu2-" validate-nmea="true"/>
+
+            <data-flow notifier="kts-drk-right-udp" subscriber="kts-drk-right"/>
+            <data-flow notifier="kts-drk-left-udp" subscriber="kts-drk-left"/>
+            <data-flow notifier="kts-pu-1-udp" subscriber="kts-pu-1"/>
+            <data-flow notifier="kts-pu-2-udp" subscriber="kts-pu-2"/>
+
+            <param-descriptors>
+                <!-- имена параметров указываются с префиксами -->
+                <param name="drk-right-baller-assignment">Заданное положение балера (ДРК правого борта)</param>
+                <param name="drk-right-rot-speed-assignment">Заданное значение скорости вращения гребного винта (ДРК правого борта)</param>
+                <param name="drk-right-baller">Фактическое положение баллера (ДРК правого борта)</param>
+                <param name="drk-right-az-drive-load">Фактическая нагрузка на азимутальный привод (ДРК правого борта)</param>
+                <param name="drk-right-engine-rot-speed">Фактическое значение скорости вращения двигателя (ДРК правого борта)</param>
+                <param name="drk-right-propeller-drive-load">Фактическая нагрузка на гребной привод (ДРК правого борта)</param>
+
+                <param name="drk-left-baller-assignment">Заданное положение балера (ДРК левого борта)</param>
+                <param name="drk-left-rot-speed-assignment">Заданное значение скорости вращения гребного винта (ДРК левого борта)</param>
+                <param name="drk-left-baller">Фактическое положение баллера (ДРК левого борта)</param>
+                <param name="drk-left-az-drive-load">Фактическая нагрузка на азимутальный привод (ДРК левого борта)</param>
+                <param name="drk-left-engine-rot-speed">Фактическое значение скорости вращения двигателя (ДРК левого борта)</param>
+                <param name="drk-left-propeller-drive-load">Фактическая нагрузка на гребной привод (ДРК левого борта)</param>
+
+                <param name="pu1-ed-speed">Фактическая скорость вращения ЭД ПУ (ПУ №1)</param>
+                <param name="pu1-ed-load">Фактическая нагрузка на привод ЭД ПУ (ПУ №1)</param>
+                <param name="pu1-rot-cmd">Команда вращения от ДП (ПУ №1)</param>
+                <param name="pu1-oil-temp">Температура масла (ПУ №1)</param>
+                <param name="pu1-rot-indication">Индикация скорости вращения ЭД ПУ (ПУ №1)</param>
+                <param name="pu1-load-indication">Индикация нагрузки на привод ЭД ПУ (ПУ №1)</param>
+                <param name="pu1-rot-assignment">Задание скорости вращения (ПУ №1)</param>
+
+                <param name="pu2-ed-speed">Фактическая скорость вращения ЭД ПУ (ПУ №2)</param>
+                <param name="pu2-ed-load">Фактическая нагрузка на привод ЭД ПУ (ПУ №2)</param>
+                <param name="pu2-rot-cmd">Команда вращения от ДП (ПУ №2)</param>
+                <param name="pu2-oil-temp">Температура масла (ПУ №2)</param>
+                <param name="pu2-rot-indication">Индикация скорости вращения ЭД ПУ (ПУ №2)</param>
+                <param name="pu2-load-indication">Индикация нагрузки на привод ЭД ПУ (ПУ №2)</param>
+                <param name="pu2-rot-assignment">Задание скорости вращения (ПУ №2)</param>
+            </param-descriptors>
+
+            <data-server>
+                <dataserver-connection protocol="tcp" sender-port="3333" listener-port="7777" client-timeout="30" />
+            </data-server>
+
+        </application>
+    </applications>
+</configuration>

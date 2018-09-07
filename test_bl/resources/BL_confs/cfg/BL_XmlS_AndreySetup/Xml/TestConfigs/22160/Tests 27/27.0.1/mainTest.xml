@@ -1,0 +1,63 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <!--config-path>d:\Baselibraries\bin2\config\</config-path-->
+        <config-path>/etc/dolphin/22160/</config-path>
+    </plugin-parameters>
+ 
+    <plugins>
+
+    </plugins>
+		
+    <objects>
+        <!-- #################### COMMON slots,etc #################### -->
+
+</objects>
+
+
+
+<!-- TEST CONFIGURATION 27.0.1 -->
+	<objects>
+
+		<file-output name="test-from-modbus-rtu-client-probe">
+            <filename>/var/log/dolphin/test/test-27.0.1-from-modbus-rtu-client-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>	
+	
+</objects>
+
+	<applications>	
+        <application name="test-app">
+			<watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="40"/>
+            
+            <modbus-rtu-client slaveId="1" regStart="0" regQnty="9">
+                <!-- Notifier, передающий NMEA, сформированное из прочитанных Modbus-регистров -->
+                <nmea-notifier name="modbus-nmea-notifier"/>
+                <nmea-format>
+                    <nmea-sentence id="SFXDN:" regStart="0" regQnty="9"/>
+                </nmea-format>
+                <!-- Интервал передачи Modbus RTU-команд -->
+                <report-period>00:00:01:000</report-period>
+                <!-- Конфигурация serial-порта, по которому происходит Modbus RTU-обмен -->
+                <serial-port>
+                    <port>/dev/ttyRTS17</port>
+                    <speed>9600</speed>
+                    <control-parity>none</control-parity>
+                    <numbit>8</numbit>
+                    <stopbits>1</stopbits>
+                </serial-port>
+            </modbus-rtu-client>
+			
+			<data-flow notifier="modbus-nmea-notifier" subscriber="test-from-modbus-rtu-client-probe"/>
+
+        </application>
+		
+		
+    </applications>
+</configuration>

@@ -1,0 +1,57 @@
+<configuration>
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+
+        <!--serial-port-connection name="sonata-serial-in">
+            <port>/dev/pts/4</port>
+            <speed>2400</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+        </serial-port-connection-->
+
+        <udp-connection name="sonata-udp-in">
+            <source-address>10.11.10.11</source-address>
+            <source-port>55555</source-port>
+        </udp-connection>
+
+        <udp-connection name="udp-out">
+            <destination-address>10.11.10.12</destination-address>
+            <destination-port>55556</destination-port>
+        </udp-connection>
+
+        <udp-connection name="udp-out-02">
+            <destination-address>10.11.10.12</destination-address>
+            <destination-port>55557</destination-port>
+        </udp-connection>
+
+        <file-output name="sonata-nmea-probe">
+		<filename>/var/log/dolphin/sonata-auto/sonata-nmea</filename>
+        </file-output>
+
+        <file-output name="sonata-raw-probe">
+		<filename>/var/log/dolphin/sonata-auto/sonata-raw</filename>
+        </file-output>
+
+    </objects>
+
+    <applications>
+        <application name="sonata-app">
+
+            <sonata-subscriber name="sonata-in" />
+            <nmea-notifier name="parsed-sonata-out" />
+            <raw-notifier name="raw-sonata-out" />
+
+            <data-flow notifier="sonata-udp-in" subscriber="sonata-in"/>
+            <data-flow notifier="parsed-sonata-out" subscriber="udp-out"/>
+            <data-flow notifier="parsed-sonata-out" subscriber="udp-out-02"/>
+            <data-flow notifier="parsed-sonata-out" subscriber="sonata-nmea-probe"/>
+            <data-flow notifier="raw-sonata-out" subscriber="sonata-raw-probe" />
+
+        </application>
+    </applications>
+
+</configuration> 

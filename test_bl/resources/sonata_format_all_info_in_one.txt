@@ -1,0 +1,99 @@
+
+"""
+options
+...here are external refs:
+"""
+#"""
+#there was some thought to use it
+#from binascii b2a_hex
+#"""
+
+from binascii import a2b_qp
+from bitstring import BitArray
+
+#"""
+#Part 1
+
+#resulting object`s fields
+#"""
+
+mtype = BitArray(bin='00')  # тип сообщения: 00 - нав.данные, 01 - текст Ж
+sonata_id = BitArray(bin='000000000001')  # id
+lat = BitArray(bin=''.join(('1011001', '0111011', '0111011', '1001')))  # 89,59,59,9
+lon = BitArray(bin="".join(('10110011', '0111011', '0111011', '1001')))  # 179,59,59,9
+vel = BitArray(bin=''.join(('111', '1100011')))  # 7,99
+course = BitArray(bin=''.join(('11', '0111011')))  # 3,59
+state = BitArray(bin='100')  # A(ctual), N(orth), E(ast)
+tail = BitArray(17)  # Датчики и каналы управления игнорируются плагином.
+
+bs_data = mtype + sonata_id + lat + lon + vel + course + state + tail
+bs_msg = bs_data.hex.upper()
+print(bs_msg)
+
+#"""
+#Part 2
+
+#checksum calculation
+#execute on
+#bs_data
+#"""
+
+def checksum(bitarray):
+    """
+    Part 3
+
+    here is how it is done
+    """
+    summa = sum((octet.int for octet in bitarray.cut(8)))
+    return BitArray(hex(summa))[-8:].hex.upper()
+
+def addChecksum(msg):
+    """
+    Part 3
+
+    here is how it is done
+    """
+    return msg+checksum(BitArray(a2b_qp(msg)))
+
+
+
+    def message(self):
+
+        """
+
+        Part 3
+        example json BUT may need some adjustment
+
+
+        {"vel": "0",
+          "lat":  {"dd":"19","mm":"19", "ss_s":"0.1","hs":"1"},
+          "signal": "2",
+          "valid": "1",
+          "mtype": "0",
+          "sid": "0",
+          "course": "0",
+          "lon": {"dd":"0","mm":"0", "ss_s":"0.2","hs":"0"}
+        }
+
+        """
+
+        # TODO: quick and dirty solution. Refact it.
+        mtype = BitArray(bin=self.entryes['mtype'].bitstring())
+        sid = BitArray(bin=self.entryes['sid'].bitstring())
+        lat = BitArray(bin=self.entryes['lat'].bitstring())
+        lon = BitArray(bin=self.entryes['lon'].bitstring())
+        vel = BitArray(bin=self.entryes['vel'].bitstring())
+        course =  BitArray(bin=self.entryes['course'].bitstring())
+        state =  BitArray(bin=self._state())
+        tail = BitArray(17) # Датчики и каналы управления игнорируются плагином.
+        signal = BitArray(bin=self.entryes['signal'].bitstring())
+
+        bs_data = mtype+sid+lat+lon+vel+course+state+tail+signal
+        bs_msg = bs_data.hex.upper()
+
+        return str('$'+ addChecksum(bs_msg) + '\n')
+
+
+
+
+

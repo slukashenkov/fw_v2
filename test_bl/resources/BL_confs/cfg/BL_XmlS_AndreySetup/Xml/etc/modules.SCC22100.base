@@ -1,0 +1,10 @@
+# /etc/modules: kernel modules to load at boot time.
+#
+# This file should contain the names of kernel modules that are
+# to be loaded at boot time, one per line.  Comments begin with
+# a `#', and everything on the line after them are ignored.
+
+# CTI serial adaptors
+cti_serial_core
+cti_8250
+cti_8250_pci

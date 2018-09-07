@@ -1,0 +1,86 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+         <serial-port-connection name="serial-port-io-1">
+            <port>\\.\COM4</port>
+            <speed>4800</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+         <serial-port-connection name="serial-port-io-2">
+            <port>\\.\COM5</port>
+            <speed>4800</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+        </serial-port-connection>
+
+         <udp-connection name="udp-out-1">
+            <source-address>10.10.78.22</source-address>
+            <destination-address>10.10.74.55</destination-address>
+            <destination-port>20000</destination-port>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+        <udp-connection name="udp-in-1">
+            <source-address>10.10.78.22</source-address>
+            <source-port>20000</source-port>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+         <udp-connection name="udp-out-2">
+            <source-address>10.10.78.22</source-address>
+            <destination-address>10.10.74.55</destination-address>
+            <destination-port>20001</destination-port>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+        <udp-connection name="udp-in-2">
+            <source-address>10.10.78.22</source-address>
+            <source-port>20001</source-port>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+        <file-output name="serial-port-probe-1">
+            <filename>c:\tmp\log\serial-port-in-1</filename>
+        </file-output>
+
+        <file-output name="serial-port-probe-2">
+            <filename>c:\tmp\log\serial-port-in-2</filename>
+        </file-output>
+
+        <file-output name="udp-in-probe">
+            <filename>c:\tmp\log\udp-in</filename>
+        </file-output>
+
+    </objects>
+    <applications>
+
+        <application name="app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <data-flow notifier="serial-port-io-1" subscriber="udp-out-1"/>
+            <data-flow notifier="udp-in-1" subscriber="serial-port-io-1"/>
+
+            <data-flow notifier="udp-in-1" subscriber="udp-in-probe"/>
+            <data-flow notifier="serial-port-io-1" subscriber="serial-port-probe-1"/>
+
+            <!--
+            <data-flow notifier="serial-port-io-2" subscriber="udp-out-2"/>
+            <data-flow notifier="serial-port-io-2" subscriber="serial-port-probe-2"/>
+            <data-flow notifier="udp-in-2" subscriber="serial-port-io-2"/>
+            <data-flow notifier="udp-in-2" subscriber="udp-in-probe"/>
+            -->
+        </application>
+
+        <application name="zda-app">
+             <zda-notifier period="00:00:01.000" name="zda-gen"/>
+        </application>
+    </applications>
+</configuration>

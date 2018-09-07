@@ -1,0 +1,137 @@
+<configuration>
+
+    <global-parameters>
+        <path>/usr/bin/dolphin/MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <slot name="slot-in">
+            <max-size>32</max-size>
+            <update-time>00:00:00:500</update-time>
+        </slot>
+
+        <connection-monitor name="slot-monitor">
+            <link-state-id>L.MANCHESTER.EXT.CTRL</link-state-id>
+            <timeout>00:00:02:000</timeout>
+        </connection-monitor>
+    </objects>
+
+    <applications>
+        <application name="manchester-reader-demo-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+            
+            <manchester-reader name="manchester-conn-in">
+                <!-- Номер инициализируемого адаптера, диапазон [0..N-1] -->
+                <card-no>0</card-no>    
+                
+                <!-- Адрес инициализируемого адаптера в режиме ОУ или
+                     удаленного устройства в режиме КК, обязателен для КК, 
+                     диапазон [0..31], 31 - групповая передача -->
+                <address>17</address>   
+                     
+                 <!-- Подадрес удаленного устройства, с которым ведется обмен 
+                      в режиме КК по любой из шин А и B, [0..30]-->
+                <subaddress>10</subaddress> 
+                
+                 <!-- Подадреса удаленного устройства, с которым ведется обмен 
+                      в режиме КК по шинам А и B, [0..30] -->
+                <subaddress busA="10" busB="20"/>
+                                                
+                <!-- Размер данных в байтах, запрашиваемых от ОУ;
+                    обязательный для manchester-reader'а в режиме КК, диапазон [2..64] -->
+                <data-size>10</data-size> 
+                
+                <!-- максимальная длительность одного цикла ожидания принимаемых из канала данных, 
+                    ответа на команду или интервал опроса ОУ; обязательный -->  
+                <max-wait-duration>00:00:01:000</max-wait-duration> 
+                
+                <!-- Передает принятые MII-команды; обязателен для manchester-reader'а в режиме ОУ -->    
+                <cmd-notifier name="manchester-cmd-out"/>
+                
+                <!-- Режим работы, обязательный, допустимые значения : 
+                    rt (Remote Terminal/RT/Оконечное Устройство/ОУ), 
+                    bc (Bus Controller/BC/Контроллер Канала/КК), 
+                    bm (Bus Monitor/BM/Монитор Канала/МК) -->                                               
+                <mode>bc</mode>     
+            </manchester-reader>
+        </application>
+        
+        <application name="manchester-writer-demo-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <manchester-writer name="manchester-conn-out">
+                <card-no>2</card-no>
+                <address>20</address>
+                <subaddress>20</subaddress>
+                <max-wait-duration>00:00:01:000</max-wait-duration>
+                
+                <!-- 
+                    Режим работы, обязательный, допустимые значения : 
+                    bc, bc-no-irq (КК - контроллер канала), auto.
+                    
+                    В режиме auto : <manchester-writer> запускается как МК (монитор канала) и следит за 
+                    наличием в манчестер-шине пакетов (адресованых на <address> и групповых). 
+                    При отсутствии в шине пакетов в течение <switch-timeout>, <manchester-writer>
+                    переключается в режим bc-no-irq (КК) и остается в нем навсегда.
+                    
+                    После переключения в режим КК, <manchester-writer> принудительно 
+                    переключается в режим МК если : 
+                     - astd-subscriber задан
+                     - на него принят параметр с именем astd-name и значением 0, 
+
+                    Режим auto предполагает запуск пары одинаковых <manchester-writer>
+                    (на разных компах, c разными <switch-timeout>), подключенных к одной манчестер-шине.
+                    Через них должны передаваться данные с частотой более <switch-timeout>. 
+                    Cам <manchester-writer> НЕ передает никаких дополнительных keeplive-пакетов.
+                    
+                    В результате один из <manchester-writer> (первый из запущенных, или с меньшим <switch-timeout>) 
+                    переключается после запуска из МК в КК, а другой остается в режиме МК до тех пор, 
+                    пока не выключится или не сломается первый.
+                -->
+                <mode>bc</mode> 
+
+                <!-- Таймаут до переключения из режима МК в КК в режиме auto-->
+                <switch-timeout>00:00:05:000</switch-timeout>
+
+                <!-- Принимает контейнер АСТД-параметров. 
+                     Параметр с именем astd-name управляет переключением из КК в МК в режиме auto -->
+                <astd-subscriber name="manchester-ext-control" astd-name="L.MANCHESTER.EXT.CTRL"/>
+
+                <!-- параметры контроля состояния связи с ОУ и переключения между 
+                  основной и резервной шинами; допустим для КК в любом режиме -->
+                <line-control bus="A" period="00:00:01:000" timeout="00:00:03:000">
+                    <!-- bus : Канал, по которому передаем данные : A (основной), B (резервный), 
+                        auto (переключать между каналами при отсутствии ОС от ОУ в течение timeout);
+                        по умолчанию A;-->
+
+                    <!-- period : Интервал опроса состояния связи с  ОУ; обязателен -->
+
+                    <!-- timeout : таймаут на отсутствие ОС от ОУ при переключении между каналами и 
+                        генерации АСТД-параметров; обязателен --> 
+
+                    <!-- Передает контейнер АСТД-параметров с состоянием ОУ, 
+                        перечисленных в тегах remote-terminal; обязательный -->
+                    <astd-notifier name="manchester-conn-astd"/>
+
+                    <!-- Периодическая передача ОУ с адресом address команды "Передать ОС" 
+                        и генерация АСТД-параметра с именем astd-name и значением "наличие ответов от ОУ".
+                        При неполучении ответов от ОУ в течение bus-timeout, АСТД-параметр устанавливается в false-->
+                    <remote-terminal address="1" astd-name="L.DEVICE1.STATE"/>
+                    <remote-terminal address="2" astd-name="L.DEVICE2.STATE"/>
+                </line-control>
+
+                <!-- Для явного указания используемой шины можно указать : 
+                <line-control bus="B"/>
+                     При этом АСТД-параметры не формируются и шина автоматически не переключается 
+                     (то есть значение bus="auto" игнорируется)
+                --> 
+                
+            </manchester-writer>
+            
+            <data-flow notifier="slot-in" converter="slot-monitor" subscriber="manchester-ext-control"/>
+        </application>
+        
+        
+    </applications>
+
+</configuration>

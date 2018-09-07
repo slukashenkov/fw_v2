@@ -1,0 +1,64 @@
+if __name__ == '__main__':
+    mtype = BitArray(bin='00')      # тип сообщения: 00 - нав.данные, 01 - текст Ж
+    sonata_id = BitArray(bin='000000000001')    # id
+    lat = BitArray(bin=''.join(( '1011001','0111011','0111011','1001'))) # 89,59,59,9
+    #                             1011001   0111011   0111011   1001
+    lon = BitArray(bin="".join(('10110011','0111011','0111011','1001'))) #179,59,59,9
+    #                            10110011   0111011   0111011   1001
+    vel = BitArray(bin=''.join(('111','1100011')))                       # 7,99
+    #                            111   1100011
+    course =  BitArray(bin=''.join(('11','0111011'))) # 3,59
+    #                                11   0111011
+    state =  BitArray(bin='100') # A(ctual), N(orth), E(ast)
+    tail = BitArray(17) # Датчики и каналы управления игнорируются плагином.
+    
+    bs_data = mtype+sonata_id+lat+lon+vel+course+state+tail
+    bs_msg = bs_data.hex.upper()
+    print (bs_msg)
+
+	
+	
+	0006CBB77366EDDCFC7BB80000
+	
+	mtype 		0b11
+	sonata_id	0x001
+	lat			0b1011001-0-111011-0-1110111001
+				0b1011001-0-111011-0-1110111001
+	lon			0b10110011011101101110111001
+	vel			0b1111100011
+	course		0b110111011
+	state		0b100
+	tail		0b00000000000000000
+	
+	0b1011001011101101110111001
+	0b1011001011101101110111001
+	
+	$C006CBB77366EDDCFC7BB20000F39
+	$C00ECBB77366EDDCFC7BB20000F48
+	$C006CBB77366EDDCFFFFF20000F53
+	
+	
+	$C006CBB77366EDDCFFFFF2F93
+	$C00ECBB77366EDDCFC7BB2F88
+
+'
+	
+	0b1011001011101101110111001
+	  1011001011101101110111001
+	  
+	  10110011011101101110111001
+	  
+	  C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\bl_frame_work\\test_bl\\test_bl_configs\\ssh_bl_conf_files.ini
+	  
+	  SSH_HOST = 10.11.10.11
+
+SSH_PORT
+SSH_USER_NAME
+SSH_PASSWD
+SSH_TARGET
+
+self.ssh_host
+self.ssh_port
+self.ssh_user
+self.ssh_pwd
+self.ssh_target_dir

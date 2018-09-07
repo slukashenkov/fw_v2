@@ -1,0 +1,64 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <!--config-path>d:\Baselibraries\bin2\config\</config-path-->
+        <config-path>/etc/dolphin/22160/</config-path>
+    </plugin-parameters>
+ 
+    <plugins>
+
+    </plugins>
+		
+    <objects>
+        <!-- #################### COMMON slots,etc #################### -->
+
+</objects>
+
+
+
+<!-- TEST CONFIGURATION 28.0 -->
+	<objects>
+
+		<file-output name="test-from-modbus-rtu-server-probe">
+            <filename>/var/log/dolphin/test/test-28.0-from-modbus-rtu-server-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>	
+	
+</objects>
+
+	<applications>	
+        <application name="test-app">
+			<watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="40"/>
+            
+            <modbus-rtu-server slaveId="1" regStart="0" regQnty="5072">
+                <nmea-notifier name="modbus-nmea-notifier"/>
+                <nmea-format>
+                    <nmea-sentence id="PGXDN" regStart="4864" regQnty="2"/>
+                    <nmea-sentence id="PGXDN" regStart="4869" regQnty="1"/>
+                    <nmea-sentence id="PGXDN" regStart="4870" regQnty="2"/>
+                    <nmea-sentence id="PGXDN" regStart="4880" regQnty="64"/>
+                    <nmea-sentence id="PGXDN" regStart="4944" regQnty="128"/>
+                </nmea-format>
+                <report-period>00:00:01:000</report-period>
+                <serial-port>
+                    <port>/dev/ttyRTS20</port>
+                    <speed>19200</speed>
+                    <control-parity>none</control-parity>
+                    <numbit>8</numbit>
+                    <stopbits>2</stopbits>
+                </serial-port>
+            </modbus-rtu-server> 
+			
+			<data-flow notifier="modbus-nmea-notifier" subscriber="test-from-modbus-rtu-server-probe"/>
+
+        </application>
+		
+		
+    </applications>
+</configuration>

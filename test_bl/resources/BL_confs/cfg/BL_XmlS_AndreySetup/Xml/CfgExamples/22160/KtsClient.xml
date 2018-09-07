@@ -1,0 +1,74 @@
+<configuration>
+<objects>
+        <file-output name="kts-in-probe">
+            <filename>/var/log/dolphin/22160/kts-in</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+            <format>astd</format>
+        </file-output>
+</objects>
+
+    <applications>
+        <application name="kts-client-app">
+
+            <kts-client connectTimeout="00:00:00:100" 
+                        pollPeriod="00:00:05:000"
+                        regOffset="0"
+                        channelsQnty="63">
+                <address>10.16.1.111:1502</address>
+                <astd-notifier name="kts-state-arm-k1-notifier"/>
+                <!-- Набор названий параметров name для регистров со смещением offset относительно начала блока данных.
+                     К каждому значению регистра применяется маска mask.
+                     Для вычисления результата может использоваться максимально допустимое значение maxValue или
+                     точное значение expectedValue. Если задано значение expectedValue, то maxValue игнорируется.
+                     Результат для ASTD-сервера определяется как:
+                      (regValue & mask) == expectedValue, если значение expectedValue задано, и
+                      (regValue & mask) > maxValue, если значение expectedValue не задано,
+                     где regValue - полученное от nitifier значение регистра.
+                     Смещение offset, значения maxValue и expectedValue задаются 10-ным числом,
+                     значение маски - 16-ным (с префиксом 0x или без).
+                     Значение маски опционально, по умолчанию равно 0xffff.
+                     Значение maxValue опционально, по умолчанию равно 0.
+                     Значение expectedValue опционально, если задано, то значение maxValue игнорируется.
+                     Смещение offset не обязано быть уникальным.
+                  -->
+
+                <!-- значение в регистре 0 превышает 500 -->
+                <state name="S.K1.KTS.Status0"
+                       offset="0"
+                       maxValue="500" />
+
+                <!-- установлен один из младших 8 битов в регистре 1 -->
+                <state name="S.K1.KTS.Status1a"
+                       offset="1"
+                       mask="0x00ff" />
+
+                <!-- установлен один из страших 8 битов в регистре 1 -->
+                <state name="S.K1.KTS.Status1b"
+                       offset="1"
+                       mask="0xff00" />
+
+                <!-- значение регистра 2 после применения маски 0xbeaf не равно 0 -->
+                <state name="S.K1.KTS.Status2"
+                       offset="2"
+                       mask="BEAF" />
+
+                <!-- значение регистра 3 в младших 8 битах превышает значение 200 -->
+                <state name="S.K1.KTS.Status3"
+                       offset="3"
+                       mask="0xff"
+                       maxValue="200" />
+
+                <!-- значение регистра 18 в младших 2 битах равно 3 -->
+                <state name="S.K1.KTS.Status4"
+                       offset="18"
+                       mask="0x0003"
+                       expectedValue="3" />
+
+            </kts-client>
+            <data-flow notifier="kts-state-arm-k1-notifier" subscriber="kts-in-probe"/>
+            <data-flow notifier="kts-state-arm-k1-notifier" subscriber="astd-slot"/>
+
+        </application>
+    </applications>
+</configuration>

@@ -1,0 +1,43 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <slot name="data-proxy-slot">
+            <max-size>1024</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+    </objects>
+
+    <applications>
+        <application name="manchester-receiver-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <manchester-reader name="manchester-conn-in">
+                <card-no>3</card-no>
+                <address>19</address>
+                <max-wait-duration>00:00:01:000</max-wait-duration>
+		<mode>rt</mode>
+            </manchester-reader>
+
+            <data-flow notifier="manchester-conn-in" subscriber="data-proxy-slot"/>
+        </application>
+
+        <application name="manchester-sender-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <manchester-writer name="manchester-conn-out">
+                <card-no>2</card-no>
+                <address>20</address>
+                <subaddress>20</subaddress>
+                <max-wait-duration>00:00:01:000</max-wait-duration>
+		<mode>bc</mode>
+            </manchester-writer>
+
+            <data-flow notifier="data-proxy-slot" subscriber="manchester-conn-out"/>
+        </application>
+    </applications>
+</configuration>
+    

@@ -1,0 +1,52 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+<!-- TEST CONFIGURATION 22.0 -->
+<objects> 
+
+		<udp-connection name="test-udp-from-ariadna" mode="server">
+            <source-address>192.168.12.3</source-address>
+            <source-port>47114</source-port>
+		</udp-connection>
+		
+		<udp-connection name="test-udp-to-imitator">
+            <destination-address>192.168.12.11</destination-address>
+            <destination-port>48114</destination-port>
+        </udp-connection>
+		
+		<file-output name="test-format-from-ariadna-probe">
+            <filename>/var/log/dolphin/test/test-22.0-format-from-ariadna-probe</filename>
+            <rotate>true</rotate>
+			<format>from-ariadna</format>
+            <max-files-index>10</max-files-index>
+        </file-output>
+		
+		<file-output name="test-format-to-ariadna-probe">
+            <filename>/var/log/dolphin/test/test-22.0-format-to-ariadna-probe</filename>
+            <rotate>true</rotate>
+			<format>to-ariadna</format>
+            <max-files-index>10</max-files-index>
+        </file-output>
+		
+</objects>
+
+    <applications>
+        <application name="ariadna-test-app">
+			<!--watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="40"/-->
+            
+			<ariadna-dispatcher name="ariadna-disp-test"/>
+			
+            <data-flow notifier="test-udp-from-ariadna" subscriber="ariadna-disp-test"/>
+            <data-flow notifier="test-udp-from-ariadna" subscriber="test-format-from-ariadna-probe"/>
+
+			<data-flow notifier="ariadna-disp-test" subscriber="test-udp-to-notebook"/>
+			<data-flow notifier="ariadna-disp-test" subscriber="test-udp-to-imitator"/>
+            <data-flow notifier="ariadna-disp-test" subscriber="test-format-to-ariadna-probe"/>
+
+		</application>
+    </applications>
+
+</configuration>

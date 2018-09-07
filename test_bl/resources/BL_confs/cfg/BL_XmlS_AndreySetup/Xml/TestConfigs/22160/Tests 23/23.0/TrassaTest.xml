@@ -1,0 +1,70 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+<!-- TEST CONFIGURATION 21.0 -->
+	<objects> 
+        <udp-connection name="test-trassa-udp-from-imitator">
+            <source-address>192.168.201.3</source-address>
+            <source-port>47102</source-port>
+        </udp-connection>       
+		
+        <serial-port-connection name="serial-port-ais-io">
+            <port>/dev/ttyRTS11</port>
+            <speed>38400</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+        </serial-port-connection>
+
+		<file-output name="test-from-udp-trassa-imitator-probe">
+            <filename>/var/log/dolphin/test/test-23.0-from-udp-trassa-imitator-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+		
+		<file-output name="test-from-serial-ais-imitator">
+            <filename>/var/log/dolphin/test/test-23.0-from-serial-ais-imitator</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>		
+		
+		<file-output name="test-to-trassa-arm-probe">
+            <filename>/var/log/dolphin/test/test-23.0-to-trassa-arm-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+
+		<file-output name="test-from-trassa-astd-probe">
+            <filename>/var/log/dolphin/test/test-23.0-from-trassa-astd-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>		
+				
+	</objects>
+
+    <applications>
+        <application name="trassa-test-app">
+			<trassa-dispatcher name="trassa">
+				<astd-param name="S.TRASSA.FE.KD1"/>
+				<astd-notifier name="trassa-astd-notifier"/>
+				<trassa-notifier name="trassa-notifier"/>
+				<subscriber name="trassa-subscriber"/>
+				<ais-subscriber name="ais-subscriber"/>
+			</trassa-dispatcher>
+			
+			<data-flow notifier="test-trassa-udp-from-imitator" subscriber="trassa-subscriber"/>
+            <data-flow notifier="test-trassa-udp-from-imitator" subscriber="test-from-udp-trassa-imitator-probe"/>
+			
+			<data-flow notifier="serial-port-ais-io" subscriber="ais-subscriber"/>
+            <data-flow notifier="serial-port-ais-io" subscriber="test-from-serial-ais-imitator"/>			
+			
+            <data-flow notifier="trassa-notifier" subscriber="test-to-trassa-probe"/>
+            <data-flow notifier="trassa-astd-notifier" subscriber="test-from-trassa-astd-probe"/>			
+
+		</application>
+    </applications>
+
+</configuration>

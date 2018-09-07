@@ -1,0 +1,38 @@
+<configuration>
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+         <slot name="slot-in">
+            <type>win-pipe</type>
+        </slot>
+        <slot name="slot-out">
+            <type>win-pipe</type>
+        </slot>
+
+        <file-output name="to-probe">
+            <filename>c:\to-ariadna.txt</filename>
+            <format>to-ariadna</format>
+        </file-output>
+        <file-output name="from-probe">
+            <filename>c:\from-ariadna.txt</filename>
+            <format>from-ariadna</format>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="vapp">
+            <watchdog aliveTimeout="00:01:01:000" terminationTime="00:01:01:200" startupDuration="00:01:00:500"/>
+
+            <ariadna-dispatcher name="ariadna"/>
+
+            <data-flow notifier="slot-in" subscriber="ariadna"/>
+            <data-flow notifier="slot-in" subscriber="from-probe"/>
+            <data-flow notifier="ariadna" subscriber="slot-out"/>
+            <data-flow notifier="ariadna" subscriber="to-probe"/>
+
+        </application>
+    </applications>
+
+</configuration>

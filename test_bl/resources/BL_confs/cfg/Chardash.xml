@@ -1,0 +1,172 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+<objects>
+
+        <serial-port-connection name="serial-port-chardash-io">
+            <port>/dev/ttyRTS15</port>
+            <speed>9600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+        </serial-port-connection>
+
+        <nmea-filter name="chardash-zda-nmea-filter"> <!-- For time correction --> 
+            <nmea type="ZDA" mode="allow"/>
+        </nmea-filter>
+
+        <connection-monitor name="chardash-rs-conn-monitor">
+            <link-state-id>D.CHARDASH.RS.KD1</link-state-id>
+            <timeout>00:00:02:000</timeout>
+        </connection-monitor>
+
+        <udp-connection name="chardashraw-udp-to-bd1-pri">
+            <destination-address>10.7.1.1</destination-address>
+            <destination-port>55100</destination-port>
+        </udp-connection>
+        
+        <udp-connection name="chardashraw-udp-to-bd2-sec">
+            <destination-address>10.7.131.2</destination-address>
+            <destination-port>46200</destination-port>
+        </udp-connection>
+
+        <udp-connection name="chardash-udp-to-arm-pri">
+            <destination-address>239.254.1.1</destination-address>
+            <destination-port>50100</destination-port>
+        </udp-connection>
+
+        <udp-connection name="chardash-udp-to-arm-sec">
+            <destination-address>239.254.131.1</destination-address>
+            <destination-port>50200</destination-port>
+        </udp-connection>
+
+        <udp-connection name="chardash-rs-udp-to-arm-pri">
+            <destination-address>239.254.1.1</destination-address>
+            <destination-port>50128</destination-port>
+        </udp-connection>
+
+        <udp-connection name="chardash-rs-udp-to-arm-sec">
+            <destination-address>239.254.131.1</destination-address>
+            <destination-port>50228</destination-port>
+        </udp-connection>
+
+        <file-output name="chardash-from-manchester-conv-probe">
+            <filename>/var/log/dolphin/22160/chardash-from-manchester-conv</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+
+        <file-output name="chardash-from-rs-probe">
+            <filename>/var/log/dolphin/22160/chardash-from-rs-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>       
+
+        
+        <file-output name="chardash-prp-probe">
+            <filename>/var/log/dolphin/22160/chardash-prp-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+        <!---###############DATE and TIME ##################-->
+        <file-output name="zda-stable-probe">
+            <filename>/var/log/dolphin/22160/zda-stable-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+
+        <converter name="date-time-conv">
+            <type>date-time</type>
+            <timeout>00:00:01:000</timeout>    <!-- default timeduration is 5 sec -->
+        </converter>
+
+        <ascii-extractor type="nmea" name="chardash-nmea-extractor"/>
+
+        <stream-thinner name="date-time-thinner" minInterval="00:15:00:000"/>
+
+        <stream-thinner name="chardash-astd-1hz-thinner" minInterval="00:00:01:000"/>
+
+        <!---###############SeaProject ##################-->
+
+        <nmea-filter name="seaproject-hdt-vbw-dpt-filter">  <!-- need prp extractor from manchester for pitchroll for seaproject-->
+            <nmea type="HDT" mode="allow"/>
+            <nmea type="VBW" mode="allow"/>
+            <nmea type="DPT" mode="allow"/>
+        </nmea-filter>
+
+        <nmea-filter name="chardash-rs-vlw-filter">  
+            <nmea type="VLW" mode="allow"/>           
+        </nmea-filter>
+
+</objects>
+    <applications>
+        <application name="chardash-app">
+            <input-manager>
+                <type>chardashNotToWgs84</type>
+                <talker-id>GP</talker-id>
+                <data-subscriber name="chardash-data-subscriber"/>
+                <data-notifier name="chardash-data-notifier"/>
+                <state-notifier name="chardash-state-notifier"/>
+                <link-state-id name="L.CHARDASH.-.KD1"/>
+                <data-available-id name="D.CHARDASH.MIL.KD1"/>
+                <data-correct-id name="V.CHARDASH.-.KD1"/>
+                <timeout>00:00:01:000</timeout>
+            </input-manager>
+
+            <manchester-reader name="chardash-manchester-in">
+                <card-no>0</card-no>
+                <address>10</address>
+                <max-wait-duration>00:00:01:000</max-wait-duration>
+                <mode>rt</mode>
+            </manchester-reader>
+
+            <!---Chardash Manchester-->
+
+            <data-flow notifier="chardash-manchester-in" subscriber="chardash-data-subscriber"/>
+            <data-flow notifier="chardash-manchester-in" subscriber="chardashraw-udp-to-bd1-pri"/>
+            <data-flow notifier="chardash-manchester-in" subscriber="chardashraw-udp-to-bd2-sec"/>
+            <data-flow notifier="chardash-data-notifier" subscriber="navdata-slot"/>            
+            <data-flow notifier="navdata-slot" subscriber="chardash-udp-to-arm-pri"/>
+            <data-flow notifier="navdata-slot" subscriber="chardash-udp-to-arm-sec"/>
+            <data-flow notifier="chardash-data-notifier" subscriber="chardash-from-manchester-conv-probe"/>
+            <data-flow notifier="chardash-state-notifier" subscriber="astd-slot"/>
+
+
+            <!---Chardash Serial-->
+
+            <data-flow notifier="serial-port-chardash-io" subscriber="chardash-nmea-extractor"/>
+            <data-flow notifier="chardash-nmea-extractor" subscriber="chardash-rs-udp-to-arm-pri"/>
+            <data-flow notifier="chardash-nmea-extractor" subscriber="chardash-rs-udp-to-arm-sec"/>
+            <data-flow notifier="chardash-nmea-extractor" subscriber="chardash-from-rs-probe"/>
+
+            <data-flow notifier="chardash-nmea-extractor" subscriber="chardash-zda-nmea-filter"/>
+            <data-flow notifier="chardash-nmea-extractor" subscriber="seaproject-hdt-vbw-dpt-filter"/>
+            <data-flow notifier="seaproject-hdt-vbw-dpt-filter" subscriber="seaproject-navdata-slot"/>
+
+            <data-flow notifier="chardash-nmea-extractor" subscriber="chardash-rs-vlw-filter"/>
+            <data-flow notifier="chardash-rs-vlw-filter" subscriber="chardash-udp-to-arm-pri"/>
+            <data-flow notifier="chardash-rs-vlw-filter" subscriber="chardash-udp-to-arm-sec"/>
+
+            <data-flow notifier="chardash-nmea-extractor" converter="chardash-rs-conn-monitor" subscriber="chardash-astd-1hz-thinner"/>
+            <data-flow notifier="chardash-astd-1hz-thinner" subscriber="astd-slot"/>
+            
+            <!-- Date and Time correction-->
+            <data-flow notifier="chardash-zda-nmea-filter" converter="date-time-conv" subscriber="zda-slot"/>
+            <data-flow notifier="zda-slot" subscriber="zda-stable-probe"/>
+            <data-flow notifier="zda-slot" subscriber="navdata-slot"/>
+
+            <date-time-handler>
+                <handler-msg>date-time-handler</handler-msg>
+                <notifier-msg>date-time-notifier</notifier-msg>
+            </date-time-handler>
+
+            <data-flow notifier="zda-slot" subscriber="date-time-thinner"/>
+            <data-flow notifier="date-time-thinner" subscriber="date-time-handler"/>
+
+        </application>
+    </applications>
+
+</configuration> 

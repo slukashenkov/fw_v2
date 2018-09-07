@@ -1,0 +1,54 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+    
+    <objects>
+        <!-- 10.10.76.124 -->
+        <udp-connection name="platan-udp-from-imitator">
+            <source-address>192.168.0.2</source-address>
+            <source-port>47903</source-port>
+        </udp-connection>
+        
+        <udp-connection name="platan-udp-to-imitator">
+            <destination-address>192.168.0.1</destination-address>
+            <destination-port>48903</destination-port>
+        </udp-connection>
+        
+<!--
+        <file-output name="platan-from-imitator-probe">
+            <filename>/var/log/dolphin/22160/platan-from-imitator</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+            <format>from-platan</format>
+        </file-output>
+        
+        <file-output name="platan-to-imitator-probe">
+            <filename>/var/log/dolphin/22160/platan-to-imitator</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+            <format>to-platan</format>
+        </file-output>
+-->
+    </objects>
+    
+    <applications>
+        <application name="platan-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="2"/>
+
+            <zda-notifier name="zda-gen" period="00:00:01:000"/> <!-- Генератор временных даннхы -->
+            
+            <!--<data-flow notifier="platan-udp-from-imitator" subscriber="platan"/>-->
+            <!--data-flow notifier="platan-udp-from-imitator" subscriber="platan-from-imitator-probe"/-->
+            <!--<data-flow notifier="platan" subscriber="platan-udp-to-imitator"/-->
+            
+            <data-flow notifier="zda-gen" subscriber="platan-from-imitator-probe"/>
+            <data-flow notifier="zda-gen" subscriber="platan-to-imitator-probe"/>
+            
+            <!--platan-dispatcher>
+            </platan-dispatcher-->
+        </application>
+    </applications>
+    
+</configuration>

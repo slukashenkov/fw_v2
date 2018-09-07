@@ -1,0 +1,30 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <database-connection name ="replay-db-conn">
+            <host>127.0.0.1</host>
+            <port>5432</port>
+            <dbname>replaydb</dbname>
+            <user>replaydbadmin</user>
+            <password>transas9</password>
+        </database-connection>
+    </objects>
+
+    <applications>
+        <application name="vapp">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:200" startupDuration="00:00:00:500"/>
+            
+			<db-time-zone-updater name="test-subscriber">
+				<database-connection name="replay-db-conn"/>
+			</db-time-zone-updater>
+			<zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" subscriber="test-subscriber"/>
+ 
+        </application>
+    </applications>
+
+</configuration>

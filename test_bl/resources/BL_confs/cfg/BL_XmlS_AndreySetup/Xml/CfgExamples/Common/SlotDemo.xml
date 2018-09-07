@@ -1,0 +1,51 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <slot name="slot-demo-out">
+            <!-- 
+                default is 64K
+                for xeno-pipe and win-pipe it means "total size of all elements written to the pipe", 
+                for posix-pipe it is ignored 
+                (data from a posix-pipe will be notified in blocks not greater than max-size),
+                for all other types - it means "size of single element" 
+            -->
+            <max-size>1024</max-size>
+            <!-- default is 100 msec--> 
+            <update-time>00:00:01:000</update-time>
+            <!-- valid types are discarding (default), reliable, xeno-pipe, posix-pipe, win-pipe -->
+            <type>reliable</type>
+            <!-- default is 10 --> 
+            <max-buffer-length>50</max-buffer-length>
+        </slot>
+
+        <slot name="slot-demo-in">
+            <max-size>1024</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>reliable</type>
+        </slot>
+
+       <file-output name="slot-in-probe">
+           <filename>/tmp/slot-in</filename>
+           <format>trace</format>
+       </file-output>
+    </objects>
+
+    <applications>
+        <application name="slot-writer-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200" />
+
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" subscriber="slot-demo-in"/>
+        </application>
+
+        <application name="slot-reader-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200" />
+            <data-flow notifier="slot-demo-in" subscriber="slot-in-probe"/>
+        </application>
+
+    </applications>
+</configuration>

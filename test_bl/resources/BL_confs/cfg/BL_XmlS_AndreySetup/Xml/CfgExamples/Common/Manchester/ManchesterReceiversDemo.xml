@@ -1,0 +1,97 @@
+<configuration>
+
+    <global-parameters>
+        <path>/usr/bin/dolphin/MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <astd-client name="astd-client" report-period="00:00:01:000"/>
+
+        <slot name="KD_PRIM_DATA_FOLKLOR">
+            <max-size>128</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+
+        <slot name="KD_PRIM_DATA_CHARDASH">
+            <max-size>128</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+
+       <file-output name="folkor-in-probe">
+           <filename>/tmp/folkor-in</filename>
+       </file-output>
+
+       <file-output name="folkor-conv-in-probe">
+           <filename>/tmp/folkor-conv-in</filename>
+       </file-output>
+
+       <file-output name="chardash-conv-in-probe">
+           <filename>/tmp/chardash-conv-in</filename>
+       </file-output>
+
+       <file-output name="astd-client-probe">
+           <filename>/tmp/astd-client</filename>
+       </file-output>
+    </objects>
+
+    <applications>
+        <application name="astd-client-application">
+            <watchdog aliveTimeout="00:00:05:000" terminationTime="00:00:00:200"/>
+            <data-flow notifier="KD_PRIM_DATA_FOLKLOR" subscriber="astd-client"/>
+            <data-flow notifier="KD_PRIM_DATA_CHARDASH" subscriber="astd-client"/>
+            <data-flow notifier="astd-client" subscriber="astd-client-probe"/>
+        </application>
+
+        <application name="folklor-receiver-application">
+            <watchdog aliveTimeout="00:00:05:000" terminationTime="00:00:03:200"/>
+
+            <input-manager>
+                <type>folklor-2</type>
+                <state-subscriber name="folklor-state-subscriber"/>
+                <data-subscriber name="folklor-data-subscriber"/>
+                <data-notifier name="folklor-data-notifier"/>
+                <state-notifier name="folklor-state-notifier"/>
+                <timeout>00:00:02:000</timeout>
+            </input-manager>
+
+            <manchester-reader name="folklor-manchester-conn-in">
+                <card-no>4</card-no>
+                <address>17</address>
+                <max-wait-duration>00:00:03:000</max-wait-duration>
+                <cmd-notifier name="folklor-cmd-sync"/>
+            </manchester-reader>
+
+<!--	    
+            <data-flow notifier="folklor-manchester-conn-in" subscriber="folklor-in-probe"/>
+-->
+            <data-flow notifier="folklor-manchester-conn-in" subscriber="folklor-data-subscriber"/>
+            <data-flow notifier="folklor-cmd-sync" subscriber="folklor-state-subscriber"/>
+            <data-flow notifier="folklor-data-notifier" subscriber="folkor-conv-in-probe"/>
+            <data-flow notifier="folklor-state-notifier" subscriber="KD_PRIM_DATA_FOLKLOR"/>
+        </application>
+
+        <application name="chardash-receiver-application">
+            <watchdog aliveTimeout="00:00:05:000" terminationTime="00:00:03:200"/>
+	    
+            <input-manager>
+                <type>chardash</type>
+                <data-subscriber name="chardash-data-subscriber"/>
+                <data-notifier name="chardash-data-notifier"/>
+                <state-notifier name="chardash-state-notifier"/>
+                <timeout>00:00:02:000</timeout>
+            </input-manager>
+
+            <manchester-reader name="chardash-manchester-conn-in">
+                <card-no>0</card-no>
+                <address>19</address>
+                <max-wait-duration>00:00:03:000</max-wait-duration>
+            </manchester-reader>
+
+            <data-flow notifier="chardash-manchester-conn-in" subscriber="chardash-data-subscriber"/>
+            <data-flow notifier="chardash-data-notifier" subscriber="chardash-conv-in-probe"/>
+            <data-flow notifier="chardash-state-notifier" subscriber="KD_PRIM_DATA_CHARDASH"/>
+        </application>
+
+    </applications>
+
+</configuration>

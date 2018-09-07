@@ -1,0 +1,164 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <udp-connection name="udp-in">
+            <source-address>127.0.0.1</source-address>
+            <source-port>59001</source-port>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+        <file-output name="modbus-rtu-client-probe">
+           <filename>/var/log/dolphin/modbus-rtu-client</filename>
+        </file-output>
+    </objects>
+
+<!--=========================================================================-->
+    <applications>
+        <application name="modbus-rtu-client-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <!--
+            slaveId : Modbus unitId/slaveId сервера, с которым ведется обмен
+            resStart, reqQnty : диапазон опрашиваемых Modbus-регистров
+            -->
+            <modbus-rtu-client slaveId="1" regStart="100" regQnty="50">
+                <!-- Notifier, передающий NMEA, сформированное из прочитанных Modbus-регистров -->
+                <nmea-notifier name="modbus-nmea-notifier"/>
+
+                <!--
+                Объединение форматируемых диапазонов (в тегах <nmea-sentence*>) должно содержаться внутри
+                опрашиваемого диапазона (в теге <modbus-rtu-client>)
+
+                floatByteOrder : порядок байт, из которого float-значения распаковываются в <nmea-sentence-float> : 
+                    ABCD       Не меняем порядок байт (значение по умолчанию)
+                    DCBA       Меняем порядок байт и слов
+                    BADC       Меняем порядок байт
+                    CDAB       Меняем порядок слов
+                
+                id : talkerId + sentence formatter предложения, передаваемого <nmea-notifier>-ом
+                regStart, regQnty : диапазон Modbus-регистров, значения которых форматируются в предложение
+                Если не указан reqQnty, то он устанавливается по умолчанию в "1"
+                Если атрибут limitNmeaLen установлен в "true" или "1", или не указан, то этот конфиг 
+                будет форматировать NMEA со значениями максимум 12 modbus-регистров. 
+                Если regQnty>12, то будет форматироваться несколько предложений с одинаковым id и разными regStart.
+
+                <nmea-sentence> форматирует несколько регистров в одно предложение в виде
+                $QQXDN,regStart,hhhh,hhhh,...,hhhh*FF
+
+                <nmea-sentence-extended> форматирует каждый из регистров диапазона в одно предложение в виде
+                 $QQXDN,regNum,hhhh,ddddd,ddL,ddH,b0,...,b15*FF
+
+                    hhhh  - значение 16-битного регистра в big-endian hex (число форматируется так, как оно лежит в Modbus-команде)
+                    ddddd - значение регистра в decimal
+                    ddL   - значение младшего байта регистра в decimal
+                    ddH   - значение старшего байта регистра в decimal
+                    b0    - значение младшего бита регистра (0/1)
+                    b15   - значение старшего бита регистра (0/1)
+
+                <nmea-sentence-float> форматирует каждую пару регистров диапазона :
+                    {regStart, regStart+1}, {regStart+2, regStart+3}, ....  в одно предложение в виде
+
+                 $QQXDN,regNum,hhh0,hhh1,ffff.ff*FF
+
+                    hhh0  - значение регистра regN в hex
+                    hhh1  - значение регистра regN+1 в hex
+                    ffff.ff - значение 32-битового float-а, находящегося в паре регистров {regN, regN+1}
+                 -->
+                <nmea-format floatByteOrder="ABCD">
+                    <nmea-sentence id="QQXD1" regStart="100" regQnty="5"/>
+                    <nmea-sentence id="QQXD2" regStart="105" regQnty="20" limitNmeaLen="true"/>
+                    <nmea-sentence id="QQXD3" regStart="106"/>
+
+                    <nmea-sentence-extended id="QQXD4" regStart="100" regQnty="5"/>
+                    <nmea-sentence-float id="QQXD5" regStart="100" regQnty="4"/>
+                </nmea-format>
+
+                <!-- Интервал передачи Modbus RTU-команд -->
+                <report-period>00:00:01:000</report-period>
+                <!-- Конфигурация serial-порта, по которому происходит Modbus RTU-обмен -->
+                <serial-port>
+                    <port>/dev/ttyCTI7</port>
+                    <speed>9600</speed>
+                    <control-parity>none</control-parity>
+                    <numbit>8</numbit>
+                    <stopbits>1</stopbits>
+                </serial-port>
+            </modbus-rtu-client>
+
+            <data-flow notifier="modbus-nmea-notifier" subscriber="modbus-rtu-client-probe"/>
+        </application>
+
+<!--=========================================================================-->
+        <application name="modbus-rtu-server-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <!--
+                <синтаксис конфига почти аналогичен <modbus-rtu-client>
+            -->
+            <modbus-rtu-server slaveId="1" regStart="100" regQnty="50">
+                <!-- Notifier, передающий NMEA, сформированное из Modbus-регистров -->
+                <nmea-notifier name="modbus-nmea-notifier"/>
+
+                <!--
+                    <синтаксис <nmea-format> аналогичен <modbus-rtu-server>
+                  -->
+                <nmea-format>
+                    <nmea-sentence id="QQXD1" regStart="100" regQnty="5"/>
+                    <nmea-sentence-extended id="QQXD4" regStart="100" regQnty="5"/>
+                    <nmea-sentence-float id="QQXD5" regStart="100" regQnty="4"/>
+                </nmea-format>
+
+                <!-- Минимальный интервал передачи NMEA (максимум - после приема каждой modbus-команды).
+                     NMEA передается вне зависимости от результата обработки принятой команды
+                     (если команда была проигнорирована, то в NMEA все равно передается текущее содержимое регистров)
+                 -->
+                <report-period>00:00:01:000</report-period>
+                <!-- Конфигурация serial-порта, по которому происходит Modbus RTU-обмен -->
+                <serial-port>
+                    <port>/dev/ttyCTI7</port>
+                    <speed>9600</speed>
+                    <control-parity>none</control-parity>
+                    <numbit>8</numbit>
+                    <stopbits>1</stopbits>
+                </serial-port>
+            </modbus-rtu-server>
+
+            <data-flow notifier="modbus-nmea-notifier" subscriber="modbus-rtu-client-probe"/>
+        </application>
+
+<!--=========================================================================-->
+        <application name="modbus-tcp-client-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <!--
+            slaveId : Modbus unitId/slaveId сервера, с которым ведется обмен
+            resStart, reqQnty : диапазон опрашиваемых Modbus-регистров
+            -->
+            <modbus-tcp-client slaveId="1" regStart="100" regQnty="50">
+                <!-- Notifier, передающий NMEA, сформированное из прочитанных Modbus-регистров -->
+                <nmea-notifier name="modbus-nmea-notifier"/>
+                <nmea-format>
+                    <nmea-sentence id="QQXD1" regStart="100" regQnty="5"/>
+                    <nmea-sentence id="QQXD2" regStart="100" regQnty="30" limitNmeaLen="true"/>
+                    <nmea-sentence id="QQXD3" regStart="105" regQnty="15" limitNmeaLen="false"/>
+                </nmea-format>
+
+                <!-- Интервал передачи Modbus RTU-команд -->
+                <report-period>00:00:01:000</report-period>
+                <!-- Конфигурация tcp-соединения, по которому происходит Modbus обмен -->
+                <modbus-tcp>
+                    <remote-address>127.0.0.1</remote-address>
+                    <remote-port>1502</remote-port>
+                </modbus-tcp>
+            </modbus-tcp-client>
+
+            <data-flow notifier="modbus-nmea-notifier" subscriber="modbus-rtu-client-probe"/>
+        </application>
+
+    </applications>
+
+</configuration>

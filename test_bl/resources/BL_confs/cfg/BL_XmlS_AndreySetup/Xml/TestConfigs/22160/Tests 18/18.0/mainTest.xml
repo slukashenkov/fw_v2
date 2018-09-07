@@ -1,0 +1,55 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <!--config-path>d:\Baselibraries\bin2\config\</config-path-->
+        <config-path>/etc/dolphin/22160/</config-path>
+    </plugin-parameters>
+ 
+    <plugins>
+
+    </plugins>
+		
+    <objects>
+        <!-- #################### COMMON slots,etc #################### -->
+
+</objects>
+
+
+
+<!-- TEST CONFIGURATION 18.0 -->
+	<objects>
+
+		<file-output name="test-from-pinger-input-manager-probe">
+            <filename>/var/log/dolphin/test/test-18.0-from-pinger-input-manager-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+
+</objects>
+
+	<applications>	
+        <application name="test-app">
+<!--        <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="40"/> -->
+            
+			<pinger-input-manager>
+                <timeout>00:00:01:000</timeout>
+                <state-notifier name="LAN-state-notifier"/>
+                <!--Pinger start-->
+                <interface address="10.7.1.3">
+                    <target address="10.7.1.1" name="L.TEST.KD1.BD1"/>
+                </interface>
+                <!--Pinger end-->
+            </pinger-input-manager>
+			
+            <data-flow notifier="LAN-state-notifier" subscriber="test-from-pinger-input-manager-probe"/>
+
+        </application>
+		
+		
+    </applications>
+</configuration>

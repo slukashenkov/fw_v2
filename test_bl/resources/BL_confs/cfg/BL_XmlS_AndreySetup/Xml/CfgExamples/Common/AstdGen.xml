@@ -1,0 +1,41 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+       
+
+        <slot name="cmd-slot">
+            <type>win-pipe</type>
+        </slot>
+        
+        <file-output name="astd-gen-probe">
+            <filename>c:/ARM/Logs/astd-gen-out.txt</filename>
+            <format>astd</format>
+        </file-output>
+        
+        <!-- Передает АСТД-параметр с именем <astd-param-name>
+             и значением 0 (при приеме <bad-value>) 
+             или 1 (при приеме <good-value>) -->
+        <astd-generator name="astd-gen">
+            <astd-param-name>astd</astd-param-name>
+            <good-value>good</good-value>
+            <bad-value>bad</bad-value>
+            <period>00:00:05:000</period> 
+        </astd-generator>
+            
+            
+    </objects>
+
+    <applications>
+        <application name="vapp">
+            <watchdog aliveTimeout="00:01:01:000" terminationTime="00:01:01:200" startupDuration="00:01:00:500"/>
+            <data-flow notifier="cmd-slot" subscriber="astd-gen"/>
+            <data-flow notifier="astd-gen" subscriber="astd-gen-probe"/>
+            
+        </application>
+    </applications>
+
+</configuration>

@@ -1,0 +1,87 @@
+<configuration>
+
+    <global-parameters>
+        <path>/home/dmitry/Desktop/Momentum/out/debug/bin/dist/MainApplication</path>
+    </global-parameters>
+
+    <objects>
+
+        <slot name="slot1">
+            <max-size>512</max-size>
+            <update-time>00:00:01:000</update-time>
+            <payload>101</payload>
+        </slot>
+
+        <file-output name="astd-client-probe">
+           <filename>/tmp/output.txt</filename>
+           <format>astd</format>
+        </file-output>
+        <file-output name="pinger-probe">
+           <filename>/tmp/pinger.txt</filename>
+           <format>astd</format>
+        </file-output>
+
+        <astd-client name="astd-client" report-period="00:00:01:000"/>
+    </objects>
+
+    <applications>
+        <application name="MomentumApplication">
+            <watchdog aliveTimeout="00:00:03:000" terminationTime="00:00:03:100"/>
+            <momentum-input-manager>
+                <state-notifier name="momentum-state-notifier" />
+                <state-subscriber name="momentum-state-subscriber" />
+                <timeout>00:00:01:000</timeout>
+                <connect-timeout>00:00:00:050</connect-timeout>
+                <relay-timeout>00:00:05:000</relay-timeout>
+                <master-state name="S.SERV_NAME.MASTER" />
+                <momentum address="192.168.99.14" testMode="on">
+                    <DDI-module register="5391">
+                    <pin name="L.K1.PRIM.IMS1" id="1"/>
+                    <pin name="L.K2.PRIM.IMS1" id="8"/>
+                    </DDI-module>
+                    <DDI-module register="5392">
+                        <pin name="E.PV1o.AVENTTTY.-" id="0"/>
+                        <pin name="E.PV1o.AVENT.-" id="1"/>
+                        <pin name="E.PV1o.AP509.-" id="2"/>
+                        <pin name="E.PV1o.APNport.-" id="3"/>
+                        <pin name="E.PV1o.OPEN.-" id="4"/>
+                    </DDI-module>
+                    <DDO-module register="0">
+                        <pin name="E.PV1oz.AV.-" id="0"/>
+                        <pin name="E.PV1o.WK.-" id="1"/>
+                        <pin name="E.PV1o.TR.-" id="2"/>
+                        <pin name="E.PV1o.TQ.-" id="7"/>
+                    </DDO-module>
+                </momentum>
+            </momentum-input-manager>
+            <data-flow notifier="momentum-state-notifier" subscriber="astd-client-probe"/>
+            <!--data-flow notifier="LAN-state-notifier" subscriber="momentum-state-subscriber"/-->
+            <data-flow notifier="slot1" subscriber="momentum-state-subscriber"/>
+            <data-flow notifier="slot1" subscriber="pinger-probe"/>
+        </application>
+
+        <application name="PingerApplication">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:100"/>
+            <pinger-input-manager>
+            <timeout>00:00:00:500</timeout>
+                <state-notifier name="LAN-state-notifier" />
+                <interface address="10.0.2.15">
+                    <target address="127.0.0.1" name="L.K3.PRIM.IMS1"/>
+                    <target address="10.10.78.22" name="L.K4.PRIM.IMS1"/>
+                </interface>
+            </pinger-input-manager>
+
+        <data-flow notifier="LAN-state-notifier" subscriber="slot1"/>
+         </application>
+
+        <!--application name="astd-client-app">
+           <watchdog aliveTimeout="00:00:05:000" terminationTime="00:00:01:000"/>
+
+            <data-flow notifier="astd-client" subscriber="astd-client-rtp"/>
+            <data-flow notifier="chardash-astd-slot" subscriber="astd-client"/>
+            <data-flow notifier="syuzhet-astd-slot" subscriber="astd-client"/>
+        </application-->
+
+    </applications>
+
+</configuration>

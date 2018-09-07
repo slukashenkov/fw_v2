@@ -1,0 +1,97 @@
+<configuration>
+
+    <global-parameters>
+        <path>/usr/bin/dolphin/MainApplication</path>
+    </global-parameters>
+
+    <objects>
+       <file-output name="zda-probe-1">
+           <filename>/var/log/dolphin/zda-out-1</filename>
+           <format>trace</format>
+       </file-output>
+
+       <file-output name="zda-probe-2">
+           <filename>/var/log/dolphin/zda-out-2</filename>
+           <format>trace</format>
+       </file-output>
+
+        <slot name="slot-in-1">
+            <max-size>32</max-size>
+            <update-time>00:00:00:500</update-time>
+        </slot>
+
+        <slot name="slot-in-2">
+            <max-size>32</max-size>
+            <update-time>00:00:00:500</update-time>
+        </slot>
+
+        <connection-monitor name="slot-monitor">
+            <link-state-id>L.MANCHESTER.EXT.CTRL</link-state-id>
+            <timeout>00:00:02:000</timeout>
+        </connection-monitor>
+    </objects>
+
+    <applications>
+        <application name="manchester-app-1">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <manchester-writer name="manchester-conn">
+                <card-no>0</card-no>    
+                <address>13</address>   
+                <subaddress>10</subaddress> 
+                <max-wait-duration>00:00:01:000</max-wait-duration> 
+                <switch-timeout>00:00:05:000</switch-timeout>
+                <astd-subscriber name="manchester-ext-control" astd-name="L.MANCHESTER.EXT.CTRL"/>
+                <mode>auto</mode>
+                <line-control bus="B"/>
+<!--
+                <line-control bus="auto" period="00:00:01:000" timeout="00:00:02:000">
+                    <astd-notifier name="manchester-conn-astd"/>
+                    <remote-terminal address="25" astd-name="L.DEVICE1.STATE"/>
+                </line-control>
+-->
+            </manchester-writer>
+
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" subscriber="manchester-conn"/>
+            <data-flow notifier="zda-gen" subscriber="zda-probe-1"/>
+
+            <data-flow notifier="slot-in-1" converter="slot-monitor" subscriber="manchester-ext-control"/>
+        </application>
+
+
+        <application name="manchester-app-2">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <manchester-writer name="manchester-conn">
+                <card-no>1</card-no>
+                <address>13</address>
+                <subaddress>10</subaddress>
+                <max-wait-duration>00:00:01:000</max-wait-duration>
+                <switch-timeout>00:00:07:000</switch-timeout>
+                <astd-subscriber name="manchester-ext-control" astd-name="L.MANCHESTER.EXT.CTRL"/>
+                <mode>auto</mode>
+                <line-control bus="B"/>
+            </manchester-writer>
+
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" subscriber="manchester-conn"/>
+            <data-flow notifier="zda-gen" subscriber="zda-probe-2"/>
+
+            <data-flow notifier="slot-in-2" converter="slot-monitor" subscriber="manchester-ext-control"/>
+        </application>
+
+        <application name="manchester-app-R">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <manchester-reader name="manchester-conn">
+                <card-no>2</card-no>
+                <address>25</address>
+                <max-wait-duration>00:00:01:000</max-wait-duration>
+                <mode>rt</mode>
+            </manchester-reader>
+        </application>
+
+    </applications>
+
+</configuration>

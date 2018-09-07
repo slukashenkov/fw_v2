@@ -1,0 +1,60 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <file-output name="xeno-pipe-probe">
+            <filename>/var/log/dolphin/xeno-pipe</filename>
+        </file-output>
+        
+        <!-- 
+            For all xenomai pipe slots configurations, 
+            <update-time> must not exceed 
+                4 sec timeout specified somewhere in Xenomai setup, otherwise
+                the reader process will be terminated with signal 24 
+            (CPU time limit exceeded) 
+        -->
+            
+        <!-- Preferred xenomai pipe slot configuration -->
+        <xeno-pipe-slot linuxName="xeno-pipe-linux" xenomaiName="xeno-pipe">
+            <max-size>192</max-size>
+            <update-time>00:00:01:000</update-time>
+        </xeno-pipe-slot>
+
+        <!-- Deprecated xenomai pipe slot configuration -->
+        <slot name="xeno-pipe-deprecated">
+            <max-size>192</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+
+        <file-input name="xeno-pipe-linux-deprecated">
+            <filename>/proc/xenomai/registry/native/pipes/slot-xeno-pipe</filename>
+            <buffer-size>128</buffer-size>
+        </file-input>
+    </objects>
+
+    <applications>
+
+        <application name="xeno-pipe-reader">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200" 
+                startupDuration="00:00:01:000" startOrder="2"/>
+
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" subscriber="xeno-pipe"/>
+            <data-flow notifier="xeno-pipe-linux" subscriber="xeno-pipe-probe"/>
+        </application>
+
+        <application name="xeno-pipe-writer">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200" 
+                startupDuration="00:00:01:000" startOrder="1"/>
+
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" subscriber="xeno-pipe-linux"/>
+            <data-flow notifier="xeno-pipe" subscriber="xeno-pipe-probe"/>
+        </application>
+    </applications>
+</configuration>
+    

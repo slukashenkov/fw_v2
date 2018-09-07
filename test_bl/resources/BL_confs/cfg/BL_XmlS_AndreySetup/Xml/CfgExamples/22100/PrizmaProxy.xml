@@ -1,0 +1,47 @@
+<configuration>
+
+    <objects>
+         <udp-connection name="udp-out">
+            <source-address>10.10.78.22</source-address>
+            <destination-address>10.10.75.251</destination-address>
+            <destination-port>30000</destination-port>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+        <udp-connection name="udp-in">
+            <source-address>10.10.78.22</source-address>
+            <source-port>30001</source-port>
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+
+        <slot name="LAYER_TO_PRIZMA">
+            <max-size>65536</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+
+        <slot name="PRIZMA_TO_LAYER">
+            <max-size>65536</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+
+        <file-output name="udp-in-probe">
+            <filename>c:\tmp\log\udp-in</filename>
+        </file-output>
+
+        <file-output name="udp-out-probe">
+            <filename>c:\tmp\log\udp-out</filename>
+        </file-output>
+    </objects>
+    <applications>
+
+        <application name="app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <data-flow notifier="udp-in" subscriber="PRIZMA_TO_LAYER"/>
+            <data-flow notifier="udp-in" subscriber="udp-in-probe"/>
+
+            <data-flow notifier="LAYER_TO_PRIZMA" subscriber="udp-out"/>
+            <data-flow notifier="LAYER_TO_PRIZMA" subscriber="udp-out-probe"/>
+        </application>
+    </applications>
+</configuration>

@@ -1,0 +1,35 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <!--config-path>d:\Baselibraries\bin2\config\</config-path-->
+        <config-path>/etc/dolphin/22160/</config-path>
+    </plugin-parameters>
+
+	<plugins>
+        <plugin name="OpModeServer22100"    cfgName="OpModeServer22100Test.xml"   mode="on"  application="op-mode-test-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+        </plugin>    
+	</plugins>
+
+	<objects>
+        <!-- #################### COMMON slots,etc #################### -->
+
+	</objects>
+
+<!-- TEST CONFIGURATION 20.0.1 -->
+	<objects>
+
+	</objects>
+
+	<applications>	
+        <application name="test-app">
+			<watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="40"/>
+
+        </application>
+	</applications>
+</configuration>

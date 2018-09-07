@@ -1,0 +1,110 @@
+{
+  "test_sonata_messages_01": {
+                      "msgSonata_363": {
+                        "pass": [
+                          "sonata_id",
+                          "lat",
+                          "lon",
+                          "vel",
+                          "course",
+                          "vel_knots"
+                        ],
+                        "mtype": 2,
+                        "sonata_id": 3464,
+                        "lat": {
+                          "deg": 10,
+                          "min": 10,
+                          "sec": 10,
+                          "tens_sec": 0
+                        },
+                        "lon": {
+                          "deg": 10,
+                          "min": 10,
+                          "sec": 10,
+                          "tens_sec": 10
+                        },
+                        "vel": {
+                          "hkm_h": 4,
+                          "km_h": 119
+                        },
+                        "course": {
+                          "deg": 2,
+                          "tens_deg": 126
+                        },
+                        "state": 6,
+                        "tail": 17,
+                        "signal_lvl": 15
+                      },
+        "msgSonata_364": {
+                        "pass": [
+                          "sonata_id",
+                          "lat",
+                          "lon",
+                          "vel",
+                          "course",
+                          "vel_knots"
+                        ],
+                        "mtype": 2,
+                        "sonata_id": 3464,
+                        "lat": {
+                          "deg": 8,
+                          "min": 8,
+                          "sec": 8,
+                          "tens_sec": 8
+                        },
+                        "lon": {
+                          "deg": 9,
+                          "min": 9,
+                          "sec": 9,
+                          "tens_sec": 9
+                        },
+                        "vel": {
+                          "hkm_h": 4,
+                          "km_h": 119
+                        },
+                        "course": {
+                          "deg": 2,
+                          "tens_deg": 126
+                        },
+                        "state": 6,
+                        "tail": 17,
+                        "signal_lvl": 15
+                      },
+        "msgSonata_366": {
+                        "pass": [
+                          "sonata_id",
+                          "lat",
+                          "lon",
+                          "vel",
+                          "course",
+                          "vel_knots"
+                        ],
+                        "mtype": 2,
+                        "sonata_id": 3464,
+                        "lat": {
+                          "deg": 99,
+                          "min": 99,
+                          "sec": 98,
+                          "tens_sec": 15
+                        },
+                        "lon": {
+                          "deg": 99,
+                          "min": 99,
+                          "sec": 99,
+                          "tens_sec": 15
+                        },
+                        "vel": {
+                          "hkm_h": 4,
+                          "km_h": 119
+                        },
+                        "course": {
+                          "deg": 2,
+                          "tens_deg": 126
+                        },
+                        "state": 6,
+                        "tail": 17,
+                        "signal_lvl": 15
+                      }
+    }
+
+}

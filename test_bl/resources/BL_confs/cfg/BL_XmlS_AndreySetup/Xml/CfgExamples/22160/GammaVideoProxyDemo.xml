@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+    
+    <objects>
+        <gamma-video-proxy  name="gamma-video-proxy">
+            <!--сетевые настройки видео сервера-->
+            <vd-server name="vd1-out" address="10.10.77.134" port="55142"/>
+
+            <!--
+            Формат сигнала, например ABXDN_1, здесь:
+            AB - talkerId,
+            XDN - формат NMEA, такой и только такой,
+            1 - номер Modbus регистра.
+            
+            бит - номер бита в Modbus регистре.
+            -->
+            <signal gamma-signal="ABXDN_1" bit="2">
+                <parametrs>
+                    <!-- сообщение, которое нужно послать, при значении бита 1-->
+                    <param value="1" text="&amp;text=ABXDN_1 bit=2 val=1"/>
+                    <!-- сообщение, которое нужно послать, при значении бита 0-->
+                    <param value="0" text="&amp;text=ABXDN_1 bit=2 val=0"/>
+                </parametrs>
+                <!--Список камер. Если камер нет, то писать NoCamera-->
+                <cameras>
+                    <camera>NoCamera</camera>
+                </cameras>
+            </signal>
+            <signal gamma-signal="ABXDN_2" bit="0">
+                <parametrs>
+                    <param value="1" text="&amp;text=ABXDN_2 bit=0 val=1"/>
+                    <param value="0" text="&amp;text=ABXDN_2 bit=0 val=0"/>
+                </parametrs>
+                <cameras>
+                    <camera>camera1</camera>
+                    <camera>camera2</camera>
+                </cameras>
+            </signal>
+        </gamma-video-proxy>
+    </objects>
+        
+    <application name="modbus-rtu-gammavproxy-app">
+        <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+        <!--
+        slaveId : Modbus unitId/slaveId сервера, с которым ведется обмен
+        resStart, reqQnty : диапазон опрашиваемых Modbus-регистров
+        -->
+        <modbus-rtu-client slaveId="1" regStart="100" regQnty="50">
+            <!-- Notifier, передающий NMEA, сформированное из прочитанных Modbus-регистров -->
+            <nmea-notifier name="modbus-nmea-notifier"/>
+
+            <!--
+            Объединение форматируемых диапазонов (в тегах <nmea-sentence*>) должно содержаться внутри
+            опрашиваемого диапазона (в теге <modbus-rtu-client>)
+
+            floatByteOrder : порядок байт, из которого float-значения распаковываются в <nmea-sentence-float> : 
+                ABCD       Не меняем порядок байт (значение по умолчанию)
+                DCBA       Меняем порядок байт и слов
+                BADC       Меняем порядок байт
+                CDAB       Меняем порядок слов
+            
+            id : talkerId + sentence formatter предложения, передаваемого <nmea-notifier>-ом
+            regStart, regQnty : диапазон Modbus-регистров, значения которых форматируются в предложение
+            Если не указан reqQnty, то он устанавливается по умолчанию в "1"
+
+            <nmea-sentence-extended> форматирует каждый из регистров диапазона в одно предложение в виде
+             $QQXDN,regNum,hhhh,ddddd,ddL,ddH,b0,...,b15*FF
+
+                hhhh  - значение 16-битного регистра в hex
+                ddddd - значение регистра в decimal
+                ddL   - значение младшего байта регистра в decimal
+                ddH   - значение старшего байта регистра в decimal
+                b0    - значение младшего бита регистра (0/1)
+                b15   - значение старшего бита регистра (0/1)
+             -->
+            <nmea-format floatByteOrder="ABCD">
+                <nmea-sentence-extended id="QQXDN" regStart="100" regQnty="5"/>
+            </nmea-format>
+
+            <!-- Интервал передачи Modbus RTU-команд -->
+            <report-period>00:00:01:000</report-period>
+            <!-- Конфигурация serial-порта, по которому происходит Modbus RTU-обмен -->
+            <serial-port>
+                <port>/dev/ttyCTI7</port>
+                <speed>9600</speed>
+                <control-parity>none</control-parity>
+                <numbit>8</numbit>
+                <stopbits>1</stopbits>
+            </serial-port>
+        </modbus-rtu-client>
+        
+        <data-flow notifier="modbus-nmea-notifier" subscriber="gamma-video-proxy"/>
+    </application>
+</configuration>

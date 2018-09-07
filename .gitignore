@@ -1,0 +1,10 @@
+/project
+/resources
+/.idea/
+**/__pycache__
+**/.log
+.idea/
+logs/
+*.log
+__pycache__/
+*.py[cod]

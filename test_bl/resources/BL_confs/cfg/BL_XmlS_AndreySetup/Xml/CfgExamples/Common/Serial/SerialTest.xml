@@ -1,0 +1,71 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <serial-port-connection name="serial-port-io">
+            <port>/dev/ttyS0</port>                             
+            <speed>9600</speed>                                 <!-- valid values 110~115200 -->
+            <numbit>8</numbit>                                  <!-- valid 5,6,7,8, default 8 -->
+            <timeout>1</timeout>                                <!-- blocking read timeout in 1/10's of second, 
+                                                                must be less than period-of-reading, default 0 -->
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading> <!-- read exec interval -->
+            <control-parity>odd</control-parity>                <!-- non-default values : odd, even, mark, 
+                                                                     space, default none (no parity) -->
+            <stopbits>1</stopbits>                               <!-- 1.5~2.0 for 1.5 or 2 stop bits,
+                                                                      default 0 for 1 stop bit, -->
+            <flow-control>xon-xoff</flow-control>               <!-- non-default values : xon-xoff, rts-cts,
+                                                                     default none (no flow control) -->
+            <op-mode></op-mode>                                 <!-- non-default values : xeno, 
+                                                                     cti-half-duplex,
+                                                                     mielhaus-half-duplex, mielhaus-half-duplex -->
+        </serial-port-connection>
+
+        <serial-port-connection name="serial-port-xeno-io">
+            <port>rtser0</port>
+            <speed>57600</speed>
+            <!-- blocking read timeout in milliseconds, 
+                 must be less than period-of-reading, default 0, -1 = infinite -->
+            <timeout>0</timeout>
+            <!-- Количество байт в приемном буфере UART-а, при котором 
+                 возвращается вызов блокирующего чтения из порта.
+                 Используется только в <op-mode>xeno<op-mode>.
+                 На любом железе поддерживаются значения {1,4,8,14},
+                 на UART XR16V79* - любые значения [1..64] -->
+            <rx-trigger-level>14</rx-trigger-level>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <!-- period-of-reading не используется в <op-mode>xeno</op-mode>, 
+                 максимальная продолжительность одной итерации чтения задается <timeout>'ом -->
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <slot name="serial-in-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+
+        <file-output name="serial-in-probe">
+            <filename>/var/log/dolphin/serial-in</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        
+        <application name="serial-test-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+
+            <!--
+            <data-flow notifier="zda-gen" subscriber="serial-port-io"/>
+            -->
+            <data-flow notifier="serial-port-io" subscriber="serial-in-slot"/>
+            <data-flow notifier="serial-port-io" subscriber="serial-in-probe"/>
+        </application>
+        
+    </applications>
+</configuration>
+    

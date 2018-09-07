@@ -1,0 +1,58 @@
+<configuration>
+    <objects>
+        <tcp-connection name="tcp-in" timeout="01:00:00">
+            <destination-address>127.0.0.1</destination-address>
+            <destination-port>5555</destination-port>
+        </tcp-connection>
+    
+        <slot name="hdt-out-slot1">
+            <type>win-pipe</type>
+        </slot>
+        
+        <slot name="hdt-out-slot2">
+            <type>win-pipe</type>
+        </slot>
+        
+        <slot name="hdt-out-slot4">
+            <type>win-pipe</type>
+        </slot>
+        
+        <file-output name="tcp-in-probe">
+           <filename>D:\tmp\logs\tcp-in.txt</filename>
+        </file-output>
+               
+    </objects>
+	
+    <applications>
+        <application name="app">            
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200" startupDuration="00:00:00:100"/>
+            
+            <faceless-nmea-parser> 
+                <nmea-sentence name="sentence1"> 
+                    <!-- support nmea fields format -->
+                    <format>$--HDT,x.x,x,c,c--c*hh</format>
+                    <fields> 
+                        <!-- fields desxription -->
+                        <field name="out1" number="1"/> 
+                        <field name="out2" number="2"/> 
+                        <field name="out4" number="4"/> 
+                    </fields> 
+                </nmea-sentence>
+                <nmea-sentence name="sentence2"> 
+                    <format>$GPHDT,x.x,c*hh</format>
+                    <fields> 
+                    <!-- field with check field -->
+                        <field name="hdt11" number="1" status-field="2" status-symbol="T"/>
+                    </fields> 
+                </nmea-sentence>
+            </faceless-nmea-parser> 
+            
+            <data-flow notifier="tcp-in" subscriber="tcp-in-probe"/>
+            <data-flow notifier="tcp-in" subscriber="sentence1"/>
+            <data-flow notifier="out1" subscriber="hdt-out-slot1"/>
+            <data-flow notifier="out2" subscriber="hdt-out-slot2"/>
+            <data-flow notifier="out4" subscriber="hdt-out-slot4"/>
+            
+        </application>        
+    </applications>
+</configuration>

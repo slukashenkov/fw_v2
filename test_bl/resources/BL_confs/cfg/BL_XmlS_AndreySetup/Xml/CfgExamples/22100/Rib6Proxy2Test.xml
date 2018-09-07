@@ -1,0 +1,37 @@
+<configuration>
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>        
+        <file-output name="rib-serial-data-probe">
+            <filename>RibSerialData</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500"/>
+            <rib6proxy2-dispatcher>
+			    <!--RIB address-->
+                <destination-address timeout="00:00:10">192.168.1.100</destination-address>
+                <destination-port>4172</destination-port>
+				
+				<!--RS address-->
+                <source-address timeout="00:00:10">127.0.0.1</source-address>
+                <source-port>4172</source-port>
+
+                <data-from-rs name="data-from-rs"/>
+                <data-to-rs name="data-to-rs"/>
+                <data-from-rib name="data-from-rib"/>
+                <data-to-rib name="data-to-rib"/>
+				
+				<rib-serial-data-out name="rib-serial-data"/>
+            </rib6proxy2-dispatcher>
+
+			<data-flow notifier="rib-serial-data" subscriber="rib-serial-data-probe"/>
+
+        </application>
+    </applications>
+
+</configuration>

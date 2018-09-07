@@ -1,0 +1,24 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+    </objects>
+
+    <applications>
+        <application name="LAN-monitoring-application">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200" />
+            <pinger-input-manager>
+                <state-notifier name="LAN-state-notifier" />
+                <timeout>00:00:05:000</timeout>
+                <interface address="10.10.73.105">
+                    <target address="10.10.1.1" name="SVN.TRANSAS.COM"/>
+                    <target address="10.10.78.22" name="VOZTS.DOLPHIN.IBS"/>
+                </interface>
+            </pinger-input-manager>
+        </application>
+    </applications>
+</configuration>
+    

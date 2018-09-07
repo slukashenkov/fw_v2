@@ -1,0 +1,68 @@
+<configuration>
+
+    <global-parameters>
+        <path>/usr/bin/dolphin/MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <xeno-pipe-slot linuxName="pipe-linux-1" xenomaiName="pipe-xeno-1">
+            <max-size>1920</max-size>
+            <update-time>00:00:01:000</update-time>
+        </xeno-pipe-slot>
+
+        <xeno-pipe-slot linuxName="pipe-linux-2" xenomaiName="pipe-xeno-2">
+            <max-size>1920</max-size>
+            <update-time>00:00:01:000</update-time>
+        </xeno-pipe-slot>
+
+    </objects>
+
+    <applications>
+        
+        <application name="manchester-writer-demo-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <zda-notifier name="zda-gen" period="00:00:00:020"/>
+
+            <manchester-writer name="manchester-conn-out-0">
+                <card-no>0</card-no>
+                <address>31</address>
+                <subaddress>20</subaddress>
+                <max-wait-duration>00:00:01:000</max-wait-duration>
+                <mode>bc-no-irq</mode> 
+                
+                <line-control bus="A" period="00:00:01:000" timeout="00:00:03:000">
+                    <astd-notifier name="manchester-conn-astd"/>
+                    <remote-terminal address="1" astd-name="L.DEVICE1.STATE0"/>
+                    <remote-terminal address="2" astd-name="L.DEVICE2.STATE0"/>
+                    <remote-terminal address="3" astd-name="L.DEVICE3.STATE0"/>
+                </line-control>
+            </manchester-writer>
+
+            <manchester-writer name="manchester-conn-out-1">
+                <card-no>1</card-no>
+                <address>31</address>
+                <subaddress>20</subaddress>
+                <max-wait-duration>00:00:01:000</max-wait-duration>
+                <mode>bc-no-irq</mode> 
+                
+                <line-control bus="A" period="00:00:01:000" timeout="00:00:03:000">
+                    <astd-notifier name="manchester-conn-astd"/>
+                    <remote-terminal address="1" astd-name="L.DEVICE1.STATE1"/>
+                    <remote-terminal address="2" astd-name="L.DEVICE2.STATE1"/>
+                    <remote-terminal address="3" astd-name="L.DEVICE3.STATE1"/>
+                </line-control>
+            </manchester-writer>
+
+            
+            <data-flow notifier="zda-gen" subscriber="pipe-linux-1"/>
+            <data-flow notifier="zda-gen" subscriber="pipe-linux-2"/>
+            
+            <data-flow notifier="pipe-xeno-1" subscriber="manchester-conn-out-0"/>
+            <data-flow notifier="pipe-xeno-2" subscriber="manchester-conn-out-1"/>
+        </application>
+        
+        
+    </applications>
+
+</configuration>

@@ -1,0 +1,126 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+        <restart-all>true</restart-all>
+    </global-parameters>
+
+    <objects>
+        <converter name="converter-sjuzhet">
+            <type>sjuzhet</type>                             <!-- a number of types exist, see ConvertersFactory.h -->
+        </converter>
+
+        <ascii-extractor type="nmea" name="channel-1-extr"/> <!-- valid types are astd, modbus-ascii, line, nmea (default) -->
+
+        <stream-thinner name="str-th" minInterval="00:00:01:000"/>
+    </objects>
+
+    <applications>
+        <application name="empty-app" xenomaiWarnSwitch="true">
+            <watchdog aliveTimeout="00:00:01:000"
+                    terminationTime="00:00:00:200"
+                    startupDuration="00:00:00:100"
+                    startOrder="1"/>
+        </application>
+
+        <application name="input-manager-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+
+            <input-manager>
+                <type>chardash</type>
+                <timeout>00:00:04:000</timeout>
+                <data-subscriber name="chardash-data-subscriber"/>
+                <data-notifier name="chardash-data-notifier"/>
+                <state-notifier name="chardash-state-notifier"/>
+                <link-state-id name="L.CHARDASH.-.KD1"/>
+                <data-available-id name="D.CHARDASH.-.KD1"/>
+                <data-correct-id name="V.CHARDASH.-.KD1"/>
+            </input-manager>
+
+            <data-flow name="data-flow-1" notifier="chardash-state-notifier" subscriber="astd-slot"/>
+        </application>
+    </applications>
+
+    <objects>
+        <file-output name="zda-probe">
+            <filename>zda_log</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="etc-components-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" subscriber="zda-probe"/>
+        </application>
+    </applications>
+
+    <applications>
+        <application name="pinger-app">
+            <watchdog aliveTimeout="00:00:05:000" terminationTime="00:00:01:000"/>
+
+            <pinger-input-manager > <!-- mode="ASTD" is the default -->
+		        <state-notifier name="arm-k-state-notifier" />
+                <timeout>00:00:05:000</timeout>
+                <interface address="10.5.1.3">
+                    <target name="L.K1.PRIM.IMS1" address="10.5.1.1"/>
+                    <target name="L.K2.PRIM.IMS1" address="10.5.2.1"/>
+                </interface>
+                <interface address="10.5.2.3">
+                    <target name="L.K1.SEC.IMS1" address="10.5.1.3"/>
+                </interface>
+            </pinger-input-manager>
+
+            <!--
+                With mode="APS", only the state of two hardcoded target names eth0 and eth1 is handled
+                The result is placed into a bitfield MotionControlCfg::ApsFlags_BitField
+            -->
+            <pinger-input-manager mode="APS">
+		        <state-notifier name="lan-state-notifier" />
+                <timeout>00:00:02:000</timeout>
+                <interface address="10.5.1.3">
+                    <target name="eth0" address="10.5.1.1"/>
+                </interface>
+                <interface address="10.5.2.3">
+                    <target name="eth1" address="10.5.2.1"/>
+                </interface>
+            </pinger-input-manager>
+        </application>
+    </applications>
+
+    <objects>
+        <file-output name="astd-probe">
+            <filename>/var/log/dolphin/some_log</filename>
+            <timestamped-filename>false</timestamped-filename>
+            <append>false</append>
+            <format>astd</format> <!-- default is "trace"; also "astd", "raw", "hex", "timestamp", "pkotni-MII", "to-bekar", "from-bekar"-->
+        </file-output>
+
+        <slot name="astd-slot">
+            <max-size>32</max-size>
+            <update-time>00:00:00:500</update-time>
+            <type>reliable</type>
+        </slot>
+
+        <astd-client name="astd-client" report-period="00:00:01:000"/>
+        
+        <connection-monitor name="conn-monitor">
+            <link-state-id>L.EDM.-.TS1</link-state-id>
+            <timeout>00:00:02:000</timeout>
+        </connection-monitor>
+    </objects>
+        
+    <applications>
+        <application name="astd-client-app">
+            <watchdog aliveTimeout="00:00:05:000" terminationTime="00:00:01:000"/>
+
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" converter="conn-monitor" subscriber="astd-probe"/>
+
+            <data-flow notifier="astd-client" subscriber="astd-probe"/>
+            <data-flow notifier="astd-slot" subscriber="astd-client"/>
+        </application>
+    </applications>
+
+</configuration>

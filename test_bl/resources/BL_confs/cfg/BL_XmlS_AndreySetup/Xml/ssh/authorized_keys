@@ -1,0 +1,2 @@
+# authorized_keys file format is described in sshd(8) manual page
+ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAIBXquwFQEioypZ2VS1aNvG2uafpVQoPIcO1WIGeikY4bZPxyiHwqcxsUqdodaG38sH3nz06vzweJwYPZXNsmgRwguwPcxdyBG6EGCcrdaE/wJwc/LFBl0iQ/38tR7YJoShF3yWkpLf7+VhKe/UxpAlGAMqTpW6OaCGo1Gq0dJKy9Q==

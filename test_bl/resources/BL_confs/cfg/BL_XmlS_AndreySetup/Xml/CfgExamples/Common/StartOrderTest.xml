@@ -1,0 +1,48 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+    </objects>
+
+    <applications>
+        <!-- different start order-->
+        <application name="app-a">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:300" startupDuration="00:00:00:300" startOrder="7"/>
+        </application>
+
+        <application name="app-b">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:300" startupDuration="00:00:00:300" startOrder="2"/>
+        </application>
+
+        <!-- equal start order-->
+        <application name="app-c">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:300" startupDuration="00:00:00:300" startOrder="3"/>
+        </application>
+
+        <application name="app-dddd">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:300" startupDuration="00:00:00:300" startOrder="3"/>
+        </application>
+
+        <application name="app-d">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:300" startupDuration="00:00:00:300" startOrder="3"/>
+        </application>
+
+        <application name="app-e">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:300" startupDuration="00:00:00:300" startOrder="5"/>
+        </application>
+
+        <!-- default start order-->
+        <application name="app-X">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:300" startupDuration="00:00:00:300" />
+        </application>
+
+        <application name="app-Y">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:300" startupDuration="00:00:00:300" />
+        </application>
+
+    </applications>
+</configuration>
+    

@@ -1,0 +1,95 @@
+<configuration>
+<objects>
+    <database-connection name="pbase-db-conn">
+        <host>127.0.0.1</host>
+        <port>5432</port>
+        <dbname>pbase</dbname>
+        <user>pbaseadmin</user>
+        <password>TranSaS157A</password>
+    </database-connection>
+    
+    <udp-connection name="purga-udp-left-period-from-pri-kd1">
+        <multicast-address>239.254.1.1</multicast-address>
+        <source-address>10.7.1.2</source-address>
+        <source-port>50129</source-port>
+    </udp-connection>
+    <udp-connection name="purga-udp-right-period-from-pri-kd1">
+        <multicast-address>239.254.1.1</multicast-address>
+        <source-address>10.7.1.2</source-address>
+        <source-port>50130</source-port>
+    </udp-connection>
+	
+    <udp-connection name="purga-udp-left-event-from-pri-kd1">
+        <multicast-address>239.254.1.1</multicast-address>
+        <source-address>10.7.1.2</source-address>
+        <source-port>50125</source-port>
+    </udp-connection>
+    <udp-connection name="purga-udp-right-event-from-pri-kd1">
+        <multicast-address>239.254.1.1</multicast-address>
+        <source-address>10.7.1.2</source-address>
+        <source-port>50110</source-port>
+    </udp-connection>	
+	
+		<file-output name="test-left-period-probe">
+            <filename>/var/log/dolphin/test/test-19.0-left-period-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+		<file-output name="test-right-period-probe">
+            <filename>/var/log/dolphin/test/test-19.0-right-period-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+		<file-output name="test-left-event-probe">
+            <filename>/var/log/dolphin/test/test-19.0-left-event-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+		<file-output name="test-right-event-probe">
+            <filename>/var/log/dolphin/test/test-19.0-right-event-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>		
+</objects>
+
+    <applications>
+        <application name="purga-db-test-app">
+<!--####################################### purga-left #######################################-->
+            
+            <db-writer-purga name="purga-dbwriter-left-board-subscriber">
+                <database-connection name="pbase-db-conn"/>
+                <board-id>0</board-id>
+            </db-writer-purga>
+
+            <data-flow notifier="purga-udp-left-period-from-pri-kd1" subscriber="purga-dbwriter-left-board-subscriber"/>
+			<data-flow notifier="purga-udp-left-period-from-pri-kd1" subscriber="test-left-period-probe"/>
+            
+            <db-writer-purga name="purga-dbwriter-left-event-board-subscriber">
+                <database-connection name="pbase-db-conn"/>
+                <board-id>0</board-id>
+            </db-writer-purga>
+
+            <data-flow notifier="purga-udp-left-event-from-pri-kd1" subscriber="purga-dbwriter-left-event-board-subscriber"/>
+            <data-flow notifier="purga-udp-left-event-from-pri-kd1" subscriber="test-left-event-probe"/>
+			
+<!--####################################### purga-right #######################################-->
+
+            <db-writer-purga name="purga-dbwriter-right-board-subscriber">
+                <database-connection name="pbase-db-conn"/>
+                <board-id>1</board-id>
+            </db-writer-purga>
+
+            <data-flow notifier="purga-udp-right-period-from-pri-kd1" subscriber="purga-dbwriter-right-board-subscriber"/>
+            <data-flow notifier="purga-udp-right-period-from-pri-kd1" subscriber="test-right-period-probe"/>
+            
+            <db-writer-purga name="purga-dbwriter-right-event-board-subscriber">
+                <database-connection name="pbase-db-conn"/>
+                <board-id>1</board-id>
+            </db-writer-purga>
+
+            <data-flow notifier="purga-udp-right-event-from-pri-kd1" subscriber="purga-dbwriter-right-event-board-subscriber"/>
+			<data-flow notifier="purga-udp-right-event-from-pri-kd1" subscriber="test-right-event-probe"/>
+			
+        </application>
+    </applications>
+</configuration>

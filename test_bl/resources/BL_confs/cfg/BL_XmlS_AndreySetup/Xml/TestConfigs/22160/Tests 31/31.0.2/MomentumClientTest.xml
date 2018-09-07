@@ -1,0 +1,475 @@
+<configuration>
+	<objects>
+
+		<file-output name="test-from-momentum-probe">
+            <filename>/var/log/dolphin/test/test-31.0.2-from-momentum-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>		
+		<file-output name="test-from-momentum-astd-probe">
+            <filename>/var/log/dolphin/test/test-31.0.2-from-momentum-astd-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+			<format>astd</format>
+        </file-output>		
+		
+		<stream-thinner name="momentum-1hz-thinner" minInterval="00:00:01:000"/>
+	</objects>
+	
+<!-- TEST CONFIGURATION 31.0.1 -->
+    <applications>
+        <application name="momentum-app">
+            <momentum-input-manager>
+                <state-notifier name="momentum-state-notifier"/>
+                <state-subscriber name="momentum-state-subscriber"/>
+                <timeout>00:00:01:000</timeout>
+                <connect-timeout>00:00:00:030</connect-timeout>
+                <!--PV1o start-->
+                <advantys address="10.16.131.11" testMode="off">
+                    <DDO-module register="0">
+                        <pin name="E.PV1MAIN.AV.-" id="0"/>
+                        <pin name="E.PV1MAIN.WK.-" id="1"/>
+                    </DDO-module>
+                    <DDI-module register="5391">
+                        <pin name="E.PV1MAIN.BP1.24ok" id="0"/>
+                        <pin name="E.PV1MAIN.BP1.220o" id="1"/>
+                        <pin name="E.PV1MAIN.BP1.220r" id="2"/>
+                        <pin name="E.PV1MAIN.BP1.27ok" id="3"/>
+                        <pin name="E.PV1MAIN.BP2.24ok" id="4"/>
+                        <pin name="E.PV1MAIN.BP2.220o" id="5"/>
+                        <pin name="E.PV1MAIN.BP2.220r" id="6"/>
+                        <pin name="E.PV1MAIN.BP2.27ok" id="7"/>
+                        <pin name="E.PV1MAIN.BP3.24ok" id="8"/>
+                        <pin name="E.PV1MAIN.BP3.220o" id="9"/>
+                        <pin name="E.PV1MAIN.BP3.220r" id="10"/>
+                        <pin name="E.PV1MAIN.BP3.27ok" id="11"/>
+                        <pin name="E.PV1MAIN.BP1.pwr" id="12"/>
+                        <pin name="E.PV1MAIN.BP2.pwr" id="13"/>
+                        <pin name="E.PV1MAIN.BP3.pwr" id="14"/>
+                        <pin name="E.PV1MAIN.OPEN.-" id="15"/>
+                    </DDI-module>
+                    <DDI-module register="5392">
+                        <pin name="E.PK1MAIN.AP.ims" id="0"/>
+                        <pin name="E.PK1MAIN.AP.adm" id="1"/>
+                        <pin name="E.PK1MAIN.AP.astd" id="2"/>
+                        <pin name="E.PK1MAIN.OPEN.VENT" id="3"/>
+                        <pin name="E.PV1MAIN.AP.a14" id="8"/>
+                        <pin name="E.PV1MAIN.AP.a15" id="9"/>
+                        <pin name="E.PV1MAIN.VENT.-" id="10"/>
+                        <pin name="E.RSH1MAIN.KZ.-" id="12"/>
+                        <pin name="E.RSH1MAIN.220.-" id="13"/>
+                        <pin name="E.RSH1MAIN.IZOL.-" id="14"/>
+                        <pin name="E.RSH1MAIN.OPEN.-" id="15"/>
+                    </DDI-module>
+                    <DDI-module register="5393">
+                        <pin name="E.PK3MAIN.AP.a7" id="0"/>
+                        <pin name="E.PK3MAIN.OPEN.VENT" id="1"/>
+                        <pin name="E.IRP29.OPEN.-" id="2"/>
+                        <pin name="E.BP1200.220o.-" id="7"/>
+                        <pin name="E.BP1200.220r.-" id="8"/>
+                        <pin name="E.BP1200.24.-" id="9"/>
+                        <pin name="E.BP1200.24ok.-" id="10"/>
+                        <pin name="E.BP1200.f1.-" id="11"/>
+                        <pin name="E.BP1200.f2.-" id="12"/>
+                        <pin name="E.BP1200.f3.-" id="13"/>
+                        <pin name="E.BP1200.av.-" id="14"/>
+                        <pin name="E.BP1200.mod.-" id="15"/>
+                    </DDI-module>
+                    <DDI-module register="5394">
+                        <pin name="E.RSH3.220o.-" id="0"/>
+                        <pin name="E.RSH3.220r.-" id="1"/>
+                        <pin name="E.RSH3.KZ.qf1q1q2" id="2"/>
+                        <pin name="E.RSH3.KZ.qf2" id="3"/>
+                        <pin name="E.RSH3.KZ.qf3qf4" id="4"/>
+                        <pin name="E.RSH3.KZ.qf5" id="5"/>
+                        <pin name="E.RSH3.KZ.qf6" id="6"/>
+                        <pin name="E.RSH3.KZ.qf7qf8" id="7"/>
+                        <pin name="E.RSH3.KZ.qf9" id="8"/>
+                        <pin name="E.RSH3.KZ.qf10" id="9"/>
+                        <pin name="E.RSH3.KZ.qf11" id="10"/>
+                        <pin name="E.RSH3.OPEN.-" id="11"/>
+                    </DDI-module>
+                </advantys>
+                <!--PV1o end-->
+                <!--PV1r start-->
+                <advantys address="10.16.131.12" testMode="off">
+                    <DDO-module register="0">
+                        <pin name="E.PV1BACKUP.AV.-" id="0"/>
+                        <pin name="E.PV1BACKUP.WK.-" id="1"/>
+                    </DDO-module>
+                    <DDI-module register="5391">
+                        <pin name="E.PV1BACKUP.BP1.24ok" id="0"/>
+                        <pin name="E.PV1BACKUP.BP1.220o" id="1"/>
+                        <pin name="E.PV1BACKUP.BP1.220r" id="2"/>
+                        <pin name="E.PV1BACKUP.BP1.27ok" id="3"/>
+                        <pin name="E.PV1BACKUP.BP2.24ok" id="4"/>
+                        <pin name="E.PV1BACKUP.BP2.220o" id="5"/>
+                        <pin name="E.PV1BACKUP.BP2.220r" id="6"/>
+                        <pin name="E.PV1BACKUP.BP2.27ok" id="7"/>
+                        <pin name="E.PV1BACKUP.BP3.24ok" id="8"/>
+                        <pin name="E.PV1BACKUP.BP3.220o" id="9"/>
+                        <pin name="E.PV1BACKUP.BP3.220r" id="10"/>
+                        <pin name="E.PV1BACKUP.BP3.27ok" id="11"/>
+                        <pin name="E.PV1BACKUP.BP1.pwr" id="12"/>
+                        <pin name="E.PV1BACKUP.BP2.pwr" id="13"/>
+                        <pin name="E.PV1BACKUP.BP3.pwr" id="14"/>
+                        <pin name="E.PV1BACKUP.OPEN.-" id="15"/>
+                    </DDI-module>
+                    <DDI-module register="5392">
+                        <pin name="E.PK1BACKUP.AP.ims" id="0"/>
+                        <pin name="E.PK1BACKUP.AP.adm" id="1"/>
+                        <pin name="E.PK1BACKUP.AP.astd" id="2"/>
+                        <pin name="E.PK1BACKUP.OPEN.VENT" id="3"/>
+                        <pin name="E.PV1BACKUP.AP.a14" id="8"/>
+                        <pin name="E.PV1BACKUP.AP.a15" id="9"/>
+                        <pin name="E.PV1BACKUP.VENT.-" id="10"/>
+                        <pin name="E.RSH1BACKUP.KZ.-" id="12"/>
+                        <pin name="E.RSH1BACKUP.220.-" id="13"/>
+                        <pin name="E.RSH1BACKUP.IZOL.-" id="14"/>
+                        <pin name="E.RSH1BACKUP.OPEN.-" id="15"/>
+                    </DDI-module>
+                    <DDI-module register="5393">
+                        <pin name="E.PK3BACKUP.AP.a7" id="0"/>
+                        <pin name="E.PK3BACKUP.OPEN.VENT" id="1"/>
+                        <pin name="E.IRP30.OPEN.-" id="2"/>
+                        <pin name="E.RSH2.KZ.-" id="3"/>
+                        <pin name="E.RSH2.24.-" id="4"/>
+                        <pin name="E.RSH2.OPEN.-" id="5"/>
+                    </DDI-module>
+                    <DDI-module register="5394">
+                        <pin name="E.RSH4.KZ.-" id="12"/>
+                        <pin name="E.RSH4.220.-" id="13"/>
+                        <pin name="E.RSH4.OPEN.-" id="14"/>
+                    </DDI-module>
+                </advantys>
+                <!--PV1r end-->
+                <!--PV2 start-->
+                <advantys address="10.16.1.13" testMode="off">
+                    <DDO-module register="0">
+                        <pin name="E.PV2.AV.-" id="0"/>
+                        <pin name="E.PV2.WK.-" id="1"/>
+                        <pin name="E.BT.ON.-" id="2"/>
+                    </DDO-module>
+                    <DDI-module register="5391">
+                        <pin name="E.PV2.BP1.24ok" id="0"/>
+                        <pin name="E.PV2.BP1.220o" id="1"/>
+                        <pin name="E.PV2.BP1.220r" id="2"/>
+                        <pin name="E.PV2.BP1.27ok" id="3"/>
+                        <pin name="E.PV2.BP2.24ok" id="4"/>
+                        <pin name="E.PV2.BP2.220o" id="5"/>
+                        <pin name="E.PV2.BP2.220r" id="6"/>
+                        <pin name="E.PV2.BP2.27ok" id="7"/>
+                        <pin name="E.PV2.BP3.24ok" id="8"/>
+                        <pin name="E.PV2.BP3.220o" id="9"/>
+                        <pin name="E.PV2.BP3.220r" id="10"/>
+                        <pin name="E.PV2.BP3.27ok" id="11"/>
+                        <pin name="E.PV2.BP1.pwr" id="12"/>
+                        <pin name="E.PV2.BP2.pwr" id="13"/>
+                        <pin name="E.PV2.BP3.pwr" id="14"/>
+                        <pin name="E.PV2.OPEN.-" id="15"/>
+                    </DDI-module>
+                    <DDI-module register="5392">
+                        <pin name="E.PZA02.MP200CH.220" id="0"/>
+                        <pin name="E.PZA02.MP200CH.26" id="1"/>
+                        <pin name="E.PZA02.MP200CH.BM" id="2"/>
+                        <pin name="E.PZA02.MP200CH.BF" id="3"/>
+                        <pin name="E.PZA02.MP200CH.BC" id="4"/>
+                        <pin name="E.PZA02.RSH1MAIN.220o" id="5"/>
+                        <pin name="E.PZA02.RSH1BACKUP.220r" id="6"/>
+                        <pin name="E.PZA02.KZ.q345" id="7"/>
+                        <pin name="E.PZA02.PWRSHIP.220o" id="8"/>
+                        <pin name="E.PZA02.PWRSHIP.220r" id="9"/>
+                        <pin name="E.PZA02.KZ.qf123456" id="10"/>
+                        <pin name="E.PZA02.OPEN.-" id="11"/>
+                        <pin name="E.PV2.VENT.-" id="14"/>
+                        <pin name="E.PV2.AP.a7" id="15"/>
+                    </DDI-module>
+                    <DDI-module register="5393">
+                        <pin name="E.PZA.MP200CH.220" id="0"/>
+                        <pin name="E.PZA.MP200CH.26" id="1"/>
+                        <pin name="E.PZA.MP200CH.BM" id="2"/>
+                        <pin name="E.PZA.MP200CH.BF" id="3"/>
+                        <pin name="E.PZA.MP200CH.BC" id="4"/>
+                        <pin name="E.PZA.RSH1MAIN.220o" id="5"/>
+                        <pin name="E.PZA.RSH1BACKUP.220r" id="6"/>
+                        <pin name="E.PZA.KZ.q1235" id="7"/>
+                        <pin name="E.PZA.KZ.q4" id="8"/>
+                        <pin name="E.PZA.OPEN.-" id="9"/>
+                        <pin name="E.PK2.AP.a1" id="10"/>
+                        <pin name="E.PK2.AP.a2" id="11"/>
+                        <pin name="E.PK2.AP.a3" id="12"/>
+                        <pin name="E.PK2.AP.a4" id="13"/>
+                        <pin name="E.PK2.AP.a5" id="14"/>
+                        <pin name="E.PK2.OPEN.VENT" id="15"/>
+                    </DDI-module>
+                    <DDI-module register="5394">
+                        <pin name="E.PZA01.MP200CH.220" id="0"/>
+                        <pin name="E.PZA01.MP200CH.26" id="1"/>
+                        <pin name="E.PZA01.MP200CH.BM" id="2"/>
+                        <pin name="E.PZA01.MP200CH.BF" id="3"/>
+                        <pin name="E.PZA01.MP200CH.BC" id="4"/>
+                        <pin name="E.PZA01.RSH1MAIN.220o" id="5"/>
+                        <pin name="E.PZA01.RSH1BACKUP.220r" id="6"/>
+                        <pin name="E.PZA01.KZ.q3" id="7"/>
+                        <pin name="E.PZA01.KZ.q12qf567" id="8"/>
+                        <pin name="E.PZA01.KZ.qf12" id="9"/>
+                        <pin name="E.PZA01.KZ.qf34" id="10"/>
+                        <pin name="E.PZA01.OPEN.-" id="11"/>
+                    </DDI-module>
+                </advantys>
+                <!--PV2 end-->
+                <!--PV3 start-->
+                <advantys address="10.16.131.14" testMode="off">
+                    <DDO-module register="0">
+                        <pin name="E.PV3.AV.-" id="0"/>
+                        <pin name="E.PV3.WK.-" id="1"/>
+                        <pin name="E.PV3.CLOSE.-" id="2"/>
+                    </DDO-module>
+                    <DDI-module register="5391">
+                        <pin name="E.PV3.BP1.24ok" id="0"/>
+                        <pin name="E.PV3.BP1.220o" id="1"/>
+                        <pin name="E.PV3.BP1.220r" id="2"/>
+                        <pin name="E.PV3.BP1.27ok" id="3"/>
+                        <pin name="E.PV3.BP2.24ok" id="4"/>
+                        <pin name="E.PV3.BP2.220o" id="5"/>
+                        <pin name="E.PV3.BP2.220r" id="6"/>
+                        <pin name="E.PV3.BP2.27ok" id="7"/>
+                        <pin name="E.PV3.BP3.24ok" id="8"/>
+                        <pin name="E.PV3.BP3.220o" id="9"/>
+                        <pin name="E.PV3.BP3.220r" id="10"/>
+                        <pin name="E.PV3.BP3.27ok" id="11"/>
+                        <pin name="E.PV3.BP1.pwr" id="12"/>
+                        <pin name="E.PV3.BP2.pwr" id="13"/>
+                        <pin name="E.PV3.BP3.pwr" id="14"/>
+                        <pin name="E.PV3.OPEN.-" id="15"/>
+                    </DDI-module>
+                    <DDI-module register="5392">
+                        <pin name="E.PV3.AP.a18" id="0"/>
+                        <pin name="E.PV3.AP.a19" id="1"/>
+                        <pin name="E.PV3.AP.a10" id="2"/>
+                        <pin name="E.PV3.VENT.-" id="3"/>
+                    </DDI-module>
+                </advantys>
+                <!--PV3 end-->
+                <!--RP start-->
+                <advantys address="10.16.131.15" testMode="off">
+                    <DDO-module register="0">
+                        <pin name="E.RP.AV.-" id="0"/>
+                        <pin name="E.RP.TR.-" id="1"/>
+                        <pin name="E.RP.WK.-" id="2"/>
+                    </DDO-module>
+                    <DDI-module register="5391">
+                        <pin name="E.RP.ON.-" id="0"/>
+                        <pin name="E.RP.BP.pwr" id="1"/>
+                        <pin name="E.RP.BP.220o" id="2"/>
+                        <pin name="E.RP.BP.220r" id="3"/>
+                        <pin name="E.RP.BP.24ok" id="4"/>
+                        <pin name="E.RP.BP.27ok" id="5"/>
+                        <pin name="E.RP.VENT.-" id="6"/>
+                        <pin name="E.RP.P427.pwr" id="8"/>
+                        <pin name="E.RP.P427.av" id="9"/>
+                    </DDI-module>
+                    <DDI-module register="5392">
+                        <pin name="E.PZA03RP.MP200CH.220" id="0"/>
+                        <pin name="E.PZA03RP.MP200CH.26" id="1"/>
+                        <pin name="E.PZA03RP.MP200CH.BM" id="2"/>
+                        <pin name="E.PZA03RP.MP200CH.BF" id="3"/>
+                        <pin name="E.PZA03RP.MP200CH.BC" id="4"/>
+                        <pin name="E.PZA03RP.KZ.q3" id="8"/>
+                        <pin name="E.PZA03RP.KZ.q4" id="9"/>
+                        <pin name="E.PZA03RP.KZ.qf123456" id="10"/>
+                        <pin name="E.PZA03RP.KZ.qf78" id="11"/>
+                        <pin name="E.PZA03RP.PWRSHIP.220o" id="12"/>
+                        <pin name="E.PZA03RP.PWRSHIP.220r" id="13"/>
+                        <pin name="E.PZA03RP.OPEN.-" id="14"/>
+                    </DDI-module>
+                </advantys>
+                <!--RP end-->
+                <!--VO1 start-->
+                <advantys address="10.16.1.16" testMode="off">
+                    <DDO-module register="0">
+                        <pin name="E.VO.AV.-" id="0"/>
+                        <pin name="E.VO.TR.-" id="1"/>
+                        <pin name="E.VO.WK.-" id="2"/>
+                        <pin name="E.K.AV.-" id="3"/>
+                        <pin name="E.K.TR.-" id="4"/>
+                        <pin name="E.K.WK.-" id="5"/>
+                        <pin name="E.GAS.AV.-" id="6"/>
+                        <pin name="E.GAS.WK.-" id="7"/>
+                        <pin name="E.GAS.TR.-" id="8"/>
+                        <pin name="E.BPLA.AV.-" id="9"/>
+                        <pin name="E.BPLA.TR.-" id="10"/>
+                        <pin name="E.BPLA.WK.-" id="11"/>
+                    </DDO-module>
+                    <DDI-module register="5391">
+                        <pin name="E.VO.ON.-" id="0"/>
+                        <pin name="E.VO1.BP1.pwr" id="1"/>
+                        <pin name="E.VO1.BP1.220o" id="2"/>
+                        <pin name="E.VO1.BP1.220r" id="3"/>
+                        <pin name="E.VO1.BP1.24ok" id="4"/>
+                        <pin name="E.VO1.BP1.27ok" id="5"/>
+                        <pin name="E.VO1.BP2.pwr" id="6"/>
+                        <pin name="E.VO1.BP2.220o" id="7"/>
+                        <pin name="E.VO1.BP2.220r" id="8"/>
+                        <pin name="E.VO1.BP2.24ok" id="9"/>
+                        <pin name="E.VO1.BP2.27ok" id="10"/>
+                        <pin name="E.VO2.BP.pwr" id="11"/>
+                        <pin name="E.VO2.BP.220o" id="12"/>
+                        <pin name="E.VO2.BP.220r" id="13"/>
+                        <pin name="E.VO2.BP.24ok" id="14"/>
+                        <pin name="E.VO2.BP.27ok" id="15"/>
+                    </DDI-module>
+                    <DDI-module register="5392">
+                        <pin name="E.VO.VENT.-" id="0"/>
+                        <pin name="E.K.ON.-" id="1"/>
+                        <pin name="E.K1.BP1.pwr" id="2"/>
+                        <pin name="E.K1.BP1.220o" id="3"/>
+                        <pin name="E.K1.BP1.220r" id="4"/>
+                        <pin name="E.K1.BP1.24ok" id="5"/>
+                        <pin name="E.K1.BP1.27ok" id="6"/>
+                        <pin name="E.K1.BP2.pwr" id="7"/>
+                        <pin name="E.K1.BP2.220o" id="8"/>
+                        <pin name="E.K1.BP2.220r" id="9"/>
+                        <pin name="E.K1.BP2.24ok" id="10"/>
+                        <pin name="E.K1.BP2.27ok" id="11"/>
+                        <pin name="E.K1.VENT.-" id="12"/>
+                    </DDI-module>
+                    <DDI-module register="5393">
+                        <pin name="E.BPLA.ON.-" id="0"/>
+                        <pin name="E.BPLA2.BP.pwr" id="1"/>
+                        <pin name="E.BPLA2.BP.220o" id="2"/>
+                        <pin name="E.BPLA2.BP.220r" id="3"/>
+                        <pin name="E.BPLA2.BP.24ok" id="4"/>
+                        <pin name="E.BPLA2.BP.27ok" id="5"/>
+                        <pin name="E.BPLA2.VENT.-" id="6"/>
+                        <pin name="E.VO1.AP.a26" id="7"/>
+                    </DDI-module>
+                    <DDI-module register="5394">
+                        <pin name="E.VO3.ADU.alarm" id="0"/>
+                        <pin name="E.VO3.KZ.qf1" id="1"/>
+                    </DDI-module>
+                </advantys>
+                <!--VO1 end-->
+                <!--SH2 start-->
+                <advantys address="10.16.131.17" testMode="off">
+                    <DDO-module register="0">
+                        <pin name="E.SH.AV.-" id="0"/>
+                        <pin name="E.SH.TR.-" id="1"/>
+                        <pin name="E.SH.WK.-" id="2"/>
+                    </DDO-module>
+                    <DDI-module register="5391">
+                        <pin name="E.SH.ON.-" id="0"/>
+                        <pin name="E.SH2.BP.pwr" id="1"/>
+                        <pin name="E.SH2.BP.220o" id="2"/>
+                        <pin name="E.SH2.BP.220r" id="3"/>
+                        <pin name="E.SH2.BP.24ok" id="4"/>
+                        <pin name="E.SH2.BP.27ok" id="5"/>
+                        <pin name="E.SH2.VENT.-" id="6"/>
+                        <pin name="E.PKP.MP200ADM.220" id="8"/>
+                        <pin name="E.PKP.MP200ADM.24" id="9"/>
+                        <pin name="E.PKP.MP200ADM.27" id="10"/>
+                        <pin name="E.PKP.MP200ADM.27ok" id="11"/>
+                        <pin name="E.PKP.RSH1MAIN.220o" id="12"/>
+                        <pin name="E.PKP.RSH1BACKUP.220r" id="13"/>
+                        <pin name="E.PKP.KZ.q345qf1" id="14"/>
+                        <pin name="E.PKP.OPEN.-" id="15"/>
+                    </DDI-module>
+                </advantys>
+                <!--SH2 end-->
+                <!--D1 start-->
+                <advantys address="10.16.1.18" testMode="off">
+                    <DDO-module register="0">
+                        <pin name="E.D.AV.-" id="0"/>
+                        <pin name="E.D.TR.-" id="1"/>
+                        <pin name="E.D.WK.-" id="2"/>
+                    </DDO-module>
+                    <DDI-module register="5391">
+                        <pin name="E.D.ON.-" id="0"/>
+                        <pin name="E.D1.BP.pwr" id="1"/>
+                        <pin name="E.D1.BP.220o" id="2"/>
+                        <pin name="E.D1.BP.220r" id="3"/>
+                        <pin name="E.D1.BP.24ok" id="4"/>
+                        <pin name="E.D1.BP.27ok" id="5"/>
+                        <pin name="E.D.VENT.-" id="6"/>
+                        <pin name="E.D2.BP.pwr" id="8"/>
+                        <pin name="E.D2.BP.220o" id="9"/>
+                        <pin name="E.D2.BP.220r" id="10"/>
+                        <pin name="E.D2.BP.24ok" id="11"/>
+                        <pin name="E.D2.BP.27ok" id="12"/>
+                        <pin name="E.D2.AP.a10" id="13"/>
+                    </DDI-module>
+                    <DDI-module register="5392">
+                        <pin name="E.PZA03D.MP200CH.220" id="0"/>
+                        <pin name="E.PZA03D.MP200CH.26" id="1"/>
+                        <pin name="E.PZA03D.MP200CH.BM" id="2"/>
+                        <pin name="E.PZA03D.MP200CH.BF" id="3"/>
+                        <pin name="E.PZA03D.MP200CH.BC" id="4"/>
+                        <pin name="E.PZA03D.KZ.q3" id="8"/>
+                        <pin name="E.PZA03D.KZ.q4" id="9"/>
+                        <pin name="E.PZA03D.KZ.qf123456" id="10"/>
+                        <pin name="E.PZA03D.KZ.qf78" id="11"/>
+                        <pin name="E.PZA03D.PWRSHIP.220o" id="12"/>
+                        <pin name="E.PZA03D.PWRSHIP.220r" id="13"/>
+                        <pin name="E.PZA03D.OPEN.-" id="14"/>
+                    </DDI-module>
+                </advantys>
+                <!--D1 end-->
+                <!--GEU2 start-->
+                <advantys address="10.16.1.19" testMode="off">
+                    <DDO-module register="0">
+                        <pin name="E.R.AV.-" id="0"/>
+                        <pin name="E.R.TR.-" id="1"/>
+                        <pin name="E.R.WK.-" id="2"/>
+                        <pin name="E.BZG.AV.-" id="4"/>
+                        <pin name="E.BZG.TR.-" id="5"/>
+                        <pin name="E.BZG.WK.-" id="6"/>
+                    </DDO-module>
+                    <DDI-module register="5391">
+                        <pin name="E.GEU2.BP.24ok" id="0"/>
+                        <pin name="E.GEU2.BP.220o" id="1"/>
+                        <pin name="E.GEU2.BP.27ok" id="2"/>
+                        <pin name="E.GEU2.BP.220r" id="3"/>
+                        <pin name="E.GEU2.BP.pwr" id="4"/>
+                        <pin name="E.GEU2.VENT.-" id="5"/>
+                        <pin name="E.R.ON.-" id="8"/>
+                        <pin name="E.R1.BP.pwr" id="9"/>
+                        <pin name="E.R1.BP.220o" id="10"/>
+                        <pin name="E.R1.BP.220r" id="11"/>
+                        <pin name="E.R1.BP.24ok" id="12"/>
+                        <pin name="E.R1.BP.27ok" id="13"/>
+                        <pin name="E.R1.VENT.-" id="14"/>
+                    </DDI-module>
+                    <DDI-module register="5392">
+                        <pin name="E.BZG.ON.-" id="0"/>
+                        <pin name="E.BZG1.BP.pwr" id="1"/>
+                        <pin name="E.BZG1.BP.220o" id="2"/>
+                        <pin name="E.BZG1.BP.220r" id="3"/>
+                        <pin name="E.BZG1.BP.24ok" id="4"/>
+                        <pin name="E.BZG1.BP.27ok" id="5"/>
+                        <pin name="E.BZG.VENT.-" id="6"/>
+                        <pin name="E.BZG1.AP.a9" id="7"/>
+                        <pin name="E.BZG3.BP.pwr" id="8"/>
+                        <pin name="E.BZG3.BP.220o" id="9"/>
+                        <pin name="E.BZG3.BP.220r" id="10"/>
+                        <pin name="E.BZG3.BP.24ok" id="11"/>
+                        <pin name="E.BZG3.BP.27ok" id="12"/>
+                    </DDI-module>
+                    <DDI-module register="5393">
+                        <pin name="E.GEU1.MP200ADMMAIN.220" id="0"/>
+                        <pin name="E.GEU1.MP200ADMMAIN.24" id="1"/>
+                        <pin name="E.GEU1.MP200ADMMAIN.27" id="2"/>
+                        <pin name="E.GEU1.MP200ADMMAIN.27ok" id="3"/>
+                        <pin name="E.GEU1.MP200ADMBACKUP.220" id="4"/>
+                        <pin name="E.GEU1.MP200ADMBACKUP.24" id="5"/>
+                        <pin name="E.GEU1.MP200ADMBACKUP.27" id="6"/>
+                        <pin name="E.GEU1.MP200ADMBACKUP.27ok" id="7"/>
+                    </DDI-module>
+                </advantys>
+                <!--GEU2 end-->
+            </momentum-input-manager>
+            <data-flow notifier="momentum-state-notifier" subscriber="momentum-1hz-thinner"/>
+            <data-flow notifier="momentum-1hz-thinner" subscriber="test-from-momentum-probe"/>
+			<data-flow notifier="momentum-1hz-thinner" subscriber="test-from-momentum-astd-probe"/>
+        </application>
+    </applications>
+</configuration>

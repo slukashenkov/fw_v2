@@ -1,0 +1,31 @@
+{
+  "sonata_tests_configuration": {
+                            "test_data_sonata": {"type":"json",
+                                                "windows": {
+                                                  "test_data_location": "test_sonata_plugin\\resources_sonata\\sonata_test_data.json"
+                                                },
+                                                "linux": {
+                                                  "test_data_location": "test_sonata_plugin/resources_sonata/sonata_test_data.json"
+                                                }
+                            },
+
+    "sut_control_commands_start": {
+                      "test_exec":"./testScr_param.bash TESTING_LAST_COMMAND_SUCCESS_ON_SETUP",
+                      "com00":"cd /usr/bin/dolphin",
+                      "com01":"/bin/tar -xzvf /usr/bin/dolphin/bl_tests_sonata.tar.gz",
+                      "com02":"cd /usr/bin/dolphin/bl_tests/",
+                      "com03":"./StartSonataOnly.bash",
+                      "com04":"cd /usr/bin/dolphin",
+                      "com05":"ps afx | egrep \".*./[W]atchDogServer --start .*\""
+                      },
+
+    "sut_control_commands_stop": {
+                      "test_exec": "./testScr_param.bash TESTING_LAST_COMMAND_SUCCESS_ON_TEARINGDOWN",
+                      "com00": "cd /usr/bin/dolphin/bl_tests",
+                      "com01": " ./StopSonataOnly.bash"
+                      }
+    }
+
+}
+
+

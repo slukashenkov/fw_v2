@@ -1,0 +1,109 @@
+
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+
+<objects>
+
+        <nmea-filter name="seq-vtg-rot-filter">
+        <nmea type="VTG" mode="allow"/>
+        <nmea type="ROT" mode="allow"/>
+        </nmea-filter>
+
+        <udp-connection name="seqnum-synch-udp-from-kd2-pri">
+            <source-address>10.7.1.3</source-address>
+            <source-port>55120</source-port>
+        </udp-connection>
+
+        <udp-connection name="seqnum-synch-udp-from-kd2-sec">
+            <source-address>10.7.131.3</source-address>
+            <source-port>55220</source-port>
+        </udp-connection>
+               
+        <udp-connection name="seqnum-synch-udp-to-kd2-pri">
+            <destination-address>10.7.1.4</destination-address>
+            <destination-port>55120</destination-port>
+        </udp-connection>
+
+        <udp-connection name="seqnum-synch-udp-to-kd2-sec">
+            <destination-address>10.7.131.4</destination-address>
+            <destination-port>55120</destination-port>
+        </udp-connection>       
+
+        <udp-connection name="arpa-b-udp-to-arm-pri">
+            <destination-address>239.254.1.1</destination-address>
+            <destination-port>50144</destination-port>
+        </udp-connection>
+
+        <udp-connection name="arpa-b-udp-to-arm-sec">
+            <destination-address>239.254.131.1</destination-address>
+            <destination-port>50244</destination-port>
+        </udp-connection>
+
+        <file-output name="arpa-b-probe">
+            <filename>/var/log/dolphin/22160/targets-arpa-b</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+
+
+</objects>
+    
+    <applications>
+        <application name="seqnum-app">
+            <seqnumsrv>
+                <data-to-client>seqnum-synch-out</data-to-client>
+                <data-from-client>seqnum-synch-in</data-from-client>
+                <targets-out>seqnum-targets-out</targets-out>
+                <master>1</master>
+
+                <pri-arms-addresses>10.7.1.13;10.7.131.13;10.7.1.11;10.7.131.11;10.7.1.19;10.7.131.19;</pri-arms-addresses> <!-- insert real masterARM IPs -->
+                <navdata-in>seqnum-navdata-in</navdata-in>
+                <navdata-timeout>2</navdata-timeout>
+                <critical-rot>0</critical-rot>
+                <rot-filter-alpha>0.95</rot-filter-alpha>
+
+                <port>4321</port>
+                <delete-target-timeout>60</delete-target-timeout>
+                <targets-out-interval>1</targets-out-interval>
+                <delta-bearing>400</delta-bearing>
+                <delta-distance>10000</delta-distance>
+                <delta-speed>1500</delta-speed><!-- was 300 -->
+                <coord-trust-coeff>0.99</coord-trust-coeff>
+                <speed-trust-coeff>0.99</speed-trust-coeff>
+                <stable-count>12</stable-count>
+                <required-tracking-time>20</required-tracking-time>
+                <max-target-speed>5000</max-target-speed>
+                <first-dist-filter>100000</first-dist-filter>
+                <first-bearing-filter>1500</first-bearing-filter>
+                <first-bearing-filter-min-dist>100000</first-bearing-filter-min-dist>
+                <nmea-device-id>U1</nmea-device-id>
+            </seqnumsrv>
+
+            <selectorN name="seqnum-synch-in-sel-out">
+                <channel priority="1" name="seqnum-synch-sel-in-1"/>
+                <channel priority="2" name="seqnum-synch-sel-in-2"/>
+                <timeout>00:00:02:500</timeout>
+            </selectorN>
+
+            <data-flow notifier="seqnum-synch-udp-from-kd2-pri" subscriber="seqnum-synch-sel-in-1"/>
+            <data-flow notifier="seqnum-synch-udp-from-kd2-sec" subscriber="seqnum-synch-sel-in-2"/>
+
+            <data-flow notifier="seqnum-synch-out" subscriber="seqnum-synch-udp-to-kd2-pri"/>
+            <data-flow notifier="seqnum-synch-out" subscriber="seqnum-synch-udp-to-kd2-sec"/>
+            <data-flow notifier="seqnum-synch-in-sel-out" subscriber="seqnum-synch-in"/>
+            <data-flow notifier="navdata-slot" subscriber="seq-vtg-rot-filter"/>
+            <data-flow notifier="seq-vtg-rot-filter" subscriber="seqnum-navdata-in"/>
+            <data-flow notifier="seqnum-targets-out" subscriber="arpa-b-udp-to-arm-pri"/>
+            <data-flow notifier="seqnum-targets-out" subscriber="arpa-b-udp-to-arm-sec"/>
+            <data-flow notifier="seqnum-targets-out" subscriber="arpa-b-slot"/>
+            <data-flow notifier="seqnum-targets-out" subscriber="arpa-b-probe"/>
+            <data-flow notifier="seqnum-targets-out" subscriber="radar-traffic-analyzer"/>
+
+        </application>
+    </applications>
+
+</configuration> 

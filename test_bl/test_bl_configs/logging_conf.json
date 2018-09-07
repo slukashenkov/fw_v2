@@ -1,0 +1,141 @@
+{
+    "version": 1,
+    "disable_existing_loggers": false,
+    "formatters": {
+            "simple": {
+                "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            },
+
+            "brief": {
+                "class": "logging.Formatter",
+                "style": "{",
+                "datefmt": "%I:%M:%S",
+                "format": "{levelname:8s}; {name:<15s}; {message:s}"
+            },
+            "simple": {
+                "class": "logging.Formatter",
+                "style": "{",
+                "datefmt": "%I:%M:%S",
+                "format": "{levelname:8s}; {asctime:s}; {name:<15s} {lineno:4d}; {message:s}"
+            },
+            "multi-process": {
+                "class": "logging.Formatter",
+                "style": "{",
+                "datefmt": "%I:%M:%S",
+                "format": "{levelname:8s}; {process:5d}; {asctime:s}; {name:<15s} {lineno:4d}; {message:s}"
+            },
+            "multi-thread": {
+                "class": "logging.Formatter",
+                "style": "{",
+                "datefmt": "%I:%M:%S",
+                "format": "{levelname:8s}; {threadName:5d}; {asctime:s}; {name:<15s} {lineno:4d}; {message:s}"
+            },
+            "verbose": {
+                "class": "logging.Formatter",
+                "style": "{",
+                "datefmt": "%I:%M:%S",
+                "format": "{levelname:8s}; {process:5d}; {threadName:8s}; {asctime:s}; {name:<15s} {lineno:4d}; {message:s}"
+            },
+            "multiline": {
+                "class": "logging.Formatter",
+                "style": "{",
+                "datefmt": "%I:%M:%S",
+                "format": "{levelname:8s}\n{process:5d}\n{threadName:8s}\n{asctime:s}\n{name:<15s}{lineno:4d}\n{message:s}\n"
+            }
+    },
+
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "DEBUG",
+            "formatter": "simple",
+            "stream": "ext://sys.stdout"
+        },
+
+        "common_log_file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "DEBUG",
+            "formatter": "simple",
+            "filename": "common_log.log",
+            "maxBytes": 10485760000,
+            "backupCount": 3,
+            "encoding": "utf8"
+        },
+        "null": {
+            "class": "logging.NullHandler"
+        }
+    },
+
+    "loggers": {
+        "test_bl.test_bl_tools.scan_logs": {
+            "level": "DEBUG",
+            "handlers": ["console","common_log_file"],
+            "propagate": "False"
+            },
+        "test_bl.test_bl_tools.udp_server": {
+            "level": "DEBUG",
+            "handlers": ["console","common_log_file"],
+            "propagate": "False"
+            },
+        "test_bl.test_bl_tools.read_test_data": {
+            "level": "DEBUG",
+            "handlers": ["console","common_log_file"],
+            "propagate": "False"
+            },
+        "test_bl.test_bl_tools.send_receive": {
+            "level": "DEBUG",
+            "handlers": ["console","common_log_file"],
+            "propagate": "False"
+            },
+         "test_bl.test_bl_tools.external_scripts": {
+            "level": "DEBUG",
+            "handlers": ["console","common_log_file"],
+            "propagate": "False"
+            },
+        "test_bl.test_bl_tools.config_test_env": {
+            "level": "DEBUG",
+            "handlers": ["console","common_log_file"],
+            "propagate": "False"
+            },
+        "test_bl.test_bl_tools.external_scripts": {
+            "level": "DEBUG",
+            "handlers": ["console","common_log_file"],
+            "propagate": "False"
+            },
+        "test_bl.test_sonata_plugin.test_tools_sonata.sonata_test_parser": {
+            "level": "DEBUG",
+            "handlers": ["console","common_log_file"],
+            "propagate": "False"
+            },
+        "test_bl.test_sonata_plugin.test_tools_sonata.setup_sonata_suite": {
+            "level": "DEBUG",
+            "handlers": ["console","common_log_file"],
+            "propagate": "False"
+            },
+        "test_bl.test_sonata_plugin.structs_sonata.sonata_msg": {
+            "level": "DEBUG",
+            "handlers": ["console","common_log_file"],
+            "propagate": "False"
+            },
+        "test_bl.test_sonata_plugin.tests_sonata.test_sonata_decouple": {
+            "level": "DEBUG",
+            "handlers": ["console","common_log_file"],
+            "propagate": "False"
+            },
+        "__main__": {
+            "level": "DEBUG",
+            "handlers": [ "console","common_log_file"],
+            "propagate": "False"
+            },
+        "test_send_receive_05":{
+            "level": "DEBUG",
+            "handlers": [ "common_log_file"],
+            "propagate": "False"
+            }
+        },
+
+    "root": {
+        "level": "NOTSET",
+        "handlers": ["null"]
+    }
+}

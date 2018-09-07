@@ -1,0 +1,83 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <udp-connection name="udp-full-io-cfg">
+            <!-- Локальный адрес, на который принимаются или с которого передаются пакеты --> 
+            <source-address>127.0.0.1</source-address>
+            <!-- Локальный порт, на который принимаются пакеты -->
+            <source-port>59001</source-port>
+            <!-- Multicast-группа, на которую подписывается приемник. 
+                 Группа должна быть привязаны к интерфейсу настройками роутинга ОС :
+                 >route add... -->
+            <multicast-address>239.255.0.1</multicast-address>
+            <!-- Удаленный адрес или multicast-группа, на который передаются пакеты --> 
+            <destination-address>10.2.1.3</destination-address>
+            <!-- Удаленный порт, на который передаются пакеты --> 
+            <destination-port>59002</destination-port>
+            <!-- Максимальный размер ПРИНИМАЕМОГО пакета, если не указан - 65535 --> 
+            <packet-max-size>1024</packet-max-size>
+        </udp-connection>
+                
+        <udp-connection name="udp-out-local">
+            <source-address>127.0.0.1</source-address>
+            <destination-address>127.0.0.1</destination-address>
+            <destination-port>1234</destination-port>
+        </udp-connection>
+        
+        <udp-connection name="udp-in-local">
+            <source-address>127.0.0.1</source-address>
+            <source-port>1234</source-port>
+        </udp-connection>
+
+        <udp-connection name="udp-in-all-interfaces">
+            <source-port>1234</source-port>
+        </udp-connection>
+
+        <udp-connection name="udp-in-multicast">
+            <source-address>10.10.201.206</source-address>
+            <source-port>1234</source-port>
+            <multicast-address>239.255.0.1</multicast-address>
+        </udp-connection>
+
+        <udp-connection name="udp-out-multicast">
+            <destination-address>239.255.0.1</destination-address>
+            <destination-port>1234</destination-port>
+        </udp-connection>
+
+        <udp-connection name="udp-out">
+            <source-address>10.10.201.206</source-address>
+            <destination-address>10.10.73.105</destination-address>
+            <destination-port>1234</destination-port>
+        </udp-connection>
+        
+        <udp-connection name="udp-in">
+            <source-address>10.10.201.206</source-address>
+            <source-port>1234</source-port>
+            <packet-max-size>1400</packet-max-size>
+        </udp-connection>
+
+        <file-output name="udp-in-probe">
+            <filename>/var/log/dolphin/udp-in</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="udp-receiver-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <data-flow notifier="udp-in-local" subscriber="udp-in-probe"/>
+        </application>
+
+        <application name="udp-sender-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+            
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" subscriber="udp-out-local"/>
+        </application>
+    </applications>
+</configuration>
+    

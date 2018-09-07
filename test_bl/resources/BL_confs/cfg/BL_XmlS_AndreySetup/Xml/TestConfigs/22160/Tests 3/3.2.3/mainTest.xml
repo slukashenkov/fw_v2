@@ -1,0 +1,72 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <!--config-path>d:\Baselibraries\bin2\config\</config-path-->
+        <config-path>/etc/dolphin/22160/</config-path>
+    </plugin-parameters>
+
+    <plugins>
+
+	
+    </plugins>
+
+    <objects>
+		
+        <slot name="test-slot">
+            <max-size>65535</max-size>
+        </slot>
+
+</objects>
+
+
+<!-- TEST CONFIGURATION 3.2.3 -->
+	<objects>
+
+		<udp-connection name="test-udp-from-notebook" mode="server">			
+            <multicast-address>239.254.1.1</multicast-address> 					
+			<source-address>10.7.1.3</source-address> 							<!-- Test 3.3-3.4 -->
+            <source-port>51111</source-port> 									<!-- Test 3.3-3.4 -->
+		</udp-connection>
+		
+		<udp-connection name="test-udp-to-notebook">
+            <destination-address>239.254.1.2</destination-address>				<!-- Test 3.3-3.4 -->
+            <destination-port>51112</destination-port>							<!-- Test 3.3-3.4 -->
+			<packet-max-size>1024</packet-max-size>								<!-- Test 3.2 -->
+        </udp-connection>
+		
+		<file-output name="test-from-udp-probe">
+            <filename>/var/log/dolphin/test/test-3.2.3-from-udp-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+<!--
+        <file-output name="test-from-1hz-thinner-probe">
+            <filename>/var/log/dolphin/test/test-3.2.3-from-1hz-thinner-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+-->	
+<!--        <stream-thinner name="test-1hz-thinner" minInterval="00:00:01:000"/>	 Test 3.1 -->
+		
+</objects>
+
+	<applications>	
+        <application name="test-app">
+			<watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="40"/> 
+
+            <data-flow notifier="test-udp-from-notebook" subscriber="test-udp-to-notebook"/>
+            <data-flow notifier="test-udp-from-notebook" subscriber="test-from-udp-probe"/>
+<!--			
+            <data-flow notifier="test-udp-from-notebook" subscriber="test-1hz-thinner"/>
+            <data-flow notifier="test-udp-from-notebook" subscriber="test-from-udp-probe"/>
+            <data-flow notifier="test-1hz-thinner" subscriber="test-from-1hz-thinner-probe"/>
+            <data-flow notifier="test-1hz-thinner" subscriber="test-udp-to-notebook"/>
+-->
+        </application>
+    </applications>
+</configuration>

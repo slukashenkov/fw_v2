@@ -1,0 +1,44 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <!--config-path>d:\Baselibraries\bin2\config\</config-path-->
+        <config-path>/etc/dolphin/22160/</config-path>
+    </plugin-parameters>
+ 
+    <plugins>
+		<plugin name="Purga"       cfgName="PurgaTest.xml"     mode="on" application="purga-test-app" xenomailnit="false">
+             <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+        </plugin>
+    </plugins>
+		
+    <objects>
+        <!-- #################### COMMON slots,etc #################### -->
+        
+		<slot name="test-slot">
+            <max-size>65535</max-size>
+        </slot>		
+	</objects>
+
+<!-- TEST CONFIGURATION 21.0 -->
+	<objects>
+
+		<file-output name="test-from-purga-to-astd-probe">
+            <filename>/var/log/dolphin/test/test-21.0-from-purga-to-astd-probe</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>	
+
+	</objects>
+
+	<applications>
+		<application name="test-app">
+			<watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+			<data-flow notifier="test-slot" subscriber="test-from-purga-to-astd-probe"/>
+		</application>
+	</applications>
+</configuration>

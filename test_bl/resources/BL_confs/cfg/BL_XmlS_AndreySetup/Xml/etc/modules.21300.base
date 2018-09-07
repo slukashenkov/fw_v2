@@ -1,0 +1,11 @@
+# /etc/modules: kernel modules to load at boot time.
+#
+# This file should contain the names of kernel modules that are
+# to be loaded at boot time, one per line.  Comments begin with
+# a `#', and everything on the line after them are ignored.
+
+# Elcus TA1-6U-CPCI
+tmk1553b misc=1 d0=1 e0=1 t0="TMKXI" d1=1 e1=2 t1="TMKXI" d2=1 e2=3 t2="TMKXI" d3=1 e3=4 t3="TMKXI"
+
+# Adlink cRTV44
+bttv card=134,134,134,134

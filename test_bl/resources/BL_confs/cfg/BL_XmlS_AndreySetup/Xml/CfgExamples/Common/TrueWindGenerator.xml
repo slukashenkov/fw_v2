@@ -1,0 +1,52 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+       
+        
+        <slot name="slot-in">
+            <max-size>65536</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>win-pipe</type>
+        </slot>
+        
+        <slot name="true-wind-out-slot">
+            <max-size>65536</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>win-pipe</type>
+        </slot>
+         
+        <true-wind-generator name="twg">
+            <timeout>00:01:01:000</timeout>
+            <talker-id>GP</talker-id>
+        </true-wind-generator>
+           
+        <tcp-connection name="navdata-tcp-local" mode="server" timeout="01:00:00">
+            <source-address>127.0.0.1</source-address>
+            <source-port>54501</source-port>
+        </tcp-connection>
+        
+        <tcp-connection name="wind-tcp-local" mode="server" timeout="01:00:00">
+            <source-address>127.0.0.1</source-address>
+            <source-port>54502</source-port>
+        </tcp-connection>
+           
+    </objects>
+
+    <applications>
+        <application name="vapp">
+            <watchdog aliveTimeout="00:01:01:000" terminationTime="00:01:01:200" startupDuration="00:01:00:500"/>
+            
+           <data-flow notifier="twg" subscriber="true-wind-out-slot"/>   
+           <data-flow notifier="slot-in" subscriber="twg"/>
+           <data-flow notifier="slot-in" subscriber="navdata-tcp-local"/>
+           <data-flow notifier="slot-in" subscriber="wind-tcp-local"/>
+            
+            
+        </application>
+    </applications>
+
+</configuration>

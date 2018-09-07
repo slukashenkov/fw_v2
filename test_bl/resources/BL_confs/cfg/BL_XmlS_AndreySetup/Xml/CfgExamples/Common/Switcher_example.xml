@@ -1,0 +1,54 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        
+	<slot name="switcher-cmd-slot">
+            <max-size>1024</max-size>
+            <update-time>00:00:01:000</update-time>
+        </slot>
+
+        <data-flow-switcher name="switcher">
+            <input-data id="1" name="switcher-in-one" />
+            <input-data id="2" name="switcher-in-two"/>            
+            <output-data name="switcher-out"/>
+        </data-flow-switcher>    
+	
+        <file-output name="switcher-log">
+            <filename>/var/log/dolphin/switcher-log.log</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="dataflow-switcher-application">
+            <watchdog aliveTimeout="00:00:05:000" terminationTime="00:00:01:000"/>
+	    
+	    <livadia-dispatcher senderId="385" receiverId="387">
+	        <base-folder>/etc/dolphin/livadia-screens</base-folder>
+		                
+		<data-available-id name="D.LIVADIA.-.KD2"/>
+		<data-correct-id name="V.LIVADIA.-.KD2"/>
+		<livadia-msg-from-livadia-subscriber name="MsgFromLivadiaSubscriber"/>
+	        <livadia-msg-to-livadia-subscriber name="MsgToLivadiaSubscriber"/>
+                <livadia-msg-to-livadia-notifier name="MsgToLivadiaNotifier"/>
+                <livadia-msg-from-livadia-notifier name="MsgFromLivadiaNotifier"/>
+                <livadia-update-astd-state-notifier name="UpdateAstdStateNotifier"/>
+            </livadia-dispatcher>
+	    
+	    <data-flow notifier="switcher-cmd-slot" subscriber="switcher"/>
+	    
+	    <zda-notifier name="zda-one" period="00:00:01:000"/>
+	                	    
+	    <data-flow notifier="zda-one" subscriber="switcher-in-one"/>
+	    <data-flow notifier="MsgToLivadiaNotifier" subscriber="switcher-in-two"/>
+  
+	    <data-flow notifier="switcher-out" subscriber="switcher-log"/>
+	    <data-flow notifier="switcher-cmd-slot" subscriber="switcher-log"/>
+        </application>
+
+    </applications>
+
+</configuration>

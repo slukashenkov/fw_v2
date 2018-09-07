@@ -1,0 +1,59 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <serial-port-connection name="serial-port-xeno-io">
+            <port>rtser0</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <rx-trigger-level>14</rx-trigger-level>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:01:000</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <xeno-pipe-slot linuxName="serial-in-pipe-linux" xenomaiName="serial-in-pipe-xeno">
+            <max-size>1920</max-size>
+            <update-time>00:00:01:000</update-time>
+        </xeno-pipe-slot>
+
+       
+        <file-input name="xeno-ipc-device-pipe-demo">
+            <filename>/proc/xenomai/registry/native/pipes/pipe-demo</filename>
+            <buffer-size>16</buffer-size>
+        </file-input>
+    </objects>
+
+    <applications>
+        <application name="xeno-dev-to-MII">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <zda-notifier name="zda-gen" period="00:00:00:020"/>
+
+            <manchester-writer name="manchester-conn-out">
+                <card-no>0</card-no>
+                <address>31</address>
+                <subaddress>20</subaddress>
+                <max-wait-duration>00:00:01:000</max-wait-duration>
+                <mode>bc-no-irq</mode> 
+                
+                <line-control bus="A" period="00:00:01:000" timeout="00:00:03:000">
+                    <astd-notifier name="manchester-conn-astd"/>
+                    <remote-terminal address="1" astd-name="L.DEVICE1.STATE"/>
+                    <remote-terminal address="2" astd-name="L.DEVICE2.STATE"/>
+                    <remote-terminal address="3" astd-name="L.DEVICE3.STATE"/>
+                </line-control>
+            </manchester-writer>
+            
+            <data-flow notifier="zda-gen" subscriber="pipe-linux"/>
+
+            <data-flow notifier="serial-port-xeno-io" subscriber="manchester-conn-out"/>
+            <data-flow notifier="serial-in-pipe-xeno" subscriber="manchester-conn-out"/>
+        </application>
+
+    </applications>
+</configuration>
+    

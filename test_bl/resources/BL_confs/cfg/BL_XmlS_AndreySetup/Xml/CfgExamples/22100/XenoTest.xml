@@ -1,0 +1,648 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+    <objects>
+        <serial-port-connection name="xeno-port-0">
+            <port>rtser0</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+            <rx-trigger-level>51</rx-trigger-level>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-1">
+            <port>rtser1</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-2">
+            <port>rtser2</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-3">
+            <port>rtser3</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-4">
+            <port>rtser4</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-5">
+            <port>rtser5</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-6">
+            <port>rtser6</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-7">
+            <port>rtser7</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-8">
+            <port>rtser8</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-9">
+            <port>rtser9</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-10">
+            <port>rtser10</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-11">
+            <port>rtser11</port>
+            <speed>19200</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-12">
+            <port>rtser12</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-13">
+            <port>rtser13</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-14">
+            <port>rtser14</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-15">
+            <port>rtser15</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-16">
+            <port>rtser16</port>
+            <speed>4800</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-17">
+            <port>rtser17</port>
+            <speed>19200</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-18">
+            <port>rtser18</port>
+            <speed>9600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-19">
+            <port>rtser19</port>
+            <speed>4800</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-20">
+            <port>rtser20</port>
+            <speed>4800</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-21">
+            <port>rtser21</port>
+            <speed>4800</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-22">
+            <port>rtser22</port>
+            <speed>4800</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <serial-port-connection name="xeno-port-23">
+            <port>rtser23</port>
+            <speed>57600</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+
+        <slot name="xeno-out-slot-pipe">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+
+        <slot name="xeno-pipe-0">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-1">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-2">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-3">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-4">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-5">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-6">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-7">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-8">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-9">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-10">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-11">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-12">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-13">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-14">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-15">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-16">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-17">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-18">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-19">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-20">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-21">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-22">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+         <slot name="xeno-pipe-23">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+            <type>xeno-pipe</type>
+        </slot>
+ 
+        <file-input name="xeno-ipc-dev-0">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-0</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-1">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-1</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-2">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-2</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-3">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-3</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-4">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-4</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-5">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-5</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-6">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-6</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-7">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-7</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-8">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-8</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-9">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-9</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-10">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-10</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-11">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-11</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-12">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-12</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-13">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-13</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-14">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-14</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-15">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-15</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-16">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-16</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-17">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-17</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-18">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-18</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-19">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-19</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-20">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-20</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-21">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-21</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-22">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-22</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+         <file-input name="xeno-ipc-dev-23">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-pipe-23</filename>
+            <buffer-size>10240</buffer-size>
+        </file-input>
+
+        <file-output name="xeno-out-ipc-dev">
+            <filename>/proc/xenomai/registry/native/pipes/xeno-out-slot-pipe</filename>
+            <format>raw</format>
+        </file-output>
+
+        <file-output name="xeno-probe-0">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-0</filename>
+        </file-output>
+        <file-output name="xeno-probe-1">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-1</filename>
+        </file-output>
+        <file-output name="xeno-probe-2">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-2</filename>
+        </file-output>
+        <file-output name="xeno-probe-3">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-3</filename>
+        </file-output>
+        <file-output name="xeno-probe-4">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-4</filename>
+        </file-output>
+        <file-output name="xeno-probe-5">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-5</filename>
+        </file-output>
+        <file-output name="xeno-probe-6">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-6</filename>
+        </file-output>
+        <file-output name="xeno-probe-7">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-7</filename>
+        </file-output>
+        <file-output name="xeno-probe-8">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-8</filename>
+        </file-output>
+        <file-output name="xeno-probe-9">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-9</filename>
+        </file-output>
+        <file-output name="xeno-probe-10">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-10</filename>
+        </file-output>
+        <file-output name="xeno-probe-11">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-11</filename>
+        </file-output>
+        <file-output name="xeno-probe-12">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-12</filename>
+        </file-output>
+        <file-output name="xeno-probe-13">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-13</filename>
+        </file-output>
+        <file-output name="xeno-probe-14">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-14</filename>
+        </file-output>
+        <file-output name="xeno-probe-15">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-15</filename>
+        </file-output>
+        <file-output name="xeno-probe-16">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-16</filename>
+        </file-output>
+        <file-output name="xeno-probe-17">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-17</filename>
+        </file-output>
+        <file-output name="xeno-probe-18">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-18</filename>
+        </file-output>
+        <file-output name="xeno-probe-19">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-19</filename>
+        </file-output>
+        <file-output name="xeno-probe-20">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-20</filename>
+        </file-output>
+        <file-output name="xeno-probe-21">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-21</filename>
+        </file-output>
+        <file-output name="xeno-probe-22">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-22</filename>
+        </file-output>
+        <file-output name="xeno-probe-23">
+            <filename>/var/log/ocean/xeno_test/xeno-channel-23</filename>
+        </file-output>
+
+        <file-output name="zda-probe">
+            <filename>/var/log/ocean/xeno_test/zda</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+
+<!--
+         <application name="xeno-read-one-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="0"/>
+
+            <data-flow notifier="xeno-port-0" subscriber="xeno-pipe-0"/>
+            <data-flow notifier="xeno-port-19" subscriber="xeno-pipe-19"/>
+         </application>
+
+         <application name="xeno-write-one-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="0"/>
+
+            <zda-notifier name="zda" period="00:00:02:000"/>
+            <data-flow notifier="zda" subscriber="xeno-port-1"/>
+         </application>
+-->
+         <application name="xeno-write-all-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="0"/>
+
+            <zda-notifier name="zda" period="00:00:02:000"/>
+
+            <data-flow notifier="zda" subscriber="zda-probe"/>
+            <data-flow notifier="zda" subscriber="xeno-port-0"/>
+            <data-flow notifier="zda" subscriber="xeno-port-1"/>
+            <data-flow notifier="zda" subscriber="xeno-port-2"/>
+            <data-flow notifier="zda" subscriber="xeno-port-3"/>
+            <data-flow notifier="zda" subscriber="xeno-port-4"/>
+            <data-flow notifier="zda" subscriber="xeno-port-5"/>
+            <data-flow notifier="zda" subscriber="xeno-port-6"/>
+            <data-flow notifier="zda" subscriber="xeno-port-7"/>
+            <data-flow notifier="zda" subscriber="xeno-port-8"/>
+            <data-flow notifier="zda" subscriber="xeno-port-9"/>
+            <data-flow notifier="zda" subscriber="xeno-port-10"/>
+            <data-flow notifier="zda" subscriber="xeno-port-11"/>
+            <data-flow notifier="zda" subscriber="xeno-port-12"/>
+            <data-flow notifier="zda" subscriber="xeno-port-13"/>
+            <data-flow notifier="zda" subscriber="xeno-port-14"/>
+            <data-flow notifier="zda" subscriber="xeno-port-15"/>
+            <data-flow notifier="zda" subscriber="xeno-port-16"/>
+            <data-flow notifier="zda" subscriber="xeno-port-17"/>
+            <data-flow notifier="zda" subscriber="xeno-port-18"/>
+            <data-flow notifier="zda" subscriber="xeno-port-19"/>
+            <data-flow notifier="zda" subscriber="xeno-port-20"/>
+            <data-flow notifier="zda" subscriber="xeno-port-21"/>
+            <data-flow notifier="zda" subscriber="xeno-port-22"/>
+            <data-flow notifier="zda" subscriber="xeno-port-23"/>
+         </application>
+
+
+         <application name="xeno-test-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="0"/>
+
+            <data-flow notifier="xeno-port-0" subscriber="xeno-pipe-0"/>
+            <data-flow notifier="xeno-port-1" subscriber="xeno-pipe-1"/>
+            <data-flow notifier="xeno-port-2" subscriber="xeno-pipe-2"/>
+            <data-flow notifier="xeno-port-3" subscriber="xeno-pipe-3"/>
+            <data-flow notifier="xeno-port-4" subscriber="xeno-pipe-4"/>
+            <data-flow notifier="xeno-port-5" subscriber="xeno-pipe-5"/>
+            <data-flow notifier="xeno-port-6" subscriber="xeno-pipe-6"/>
+            <data-flow notifier="xeno-port-7" subscriber="xeno-pipe-7"/>
+            <data-flow notifier="xeno-port-8" subscriber="xeno-pipe-8"/>
+            <data-flow notifier="xeno-port-9" subscriber="xeno-pipe-9"/>
+            <data-flow notifier="xeno-port-10" subscriber="xeno-pipe-10"/>
+            <data-flow notifier="xeno-port-11" subscriber="xeno-pipe-11"/>
+            <data-flow notifier="xeno-port-12" subscriber="xeno-pipe-12"/>
+            <data-flow notifier="xeno-port-13" subscriber="xeno-pipe-13"/>
+            <data-flow notifier="xeno-port-14" subscriber="xeno-pipe-14"/>
+            <data-flow notifier="xeno-port-15" subscriber="xeno-pipe-15"/>
+            <data-flow notifier="xeno-port-16" subscriber="xeno-pipe-16"/>
+            <data-flow notifier="xeno-port-17" subscriber="xeno-pipe-17"/>
+            <data-flow notifier="xeno-port-18" subscriber="xeno-pipe-18"/>
+            <data-flow notifier="xeno-port-19" subscriber="xeno-pipe-19"/>
+            <data-flow notifier="xeno-port-20" subscriber="xeno-pipe-20"/>
+            <data-flow notifier="xeno-port-21" subscriber="xeno-pipe-21"/>
+            <data-flow notifier="xeno-port-22" subscriber="xeno-pipe-22"/>
+            <data-flow notifier="xeno-port-23" subscriber="xeno-pipe-23"/>
+
+            <data-flow notifier="xeno-out-slot-pipe" subscriber="xeno-port-15"/>
+        </application>
+
+         <application name="xeno-out-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:10:000" startOrder="3"/>
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+
+            <data-flow notifier="xeno-ipc-dev-0" subscriber="xeno-probe-0"/>
+            <data-flow notifier="xeno-ipc-dev-1" subscriber="xeno-probe-1"/>
+            <data-flow notifier="xeno-ipc-dev-2" subscriber="xeno-probe-2"/>
+            <data-flow notifier="xeno-ipc-dev-3" subscriber="xeno-probe-3"/>
+            <data-flow notifier="xeno-ipc-dev-4" subscriber="xeno-probe-4"/>
+            <data-flow notifier="xeno-ipc-dev-5" subscriber="xeno-probe-5"/>
+            <data-flow notifier="xeno-ipc-dev-6" subscriber="xeno-probe-6"/>
+            <data-flow notifier="xeno-ipc-dev-7" subscriber="xeno-probe-7"/>
+            <data-flow notifier="xeno-ipc-dev-8" subscriber="xeno-probe-8"/>
+            <data-flow notifier="xeno-ipc-dev-9" subscriber="xeno-probe-9"/>
+            <data-flow notifier="xeno-ipc-dev-10" subscriber="xeno-probe-10"/>
+            <data-flow notifier="xeno-ipc-dev-11" subscriber="xeno-probe-11"/>
+            <data-flow notifier="xeno-ipc-dev-12" subscriber="xeno-probe-12"/>
+            <data-flow notifier="xeno-ipc-dev-13" subscriber="xeno-probe-13"/>
+            <data-flow notifier="xeno-ipc-dev-14" subscriber="xeno-probe-14"/>
+            <data-flow notifier="xeno-ipc-dev-15" subscriber="xeno-probe-15"/>
+            <data-flow notifier="xeno-ipc-dev-16" subscriber="xeno-probe-16"/>
+            <data-flow notifier="xeno-ipc-dev-17" subscriber="xeno-probe-17"/>
+            <data-flow notifier="xeno-ipc-dev-18" subscriber="xeno-probe-18"/>
+            <data-flow notifier="xeno-ipc-dev-19" subscriber="xeno-probe-19"/>
+            <data-flow notifier="xeno-ipc-dev-20" subscriber="xeno-probe-20"/>
+            <data-flow notifier="xeno-ipc-dev-21" subscriber="xeno-probe-21"/>
+            <data-flow notifier="xeno-ipc-dev-22" subscriber="xeno-probe-22"/>
+            <data-flow notifier="xeno-ipc-dev-23" subscriber="xeno-probe-23"/>
+
+            <data-flow notifier="zda-gen" subscriber="xeno-out-ipc-dev"/>
+
+        </application>
+
+    </applications>
+</configuration>

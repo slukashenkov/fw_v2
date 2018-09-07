@@ -1,0 +1,2853 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+        <restart-all>true</restart-all>
+    </global-parameters>
+
+    <plugin-parameters>
+        <module-path>/usr/local/lib</module-path>
+        <config-path>/usr/local</config-path>
+    </plugin-parameters>
+                                           
+    <plugins>
+        <!-- optional plugin list, can be empty -->
+        <plugin name="Astk" mode="off" application="astk-application" />
+        <plugin name="Journals" mode="off" application="" />
+        <plugin name="Platan" mode="off" application="platan-app" />
+    </plugins>
+
+    <!-- etc-components-app --> 
+    <objects>
+        <traffic-analyzer name="ta-in-out">
+            <talker-id>U0</talker-id>
+            <nmea-type>RSS</nmea-type>
+            <timeout>00:00:02:000</timeout>
+            <period>00:00:02:000</period>
+        </traffic-analyzer>
+
+        <file-output name="traffic-analyzer-probe">
+            <filename>/var/log/dolphin/traffic-analyzer</filename>
+        </file-output>
+        
+        <vbw-generator name="vbw-gen">
+            <min-interval>00:00:01:000</min-interval>
+            <timeout>00:00:03:000</timeout>
+            <talker-id>VM</talker-id>
+        </vbw-generator>
+        
+        <udp-connection name="vbw-and-true-wind-gen-udp-in">
+            <local-port>1237</local-port>
+        </udp-connection>
+        
+        <file-output name="vbw-gen-out-probe">
+            <filename>/var/log/dolphin/vbw-gen-out</filename>
+        </file-output>
+        
+        <true-wind-generator name="true-wind-gen">
+            <timeout>00:01:01:000</timeout>
+            <talker-id>GP</talker-id>
+        </true-wind-generator>
+
+        <file-output name="true-wind-gen-out-probe">
+            <filename>/var/log/dolphin/true-wind-gen-out</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="etc-components-app">
+            <watchdog aliveTimeout="00:00:01:000"
+                    terminationTime="00:00:00:200"
+                    startupDuration="00:00:00:100"
+                    startOrder="1"/>
+
+            <!-- traffic-analyzer -->
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" subscriber="ta-in-out"/>
+            <data-flow notifier="ta-in-out" subscriber="traffic-analyzer-probe"/>
+            
+            <!-- vbw-generator -->
+            <data-flow notifier="vbw-and-true-wind-gen-udp-in" subscriber="vbw-gen"/>
+            <data-flow notifier="vbw-gen"                      subscriber="vbw-gen-out-probe"/>
+
+            <!-- true-wind-generator -->
+            <data-flow notifier="vbw-and-true-wind-gen-udp-in" subscriber="true-wind-gen"/>
+            <data-flow notifier="true-wind-gen"                subscriber="true-wind-gen-out-probe"/>
+            
+            <!-- date-time-handler -->
+            <date-time-handler>
+                <handler-msg>date-time-handler</handler-msg>
+                <notifier-msg>date-time-notifier</notifier-msg>
+            </date-time-handler>
+            <data-flow notifier="zda-gen" subscriber="date-time-handler"/>
+
+        </application>
+    </applications>
+
+    <!-- converters-app --> 
+    <objects>
+        <udp-connection name="converters-udp-in">
+            <local-port>56900</local-port>
+        </udp-connection>
+
+        <file-output name="converters-out-probe">
+            <filename>/var/log/dolphin/converters-out</filename>
+        </file-output>
+    
+        <converter name="date-time-conv">
+            <type>date-time</type>
+        </converter>
+        <converter name="sjuzhet-conv">
+            <type>sjuzhet</type>
+        </converter>
+        <converter name="folklor-conv">
+            <type>folklor</type>
+        </converter>
+        <converter name="linkquest-conv">
+            <type>linkquest</type>
+        </converter>
+        <converter name="anapa-conv">
+            <type>anapa</type>
+        </converter>
+        <converter name="rtpa-conv">
+            <type>rtpa</type>
+        </converter>
+        <converter name="tnpa-conv">
+            <type>tnpa</type>
+        </converter>
+        <converter name="r764-conv">
+            <type>r764</type>
+        </converter>
+        <converter name="kama-conv">
+            <type>kama</type>
+        </converter>
+    </objects>
+
+    <applications>
+        <application name="converters-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+            
+            <data-flow notifier="converters-udp-in" converter="date-time-conv" subscriber="converters-out-probe"/>
+            <data-flow notifier="converters-udp-in" converter="sjuzhet-conv" subscriber="converters-out-probe"/>
+            <data-flow notifier="converters-udp-in" converter="folklor-conv" subscriber="converters-out-probe"/>
+            <data-flow notifier="converters-udp-in" converter="linkquest-conv" subscriber="converters-out-probe"/>
+            <data-flow notifier="converters-udp-in" converter="anapa-conv" subscriber="converters-out-probe"/>
+            <data-flow notifier="converters-udp-in" converter="rtpa-conv" subscriber="converters-out-probe"/>
+            <data-flow notifier="converters-udp-in" converter="tnpa-conv" subscriber="converters-out-probe"/>
+            <data-flow notifier="converters-udp-in" converter="r764-conv" subscriber="converters-out-probe"/>
+            <data-flow notifier="converters-udp-in" converter="kama-conv" subscriber="converters-out-probe"/>
+
+        </application>
+    </applications>
+
+    <!-- etc-input-managers-app --> 
+    <objects>
+        <udp-connection name="input-manager-udp-in">
+            <local-port>56901</local-port>
+        </udp-connection>
+
+        <file-output name="input-manager-out-probe">
+            <filename>/var/log/dolphin/input-manager-out</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="etc-input-managers-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <input-manager>
+                <type>folklor</type>
+                <timeout>00:00:04:000</timeout>
+                <data-subscriber name="folklor-data-subscriber"/>
+                <data-notifier name="folklor-data-notifier"/>
+                <state-notifier name="folklor-state-notifier"/>
+                <link-state-id name="L.FOLKLOR.INPUT.MANAGER"/>
+                <data-available-id name="D.FOLKLOR.-.KD1"/>
+                <data-correct-id name="V.FOLKLOR.-.KD1"/>
+            </input-manager>
+
+            <input-manager>
+                <type>folklor-2</type>
+                <timeout>00:00:04:000</timeout>
+                <data-subscriber name="folklor2-data-subscriber"/>
+                <data-notifier name="folklor2-data-notifier"/>
+                <state-notifier name="folklor2-state-notifier"/>
+                <link-state-id name="L.FOLKLOR2.INPUT.MANAGER"/>
+                <data-available-id name="D.FOLKLOR2.-.KD1"/>
+                <data-correct-id name="V.FOLKLOR2.-.KD1"/>
+            </input-manager>
+            
+            <input-manager>
+                <type>r764</type>
+                <timeout>00:00:04:000</timeout>
+                <data-subscriber name="r764-data-subscriber"/>
+                <data-notifier name="r764-data-notifier"/>
+                <state-notifier name="r764-state-notifier"/>
+                <link-state-id name="L.R764.INPUT.MANAGER"/>
+                <data-available-id name="D.R764.-.KD1"/>
+                <data-correct-id name="V.R764.-.KD1"/>
+            </input-manager>
+
+            <input-manager>
+                <type>rtpa</type>
+                <timeout>00:00:04:000</timeout>
+                <data-subscriber name="rtpa-data-subscriber"/>
+                <data-notifier name="rtpa-data-notifier"/>
+                <state-notifier name="rtpa-state-notifier"/>
+                <link-state-id name="L.RTPA.INPUT.MANAGER"/>
+                <data-available-id name="D.RTPA.-.KD1"/>
+                <data-correct-id name="V.RTPA.-.KD1"/>
+            </input-manager>
+
+            <input-manager>
+                <type>tnpa</type>
+                <timeout>00:00:04:000</timeout>
+                <data-subscriber name="tnpa-data-subscriber"/>
+                <data-notifier name="tnpa-data-notifier"/>
+                <state-notifier name="tnpa-state-notifier"/>
+                <link-state-id name="L.TNPA.INPUT.MANAGER"/>
+                <data-available-id name="D.TNPA.-.KD1"/>
+                <data-correct-id name="V.TNPA.-.KD1"/>
+            </input-manager>
+
+            <input-manager>
+                <type>linkQuest</type>
+                <timeout>00:00:04:000</timeout>
+                <data-subscriber name="linkQuest-data-subscriber"/>
+                <data-notifier name="linkQuest-data-notifier"/>
+                <state-notifier name="linkQuest-state-notifier"/>
+                <link-state-id name="L.LQ.INPUT.MANAGER"/>
+                <data-available-id name="D.LQ.-.KD1"/>
+                <data-correct-id name="V.LQ.-.KD1"/>
+            </input-manager>
+            
+            <data-flow notifier="input-manager-udp-in" subscriber="folklor-data-subscriber"/>
+            <data-flow notifier="input-manager-udp-in" subscriber="folklor-2-data-subscriber"/>
+            <data-flow notifier="input-manager-udp-in" subscriber="r764-data-subscriber"/>
+            <data-flow notifier="input-manager-udp-in" subscriber="rtpa-data-subscriber"/>
+            <data-flow notifier="input-manager-udp-in" subscriber="tnpa-data-subscriber"/>
+            <data-flow notifier="input-manager-udp-in" subscriber="linkQuest-data-subscriber"/>
+            
+            <data-flow notifier="folklor-data-notifier" subscriber="input-manager-out-probe"/>
+            <data-flow notifier="folklor-2-data-notifier" subscriber="input-manager-out-probe"/>
+            <data-flow notifier="r764-data-notifier" subscriber="input-manager-out-probe"/>
+            <data-flow notifier="rtpa-data-notifier" subscriber="input-manager-out-probe"/>
+            <data-flow notifier="tnpa-data-notifier" subscriber="input-manager-out-probe"/>
+            <data-flow notifier="linkQuest-data-notifier" subscriber="input-manager-out-probe"/>
+            
+            <data-flow notifier="folklor-data-notifier" subscriber="astd-server-in-slot"/>
+            <data-flow notifier="folklor-2-data-notifier" subscriber="astd-server-in-slot"/>
+            <data-flow notifier="r764-data-notifier" subscriber="astd-server-in-slot"/>
+            <data-flow notifier="rtpa-data-notifier" subscriber="astd-server-in-slot"/>
+            <data-flow notifier="tnpa-data-notifier" subscriber="astd-server-in-slot"/>
+            <data-flow notifier="linkQuest-data-notifier" subscriber="astd-server-in-slot"/>
+        </application>
+    </applications>
+    
+    <!-- file-fmt-app --> 
+    <objects>
+        <udp-connection name="file-fmt-udp-in">
+            <local-port>56902</local-port>
+        </udp-connection>
+
+        <file-output name="fmt-trace-probe">
+            <filename>/var/log/dolphin/fmt-trace</filename>
+        </file-output>
+
+        <file-output name="fmt-raw-probe">
+            <filename>/var/log/dolphin/fmt-raw</filename>
+        </file-output>
+
+        <file-output name="fmt-astd-probe">
+            <filename>/var/log/dolphin/fmt-astd</filename>
+        </file-output>
+
+        <file-output name="fmt-timestamp-probe">
+            <filename>/var/log/dolphin/fmt-timestamp</filename>
+        </file-output>
+
+        <file-output name="fmt-hex-probe">
+            <filename>/var/log/dolphin/fmt-hex</filename>
+        </file-output>
+
+        <file-output name="fmt-pkotni-MII-probe">
+            <filename>/var/log/dolphin/fmt-pkotni-MII</filename>
+        </file-output>
+
+        <file-output name="fmt-to-bekar-probe">
+            <filename>/var/log/dolphin/fmt-to-bekar</filename>
+        </file-output>
+
+        <file-output name="fmt-from-bekar-probe">
+            <filename>/var/log/dolphin/fmt-from-bekar</filename>
+        </file-output>
+
+        <file-output name="fmt-to-prizma-probe">
+            <filename>/var/log/dolphin/fmt-to-prizma</filename>
+        </file-output>
+
+        <file-output name="fmt-from-prizma-probe">
+            <filename>/var/log/dolphin/fmt-from-prizma</filename>
+        </file-output>
+
+        <file-output name="fmt-pkotni-raw-probe">
+            <filename>/var/log/dolphin/fmt-pkotni-raw</filename>
+        </file-output>
+
+        <file-output name="fmt-to-ariadna-probe">
+            <filename>/var/log/dolphin/fmt-to-ariadna</filename>
+        </file-output>
+
+        <file-output name="fmt-from-ariadna-probe">
+            <filename>/var/log/dolphin/fmt-from-ariadna</filename>
+        </file-output>
+
+        <file-output name="fmt-to-platan-probe">
+            <filename>/var/log/dolphin/fmt-to-platan</filename>
+        </file-output>
+
+        <file-output name="fmt-from-platan-probe">
+            <filename>/var/log/dolphin/fmt-from-platan</filename>
+        </file-output>
+
+        <file-output name="fmt-from-purga-probe">
+            <filename>/var/log/dolphin/fmt-from-purga</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="file-fmt-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+            
+            <data-flow notifier="file-fmt-udp-in" subscriber="fmt-trace-probe"/>
+            <data-flow notifier="file-fmt-udp-in" subscriber="fmt-raw-probe"/>
+            <data-flow notifier="file-fmt-udp-in" subscriber="fmt-astd-probe"/>
+            <data-flow notifier="file-fmt-udp-in" subscriber="fmt-timestamp-probe"/>
+            <data-flow notifier="file-fmt-udp-in" subscriber="fmt-hex-probe"/>
+            <data-flow notifier="file-fmt-udp-in" subscriber="fmt-pkotni-MII-probe"/>
+            <data-flow notifier="file-fmt-udp-in" subscriber="fmt-to-bekar-probe"/>
+            <data-flow notifier="file-fmt-udp-in" subscriber="fmt-from-bekar-probe"/>
+            <data-flow notifier="file-fmt-udp-in" subscriber="fmt-to-prizma-probe"/>
+            <data-flow notifier="file-fmt-udp-in" subscriber="fmt-from-prizma-probe"/>
+            <data-flow notifier="file-fmt-udp-in" subscriber="fmt-pkotni-raw-probe"/>
+            <data-flow notifier="file-fmt-udp-in" subscriber="fmt-to-ariadna-probe"/>
+            <data-flow notifier="file-fmt-udp-in" subscriber="fmt-from-ariadna-probe"/>
+            <data-flow notifier="file-fmt-udp-in" subscriber="fmt-to-platan-probe"/>
+            <data-flow notifier="file-fmt-udp-in" subscriber="fmt-from-platan-probe"/>
+            <data-flow notifier="file-fmt-udp-in" subscriber="fmt-from-purga-probe"/>
+        </application>
+    </applications>
+    
+    <!-- sjuzhet-app 
+        ВАЖНО: Модуль/функционал Сюжет вынесен в 3-ю очередь и в сборку BL сейчас не включается.
+        Он будет включён в сборку только для нового 21300, либо при возникновении 
+        конкретной необходимости
+    -->
+    <objects>
+        <serial-port-connection name="syuzhet-serial-in">
+            <port>/dev/pts/4</port>
+            <speed>4800</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+        </serial-port-connection>
+        
+        <!-- todo : type=astd, modbus-ascii, line -->
+        <ascii-extractor type="nmea" name="syuzhet-nmea-extr"/>
+        
+        <file-output name="syuzhet-serial-in-probe">
+            <filename>/var/log/dolphin/syuzhet-serial-in</filename>
+            <rotate>true</rotate>
+            <max-files-index>1</max-files-index>
+        </file-output>
+
+        <file-output name="syuzhet-raw-probe">
+            <filename>/var/log/dolphin/syuzhet-raw</filename>
+        </file-output>
+
+        <file-output name="syuzhet-extr-probe">
+            <filename>/var/log/dolphin/syuzhet-extr</filename>
+        </file-output>
+        
+        <file-output name="syuzhet-conv-probe">
+            <filename>/var/log/dolphin/syuzhet-conv</filename>
+        </file-output>
+    </objects>
+    
+    <applications>
+        <application name="syuzhet-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+
+            <input-manager>
+                <type>sjuzhet</type>
+                <timeout>00:00:04:000</timeout>
+                <data-subscriber name="syuzhet-data-subscriber"/>
+                <data-notifier name="syuzhet-data-notifier"/>
+                <state-notifier name="syuzhet-state-notifier"/>
+                <link-state-id name="L.SYUZHET.INPUT.MANAGER"/>
+                <data-available-id name="D.SYUZHET.-.KD1"/>
+                <data-correct-id name="V.SYUZHET.-.KD1"/>
+            </input-manager>
+
+            <!-- Обработка Сюжета input manager-ом --> 
+            <data-flow notifier="syuzhet-serial-in" subscriber="syuzhet-nmea-extr"/>
+            <data-flow notifier="syuzhet-serial-in" subscriber="syuzhet-raw-probe"/>
+            <data-flow notifier="syuzhet-nmea-extr" subscriber="syuzhet-data-subscriber"/>
+            <data-flow notifier="syuzhet-nmea-extr" subscriber="syuzhet-extr-probe"/>
+            <data-flow notifier="syuzhet-state-notifier" subscriber="astd-server-in-slot"/>
+            <data-flow notifier="syuzhet-data-notifier" subscriber="syuzhet-conv-probe"/>
+        </application>
+    </applications>
+
+    <!-- chardash-app -->
+    <objects>
+        <converter name="chardash-conv">
+            <type>chardash</type>
+        </converter>
+
+        <converter name="chardash-lq-conv">
+            <type>chardash-to-linkquest</type>
+        </converter>
+        
+        <converter name="chardash-xdr-conv">
+            <type>chardash-to-pitch-roll-xdr</type>
+        </converter>
+
+        <slot name="astd-server-in-slot">
+            <update-time>00:00:01:000</update-time>
+            <type>reliable</type>
+        </slot>
+        
+        <connection-monitor name="chardash-conn-mon">
+            <link-state-id>L.CHARDASH.CONN.MONITOR</link-state-id>
+            <timeout>00:00:02:000</timeout>
+        </connection-monitor>
+
+        <stream-thinner name="chardash-1hz-thinner" minInterval="00:00:01:000"/>
+
+        <nmea-filter name="chardash-nmea-filter">
+            <nmea type="VTG" mode="allow"/>
+            <nmea type="GLL" mode="allow"/>
+            <nmea type="ROT" mode="reject"/>
+        </nmea-filter>
+
+        <file-output name="chardash-raw-probe">
+            <filename>/var/log/dolphin/chardash-raw</filename>
+            <format>hex</format>
+        </file-output>
+        
+        <file-output name="chardash-conv-probe">
+            <filename>/var/log/dolphin/chardash-conv</filename>
+        </file-output>
+
+        <file-output name="chardash-filt-probe">
+            <filename>/var/log/dolphin/chardash-filt</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="chardash-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+
+            <chardash-type>22160</chardash-type>
+            
+            <input-manager>
+                <type>chardash</type>
+                <!--type>chardashNotToWgs84</type-->
+                <timeout>00:00:04:000</timeout>
+                <data-subscriber name="chardash-data-subscriber"/>
+                <data-notifier name="chardash-data-notifier"/>
+                <state-notifier name="chardash-state-notifier"/>
+                <link-state-id name="L.CHARDASH.INPUT.MANAGER"/>
+                <data-available-id name="D.SYUZHET.-.KD1"/>
+                <data-correct-id name="V.SYUZHET.-.KD1"/>
+            </input-manager>
+
+            <manchester-reader name="chardash-manchester-in">
+                <card-no>0</card-no>
+                <address>10</address>
+                <max-wait-duration>00:00:01:000</max-wait-duration>
+                <mode>rt</mode>
+            </manchester-reader>
+
+            <data-flow notifier="chardash-manchester-in" subscriber="chardash-1hz-thinner"/>
+            <data-flow notifier="chardash-manchester" subscriber="chardash-raw-probe"/>
+
+            <!-- Обработка Чардаша input manager-ом --> 
+            <data-flow notifier="chardash-1hz-thinner" subscriber="chardash-data-subscriber"/>
+            <data-flow notifier="chardash-state-notifier" subscriber="astd-server-in-slot"/>
+            <data-flow notifier="chardash-data-notifier" subscriber="chardash-conv-probe"/>
+
+            <!-- Обработка Чардаша без input manager-а --> 
+            <data-flow notifier="chardash-1hz-thinner" subscriber="chardash-conv"/>
+            <data-flow notifier="chardash-1hz-thinner" subscriber="chardash-lq-conv"/>
+            <data-flow notifier="chardash-1hz-thinner" converter="chardash-conn-mon" subscriber="astd-server-in-slot"/>
+            
+            <data-flow notifier="chardash-conv" converter="chardash-nmea-filter" subscriber="chardash-filt-probe"/>
+            <data-flow notifier="chardash-conv" subscriber="chardash-conv-probe"/>
+            <data-flow notifier="chardash-lq-conv" subscriber="chardash-conv-probe"/>
+            <data-flow notifier="chardash-xdr-conv" subscriber="chardash-conv-probe"/>
+        </application>
+    </applications>
+
+    <!-- anapa-app --> 
+    <objects>
+        <udp-connection name="anapa-req-udp-in">
+            <local-port>56021</local-port>
+        </udp-connection>
+        
+        <file-output name="anapa-tgt-conv-probe">
+            <filename>/var/log/dolphin/anapa-tgt-conv</filename>
+        </file-output>
+
+       <file-output name="anapa-scr-probe">
+           <filename>/var/log/dolphin/anapa-scr-last</filename>
+           <append>false</append>
+           <format>raw</format>
+       </file-output>
+
+       <file-output name="anapa-scr-log">
+           <filename>/var/log/dolphin/anapa-scr-log</filename>
+           <append>true</append>
+           <format>timestamp</format>
+       </file-output>
+
+    </objects>
+
+    <applications>
+        <application name="anapa-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <anapa-client name="AD1" id="390">
+                <listening-address>127.0.0.1</listening-address>
+
+                <screen-request-sender name="anapa-screen-req-subscriber" />
+                <error-receiver name="anapa-error-notifier" />
+
+                <targets>
+                    <receiver name="anapa-tgt-receiver">
+                        <local-port>24051</local-port>
+                        <receive-buffer-size>128</receive-buffer-size>
+                    </receiver>
+                </targets>
+                <screens>
+                    <receiver name="anapa-screen-receiver">
+                        <local-port>24052</local-port>
+                    </receiver>
+                </screens>
+                <requests>
+                    <sender name="anapa-empty-packet-and-req-sender">
+                        <remote-address>192.168.161.212</remote-address>
+                        <remote-port>24050</remote-port>
+                    </sender>
+                </requests>
+            </anapa-client>
+
+            <anapa-input-manager>
+                <data-subscriber name="anapa-data-subscriber"/>
+                <data-notifier name="anapa-data-notifier"/>
+                <state-notifier name="anapa-state-notifier"/>
+                <state-subscriber name="anapa-state-subscriber"/>
+                <link-state-id name="L.ANAPA.-.KD1"/>
+                <data-available-id name="D.ANAPA.-.KD1"/>
+                <data-correct-id name="V.ANAPA.-.KD1"/>
+            </anapa-input-manager>
+
+            <data-flow notifier="anapa-req-udp-in" subscriber="anapa-screen-req-subscriber"/>
+            
+            <data-flow notifier="anapa-tgt-receiver" subscriber="anapa-data-subscriber"/>
+            <data-flow notifier="anapa-error-notifier" subscriber="anapa-state-subscriber"/>
+
+            <data-flow notifier="anapa-state-notifier" subscriber="astd-server-in-slot"/>
+            <data-flow notifier="anapa-data-notifier" subscriber="anapa-tgt-conv-probe"/>
+            <data-flow notifier="anapa-data-notifier" subscriber="anapa-tgt-conv-probe"/>
+            
+            <data-flow notifier="anapa-screen-receiver" subscriber="anapa-scr-probe"/>
+            <data-flow notifier="anapa-screen-receiver" subscriber="anapa-scr-log"/>
+        </application>
+    </applications>
+    
+    
+    <!-- astd-***-app --> 
+    <objects>
+        <converter name="astd-ascii-conv">
+            <type>astd-ascii</type>
+        </converter>
+
+        <slot name="astd-server-out-slot">
+            <type>posix-pipe</type>
+        </slot>
+    
+        <file-output name="astd-momentum-probe">
+            <filename>/var/log/dolphin/astd-momentum</filename>
+            <format>astd</format>
+        </file-output>
+
+        <file-output name="astd-pinger-probe">
+            <filename>/var/log/dolphin/astd-pinger</filename>
+            <format>astd</format>
+        </file-output>
+
+        <file-output name="astd-server-probe">
+            <filename>/var/log/dolphin/astd-server-probe</filename>
+            <format>astd</format>
+        </file-output>
+
+        <file-output name="astd-etc-probe">
+            <filename>/var/log/dolphin/astd-etc</filename>
+            <format>astd</format>
+        </file-output>
+
+        <connection-monitor name="astd-conn-monitor">
+            <link-state-id>ASTD.PARAM.NAME.MONITOR</link-state-id>
+            <timeout>00:00:02:000</timeout>
+        </connection-monitor> 
+
+        <slot name="astd-gen-in-slot">
+            <type>posix-pipe</type>
+        </slot>
+        
+        <astd-generator name="astd-gen">
+            <astd-param-name>ASTD.PARAM.NAME.GENERATOR</astd-param-name>
+            <good-value>good</good-value>
+            <bad-value>bad</bad-value>
+            <period>00:00:05:000</period> 
+        </astd-generator>
+    </objects>
+
+    <applications>
+        <application name="astd-etc-app">
+            <watchdog aliveTimeout="00:00:05:000" terminationTime="00:00:01:000"/>
+
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen"          converter="astd-conn-monitor" subscriber="astd-etc-probe"/>
+            <data-flow notifier="astd-gen-in-slot" converter="astd-gen"          subscriber="astd-etc-probe"/>
+        </application>
+        
+        <application name="astd-pinger-app">
+            <watchdog aliveTimeout="00:00:05:000" terminationTime="00:00:01:000"/>
+
+            <pinger-input-manager>
+                <state-notifier name="pinger-notifier" />
+                <timeout>00:00:05:000</timeout>
+                <interface address="10.10.201.61">
+                    <target name="L.K1.PRIM.IMS1" address="10.10.201.211"/>
+                    <target name="L.K2.PRIM.IMS1" address="10.5.2.1"/>
+                </interface>
+            </pinger-input-manager>
+            
+            <data-flow notifier="pinger-notifier" subscriber="astd-pinger-probe"/>
+            <data-flow notifier="pinger-notifier" subscriber="astd-pinger-probe"/>
+            <data-flow notifier="pinger-notifier" subscriber="astd-server-in-slot"/>
+        </application>
+        
+        <application name="astd-momentum-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <momentum-input-manager>
+                <state-notifier name="momentum-astd-out" />
+                <state-subscriber name="momentum-astd-in" />
+                <timeout>00:00:01:000</timeout>
+                <connect-timeout>00:00:00:050</connect-timeout>
+                <relay-timeout>00:00:05:000</relay-timeout>
+                <master-state name="S.SERV_NAME.MASTER" />
+                <momentum address="192.168.99.14" testMode="on">
+                    <DDI-module register="5391">
+                        <pin name="L.K1.PRIM.IMS1" id="1"/>
+                        <pin name="L.K2.PRIM.IMS1" id="8"/>
+                    </DDI-module>
+                    <DDI-module register="5392">
+                        <pin name="E.PV1o.AVENTTTY.-" id="0"/>
+                        <pin name="E.PV1o.AVENT.-" id="1"/>
+                    </DDI-module>
+                    <DDO-module register="0">
+                        <pin name="E.PV1oz.AV.-" id="0"/>
+                        <pin name="E.PV1o.WK.-" id="1"/>
+                    </DDO-module>
+                </momentum>
+            </momentum-input-manager>
+            
+            <data-flow notifier="momentum-astd-out" subscriber="astd-momentum-probe"/>
+            <data-flow notifier="astd-server-out-slot" converter="astd-ascii-conv" subscriber="momentum-astd-in"/>
+        </application>
+
+        <application name="astd-server-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <astd-server name="astd-server">
+                <reset-period>00:00:10:000</reset-period>
+                <report-period>00:00:02:000</report-period>
+                <first-delay-period>00:00:10:000</first-delay-period>
+                <interval-between-sending>00:00:00:100</interval-between-sending>
+                <converter-rules-cfg>./xml/astd-rules.cfg</converter-rules-cfg>
+                <converter-defaults-cfg>./xml/astd-defaults.cfg</converter-defaults-cfg>
+                <events-notifier name="astd-srv-events-notifier"/>
+                
+                <database name="dummy">
+                   <host>127.0.0.1</host>
+                   <port>12345</port>
+                   <dbname>astd</dbname>
+                   <user>root</user>
+                   <password>root</password>
+                </database>
+            </astd-server>
+            
+            <data-flow notifier="astd-server-in-slot" subscriber="astd-server"/>
+            <data-flow notifier="astd-server" subscriber="astd-server-probe"/>
+            <data-flow notifier="astd-server" converter="astd-ascii-conv" subscriber="astd-server-out-slot"/>
+        </application>
+    </applications>
+    
+    <!-- slot-writers/readers-app --> 
+    <objects>
+        <slot name="slot-discarding"/>
+
+        <slot name="slot-reliable">
+            <type>reliable</type>
+        </slot>
+
+        <!-- При запуске под windows вызовет ошибку -->
+        <slot name="slot-posix-pipe">
+            <type>posix-pipe</type>
+        </slot>
+
+        <!-- Альтернативный способ чтения из slot-posix-pipe, deprecated --> 
+        <file-input name="posix-pipe-reader">
+            <filename>/tmp/slot-posix-pipe</filename>
+            <buffer-size>1024</buffer-size>
+        </file-input>
+
+        <!-- При запуске под Linux вызовет ошибку -->
+        <slot name="slot-win-pipe">
+            <type>win-pipe</type>
+        </slot>
+
+        <file-output name="slot-discarding-probe">
+            <filename>/var/log/dolphin/slot-discarding</filename>
+        </file-output>
+
+        <file-output name="slot-reliable-probe">
+            <filename>/var/log/dolphin/slot-reliable</filename>
+        </file-output>
+
+        <file-output name="slot-pipe-probe">
+            <filename>/var/log/dolphin/slot-pipe</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="slot-writers-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            
+            <data-flow notifier="zda-gen" subscriber="slot-reliable"/>
+            <data-flow notifier="zda-gen" subscriber="slot-discarding"/>
+            <data-flow notifier="zda-gen" subscriber="slot-win-pipe"/>
+            <data-flow notifier="zda-gen" subscriber="slot-posix-pipe"/>
+        </application>
+        
+        <application name="slot-readers-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <data-flow notifier="slot-reliable" subscriber="slot-discarding-probe"/>
+            <data-flow notifier="slot-discarding" subscriber="slot-reliable-probe"/>
+            <data-flow notifier="slot-posix-pipe" subscriber="slot-pipe-probe"/>
+            <!--data-flow notifier="posix-pipe-reader" subscriber="slot-pipe-probe"/-->
+            <data-flow notifier="slot-win-pipe" subscriber="slot-pipe-probe"/>
+        </application>
+    </applications>
+    
+    <!-- udp-sender/receiver-app--> 
+    <objects>
+        <udp-connection name="udp-out-unicast">
+            <remote-address>127.0.0.1</remote-address>
+            <remote-port>1234</remote-port>
+        </udp-connection>
+
+        <udp-connection name="udp-out-multicast">
+            <remote-address>239.255.0.1</remote-address>
+            <remote-port>1235</remote-port>
+        </udp-connection>
+
+        <udp-connection name="udp-in-unicast">
+            <local-address>127.0.0.1</local-address>
+            <local-port>1234</local-port>
+        </udp-connection>
+        
+        <udp-connection name="udp-in-all-interfaces">
+            <local-port>1236</local-port>
+        </udp-connection>
+
+        <!-- Вызовет ошибку -->
+        <udp-connection name="udp-in-nonexistent-interface">
+            <local-address>10.20.30.40</local-address>
+            <local-port>4321</local-port>
+        </udp-connection>
+        
+        <udp-connection name="udp-in-multicast">
+            <multicast-address>239.255.0.1</multicast-address>
+            <local-port>1235</local-port>
+        </udp-connection>
+        
+        <file-output name="udp-unicast-in-probe">
+            <filename>/var/log/dolphin/udp-unicast-in</filename>
+        </file-output>
+
+        <file-output name="udp-multicast-in-probe">
+            <filename>/var/log/dolphin/udp-multicast-in</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="udp-sender-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" subscriber="udp-out-unicast"/>
+            <data-flow notifier="zda-gen" subscriber="udp-out-multicast"/>
+        </application>
+        
+        <application name="udp-receiver-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <data-flow notifier="udp-in-unicast"        subscriber="udp-unicast-in-probe"/>
+            <data-flow notifier="udp-in-all-interfaces" subscriber="udp-unicast-in-probe"/>
+            <data-flow notifier="udp-in-multicast"      subscriber="udp-multicast-in-probe"/>
+            <data-flow notifier="udp-in-nonexistent-interface" subscriber="udp-unicast-in-probe"/>
+        </application>
+    </applications>
+
+    <!-- tcp-sender/receiver-app--> 
+    <objects>
+        <tcp-connection name="tcp-client-out">
+            <remote-address>127.0.0.1</remote-address>
+            <remote-port>2234</remote-port>
+        </tcp-connection>
+
+        <tcp-connection name="tcp-server-out" mode="server">
+            <local-address>127.0.0.1</local-address>
+            <local-port>2235</local-port>
+        </tcp-connection>
+
+        <tcp-connection name="tcp-server-in" mode="server">
+            <local-address>127.0.0.1</local-address>
+            <local-port>2234</local-port>
+        </tcp-connection>
+
+        <tcp-connection name="tcp-client-in" mode="client">
+            <remote-address>127.0.0.1</remote-address>
+            <remote-port>2235</remote-port>
+        </tcp-connection>
+        
+        <ini-client name="ini-client-in">
+            <remote-address>127.0.0.1</remote-address>
+            <remote-port>15000</remote-port>
+        </ini-client>        
+        
+        <file-output name="ini-client-in-probe">
+            <filename>/var/log/dolphin/ini-client-in</filename>
+        </file-output>
+
+        <file-output name="tcp-client-in-probe">
+            <filename>/var/log/dolphin/tcp-client-in</filename>
+        </file-output>
+
+        <file-output name="tcp-server-in-probe">
+            <filename>/var/log/dolphin/tcp-server-in</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="tcp-sender-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" subscriber="tcp-client-out"/>
+            <data-flow notifier="zda-gen" subscriber="tcp-server-out"/>
+        </application>
+
+        <application name="tcp-receiver-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <data-flow notifier="ini-client-in" subscriber="ini-client-in-probe"/>
+            <data-flow notifier="tcp-client-in" subscriber="tcp-client-in-probe"/>
+            <data-flow notifier="tcp-server-in" subscriber="tcp-server-in-probe"/>
+        </application>
+    </applications>
+    
+    <!-- serial-io-app --> 
+    <objects>
+        <serial-port-connection name="serial-io">
+            <port>/dev/pts/5</port>
+            <speed>4800</speed>
+            <timeout>0</timeout>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <period-of-reading>00:00:00:100</period-of-reading>
+        </serial-port-connection>
+
+        <file-output name="serial-in-probe">
+            <filename>/var/log/dolphin/serial-in</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="serial-io-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+            
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" subscriber="serial-io"/>
+            <data-flow notifier="serial-io" subscriber="serial-in-probe"/>
+        </application>
+    </applications>
+
+    <!-- manchester-app --> 
+    <objects>
+        <udp-connection name="udp-in-unicast">
+            <local-address>127.0.0.1</local-address>
+            <local-port>1234</local-port>
+        </udp-connection>
+
+        <file-output name="manchester-reader-bc-probe">
+            <filename>/var/log/dolphin/manchester-reader-bc</filename>
+        </file-output>
+
+        <file-output name="manchester-reader-rt-probe">
+            <filename>/var/log/dolphin/manchester-reader-rt</filename>
+        </file-output>
+
+        <file-output name="manchester-reader-bm-probe">
+            <filename>/var/log/dolphin/manchester-reader-bm</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="manchester-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+            
+            <manchester-reader name="manchester-reader-bc">
+                <card-no>0</card-no>    
+                <address>17</address>   
+                <subaddress busA="10" busB="20"/>
+                <data-size>10</data-size> 
+                <max-wait-duration>00:00:01:000</max-wait-duration> 
+                <mode>bc</mode>     
+            </manchester-reader>
+
+            <manchester-reader name="manchester-reader-rt">
+                <card-no>1</card-no>    
+                <address>17</address>   
+                <max-wait-duration>00:00:01:000</max-wait-duration> 
+                <mode>rt</mode>
+            </manchester-reader>
+
+            <manchester-reader name="manchester-reader-bm">
+                <card-no>2</card-no>    
+                <max-wait-duration>00:00:01:000</max-wait-duration> 
+                <mode>bm</mode>
+            </manchester-reader>
+            
+            <data-flow notifier="manchester-reader-bc" subscriber="manchester-reader-bc-probe"/>
+            <data-flow notifier="manchester-reader-rt" subscriber="manchester-reader-rt-probe"/>
+            <data-flow notifier="manchester-reader-rt" subscriber="manchester-reader-bm-probe"/>
+            
+            <manchester-writer name="manchester-wrtiter-bc-out">
+                <card-no>3</card-no>
+                <address>20</address>
+                <subaddress>20</subaddress>
+                <max-wait-duration>00:00:01:000</max-wait-duration>
+                
+                <mode>auto</mode> 
+                <switch-timeout>00:00:05:000</switch-timeout>
+                <astd-subscriber name="manchester-ext-control" astd-name="L.MANCHESTER.EXT.CTRL"/>
+
+                <line-control bus="A" period="00:00:01:000" timeout="00:00:03:000">
+                    <astd-notifier name="manchester-conn-astd"/>
+                    <remote-terminal address="1" astd-name="L.DEVICE1.STATE"/>
+                    <remote-terminal address="2" astd-name="L.DEVICE2.STATE"/>
+                </line-control>
+            </manchester-writer>
+
+            <data-flow notifier="astd-server-out-slot" converter="astd-ascii-conv" subscriber="manchester-ext-control"/>
+            <data-flow notifier="manchester-conn-astd" subscriber="astd-server-in-slot"/>
+        </application>
+    </applications>
+    
+    <!-- db-***-app --> 
+    <objects>
+        <slot name="replay-cmd-slot"/>
+
+        <database-connection name ="replay-db-conn">
+            <host>localhost</host>
+            <port>5432</port>
+            <dbname>replaydb</dbname>
+            <user>replaydbadmin</user>
+       </database-connection>
+
+       <file-output name="replay-log">
+           <filename>/var/log/dolphin/replay-log</filename>
+       </file-output>
+        
+       <database-connection name ="astdbase-conn-local">
+            <host>localhost</host>
+            <port>5432</port>
+            <dbname>astdbase</dbname>
+            <user>astdadmin</user>
+        </database-connection>
+
+       <database-connection name ="astdbase-conn-remote">
+            <host>remote_host</host>
+            <port>5432</port>
+            <dbname>astdbase</dbname>
+            <user>astdadmin</user>
+        </database-connection>
+
+        <slot name="mastery-cmd-slot-some-layer"/>
+        <slot name="mastery-state-slot-some-layer"/>
+        
+        <database-connection name ="devbase-connection">
+            <host>remote_host_1</host>
+            <host>remote_host_2</host>
+            <port>5432</port>
+            <dbname>devbase</dbname>
+            <user>devadmin</user>
+        </database-connection>
+    </objects>
+
+    <applications>
+        <application name="db-reader-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <!-- 
+                Возможные значения атрибута <sensor type=""/> :
+                 chardash
+                 anapa
+                 syuzhet
+                 linkquest
+                 r764
+                 folklor
+                 rtpa
+                 tnpa
+                 Все они deprecated, вместо них к notifier-у <replay-db-reader>-а 
+                 подключаем <converter> с тем же типом
+                 
+                 В атрибут <sensor id=""/> пишется id таблицы в БД replaydb
+                 Атрибут <replay-db-reader name=""/> не используется, но должен быть задан
+            -->
+            <replay-db-reader name="not_used_must_be_not_empty">
+                <database-connection name="replay-db-conn"/>
+                <cmd-subscriber name="replay-cmd-in"/>
+                <period-of-reading>00:00:01:000</period-of-reading>
+                <sensors>
+                    <sensor id="111" name="replay-chardash-out"/>
+                    <sensor id="555" name="replay-anapa-out" type="anapa"/>
+                </sensors>
+                <mode>replay</mode>
+            </replay-db-reader>
+
+            <!-- todo : разобраться, что это такое. Кажется, deprecated-версия <replay-db-reader> -->
+            <db-reader name="syuzhet-replay-cmd-in-data-out">
+                <database-connection name="replay-db-conn"/>
+                <period-of-reading>00:00:01:000</period-of-reading>
+                <type>syuzhet</type>
+            </db-reader>
+            
+            <data-flow notifier="replay-cmd-slot" subscriber="replay-cmd-in"/>
+            
+            <!-- deprecated --> 
+            <data-flow notifier="replay-anapa-out" subscriber="replay-log"/>
+            <!-- preferred --> 
+            <data-flow notifier="replay-chardash-out" converter="chardash-conv" subscriber="replay-log"/>
+        </application>
+        
+        <application name="db-writer-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <db-writer name="replaydb-writer-in">
+                <database-connection name="replay-db-conn"/>
+                <sensorId>1</sensorId>
+            </db-writer>
+
+            <db-writer-purga name="replaydb-purga-writer-in">
+                <database-connection name="replay-db-conn"/>
+                <sensorId>222</sensorId>
+            </db-writer-purga>
+            
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" subscriber="replaydb-writer-in"/>
+            <!-- todo : передать сюда данные Пурги от имитатора-->
+            <data-flow notifier="zda-gen" subscriber="replaydb-purga-writer-in"/>
+        </application>
+
+        <application name="db-maintenance-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <db-cleaner>
+                <database-connection name="replay-db-conn"/>
+                <period>24:00:00:000</period>
+                <ageing-time>720:00:00:000</ageing-time>
+            </db-cleaner>
+            
+            <db-archiver>
+                <database-connection name="replay-db-conn"/>
+                <period>01:00:00:000</period>
+                <phase>00:00:00:000</phase>
+                <dump-filename-base>/var/log/dolphin/replaydb_dumps/db-dump</dump-filename-base>
+            </db-archiver>
+
+            <db-sync>
+                <database-connection name="astdbase-conn-local"/>
+                <remote-database-connection name="astdbase-conn-remote"/>
+                <period>01:00:00:000</period>
+                <phase>00:30:00:000</phase>
+            </db-sync>
+
+            <db-time-zone-updater name="replaydb-timezone-in">
+                <database-connection name="replay-db-conn"/>
+            </db-time-zone-updater>
+
+            <zda-notifier name="zda-gen" period="00:00:01:000"/>
+            <data-flow notifier="zda-gen" subscriber="replaydb-timezone-in"/>
+        </application>
+
+        <application name="db-mastery-app">
+            <!-- Запускается только на АРМ-ах, работает через слоты с подвалами MFD--> 
+            <db-mastery-dispatcher name="mastery">
+                <devices-id>122;119;118;109;117;116</devices-id>
+                <database-connection name="devbase-connection"/>
+            </db-mastery-dispatcher>
+            
+            <data-flow notifier="mastery" subscriber="mastery-state-slot-some-layer"/>
+            <data-flow notifier="mastery-cmd-slot-some-layer" subscriber="mastery"/>
+        </application>
+    </applications>
+    
+    <!-- modbus-app --> 
+    <objects>
+        <file-output name="modbus-rtu-client-probe">
+           <filename>/var/log/dolphin/modbus-rtu-client</filename>
+        </file-output>
+
+        <file-output name="modbus-rtu-server-probe">
+           <filename>/var/log/dolphin/modbus-rtu-server</filename>
+        </file-output>
+
+        <file-output name="modbus-tcp-client-probe">
+           <filename>/var/log/dolphin/modbus-tcp-client</filename>
+        </file-output>
+
+        <slot name="modbus-nmea-slot">
+            <update-time>00:00:01:000</update-time>
+            <type>reliable</type>
+        </slot>
+    </objects>
+
+    <applications>
+        <application name="modbus-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <!--
+            Атрибут readFunc указывает тип функции, которая должна использоваться
+            для чтения регистров. Возможные значения - Func03, Func04.
+            Значение по умолчанию, если атрибут не указан - Func04.
+            -->
+            <modbus-rtu-client slaveId="1" regStart="100" regQnty="50" readFunc="Func03">
+                <nmea-notifier name="modbus-rtu-client-nmea-out"/>
+
+                <nmea-format floatByteOrder="ABCD">
+                    <nmea-sentence id="QQXD1" regStart="100" regQnty="5"/>
+                    <nmea-sentence-extended id="QQXD4" regStart="100" regQnty="5"/>
+                    <nmea-sentence-float id="QQXD5" regStart="100" regQnty="4"/>
+                </nmea-format>
+
+                <report-period>00:00:01:000</report-period>
+                <serial-port>
+                    <port>/dev/pts/6</port>
+                    <speed>9600</speed>
+                    <control-parity>none</control-parity>
+                    <numbit>8</numbit>
+                    <stopbits>1</stopbits>
+                </serial-port>
+            </modbus-rtu-client>
+            
+            <modbus-rtu-server slaveId="1" regStart="100" regQnty="50">
+                <nmea-notifier name="modbus-rtu-server-nmea-out"/>
+
+                <nmea-format>
+                    <nmea-sentence id="QQXD1" regStart="100" regQnty="5"/>
+                </nmea-format>
+
+                <report-period>00:00:01:000</report-period>
+                <serial-port>
+                    <port>/dev/pts/7</port>
+                    <speed>9600</speed>
+                    <control-parity>none</control-parity>
+                    <numbit>8</numbit>
+                    <stopbits>1</stopbits>
+                </serial-port>
+            </modbus-rtu-server>
+
+            <modbus-tcp-client slaveId="1" regStart="100" regQnty="50">
+                <nmea-notifier name="modbus-tcp-client-nmea-out"/>
+                <nmea-format>
+                    <nmea-sentence id="QQXD1" regStart="100" regQnty="5"/>
+                </nmea-format>
+
+                <report-period>00:00:01:000</report-period>
+                <modbus-tcp>
+                    <remote-address>127.0.0.1</remote-address>
+                    <remote-port>1502</remote-port>
+                </modbus-tcp>
+            </modbus-tcp-client>
+            
+            <data-flow notifier="modbus-rtu-client-nmea-out" subscriber="modbus-rtu-client-probe"/>
+            <data-flow notifier="modbus-rtu-client-nmea-out" subscriber="modbus-nmea-slot"/>
+            <data-flow notifier="modbus-rtu-server-nmea-out" subscriber="modbus-rtu-server-probe"/>
+            <data-flow notifier="modbus-tcp-client-nmea-out" subscriber="modbus-tcp-client-probe"/>
+        </application>
+    </applications>
+    
+    <!-- data-flow-switcher-app 
+         используется для принудительного (по команде от MFD-плагина ExtPlayback)
+         переключения потоков данных, передающихся в подвалы MFD, при проигрывании
+     --> 
+    <objects>
+        <data-flow-switcher name="switcher-cmd-in">
+            <input-data id="0" name="switcher-data-in-0"/>
+            <input-data id="1" name="switcher-data-in-1"/>
+            <output-data name="switcher-data-out"/>
+            <active-input-data id="0"/>
+        </data-flow-switcher>
+        
+        <slot name="switcher-cmd-slot"/>
+        <slot name="switcher-data-in-slot-0"/>
+        <slot name="switcher-data-in-slot-1"/>
+
+        <file-output name="switcher-probe">
+           <filename>/var/log/dolphin/data-flow-switcher-out</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="data-flow-switcher-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+            
+            <data-flow notifier="switcher-cmd-slot" subscriber="switcher-cmd-in"/>
+            <data-flow notifier="switcher-data-out" subscriber="switcher-probe"/>
+
+            <data-flow notifier="switcher-data-in-slot-0" subscriber="switcher-data-in-0"/>
+            <data-flow notifier="switcher-data-in-slot-1" subscriber="switcher-data-in-1"/>
+        </application>
+    </applications>
+    
+    <!-- raf-player-app 
+         todo : unknown object type tag 'raf-player'
+        --> 
+    <objects>
+        <tcp-connection name="raf-player-cmd-tcp-in" mode="server">
+            <local-address>0.0.0.0</local-address>
+            <local-port>6666</local-port>
+        </tcp-connection>
+
+        <udp-connection name="raf-player-multicast-out">
+            <remote-address>232.113.104.70</remote-address>
+            <remote-port>51709</remote-port>
+        </udp-connection>
+        
+        <raf-player name="raf-player">
+            <directory>/var/log/dolphin/raf/</directory>
+            <period>1</period>
+        </raf-player>
+    </objects>
+
+    <applications>
+        <application name="raf-player-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+            
+            <data-flow notifier="raf-player-cmd-tcp-in" subscriber="raf-player"/>
+            <data-flow notifier="raf-player" subscriber="raf-player-multicast-out"/>
+        </application>
+    </applications>
+
+    <!-- ariadna-app --> 
+    <objects>
+        <udp-connection name="ariadna-udp-in">
+            <local-port>47912</local-port>
+        </udp-connection>
+
+        <file-output name="ariadna-out-probe">
+            <filename>/var/log/dolphin/ariadna-out</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="ariadna-app">
+            <watchdog aliveTimeout="00:01:01:000" terminationTime="00:01:01:200"/>
+
+            <ariadna-dispatcher name="ariadna-io"/>
+            <data-flow notifier="ariadna-udp-in" subscriber="ariadna-io"/>
+            <data-flow notifier="ariadna-io" subscriber="ariadna-out-probe"/>
+        </application>
+    </applications>
+
+    <!-- trassa-app --> 
+    <objects>
+        <udp-connection name="trassa-udp-in">
+            <local-port>47902</local-port>
+        </udp-connection>
+    
+        <udp-connection name = "trassa-udp-out">
+            <remote-address>127.0.0.1</remote-address>
+            <remote-port>48902</remote-port>
+        </udp-connection>
+    </objects>
+
+    <applications>
+        <application name="trassa-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100"/>
+
+            <trassa-dispatcher>
+                <astd-param name = 'trassa_state'/>
+                <astd-notifier name = 'trassa-astd-notifier'/>
+                <trassa-notifier name = 'trassa-notifier'/>
+                <subscriber name = 'trassa-subscriber'/>
+            </trassa-dispatcher>
+                                        
+            <data-flow notifier="trassa-udp-in" subscriber="trassa-subscriber"/>                    
+            <data-flow notifier="trassa-astd-notifier" subscriber="astd-server-in-slot"/>            
+            <data-flow notifier="trassa-notifier" subscriber="trassa-udp-out"/>
+        </application>
+    </applications>
+
+    <!-- seqnumsrv-app --> 
+    <objects>
+        <file-output name="seqnum-synch-out-probe">
+            <filename>/var/log/dolphin/seqnum-synch-out</filename>
+        </file-output>
+
+        <file-output name="seqnum-targets-probe">
+            <filename>/var/log/dolphin/seqnum-targets</filename>
+        </file-output>
+        
+        <udp-connection name="seqnum-synch-udp-out">
+            <remote-address>10.0.1.2</remote-address>
+            <remote-port>53813</remote-port>
+        </udp-connection>
+
+        <udp-connection name="seqnum-synch-udp-in">
+            <local-port>53913</local-port>
+        </udp-connection>
+        
+        <udp-connection name="navdata-udp-in">
+            <local-port>47902</local-port>
+        </udp-connection>
+    
+        <nmea-filter name="seq-vtg-rot-filter">
+            <nmea type="VTG" mode="allow"/>
+            <nmea type="ROT" mode="allow"/>
+        </nmea-filter>
+    </objects>
+
+    <applications>
+        <application name="seqnumsrv-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <seqnumsrv>
+                <master>1</master>
+                <data-to-client>seqnum-synch-out</data-to-client>
+                <data-from-client>seqnum-synch-in</data-from-client>
+                <targets-out>seqnum-targets-out</targets-out>
+
+                <main-arms-addresses>10.0.1.11; 10.0.2.11;</main-arms-addresses>
+                <navdata-in>seqnum-navdata-in</navdata-in>
+                <navdata-timeout>2</navdata-timeout>
+                <critical-rot>0</critical-rot>
+                <rot-filter-alpha>0.95</rot-filter-alpha>
+
+                <port>4321</port>
+                <delete-target-timeout>11</delete-target-timeout>
+                <targets-out-interval>1</targets-out-interval>
+                <delta-bearing>400</delta-bearing>
+                <delta-distance>10000</delta-distance>
+                <delta-speed>1500</delta-speed><!-- was 300 -->
+                <coord-trust-coeff>0.99</coord-trust-coeff>
+                <speed-trust-coeff>0.99</speed-trust-coeff>
+                <stable-count>12</stable-count>
+                <required-tracking-time>20</required-tracking-time>
+                <max-target-speed>5000</max-target-speed>
+                <first-dist-filter>100000</first-dist-filter>
+                <first-bearing-filter>1500</first-bearing-filter>
+                <first-bearing-filter-min-dist>100000</first-bearing-filter-min-dist>
+                <nmea-device-id>U0</nmea-device-id>
+            </seqnumsrv>
+
+            <data-flow notifier="seqnum-synch-out" subscriber="seqnum-synch-udp-out"/>
+            <data-flow notifier="seqnum-synch-out" subscriber="seqnum-synch-out-probe"/>
+            <data-flow notifier="seqnum-synch-udp-in" subscriber="seqnum-synch-in"/>
+            
+            <data-flow notifier="seqnum-targets-out" subscriber="seqnum-targets-probe"/>
+            
+            <data-flow notifier="navdata-udp-in" converter="seq-vtg-rot-filter" subscriber="seqnum-navdata-in"/>
+        </application>
+    </applications>
+
+    <!-- op-mode-server-app --> 
+    <objects>
+        <converter name="op-mode-nmea-conv-2">
+           <type>op-mode</type>
+        </converter>
+
+        <converter name="op-mode-astd-conv">
+           <type>op-mode-to-astd</type>
+        </converter>
+
+        <file-output name="op-mode-sync-req-probe">
+            <filename>/var/log/dolphin/op-mode-sync-req</filename>
+        </file-output>
+
+        <file-output name="op-mode-astd-probe">
+            <filename>/var/log/dolphin/op-mode-astd</filename>
+            <format>astd</format>
+        </file-output>
+
+        <file-output name="op-mode-nmea-probe">
+            <filename>/var/log/dolphin/op-mode-nmea</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="op-mode-server-app">
+           <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+           <op-mode-server>
+               <admin-side-local address="127.0.0.1" port="52000"/>
+               <commander-side-remote address="10.10.201.203" port="52200"/>
+               <op-mode-notifier name="op-mode-notifier"/>
+               <op-mode-periodic-notifier name="op-mode-periodic-notifier"/>
+
+               <sync-req-subscriber name="sync-req-in"/>
+               <sync-req-notifier name="sync-req-out"/>
+               <sync-subscriber name="sync-in"/>
+
+               <saved-state-file>/etc/dolphin/op-mode-saved</saved-state-file>
+           </op-mode-server>
+           
+           <data-flow notifier="op-mode-notifier" converter="op-mode-astd-conv" subscriber="op-mode-astd-probe"/>
+
+           <data-flow notifier="op-mode-periodic-notifier" converter="op-mode-nmea-conv" subscriber="op-mode-nmea-probe"/>
+           <data-flow notifier="sync-req-out" subscriber="op-mode-sync-req-probe"/>
+        </application>
+
+    </applications>
+
+    <!-- op-mode-server-22100-app --> 
+    <objects>
+        <ascii-extractor type="nmea" name="op-mode-nmea-extr"/>
+
+        <converter name="op-mode-astd-proxy">
+            <type>op-mode-22100-to-astd</type>
+        </converter>
+
+        <udp-connection name="sa-udp-in">
+            <local-port>59001</local-port>
+        </udp-connection>
+
+        <udp-connection name="sa-out-udp">
+            <remote-address>10.10.76.156</remote-address>
+            <remote-port>59002</remote-port>
+        </udp-connection>
+        
+        <file-output name="op-mode-22100-saver">
+            <filename>/etc/dolphin/op-mode-22100-saved</filename>
+            <append>false</append>
+            <format>raw</format>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="op-mode-server-22100-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:500"/>
+
+            <op-mode-server-22100>
+               <sa-data name="sa-in"/>
+               <data-to-arms name="arms-out"/>
+               <data-to-sa name="sa-out"/>
+               <saved-state-file>/etc/dolphin/op-mode-22100-saved</saved-state-file>
+            </op-mode-server-22100> 
+
+            <data-flow notifier="sa-udp-in" subscriber="op-mode-22100-saver"/>
+            <data-flow notifier="sa-udp-in" converter="op-mode-nmea-extr" subscriber="sa-in"/>
+            <data-flow notifier="arms-out" converter="op-mode-astd-proxy" subscriber="astd-server-in-slot"/>
+            <data-flow notifier="sa-out" subscriber="sa-out-udp"/>   
+        </application>
+    </applications>
+    
+    <!-- avrora-vector-ssbd-app --> 
+    <objects>
+        <file-output name="ssbd-nmea-probe">
+            <filename>/var/log/dolphin/ssbd-nmea</filename>
+        </file-output>
+
+        <udp-connection name="avrora-udp-in">
+            <local-port>56000</local-port>
+        </udp-connection>
+        
+        <udp-connection name="avrora-bridge-udp-in">
+            <local-port>56001</local-port>
+        </udp-connection>
+        
+        <udp-connection name="folklor-udp-in">
+            <local-port>56002</local-port>
+        </udp-connection>
+        
+        <file-output name="inotify-events-probe">
+            <filename>/var/log/dolphin/inotify-events</filename>
+        </file-output>
+
+       <file-output name="avrora-out-probe">
+            <filename>/var/log/dolphin/avrora-out</filename>
+       </file-output>
+
+      <file-output name="avrora-bridge-out-probe">
+            <filename>/var/log/dolphin/avrora-bridge-out</filename>
+       </file-output>
+    </objects>
+
+    <applications>
+        <application name="avrora-vector-ssbd-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+            
+            <vector-to-ssbd-input-manager sendInterval="00:00:10:000">
+                <nmea-notifier name="ssbd-nmea-notifier"/>
+                <vector-file-subscriber name="inotify-ssbd-subscriber"/>
+            </vector-to-ssbd-input-manager>
+
+            <inotify>
+                <path>/var/ftp/</path>
+                <events-notifier name="inotify-notifier"/>
+                <read-timeout>00:00:01:000</read-timeout>
+            </inotify>
+
+            <data-flow notifier="inotify-notifier" subscriber="inotify-ssbd-subscriber"/>
+            <data-flow notifier="inotify-notifier" subscriber="inotify-avrora-subscriber"/>
+            <data-flow notifier="inotify-notifier" subscriber="inotify-events-probe"/>
+
+            <data-flow notifier="ssbd-nmea-notifier" subscriber="ssbd-nmea-probe"/>
+
+            <avrora-dispatcher>
+                <bridge-message-notifier name="avrora-bridge-notifier"/>
+                <bridge-message-subscriber name="avrora-bridge-subscriber"/>
+                <avrora-message-notifier name="avrora-notifier"/>
+                <avrora-message-subscriber name="avrora-subscriber"/>
+                
+                <vector-file-subscriber name="inotify-avrora-subscriber"/>
+                <vector-max-depth>10</vector-max-depth>
+                <state-notifier name="avrora-state-notifier"/>
+                
+                <link-state-id name="L.CKSU.FAKE.TS1"/>
+                <data-available-id name="D.CKSU.-.TS1"/>
+                <data-correct-id name="V.CKSU.-.TS1"/>
+
+                <reliable-msg retrInterval="00:00:01:000" retrMax="3"/>
+                <folklor-subscriber name="avrora-folklor-subscriber"/>
+            </avrora-dispatcher>
+
+            <data-flow notifier="avrora-bridge-notifier" subscriber="avrora-bridge-out-probe"/>
+            <data-flow notifier="avrora-state-notifier" subscriber="astd-server-in-slot"/>
+            <data-flow notifier="avrora-notifier" subscriber="avrora-out-probe"/>
+
+            <data-flow notifier="avrora-udp-in" subscriber="avrora-subscriber"/>
+            <data-flow notifier="avrora-bridge-udp-in" subscriber="avrora-bridge-subscriber"/>
+            <data-flow notifier="folklor-udp-in" subscriber="avrora-folklor-subscriber"/>
+        </application>
+    </applications>
+    
+    
+    <!-- gvk-kts-client-app --> 
+    <objects>
+        <file-output name="gvk-client-nmea-probe">
+            <filename>/var/log/dolphin/gvk-client-nmea</filename>
+        </file-output>
+
+        <file-output name="kts-client-astd-probe">
+            <filename>/var/log/dolphin/kts-client-astd</filename>
+            <format>astd</format>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="gvk-kts-client-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <gvk-client connectTimeout="00:00:00:100" 
+                        pollPeriod="00:00:01:000"
+                        regOffset="30001"
+                        channelsQnty="8">
+                <nmea-notifier name="gvk-nmea-out"/>
+                <address>127.0.0.1:2502</address>
+                <nmea-sentence valuesId="KSGP1"/>
+            </gvk-client>
+
+            <data-flow notifier="gvk-nmea-out" subscriber="gvk-client-nmea-probe"/>
+            
+            <kts-client connectTimeout="00:00:00:100" 
+                        pollPeriod="00:00:05:000"
+                        regOffset="0"
+                        channelsQnty="63">
+                <address>10.0.0.1:1502</address>
+                <astd-notifier name="kts-astd-out" />
+                <state name="KTS.PARAM.NAME"/>
+            </kts-client>
+            
+            <data-flow notifier="kts-astd-out" subscriber="kts-client-astd-probe" />
+            <data-flow notifier="kts-astd-out" subscriber="astd-server-in-slot" />
+        </application>
+    </applications>
+
+    <!-- selectors-app --> 
+    <objects>
+        <udp-connection name="sel-udp-in-1">
+            <local-port>1241</local-port>
+        </udp-connection>
+        <udp-connection name="sel-udp-in-2">
+            <local-port>1242</local-port>
+        </udp-connection>
+        <udp-connection name="sel-udp-in-3">
+            <local-port>1243</local-port>
+        </udp-connection>
+
+        <file-output name="sel-out-probe">
+            <filename>/var/log/dolphin/sel-out</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="selectors-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+            
+            <selectorN name="selN-out">
+                <channel priority="1" name="selN-in-1"/>
+                <channel priority="2" name="selN-in-2"/>
+                <channel priority="20" name="selN-in-3"/>
+                <timeout>00:00:02:000</timeout>
+            </selectorN>
+
+            <data-flow notifier="sel-udp-in-1" subscriber="selN-in-1"/>
+            <data-flow notifier="sel-udp-in-2" subscriber="selN-in-2"/>
+            <data-flow notifier="sel-udp-in-3" subscriber="selN-in-3"/>
+            <data-flow notifier="selN-out"      subscriber="sel-out-probe"/>
+            
+            <selector2 name="sel2-out">
+                <primary-subscriber-name>sel2-in-1</primary-subscriber-name>
+                <secondary-subscriber-name>sel2-in-2</secondary-subscriber-name>
+                <timeout>00:00:02:000</timeout>
+            </selector2>
+            
+            <data-flow notifier="sel-udp-in-1" subscriber="sel2-in-1"/>
+            <data-flow notifier="sel-udp-in-2" subscriber="sel2-in-2"/>
+            <data-flow notifier="sel2-out"      subscriber="sel-out-probe"/>
+        </application>
+    </applications>
+
+    <!-- citect-proxies-app --> 
+    <objects>
+        <tcp-connection name="citect-video-tcp-out"  timeout="00:00:04:000">
+            <remote-address>127.0.0.1</remote-address>
+            <remote-port>54121</remote-port>
+        </tcp-connection>
+        
+        <file-output name="citect-nmea-probe">
+            <filename>/var/log/dolphin/citect-nmea</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="citect-proxies-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <citect-nmea-proxy>
+                <citect username="kernel" password="kernel" address="localhost" poll-period="00:00:01:000"/>
+                <nmea-notifier name="citect-nmea-out" />
+            </citect-nmea-proxy>
+
+            <data-flow notifier="citect-nmea-out" subscriber="citect-nmea-probe"/>
+            
+            <citect-video-proxy>
+                <citect username="kernel" password="kernel" address="localhost" period="00:00:02:000"/>
+                <vd-server name="vd1-out" address="10.7.1.5" port="54121"/>
+                <vd-server name="vd2-out" address="10.7.1.6" port="54121"/>
+                <vd-server name="vd3-out" address="10.7.1.9" port="54121"/>
+
+                <signal citect-param="LS_WaterVP2_1_DI_LS_LL_ST" bit="5">
+                    <parametrs>
+                        <param value="1" text="qqqqqq"/>
+                        <param value="0" text="wwwwww"/>
+                    </parametrs>
+                    <cameras>
+                        <camera>NoCamera</camera>
+                    </cameras>
+                </signal>
+            </citect-video-proxy>
+            
+            <data-flow notifier="vd1-out" subscriber="citect-video-tcp-out"/>
+        </application>
+    </applications>
+    
+    <!-- etna-app --> 
+    <objects>
+        <udp-connection name="etna-udp-in">
+            <local-port>3002</local-port>
+        </udp-connection>
+
+        <udp-connection name="etna-nmea-udp-out">
+            <remote-address>127.0.0.1</remote-address> 
+            <remote-port>3001</remote-port>
+        </udp-connection>
+
+        <udp-connection name="etna-msg3-udp-out">
+            <remote-address>127.0.0.1</remote-address> 
+            <remote-port>3003</remote-port>
+        </udp-connection>
+        
+        <file-output name="etna-nmea-probe">
+            <filename>/var/log/dolphin/etna-nmea</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="etna-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+
+            <etna-dispatcher >
+                <data-from-etna-subscriber name="etna-subscriber"/>
+                <data-to-etna-notifier name="etna-notifier"/>
+                <data-to-arms-notifier name="etna-nmea-notifier"/>
+                <data-msg3-to-rhbjz-notifier name="etna-msg3-notifier"/>
+                <astd-out name="etna-astd-notifier" />
+                <astd-param name="ETNA.PARAM.NAME" timeout="00:00:05.000"/>
+            </etna-dispatcher>
+            
+            <data-flow notifier="etna-udp-in" subscriber="etna-subscriber"/>
+            <data-flow notifier="etna-notifier" subscriber="etna-udp-out"/>
+            <data-flow notifier="etna-nmea-notifier" subscriber="etna-udp-out"/>
+            <data-flow notifier="etna-astd-notifier" subscriber="astd-udp-out"/>
+            <data-flow notifier="etna-msg3-notifier" subscriber="etna-msg3-udp-out"/>
+        </application>
+    </applications>
+
+    <!-- astk-app --> 
+    <objects>
+        <ascii-extractor type="nmea" name="tcs-extr"/>
+
+        <tcp-connection name="astk-tcp-out" mode="server">
+            <local-address>127.0.0.1</local-address>
+            <local-port>1234</local-port>
+        </tcp-connection>
+
+        <tcp-connection name="astk-tcp-in" mode="server">
+            <local-address>127.0.0.1</local-address>
+            <local-port>5555</local-port>
+        </tcp-connection>
+
+        <udp-connection name="astk-udp-out">
+            <remote-address>10.10.74.195</remote-address>
+            <remote-port>5551</remote-port>
+        </udp-connection>
+
+        <udp-connection name="astk-udp-in">
+            <local-port>20002</local-port>
+        </udp-connection>
+    </objects>
+
+    <applications>
+        <application name="astk-app">
+            <watchdog aliveTimeout="00:00:03:000" terminationTime="00:00:00:500"/>
+
+            <astk-dispatcher radarSN="11.0.0.2" aisSN="11.0.0.3">
+                <tcp-subscriber name="astk-tcp-subscriber"/>
+                <serial-subscriber name="astk-serial-subscriber"/>
+                <tcp-notifier name="astk-tcp-notifier"/>
+                <serial-notifier name="astk-serial-notifier"/>         
+            </astk-dispatcher>
+
+            <data-flow notifier="astk-tcp-in" converter="tcs-extr" subscriber="astk-tcp-subscriber"/>
+            <data-flow notifier="astk-tcp-notifier" subscriber="astk-tcp-out"/>
+
+            <data-flow notifier="astk-udp-in" subscriber="astk-serial-subscriber"/>
+            <data-flow notifier="astk-serial-notifier" subscriber="astk-udp-out"/>
+        </application>
+    </applications>
+
+    <!-- visual-server-app --> 
+    <objects>
+        <udp-connection name="vis-from-ws-udp-in">
+            <local-port>20100</local-port>
+        </udp-connection>
+
+        <udp-connection name="vis-navdata-udp-in">
+            <local-port>20101</local-port>
+        </udp-connection>
+
+        <udp-connection name="vis-gvk-udp-in">
+            <local-port>20102</local-port>
+        </udp-connection>
+
+        <udp-connection name="vis-synch-udp-in">
+            <local-port>20103</local-port>
+        </udp-connection>
+
+        <file-output name="vis-synch-probe">
+            <filename>/var/log/dolphin/vis-synch-out</filename>
+        </file-output>
+
+        <file-output name="vis-data-to-client-probe">
+            <filename>/var/log/dolphin/vis-data-to-client</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="visual-server-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+            
+            <visual-server name="vis" period="00:00:01:000">
+                <vis-nav-data>vis-navdata-name</vis-nav-data>
+                <vis-data-to-client>vis-data-to-client</vis-data-to-client>
+                <vis-data-from-display>vis-data-from-display</vis-data-from-display>
+                <vis-struktura-data>structura-data</vis-struktura-data>
+                <vis-synch-data-out>vis-synch-out</vis-synch-data-out>
+                <vis-synch-data-in>vis-synch-in</vis-synch-data-in>
+                <vis-gvk-info-data>vis-gvk-in</vis-gvk-info-data>
+                <msg-max-length>1400</msg-max-length>
+            </visual-server>
+
+            <data-flow notifier="vis-from-ws-udp-in" subscriber="vis-data-from-display"/>
+            <data-flow notifier="vis-navdata-udp-in" subscriber="vis-navdata-name"/>
+            <data-flow notifier="vis-synch-udp-in" subscriber="vis-synch-in"/>
+            <data-flow notifier="vis-gvk-udp-in" subscriber="vis-gvk-in"/>
+
+            <data-flow notifier="vis-synch-out" subscriber="vis-synch-udp-out"/>
+            <data-flow notifier="vis-synch-out" subscriber="vis-synch-probe"/>
+            <data-flow notifier="vis-data-to-client" subscriber="vis-data-to-client-probe"/>
+        </application>
+    </applications>
+    
+    <!-- gammavproxy-app --> 
+    <applications>
+        <application name="gammavproxy-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+            
+            <gamma-video-proxy name="gammavproxy-nmea-in">
+                <vd-server name="vd1-out" address="10.10.77.134" port="55142"/>
+
+                <signal gamma-signal="ABXDN_2" bit="0">
+                    <parametrs>
+                        <param value="1" text="&amp;text=ABXDN_2 bit=0 val=1"/>
+                        <param value="0" text="&amp;text=ABXDN_2 bit=0 val=0"/>
+                    </parametrs>
+                    <cameras>
+                        <camera>camera1</camera>
+                        <camera>camera2</camera>
+                    </cameras>
+                </signal>
+            </gamma-video-proxy>
+
+            <data-flow notifier="modbus-nmea-slot" subscriber="gammavproxy-nmea-in"/>
+        </application>
+    </applications>
+
+    <!-- msclient-app --> 
+    <objects>
+        <file-output name="nmea-parsed-probe">
+            <filename>/var/log/dolphin/nmea-parsed</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="msclient-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+            
+            <faceless-nmea-parser>
+                <nmea-sentence name="wea-sentence">
+                    <format>$--WEA,x.x,,x.x,,x.x,,,,x.x,*hh</format>
+                    <fields>
+                        <field name="wea-pressure" number="1"/>
+                        <field name="wea-temperature" number="3"/>
+                        <field name="wea-humidity" number="5"/>
+                        <field name="wea-visibility-range" number="9"/>
+                    </fields>
+                </nmea-sentence>
+            </faceless-nmea-parser>
+
+            <mserver-client>
+                <sender>
+                    <default-timeout>00:00:20.000</default-timeout>
+                    <default-values>
+                        <double>0.0</double>
+                        <int>0</int>
+                        <string> </string>
+                    </default-values>
+                    <params>
+                        <param name="wi_P" type="double"/> <!--давление-->
+                        <param name="wi_airT" type="double"/> <!--температура-->
+                        <param name="wi_H" type="double"/> <!--влажность-->
+                        <param name="wi_MDV" type="double"/> <!--видимость-->
+                    </params>
+                </sender>
+            </mserver-client>
+                
+            <data-flow notifier="wea-pressure" subscriber="wi_P"/>
+            <data-flow notifier="wea-temperature" subscriber="wi_airT"/>
+            <data-flow notifier="wea-humidity" subscriber="wi_H"/>
+            <data-flow notifier="wea-visibility-range" subscriber="wi_MDV"/>
+            
+            <data-flow notifier="wea-pressure" subscriber="nmea-parsed-probe"/>
+            <data-flow notifier="wea-temperature" subscriber="nmea-parsed-probe"/>
+            <data-flow notifier="wea-humidity" subscriber="nmea-parsed-probe"/>
+            <data-flow notifier="wea-visibility-range" subscriber="nmea-parsed-probe"/>
+        </application>
+    </applications>
+    
+    <!-- prizma-app --> 
+    <objects>
+        <udp-connection name="from-prizma-udp-in">
+            <multicast-port>24030</multicast-port>
+        </udp-connection>
+
+        <udp-connection name="prizma-ctrl-udp-in">
+            <multicast-port>24030</multicast-port>
+        </udp-connection>
+
+        <udp-connection name="radar-tgt-udp-in">
+            <multicast-port>24031</multicast-port>
+        </udp-connection>
+
+        <slot name="pulsar-to-prizma-slot"/>
+
+        <file-output name="to-prizma-out-probe">
+            <filename>/var/log/dolphin/to-prizma-out</filename>
+        </file-output>
+
+        <file-output name="to-buran-out-probe">
+            <filename>/var/log/dolphin/to-buran-out</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="prizma-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100"/>
+
+            <prizma mastery="primary" aging-time="00:00:10:000">
+                <handler-from-layer-data name="prizma-from-layer-in"/>
+                <handler-from-prizma-data name="prizma-from-prizma-in"/>
+                <handler-from-pulsar-data name="prizma-from-pulsar-in"/>
+                <handler-from-radar-data name="prizma-radar-in"/>
+                <handler-from-navi-data name="prizma-navi-in"/>
+                <handler-from-master-disp-data name="prizma-fake"/>
+                <sender-to-prizma-data name="to-prizma-out"/>
+                <sender-to-buran-data name="to-buran-out"/>
+            </prizma>
+            
+            <data-flow notifier="navdata-udp-in" subscriber="prizma-navi-in"/>
+            <data-flow notifier="radar-tgt-udp-in" subscriber="prizma-radar-in"/>
+            <data-flow notifier="prizma-ctrl-udp-in" subscriber="prizma-from-layer-in"/>
+            <data-flow notifier="from-prizma-udp-in" subscriber="prizma-from-prizma-in"/>
+            <data-flow notifier="pulsar-to-prizma-slot" subscriber="handler-from-pulsar-data"/>
+            
+            <data-flow notifier="to-prizma-out" subscriber="to-prizma-out-probe"/>
+            <data-flow notifier="to-buran-out" subscriber="to-buran-out-probe"/>
+
+        </application>
+    </applications>
+
+    <!-- pulsar-app --> 
+    <objects>
+        <udp-connection name="pulsar-udp-in">
+            <local-port>24000</local-port>
+        </udp-connection>
+
+        <udp-connection name="pulsar-ctrl-udp-in">
+            <local-port>51101</local-port>
+        </udp-connection>
+        
+        <connection-monitor name="pulsar-conn-monitor">
+            <link-state-id>D.PULSAR1.-.KD1</link-state-id>
+            <timeout>00:00:02:000</timeout>
+        </connection-monitor>
+        
+        <file-output name="pulsar-to-arm-probe">
+            <filename>/var/log/dolphin/pulsar-to-arm</filename>
+        </file-output>
+
+        <file-output name="pulsar-out-probe">
+            <filename>/var/log/dolphin/pulsar-out</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="pulsar-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100"/>
+
+            <pulsar>
+                <ship-data name="pulsar-navi-in" period="00:00:02:000"/>
+                <pulsar-data name="pulsar-in"/>
+                <out-data name="pulsar-out"/>
+            </pulsar>
+
+            <data-flow notifier="navdata-udp-in" subscriber="prizma-navi-in"/>
+            <data-flow notifier="pulsar-udp-in" subscriber="pulsar-in"/>
+            <data-flow notifier="pulsar-udp-in" converter="pulsar-conn-monitor" subscriber="astd-server-in-slot"/>
+            <data-flow notifier="pulsar-out" subscriber="pulsar-to-arm-probe"/>
+
+            <pulsar-ctrl>
+                <sending-period period="00.00.01.000"/>
+                <pulsar-cmd name="pulsar-cmd-in"/>
+                <nav-data name="pulsar-ctrl-navi-in"/>
+                <radar-targets name="pulsar-radar-in"/>
+                <out-master name="pulsar-out-master"/>
+                <out-slave name="pulsar-out-slave"/>
+            </pulsar-ctrl>
+
+            <data-flow notifier="radar-tgt-udp-in" subscriber="pulsar-radar-in"/>
+            <data-flow notifier="pulsar-ctrl-udp-in" subscriber="pulsar-cmd-in"/>
+            <data-flow notifier="pulsar-out-master" subscriber="pulsar-out-probe"/>
+            <data-flow notifier="pulsar-out-slave" subscriber="pulsar-out-probe"/>
+        </application>
+    </applications>
+    
+    <!-- rib6proxy2-app --> 
+    <objects>
+        <file-output name="rib-serial-data-probe">
+            <filename>/var/log/dolphin/rib-serial-data</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="rib6proxy2-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100"/>
+            
+            <rib6proxy2-dispatcher>
+                <serial-data-out name="rib-serial-data"/>
+
+                <remote-address checkTimer="00:00:10:000" readBufferSize="2048">10.8.1.210</remote-address>
+                <remote-port>4172</remote-port>
+
+                <local-address checkTimer="00:00:10:000" readBufferSize="2048">127.0.0.1</local-address>
+                <local-port>4172</local-port>
+
+                <multicast-interface>127.0.0.1</multicast-interface>
+                <raw-directory>/var/backup/radar1</raw-directory>
+                <raw-store-period>120</raw-store-period>
+            </rib6proxy2-dispatcher>
+
+            <data-flow notifier="rib-serial-data" subscriber="rib-serial-data-probe"/>
+        </application>
+    </applications>
+            
+    <!-- platan-app --> 
+    <objects>
+        <udp-connection name="platan-udp-in">
+            <multicast-port>24030</multicast-port>
+        </udp-connection>
+
+        <file-output name="platan-out-probe">
+            <filename>/var/log/dolphin/platan-out</filename>
+        </file-output>
+
+        <file-output name="platan-state-out-probe">
+            <filename>/var/log/dolphin/platan-state-out</filename>
+        </file-output>
+
+        <file-output name="platan-req-out-probe">
+            <filename>/var/log/dolphin/platan-req-out</filename>
+        </file-output>
+
+    </objects>
+
+    <applications>
+        <application name="platan-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+            
+            <platan-dispatcher>
+                <data-in name="platan-data-in"/>    
+                <data-out name="platan-data-out"/>  
+                <state-out name="platan-state-out"/>
+                <request-out name="platan-req-out"/>
+            </platan-dispatcher>
+            
+            <data-flow notifier="platan-udp-in" subscriber="platan-data-in"/>
+            <data-flow notifier="platan-data-out" subscriber="platan-out-probe"/>
+            <data-flow notifier="platan-req-out" subscriber="platan-req-out"/>
+        </application>
+    </applications>
+
+    <!-- character-app --> 
+    <objects>
+        <udp-connection name="character-udp-in">
+            <local-port>20006</local-port>
+        </udp-connection>
+
+        <connection-monitor name="character-conn-monitor">
+            <link-state-id>D.GMSK.-.KD1</link-state-id>
+            <timeout>00:00:02:000</timeout>
+        </connection-monitor>
+
+        <ascii-extractor type="nmea" name="character-nmea-extractor"/>
+
+        <converter name="converter-character">
+             <type>sjuzhet</type>
+        </converter>
+        
+        <file-output name="character-conv-probe">
+            <filename>/var/log/dolphin/character-conv</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="character-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="3"/>
+
+            <character-wind-converter name="character-wind-converter"/>
+            
+            <data-flow notifier="character-udp-in"  converter="character-wind-converter" subscriber="character-in-probe"/>
+            <data-flow notifier="character-udp-in"  converter="character-nmea-extractor" subscriber="character-in-probe"/>
+            <data-flow notifier="character-nmea-extractor" subscriber="converter-character"/>
+            <data-flow notifier="converter-character" subscriber="character-conv-probe"/>
+        </application>
+    </applications>
+
+
+    <!-- gspu-app --> 
+    <objects>
+        <udp-connection name="gspu-udp-in">
+            <local-port>20006</local-port>
+        </udp-connection>
+
+        <file-output name="gspu-out-probe">
+            <filename>/var/log/dolphin/gspu-out</filename>
+        </file-output>
+
+        <file-output name="gspu-response-probe">
+            <filename>/var/log/dolphin/gspu-response</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="gspu-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:200" startupDuration="00:00:00:500"/>
+
+            <gspu-dispatcher>
+                <data-in name="gspu-data-in"/>
+                <data-out name="gspu-data-out"/>
+                <astd-out name="gspu-astd-out"/>
+                <response-out name="gspu-response-out"/>
+                <astd-param name="GSPU.NAME" timeout="00:00:01:000"/>
+            </gspu-dispatcher>
+            
+            <data-flow notifier="gspu-data-out" subscriber="gspu-out-probe"/>
+            <data-flow notifier="gspu-response-out" subscriber="gspu-response-probe"/>
+            <data-flow notifier="gspu-astd-out" subscriber="astd-server-in-slot"/>
+            <data-flow notifier="gspu-udp-in" subscriber="gspu-data-in"/>
+            
+        </application>
+    </applications>
+
+    <!-- positive-app --> 
+    <objects>
+        <udp-connection name="positive-udp-in">
+            <local-port>20011</local-port>
+        </udp-connection>
+
+        <file-output name="positive-to-dev-probe">
+            <filename>/var/log/dolphin/11661/positive-to-dev</filename>
+        </file-output>
+        
+        <file-output name="positive-to-arms-probe">
+            <filename>/var/log/dolphin/11661/positive-to-arms</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="positive-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="2"/>
+
+            <positive-dispatcher>
+                <data-in name="data-from-positive"/>
+                <data-out name="positive-data-to-layer"/>
+                <astd-out name="positive-astd-out"/>
+                <response-out name="data-to-positive"/>
+                <astd-param name="D.POZITIV.-.KK4" timeout="00:00:02:000"/>
+            </positive-dispatcher>
+
+            <data-flow notifier="positive-udp-in" subscriber="data-from-positive"/>
+            <data-flow notifier="positive-astd-out" subscriber="astd-server-in-slot"/>
+            <data-flow notifier="positive-data-to-layer" subscriber="positive-to-arms-probe"/>
+            <data-flow notifier="data-to-positive" subscriber="positive-to-dev-probe"/>
+        </application>    
+    </applications>
+
+    <!-- fcm-app --> 
+    <objects>
+        <udp-connection name="uv450-udp-in">
+            <local-port>20011</local-port>
+        </udp-connection>
+
+        <udp-connection name="tgt-des-udp-in">
+            <local-port>20012</local-port>
+        </udp-connection>
+
+        <ascii-extractor type="nmea" name="tgt-des-extr"/>
+        <ascii-extractor type="nmea" name="arpa-tgt-extr"/>
+        <ascii-extractor type="nmea" name="uv450-extr"/>
+
+        <file-output name="fcm-to-layers-probe">
+            <filename>/var/log/ocean/fcm-to-layers</filename>
+        </file-output>
+        
+        <file-output name="fcm-to-uv450-probe">
+            <filename>/var/log/ocean/fcm-to-uv450</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="fcm-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+            <fcm-dispatcher>
+                <arpa-targets-subscriber name="fcm-dispatcher-arpa-tgt-in"/>
+                <from-uv450-subscriber name="fcm-dispatcher-uv450-in"/>
+                <to-uv450-notifier name="fcm-dispatcher-to-uv450"/>
+                <from-layers-subscriber name="fcm-dispatcher-tgt-des-in"/>
+                <to-layers-notifier name="fcm-dispatcher-to-layers"/>
+
+                <manchester-connection>
+                    <card-no>0</card-no>
+                    <address>2</address>
+                    <subaddress>0</subaddress>
+                    <max-wait-duration>00:00:01:000</max-wait-duration>
+                    <switch-timeout>00:00:02:000</switch-timeout>
+                    <line-control bus="auto" period="00:00:01:000" timeout="00:00:03:000">
+                        <astd-notifier name="fcm-astd-notifier"/>
+                        <remote-terminal address="2" astd-name="L.MUS11.-.aKD1"/>
+                    </line-control>
+                </manchester-connection>
+
+                <session-period>00:00:00:020</session-period>
+                <offline-timeout>00:00:01:000</offline-timeout>
+            </fcm-dispatcher>
+
+            <data-flow notifier="uv450-udp-in" converter="uv450-extr" subscriber="fcm-dispatcher-uv450-in"/>
+            <data-flow notifier="tgt-des-udp-in" converter="tgt-des-extr" subscriber="fcm-dispatcher-tgt-des-in"/>
+            <data-flow notifier="radar-tgt-udp-in" converter="arpa-tgt-extr" subscriber="fcm-dispatcher-arpa-tgt-in"/>
+
+            <data-flow notifier="fcm-dispatcher-to-layers" subscriber="fcm-to-layers-probe"/>
+            <data-flow notifier="fcm-dispatcher-to-uv450" subscriber="fcm-to-uv450-probe"/>
+            
+            <data-flow notifier="fcm-astd-notifier" subscriber="astd-server-in-slot"/>
+        </application>
+    </applications>
+
+    <!-- pkotni-app --> 
+    <objects>
+        <serial-port-connection name="serial-port-bekar1-inf">
+            <speed>57600</speed>
+            <port>/dev/pts/4</port>
+        </serial-port-connection>
+
+        <udp-connection name="farvater-udp-in">
+            <local-port>21000</local-port>
+        </udp-connection>
+        
+        <udp-connection name="integration-udp-in">
+            <local-port>20001</local-port>
+        </udp-connection>
+        
+        <udp-connection name="echo-udp-in">
+            <local-port>20002</local-port>
+        </udp-connection>
+
+        <udp-connection name="log-udp-in">
+            <local-port>20003</local-port>
+        </udp-connection>
+
+        <udp-connection name="mk-udp-in">
+            <local-port>20004</local-port>
+        </udp-connection>
+
+        <udp-connection name="loranc-udp-in">
+            <local-port>20005</local-port>
+        </udp-connection>
+
+        <udp-connection name="ais-udp-in">
+            <local-port>20006</local-port>
+        </udp-connection>
+
+        <udp-connection name="pkotni-ctrl-udp-in">
+            <local-port>20009</local-port>
+        </udp-connection>
+
+        <udp-connection name="pkotni-state-udp-out">
+            <remote-address>127.0.0.1</remote-address>
+            <remote-port>20010</remote-port>
+        </udp-connection>
+
+        <udp-connection name="manchester-controller-udp-in">
+            <local-port>52232</local-port>
+        </udp-connection>
+        
+        <bekar-data-accumulator name="bekar1-inf-accumulator"/>
+
+        <file-output name="priority-param-save-probe">
+            <filename>/etc/dolphin/pkotni-priority-save</filename>
+            <append>false</append>
+            <format>raw</format>
+            <rotate>false</rotate>
+        </file-output>
+
+        <file-output name="manchester-controller-out-probe">
+            <filename>/var/log/dolphin/manchester-controller-out</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+            <format>astd</format>
+        </file-output>
+
+        <file-output name="bekar1-inf-out-probe">
+            <filename>/var/log/dolphin/bekar1-inf-out</filename>
+            <format>to-bekar</format>
+        </file-output>
+
+        <file-output name="character-out-probe">
+            <filename>/var/log/dolphin/character-out</filename>
+        </file-output>
+
+        <file-output name="guvk-out-probe">
+            <filename>/var/log/dolphin/guvk-out</filename>
+        </file-output>
+
+        <file-output name="ospv-out-probe">
+            <filename>/var/log/dolphin/ospv-out</filename>
+        </file-output>
+
+        <file-output name="1hz-out-probe">
+            <filename>/var/log/dolphin/1hz-out</filename>
+        </file-output>
+
+        <file-output name="pulsar-out-probe">
+            <filename>/var/log/dolphin/pulsar-out</filename>
+        </file-output>
+
+        <file-output name="sector-out-probe">
+            <filename>/var/log/dolphin/sector-out</filename>
+        </file-output>
+
+        <file-output name="pkotni-param-out-probe">
+            <filename>/var/log/dolphin/pkotni-param-out</filename>
+            <format>hex</format>
+        </file-output>
+
+        <file-output name="pkotni-state-out-probe">
+            <filename>/var/log/dolphin/pkotni-state-out</filename>
+            <format>hex</format>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="pkotni-app">
+            <watchdog aliveTimeout="00:00:10:000" terminationTime="00:00:00:500"/>
+
+            <pkotni>
+                <input-channels>
+                    <channel type="bekar1">
+                        <data-subscriber name="bekar1-data"/>
+                        <timeout>00:00:00:200</timeout>
+                    </channel>
+                    <channel type="farvater">
+                        <data-subscriber name="farvater-data"/>
+                        <timeout>00:00:02:000</timeout>
+                        <offset x="9.094" y="1.2" z="32.24"/>
+                    </channel>
+                    <channel type="integration">
+                        <data-subscriber name="integration-data"/>
+                        <timeout>00:00:02:000</timeout>
+                        <offset x="4.9" y="0" z="30.34"/>
+                    </channel>
+                    <channel type="ais">
+                        <data-subscriber name="ais-data"/>
+                        <timeout>00:00:02:000</timeout>
+                        <offset x="9.05" y="1.2" z="32.24"/>
+                    </channel>
+                    <channel type="lag">
+                        <data-subscriber name="log-data"/>
+                        <timeout>00:00:10:000</timeout>
+                    </channel>
+                    <channel type="echo">
+                        <data-subscriber name="echo-data"/>
+                        <timeout>00:00:30:000</timeout>
+                    </channel>
+                    <channel type="mk">
+                        <data-subscriber name="mk-data"/>
+                        <timeout>00:00:02:000</timeout>
+                    </channel>
+                    <channel type="loranC">
+                        <data-subscriber name="loranc-data"/>
+                        <timeout>00:00:02:000</timeout>
+                        <offset x="4.9" y="0" z="30.34"/>
+                        <ellipse a="30.0" b="30.0" tau="0"/>
+                    </channel>
+                    <channel type="test">
+                        <data-subscriber name="testing-model-data"/>
+                        <timeout>00:00:02:000</timeout>
+                    </channel>
+                </input-channels>
+
+                <output-channels>
+                    <channel type="guvk">
+                        <data-notifier name="guvk-out"/>
+                        <notification-period>00:00:00:020</notification-period>
+                    </channel>
+                    <channel type="bekar">
+                        <data-notifier name="bekar-out"/>
+                        <notification-period>00:00:01:000</notification-period>
+                    </channel>
+                    <channel type="nmea">
+                        <data-notifier name="ospv-out"/>
+                        <notification-period>00:00:00:020</notification-period>
+                        <nmea type="ELh"/>
+                    </channel>
+                    <channel type="pulsar">
+                        <data-notifier name="pulsar-out"/>
+                        <notification-period>00:00:01:000</notification-period>
+                        <nmea type="GLL"/>
+                        <nmea type="HDT"/>
+                        <nmea type="VBW" talkerId="GP"/>
+                        <nmea type="VTG" talkerId="GP"/>
+                        <nmea type="ZDA"/>
+                    </channel>
+                    <channel type="character">
+                        <data-notifier name="character-out"/>
+                        <notification-period>00:00:01:000</notification-period>
+                        <nmea type="HDT" talkerId="VM"/>
+                        <nmea type="VBW" talkerId="VM"/>
+                    </channel>
+
+                    <channel type="nmea">
+                        <data-notifier name="1hz-out"/>
+                        <notification-period>00:00:01:000</notification-period>
+                        <nmea type="DBT" talkerId="GP"/>
+                        <nmea type="DPT" talkerId="GP"/>
+                        <nmea type="DTM" talkerId="GP"/>
+                        <nmea type="GGA" talkerId="GP"/>
+                        <nmea type="GLL" talkerId="GP"/>
+                        <nmea type="HDT" talkerId="HE"/>
+                        <nmea type="PRP" talkerId="GP"/>
+                        <nmea type="ROT" talkerId="GP"/>
+                        <nmea type="VBW" talkerId="VM"/>
+                        <nmea type="VHW" talkerId="GP"/>
+                        <nmea type="VLW" talkerId="GP"/>
+                        <nmea type="VTG" talkerId="GP"/>
+                        <nmea type="GFA" talkerId="GP"/>
+                        <nmea type="MTW" talkerId="GP"/>
+                        <nmea type="ZDA" talkerId="GP"/>
+                    </channel>
+                </output-channels>
+
+                <table-priority>
+                    <cmd_in name="priority-cmd-in"/>
+                    <table_out name="priority-state-out"/>
+                    <priority-param name="priority-param-out"/>
+                    <priority-saver name="priority-param-save"/>
+                    <default-settings name="/etc/dolphin/22100/pkotni-priority-save"/>
+                    <current-settings name=""/>
+                    <notification-period>00:00:01:000</notification-period>
+                </table-priority>
+            </pkotni>
+
+            <manchester-writer name="fcm-nav-manchester-out">
+                <card-no>0</card-no>
+                <address>31</address>
+                <subaddress busA="2" busB="4"/>
+                <max-wait-duration>00:00:00:020</max-wait-duration>
+                <mode>auto</mode>
+                <switch-timeout>00:00:01:500</switch-timeout>
+                <line-control bus="auto" period="00:00:01:000" timeout="00:00:02:000">
+                    <astd-notifier name="fcm-nav-manchester-astd"/>
+                    <remote-terminal address="2" astd-name="L.MUS.OESU.KD1"/>
+                    <remote-terminal address="1" astd-name="L.VIZIR.OESU.KD1"/>
+                    <remote-terminal address="0" astd-name="L.UV450.-.KD1"/>
+                </line-control>
+            </manchester-writer>
+
+            <!-- / opposite -->
+            <manchester-controller name="manchester-controller-out">
+                <master>true</master>
+                <astd-cmd-out-name>D.MANCON.CMD.KD1</astd-cmd-out-name>
+                <astd-state-out-name>D.MANCON.STATE.KD1</astd-state-out-name>
+                <astd-cmd-out-opposite-name>D.MANCON.CMD.KD2</astd-cmd-out-opposite-name>
+                <astd-state-out-opposite-name>D.MANCON.STATE.KD2</astd-state-out-opposite-name>
+
+                <startup-duration>00:00:30:000</startup-duration>
+                <astd-timeout>00:00:05:000</astd-timeout>
+                <priority-timeout>00:00:05:000</priority-timeout>
+                <send-period>00:00:01:000</send-period>
+
+                <follow-types handler="mancon-priority-in">
+                    <type>3</type>
+                    <type>4</type>
+                    <type>10</type>
+                    <type>11</type>
+                    <type>22</type>
+                </follow-types>
+
+                <sources-state handler="con-monitors-in">
+                    <source id="1" astd="D.BEKAR1.D.KD1"/>
+                    <source id="2" astd="D.BEKAR2.D.KD1"/>
+                    <source id="3" astd="D.INTEGRATION.-.KD1"/>
+                </sources-state>
+
+                <opposite-controller-signal-handler>opposite-controller-state-in</opposite-controller-signal-handler>
+            </manchester-controller>
+
+            <!-- Input Data -->
+            <data-flow notifier="serial-port-bekar1-inf" converter="bekar1-inf-accumulator" subscriber="bekar1-data"/>
+
+            <data-flow notifier="farvater-udp-in" subscriber="farvater-data"/>
+            <data-flow notifier="integration-udp-in" subscriber="integration-data"/>
+            <data-flow notifier="echo-udp-in" subscriber="echo-data"/>
+            <data-flow notifier="log-udp-in" subscriber="log-data"/>
+            <data-flow notifier="mk-udp-in" subscriber="mk-data"/>
+            <data-flow notifier="loranc-udp-in" subscriber="loranc-data"/>
+            <data-flow notifier="ais-udp-in" subscriber="ais-data"/>
+            
+            <data-flow notifier="priority-state-out" subscriber="pkotni-state-out-probe"/>
+            <data-flow notifier="priority-param-out" subscriber="pkotni-param-out-probe"/>
+            <data-flow notifier="priority-param-save" subscriber="priority-param-save-probe"/>
+            <data-flow notifier="pkotni-ctrl-udp-in" subscriber="priority-cmd-in"/>
+
+            <!-- Pkotni out data -->
+            <data-flow notifier="bekar-out" subscriber="bekar1-inf-out-probe"/>
+            <data-flow notifier="guvk-out" subscriber="guvk-out-probe"/>
+            <data-flow notifier="ospv-out" subscriber="ospv-out-probe"/>
+            <data-flow notifier="pulsar-out" subscriber="pulsar-comp-probe"/>
+            <data-flow notifier="sector-out" subscriber="sector-comp-probe"/>
+            <data-flow notifier="1hz-out" subscriber="1hz-nmea-comp-probe"/>
+            <data-flow notifier="character-out" subscriber="character-out-probe"/>
+
+            <!-- Manchster ASTD -->
+            <data-flow notifier="fcm-nav-manchester-astd" subscriber="astd-server-in-slot"/>
+
+            <!-- PKOTNI -> Manchester -->
+            <data-flow notifier="guvk-out" subscriber="fcm-nav-manchester-out"/>
+
+            <!-- manchester-controller -->
+            <data-flow notifier="pkotni-param-out" subscriber="mancon-priority-in"/>
+            <data-flow notifier="astd-server-out-slot" converter="astd-ascii-conv" subscriber="con-monitors-in"/>
+
+            <data-flow notifier="manchester-controller-udp-in" subscriber="opposite-controller-state-in"/>
+            <data-flow notifier="manchester-controller-out" subscriber="manchester-controller-out-probe"/>
+
+        </application>
+    </applications>
+
+    <!-- xenomai-app --> 
+    <objects>
+        <serial-port-connection name="serial-port-xeno-io">
+            <port>rtser1</port>
+            <speed>57600</speed>
+            <timeout>1000</timeout>
+            <rx-trigger-level>51</rx-trigger-level>
+            <receive-buffer-size>1024</receive-buffer-size>
+            <op-mode>xeno</op-mode>
+        </serial-port-connection>
+
+        <udp-connection name="xeno-sel-udp-in">
+            <local-port>20101</local-port>
+        </udp-connection>
+
+        <file-output name="xeno-sel-probe">
+            <filename>/var/log/ocean/xeno-sel-out</filename>
+        </file-output>
+
+        <xeno-pipe-slot linuxName="xp-linux-out" xenomaiName="xp-xeno-out">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+        </xeno-pipe-slot>
+
+        <xeno-pipe-slot linuxName="xp-linux-in" xenomaiName="xp-xeno-in">
+            <max-size>19200</max-size>
+            <update-time>00:00:01:000</update-time>
+        </xeno-pipe-slot>
+        
+    </objects>
+
+    <applications>
+        <application name="xenomai-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+            
+            <selectorXeno name="xeno-sel-out">
+                <primary-subscriber-name name="xeno-sel-in-1"/>
+                <secondary-subscriber-name name="xeno-sel-in-2"/>
+                <timeout>00:00:02:500</timeout>
+            </selectorXeno>
+
+            <data-flow notifier="xeno-sel-out" subscriber="xp-xeno-out"/>
+            <data-flow notifier="xp-linux-out" subscriber="xeno-sel-probe"/>
+            
+            <data-flow notifier="xeno-sel-udp-in" subscriber="xp-linux-in"/>
+            <data-flow notifier="xp-xeno-in" subscriber="xeno-sel-1"/>
+            
+            <data-flow notifier="serial-port-xeno-io" subscriber="xeno-sel-2"/>
+            
+            <latency-recorder name="lr" startName="latency-start" endName="latency-end"/>
+            <data-flow notifier="serial-port-xeno-io" subscriber="pkotni-latency-start"/>
+            <data-flow notifier="xeno-sel-out" subscriber="pkotni-latency-end"/>
+        </application>
+    </applications>
+
+    
+    <!-- motion-control-app --> 
+    <objects>
+        <serial-port-connection name="rku-serial-io">
+            <port>/dev/pts/4</port>
+            <speed>9600</speed>
+        </serial-port-connection>
+
+        <serial-port-connection name="aps-serial-io">
+            <port>/dev/pts/6</port>
+            <speed>9600</speed>
+        </serial-port-connection>
+
+        <udp-connection name="viewer-to-scc-udp-in">
+            <local-port>40001</local-port>
+        </udp-connection>
+
+        <ascii-extractor type="modbus-ascii" name="rku-modbus-extractor"/>
+        <ascii-extractor type="modbus-ascii" name="aps-modbus-extractor"/>
+
+        <file-output name="scc-to-viewer-probe">
+            <filename>/var/log/dolphin/scc-to-viewer</filename>
+        </file-output>        
+
+        <file-output name="icxdr-probe">
+            <filename>/var/log/dolphin/icxdr-out</filename>
+        </file-output>
+    </objects>
+
+    <applications>
+        <application name="motion-control-app">
+            <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:200"/>
+            
+            <pinger-input-manager mode="APS">  
+                <state-notifier name="scc-pinger-notifier"/>
+                <timeout>00:00:02:000</timeout>
+                <interface address="127.0.0.1">
+                    <target name="eth0" address="127.0.0.1"/>
+                </interface>
+            </pinger-input-manager>
+
+            <motion-control>
+                <viewer-notifier name="scc-to-viewer"/>
+                <viewer-subscriber name="scc-from-viewer"/>
+                <gps-nmea-subscriber name="scc-gps-in"/>
+                <kama-1-nmea-subscriber name="scc-kama-1-in"/>
+                <kama-2-nmea-subscriber name="scc-kama-2-in"/>
+                <character-nmea-subscriber name="scc-character-in"/>
+                <lan-state-subscriber name="scc-lan-state-in"/>
+
+                <rku-modbus-interface name="rku-scc-io" slaveId="1"/>
+                <aps-modbus-interface name="aps-scc-io" slaveId="1"/>
+
+                <registration-interface address="127.0.0.1" port="55555"/>
+                <conning-interface address="127.0.0.1" port="25555" timeout="00:00:04"/>
+
+                <ir104 baseAddr="0"/>
+                <dmm32 baseAddr="0"/>
+
+                <registration-logfile>/var/log/dolphin/SCC_reg_data</registration-logfile>
+                <adc-dac-cfg>/etc/dolphin/SCC/sku.cfg</adc-dac-cfg>
+                <control-system-cfg recurrent-update="false">/etc/dolphin/SCC/SystemParams.cfg</control-system-cfg>
+
+                <rku-scaling-coeff>0.5</rku-scaling-coeff>
+
+                <state-change-min-dt>00:00:02:000</state-change-min-dt>
+
+                <modbus-write-period>00:00:00:100</modbus-write-period>
+                <recalc-period>00:00:00:050</recalc-period>
+                <viewers-notify-period>00:00:00:050</viewers-notify-period>
+
+                <nmea-timeout>00:00:01:500</nmea-timeout>
+                <nmea-gps-timeout>00:00:03:000</nmea-gps-timeout>
+                <modbus-timeout>00:00:02:000</modbus-timeout>
+                <system-failure-timeout>00:01:00:000</system-failure-timeout>
+           </motion-control>
+
+           <data-flow notifier="navdata-udp-in" subscriber="scc-gps-in"/>
+           <data-flow notifier="navdata-udp-in" subscriber="scc-kama-1-in"/>
+           <data-flow notifier="navdata-udp-in" subscriber="scc-kama-2-in"/>
+           <data-flow notifier="navdata-udp-in" subscriber="scc-character-in"/>
+
+           <data-flow notifier="scc-pinger-notifier" subscriber="scc-lan-state-in"/>
+
+           <data-flow notifier="scc-to-viewer" subscriber="scc-to-viewer-probe"/>
+           <data-flow notifier="viewer-to-scc-udp-in" subscriber="scc-from-viewer"/>
+
+           <data-flow notifier="rku-serial-io" converter="rku-modbus-extractor" subscriber="rku-scc-io"/>
+           <data-flow notifier="aps-serial-io" converter="aps-modbus-extractor" subscriber="rku-aps-io"/>
+           
+           <data-flow notifier="rku-scc-io" subscriber="rku-serial-io"/>
+           <data-flow notifier="aps-scc-io" subscriber="aps-serial-io"/>        
+       </application>
+    </applications>
+    
+    <!-- inguri-app -->
+    <objects>
+        <udp-connection name="model-to-scc-udp-in">
+            <local-port>40011</local-port>
+        </udp-connection>
+
+        <file-output name="scc-to-model-out-probe">
+            <filename>/var/log/dolphin/scc-to-model-out</filename>
+            <format>hex</format>
+        </file-output>
+    </objects>
+    
+    <applications>
+        <application name="inguri-app">
+           <watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:01:000"/>
+
+           <motion-control-inguri>
+                <viewer-notifier name="scc-to-viewer"/>
+                <viewer-subscriber name="scc-from-viewer"/>
+
+                <model-notifier name="scc-to-model"/>
+                <model-subscriber name="model-to-scc"/>
+
+                <gps-nmea-subscriber name="scc-gps-in"/>
+                <kama-1-nmea-subscriber name="scc-kama-1-in"/>
+                <kama-2-nmea-subscriber name="scc-kama-2-in"/>
+                <character-nmea-subscriber name="scc-character-in"/>
+
+                <rku-modbus-interface name="rku-scc-io" slaveId="1"/>
+                <aps-modbus-interface name="aps-scc-io" slaveId="1"/>
+
+                <rku-scaling-coeff>0.5</rku-scaling-coeff>
+
+                <nmea-timeout>00:00:01:500</nmea-timeout>
+                <nmea-gps-timeout>00:00:03:000</nmea-gps-timeout>
+
+                <state-change-min-dt>00:00:02:000</state-change-min-dt>
+                <recalc-period>00:00:00:100</recalc-period>
+                <modbus-write-period>00:00:00:100</modbus-write-period>
+                <modbus-timeout>00:00:01:000</modbus-timeout>
+                <viewers-notify-period>00:00:00:100</viewers-notify-period>
+
+                <control-system-cfg recurrent-update="true">/etc/dolphin/Inguri/InguriParams.cfg</control-system-cfg>
+           </motion-control-inguri>
+
+           <data-flow notifier="navdata-udp-in" subscriber="scc-gps-in"/>
+           <data-flow notifier="navdata-udp-in" subscriber="scc-kama-1-in"/>
+           <data-flow notifier="navdata-udp-in" subscriber="scc-kama-2-in"/>
+           <data-flow notifier="navdata-udp-in" subscriber="scc-character-in"/>
+
+           <data-flow notifier="rku-serial-io" converter="rku-modbus-extractor" subscriber="rku-scc-io"/>
+           <data-flow notifier="aps-serial-io" converter="aps-modbus-extractor" subscriber="rku-aps-io"/>
+           
+           <data-flow notifier="rku-scc-io" subscriber="rku-serial-io"/>
+           <data-flow notifier="aps-scc-io" subscriber="aps-serial-io"/>
+           
+           <data-flow notifier="scc-to-viewer" subscriber="scc-to-viewer-probe"/>
+           <data-flow notifier="viewer-to-scc-udp-in" subscriber="scc-from-viewer"/>
+
+           <data-flow notifier="scc-to-model" subscriber="scc-to-model-out-probe"/>
+           <data-flow notifier="model-to-scc-udp-in" subscriber="model-to-scc"/>
+        </application>
+    </applications>
+
+    <!-- scc22100-app -->
+    <objects>
+        <udp-connection name="model-to-scc-udp-in">
+            <local-port>40011</local-port>
+        </udp-connection>
+
+        <file-output name="scc-to-model-out-probe">
+            <filename>/var/log/dolphin/scc-to-model-out</filename>
+            <format>hex</format>
+        </file-output>
+
+        <file-output name="icxdr-probe">
+            <filename>/var/log/dolphin/icxdr-out</filename>
+        </file-output>
+
+    </objects>
+    <applications>
+        <application name="scc22100-app">
+           <watchdog aliveTimeout="00:00:02:000" terminationTime="00:00:01:000"/>
+
+           <motion-control-22100>
+                <viewer-notifier name="scc-to-viewer"/>
+                <viewer-subscriber name="scc-from-viewer"/>
+                <gps-nmea-subscriber name="scc-gps-in"/>
+                <kama-1-nmea-subscriber name="scc-kama-1-in"/>
+                <kama-2-nmea-subscriber name="scc-kama-2-in"/>
+                <character-nmea-subscriber name="scc-character-in"/>
+                <lan-state-subscriber name="scc-lan-state-in"/>
+                
+                <conning-notifier name="scc-icxdr-to-conning"/>
+                
+                <rku-modbus-interface name="rku-scc-io" slaveIdPort="1" slaveIdCentral="2" slaveIdStbd="3"/>
+                <aps-modbus-interface name="aps-scc-io" slaveId="255"/>
+                <vpu-modbus-serial-interface slaveId="4" 
+                                             offlineTimeout="00:00:02:000" 
+                                             minReportPeriod="00:00:00:250">
+                    <port>/dev/pts/8</port>
+                    <speed>9600</speed>
+                    <control-parity>none</control-parity>
+                    <numbit>8</numbit>
+                    <stopbits>2</stopbits>
+                    <!-- Modbus data logged as <register number>:<16-bit data> in "hex" (default) or "bin" format.
+                         Output for "hex" format: 01:0xABCD, 02:0xABCD, ...
+                         Output for "bin" format: 01:1010101111001101, 02:1010101111001101, ...
+                         Element <log-filename> is optional and can be omitted. -->
+                    <log-filename format="hex">/var/log/dolphin/modbus_data</log-filename>
+                </vpu-modbus-serial-interface>
+
+                <registration-interface address="127.0.0.1" port="55555"/>
+                
+                <ir104 baseAddr="0"/>
+                <dmm32 baseAddr="0" enableDAC="false"/>
+                <rmm baseAddr="0"/>
+                <registration-logfile>/var/log/dolphin/reg_data</registration-logfile>
+                <adc-dac-cfg>/etc/dolphin/SCC22100.DAC.cfg</adc-dac-cfg>
+                <control-system-cfg recurrent-update="false">/etc/dolphin/SCC22100.math.cfg</control-system-cfg>
+                <control-system2-cfg>/etc/dolphin/SCC22100.math.cfg</control-system2-cfg>
+                
+                <rku-scaling-coeff>0.5</rku-scaling-coeff>
+
+                <state-change-min-dt>00:00:02:000</state-change-min-dt>
+                
+                <modbus-write-period>00:00:00:100</modbus-write-period>
+                <recalc-period>00:00:00:050</recalc-period>
+                <viewers-notify-period>00:00:00:100</viewers-notify-period>
+                
+                <nmea-timeout>00:00:01:500</nmea-timeout>
+                <nmea-gps-timeout>00:00:03:000</nmea-gps-timeout>
+                <modbus-timeout>00:00:02:000</modbus-timeout>
+                <system-failure-timeout>00:01:00:000</system-failure-timeout>
+           </motion-control-22100>
+           
+           <data-flow notifier="navdata-udp-in" subscriber="scc-gps-in"/>
+           <data-flow notifier="navdata-udp-in" subscriber="scc-kama-1-in"/>
+           <data-flow notifier="navdata-udp-in" subscriber="scc-kama-2-in"/>
+           <data-flow notifier="navdata-udp-in" subscriber="scc-character-in"/>
+
+           <data-flow notifier="scc-to-viewer" subscriber="scc-to-viewer-probe"/>
+           <data-flow notifier="viewer-to-scc-udp-in" subscriber="scc-from-viewer"/>
+
+           <data-flow notifier="rku-serial-io" converter="rku-modbus-extractor" subscriber="rku-scc-io"/>
+           <data-flow notifier="aps-serial-io" converter="aps-modbus-extractor" subscriber="rku-aps-io"/>
+           
+           <data-flow notifier="rku-scc-io" subscriber="rku-serial-io"/>
+           <data-flow notifier="aps-scc-io" subscriber="aps-serial-io"/>
+
+           <data-flow notifier="scc-icxdr-to-conning" subscriber="icxdr-probe"/>
+        </application>
+    </applications>
+</configuration>

@@ -1,0 +1,67 @@
+<configuration>
+<objects>
+        <file-output name="kts-in-probe">
+            <filename>/var/log/dolphin/test/test-26.0.1-kts-in</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+            <format>astd</format>
+        </file-output>
+</objects>
+
+    <applications>
+        <application name="kts-client-test-app">
+            <kts-client connectTimeout="00:00:00:100" 
+                        pollPeriod="00:00:05:000"
+                        regOffset="0"
+                        channelsQnty="63">
+                <address>10.16.1.113:1502</address>
+                <astd-notifier name="kts-state-arm-vo1-notifier"/>
+                <state name="S.VO1.KTS.ST_Korpus"
+                       offset="0"
+                       mask="0x0001"/>
+                <state name="S.VO1.KTS.ST_CPU"
+                       offset="0"
+                       mask="0x0002"/>
+                <state name="S.VO1.KTS.ST_LAN"
+                       offset="0"
+                       mask="0x0020"/>
+                <state name="S.VO1.KTS.ST_PWR"
+                       offset="0"
+                       mask="0x0040"/>
+                <state name="S.VO1.KTS.ST_KTS"
+                       offset="0"
+                       mask="0x0800"/>
+                <state name="S.VO1.KTS.LAN1"
+                       offset="16"
+                       mask="0x0001" />
+                <state name="S.VO1.KTS.LAN2"
+                       offset="16"
+                       mask="0x0002" />
+                <state name="S.VO1.KTS.LAN1state"
+                       offset="18" />
+                <state name="S.VO1.KTS.LAN2state"
+                       offset="21" />
+                <state name="S.VO1.KTS.PortPwrDr"
+                       offset="19"
+                       expectedValue="0"
+                       mask="0x003" />
+                <state name="S.VO1.KTS.PortPwrD0u"
+                       offset="19"
+                       expectedValue="1"
+                       mask="0x003" />
+                <state name="S.VO1.KTS.PortPwrD0"
+                       offset="19"
+                       expectedValue="2"
+                       mask="0x003" />
+                <state name="S.VO1.KTS.PortPwrD3"
+                       offset="19"
+                       expectedValue="3"
+                       mask="0x003" />
+                <state name="S.VO1.KTS.CPUTempAlarm"
+                       offset="4"
+                       maxValue="700" />
+            </kts-client>
+            <data-flow notifier="kts-state-arm-vo1-notifier" subscriber="kts-in-probe"/>
+        </application>
+    </applications>
+</configuration>
