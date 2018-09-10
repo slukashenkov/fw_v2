@@ -304,6 +304,19 @@ class ConfigTestEnv:
                         logging_conf_full_l = logging_conf_full["linux"]
                         return logging_conf_full_l
 
+        def get_tests_logging_config(self):
+            if self.test_bl_config:
+                    conf_map = self.get_test_bl_configuration()
+                    logging_conf_conf_file = conf_map["tests_logging_conf"]
+                    if self.syst == 'Windows':
+                        logging_conf_part_w = logging_conf_conf_file["windows"]["loggers_conf"]
+                        tests_logging_config_w = os.path.join(self.path_to_proj, logging_conf_part_w)
+                        return tests_logging_config_w
+                    elif self.syst == 'Linux':
+                        logging_conf_part_l     = logging_conf_conf_file["linux"]["loggers_conf"]
+                        tests_logging_config_l  = os.path.join(self.path_to_proj, logging_conf_part_l)
+                        return tests_logging_config_l
+
         def get_sut_logging_log_srv_exec(self):
             logging_conf = self.get_sut_logging_config()
             log_srv_exec = logging_conf["log_srv_exec"]

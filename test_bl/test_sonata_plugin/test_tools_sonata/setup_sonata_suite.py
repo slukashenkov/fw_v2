@@ -26,10 +26,18 @@ class SetupSonataSuite:
         self.module_abs_path = os.path.abspath(os.path.dirname(__file__))
         self.path_to_proj=re.findall(r".*\\test_bl",self.module_abs_path)
         '''-----------------------------------------------------------------------------------------------------------
+        GET GENERAL PREFERENCES
+        '''
+        self.g_prefs = config_test_env.ConfigTestEnv()
+        '''
+        GET TEST SUITE PREFERENCES
+        '''
+        self.s_prefs=config_sonata_suite.ConfigSonataSuite()
+        self.g_prefs.set_suite_conf(self.s_prefs.get_sonata_configuration())
+        '''-----------------------------------------------------------------------------------------------------------
         CONFIG LOGGING
         '''
-        path_to_logging_conf = "..\\..\\test_bl_configs\\logging_conf.json"
-        path_to_logging_conf = os.path.join(self.module_abs_path, path_to_logging_conf)
+        path_to_logging_conf = self.g_prefs.get_tests_logging_config()
         '''
         Logging for all classes used here 
         is configured from the config file in
@@ -39,15 +47,6 @@ class SetupSonataSuite:
         '''
         self._config_loggers(path_to_logging_conf)
         self.logger = logging.getLogger(__name__)
-        '''-----------------------------------------------------------------------------------------------------------
-        GET GENERAL PREFERENCES
-        '''
-        self.g_prefs = config_test_env.ConfigTestEnv()
-        '''
-        GET TEST SUITE PREFERENCES
-        '''
-        self.s_prefs=config_sonata_suite.ConfigSonataSuite()
-        self.g_prefs.set_suite_conf(self.s_prefs.get_sonata_configuration())
         '''-----------------------------------------------------------------------------------------------------------
         SEND RECEIVE 
         '''
