@@ -37,9 +37,6 @@ class SetupSonataSuite:
         '''-----------------------------------------------------------------------------------------------------------
         CONFIG LOGGING
         '''
-        #path_to_logging_conf = "..\\..\\test_bl_configs\\logging_conf.json"
-        #path_to_logging_conf = os.path.join(self.module_abs_path, path_to_logging_conf)
-
         path_to_logging_conf = self.g_prefs.get_tests_logging_config()
         '''
         Logging for all classes used here 
