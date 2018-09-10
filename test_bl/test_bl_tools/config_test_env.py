@@ -313,8 +313,8 @@ class ConfigTestEnv:
                         tests_logging_config_w = os.path.join(self.path_to_proj, logging_conf_part_w)
                         return tests_logging_config_w
                     elif self.syst == 'Linux':
-                        logging_conf_part_l = logging_conf_conf_file["linux"]
-                        tests_logging_config_l =os.path.join(self.path_to_proj, logging_conf_part_l)
+                        logging_conf_part_l     = logging_conf_conf_file["linux"]["loggers_conf"]
+                        tests_logging_config_l  = os.path.join(self.path_to_proj, logging_conf_part_l)
                         return tests_logging_config_l
 
         def get_sut_logging_log_srv_exec(self):
