@@ -78,12 +78,10 @@ class SonataTests(unittest.TestCase):
                 self.sonata_setup.send_receive_tdata(test_case_ids=t_case_name)
                 self.sonata_setup.compare_sent_received_tdata(test_case_ids=t_case_name)
 
-
         def tearDown(self):
             #self.ext_scripts.stop_logserver()
             time.sleep(4)
             self.curr_logger.info('Test'+__name__+ 'tearDown routine.')
-
 
         def test_sonata_messages01(self):
                 """
