@@ -7,11 +7,6 @@ from test_bl.test_sonata_plugin.test_tools_sonata import config_sonata_suite
 from test_bl.test_bl_tools import var_utils, external_scripts, send_receive, udp_server, udp_sender,logging_tools
 
 
-#import send_receive_sonata, sonata_nmea_msgs_content_process
-#import sonata_send_recieve_properties, sonata_suite_config
-#import var_utils, external_scripts
-
-
 class SonataTests(unittest.TestCase):
         @classmethod
         def setUpClass(self):
