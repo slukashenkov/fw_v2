@@ -1,5 +1,4 @@
 import unittest, time, xmlrunner, logging
-
 from collections import deque
 
 from test_bl.test_sonata_plugin.test_tools_sonata import  setup_sonata_suite
