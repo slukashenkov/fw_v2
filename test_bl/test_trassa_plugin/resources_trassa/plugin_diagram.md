@@ -30,8 +30,3 @@ autonumber stop
 @enduml
 ```
 
-
-```plantuml
-digraph Test {
-A -> B
-}
