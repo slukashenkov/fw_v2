@@ -1,0 +1,24 @@
+      - MessageID(uint): AIS message number.  Must be 1 (field automatically set to "1")
+      - RepeatIndicator(uint): Indicated how many times a message has been repeated
+      - MMSI(uint): Unique ship identification number (MMSI)
+      - NavigationStatus(uint): What is the vessel doing
+      - ROT(int): RateOfTurn
+      - SOG(udecimal): Speed over ground
+      - PositionAccuracy(uint): Accuracy of positioning fixes
+      - longitude(decimal): Location of the vessel  East West location
+      - latitude(decimal): Location of the vessel  North South location
+      - COG(udecimal): Course over ground
+      - TrueHeading(uint): True heading (relative to true North)
+      - TimeStamp(uint): UTC second when the report was generated
+      - RegionalReserved(uint): Reserved for definition by a regional authority. (field automatically set to "0")
+      - Spare(uint): Not used.  Should be set to zero. (field automatically set to "0")
+
+
+
+
+
+
+      - RAIM(bool): Receiver autonomous integrity monitoring flag
+      - state_syncstate(uint): Communications State - SOTDMA  Sycronization state
+      - state_slottimeout(uint): Communications State - SOTDMA  Frames remaining until a new slot is selected
+      - state_slotoffset(uint): Communications State - SOTDMA  In what slot will the next transmission occur. BROKEN

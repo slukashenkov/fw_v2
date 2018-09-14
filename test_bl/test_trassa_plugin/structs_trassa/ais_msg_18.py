@@ -21,11 +21,11 @@ import sys
 from decimal import Decimal
 import unittest
 
-from aisutils.BitVector import BitVector
+from BitVector import BitVector
 
 from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisstring
 from test_bl.test_trassa_plugin.structs_trassa.aisutils  import binary
-from test_bl.test_trassa_plugin.structs_trassa.aisutils import  sqlhelp
+#from test_bl.test_trassa_plugin.structs_trassa.aisutils import  sqlhelp
 from test_bl.test_trassa_plugin.structs_trassa.aisutils import  uscg
 
 TrueBV  = BitVector(bitstring="1")
@@ -107,7 +107,7 @@ def encode(params, validate=False):
     Fields in params:
       - MessageID(uint): AIS message number.  Must be 18 (field automatically set to "18")
       - RepeatIndicator(uint): Indicated how many times a message has been repeated
-      - UserID(uint): Unique ship identification number (MMSI)
+      - MMSI(uint): Unique ship identification number (MMSI)
       - Reserved1(uint): Reseverd for definition by a compentent regional or local authority.  Should be set to zero. (field automatically set to "0")
       - SOG(udecimal): Speed over ground
       - PositionAccuracy(uint): Accuracy of positioning fixes
@@ -135,11 +135,12 @@ def encode(params, validate=False):
 
     bvList = []
     bvList.append(binary.setBitVectorSize(BitVector(intVal=18),6))
+
     if 'RepeatIndicator' in params:
         bvList.append(binary.setBitVectorSize(BitVector(intVal=params['RepeatIndicator']),2))
     else:
         bvList.append(binary.setBitVectorSize(BitVector(intVal=0),2))
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['UserID']),30))
+    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['MMSI']),30))
     bvList.append(binary.setBitVectorSize(BitVector(intVal=0),8))
     if 'SOG' in params:
         bvList.append(binary.setBitVectorSize(BitVector(intVal=int((Decimal(params['SOG'])*Decimal('10')))),10))
@@ -182,7 +183,15 @@ def encode(params, validate=False):
     if params["RAIM"]: bvList.append(TrueBV)
     else: bvList.append(FalseBV)
     bvList.append(binary.setBitVectorSize(BitVector(intVal=params['CommStateSelector']),1))
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['CommState']),19))
+
+    #For better compatibility Comm selector vector should be formed
+    #according to the transmitter type SOTDMA/ITDMA
+    #both take 19 bits space but length is different
+    #bvList.append(binary.setBitVectorSize(BitVector(intVal=params['CommState']),19))
+
+    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['state_syncstate']),2))
+    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['state_slottimeout']),3))
+    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['state_slotoffset']),14))
 
     return binary.joinBV(bvList)
 
@@ -537,8 +546,8 @@ def printKml(params, out=sys.stdout):
     out.write("    <Placemark>\n")
     out.write("        <name>"+str(params['UserID'])+"</name>\n")
     out.write("        <description>\n")
-    import StringIO
-    buf = StringIO.StringIO()
+    import io
+    buf = io.StringIO()
     printHtml(params,buf)
     import cgi
     out.write(cgi.escape(buf.getvalue()))
@@ -608,9 +617,11 @@ def printFields(params, out=sys.stdout, format='std', fieldList=None, dbType='po
         if 'CommStateSelector' in params: out.write("    CommStateSelector:  "+str(params['CommStateSelector'])+"\n")
         if 'CommState' in params: out.write("    CommState:          "+str(params['CommState'])+"\n")
         elif 'csv'==format:
-                if None == options.fieldList:
-                        options.fieldList = fieldList
+                if None == params.fieldList:
+                    params.fieldList = fieldList
+
                 needComma = False;
+
                 for field in fieldList:
                         if needComma: out.write(',')
                         needComma = True
@@ -633,7 +644,7 @@ def printFields(params, out=sys.stdout, format='std', fieldList=None, dbType='po
         out.write("</Document>\n")
         out.write("</kml>\n")
     else:
-        print "ERROR: unknown format:",format
+        print("ERROR: unknown format:",format)
         assert False
 
     return # Nothing to return
@@ -1104,7 +1115,7 @@ def addMsgOptions(parser):
     parser.add_option('--CommState-field', dest='CommStateField',metavar='uint',type='int'
         ,help='Field parameter value [default: %default]')
 
-def main():
+def test_auth():
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options]")
 
@@ -1173,7 +1184,7 @@ def main():
 
     outfile = sys.stdout
     if None!=options.outputFileName:
-            outfile = file(options.outputFileName,'w')
+            outfile = open(options.outputFileName,'w')
 
 
     if options.doEncode:
@@ -1222,18 +1233,18 @@ def main():
 
     bits = encode(msgDict)
     if 'binary' == options.ioType:
-        print str(bits)
+        print(str(bits))
     elif 'nmeapayload'==options.ioType:
         # FIX: figure out if this might be necessary at compile time
         bitLen=len(bits)
         if bitLen % 6 != 0:
             bits = bits + BitVector(size=(6 - (bitLen%6)))  # Pad out to multiple of 6
-        print binary.bitvectoais6(bits)[0]
+        print(binary.bitvectoais6(bits)[0])
 
     # FIX: Do not emit this option for the binary message payloads.  Does not make sense.
     elif 'nmea' == options.ioType:
         nmea = uscg.create_nmea(bits)
-        print nmea
+        print(nmea)
     else:
         sys.exit('ERROR: unknown ioType.  Help!')
 
@@ -1256,8 +1267,8 @@ def main():
                 for field in options.fieldList:
                         buf.write(field+',')
                 result = buf.getvalue()
-                if result[-1] == ',': print result[:-1]
-                else: print result
+                if result[-1] == ',': print(result[:-1])
+                else: print(result)
 
         if options.doDecode:
                 if len(args)==0: args = sys.stdin
@@ -1287,6 +1298,47 @@ def main():
                                     ,dbType=options.dbType
                                     )
 
+def test_this():
+    msg18 = {}
+    msg18['MessageID'] = 18
+    msg18['RepeatIndicator'] = 1
+    msg18['MMSI'] = 1193046
+    msg18['Reserved1'] = 0
+    msg18['SOG'] = Decimal('101.9')
+    msg18['PositionAccuracy'] = 1
+    msg18['longitude'] = Decimal('-122.16328055555556')
+    msg18['latitude'] = Decimal('37.424458333333334')
+    msg18['COG'] = Decimal('34.5')
+    msg18['TrueHeading'] = 41
+    msg18['TimeStamp'] = 35
+    msg18['Spare'] = 0
+    msg18['cs_unit'] = False
+    msg18['display_flag'] = False
+    msg18['dsc_flag'] = False
+    msg18['band_flag'] = False
+    msg18['msg22_flag'] = False
+    msg18['mode_flag'] = False
+    msg18['RAIM'] = False
+    #CommStateSelector 0 = SOTDMA
+    ##CommStateSelector 1 = ITDMA
+    msg18['CommStateSelector'] = 0
+    # This state is ought to be filled
+    # in full according tospecs
+    #
+    #This field can be SOTDMA or ITDMA communication state
+    #20 bites long
+    #msg18['CommState'] = 0
+    #What follows is SOTDMA communication state
+    msg18['state_syncstate'] = 2
+    msg18['state_slottimeout'] = 0
+    msg18['state_slotoffset'] = 1221
+
+
+
+    bits = encode(msg18)
+    nmea = uscg.create_nmea(bits)
+    return
+
 ############################################################
 if __name__=='__main__':
-    main()
+   test_this()

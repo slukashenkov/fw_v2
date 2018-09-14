@@ -92,7 +92,6 @@ Lookup table for each postgis field name to get its type.
 """
 
 def encode(params):
-
     """
     Create a position binary message payload to pack into an AIS Msg position.
 
@@ -125,6 +124,7 @@ def encode(params):
 
     bvList = []
     bvList.append(binary.setBitVectorSize(BitVector(intVal=1),6))
+
     if 'RepeatIndicator' in params:
         bvList.append(binary.setBitVectorSize(BitVector(intVal=params['RepeatIndicator']),2))
     else:
@@ -807,52 +807,7 @@ def addMsgOptions(parser):
     parser.add_option('--state_slotoffset-field', dest='state_slotoffsetField',metavar='uint',type='int'
         ,help='Field parameter value [default: %default]')
 
-def test_this():
-    '''
-    msgDict = {
-        'MessageID': '1',
-        'RepeatIndicator': options.RepeatIndicatorField,
-        'UserID': options.UserIDField,
-        'NavigationStatus': options.NavigationStatusField,
-        'ROT': options.ROTField,
-        'SOG': options.SOGField,
-        'PositionAccuracy': options.PositionAccuracyField,
-        'longitude': options.longitudeField,
-        'latitude': options.latitudeField,
-        'COG': options.COGField,
-        'TrueHeading': options.TrueHeadingField,
-        'TimeStamp': options.TimeStampField,
-        'RegionalReserved': '0',
-        'Spare': '0',
-        'RAIM': options.RAIMField,
-        'state_syncstate': options.state_syncstateField,
-        'state_slottimeout': options.state_slottimeoutField,
-        'state_slotoffset': options.state_slotoffsetField,
-    }
-    '''
-    msg={}
-    msg['MessageID'] = 1
-    msg['RepeatIndicator'] = 1
-    msg['MMSI'] = 1193046
-    msg['NavigationStatus'] = 3
-    msg['ROT'] = -2
-    msg['SOG'] = Decimal('101.9')
-    msg['PositionAccuracy'] = 1
-    msg['longitude'] = Decimal('-122.16328055555556')
-    msg['latitude'] = Decimal('37.424458333333334')
-    msg['COG'] = Decimal('34.5')
-    msg['TrueHeading'] = 41
-    msg['TimeStamp'] = 35
-    msg['RegionalReserved'] = 0
-    msg['Spare'] = 0
-    msg['RAIM'] = False
-    msg['state_syncstate'] = 2
-    msg['state_slottimeout'] = 0
-    msg['state_slotoffset'] = 1221
 
-    bits = encode(msg)
-    nmea = uscg.create_nmea(bits)
-    return
 
 def test_author():
     from optparse import OptionParser
@@ -1038,6 +993,57 @@ def test_author():
                             , dbType=options.dbType
                             )
 
+    return
+
+def test_this():
+    '''
+    msgDict = {
+        'MessageID': '1',
+        'RepeatIndicator': options.RepeatIndicatorField,
+        'UserID': options.UserIDField,
+        'NavigationStatus': options.NavigationStatusField,
+        'ROT': options.ROTField,
+        'SOG': options.SOGField,
+        'PositionAccuracy': options.PositionAccuracyField,
+        'longitude': options.longitudeField,
+        'latitude': options.latitudeField,
+        'COG': options.COGField,
+        'TrueHeading': options.TrueHeadingField,
+        'TimeStamp': options.TimeStampField,
+        'RegionalReserved': '0',
+        'Spare': '0',
+        'RAIM': options.RAIMField,
+        'state_syncstate': options.state_syncstateField,
+        'state_slottimeout': options.state_slottimeoutField,
+        'state_slotoffset': options.state_slotoffsetField,
+    }
+    '''
+    msg01={}
+    msg01['MessageID'] = 1
+    msg01['RepeatIndicator'] = 1
+    msg01['MMSI'] = 1193046
+    msg01['NavigationStatus'] = 3
+    msg01['ROT'] = -2
+    msg01['SOG'] = Decimal('101.9')
+    msg01['PositionAccuracy'] = 1
+    msg01['longitude'] = Decimal('-122.16328055555556')
+    msg01['latitude'] = Decimal('37.424458333333334')
+    msg01['COG'] = Decimal('34.5')
+    msg01['TrueHeading'] = 41
+    msg01['TimeStamp'] = 35
+    msg01['RegionalReserved'] = 0
+    msg01['Spare'] = 0
+    msg01['RAIM'] = False
+    #This is SOTDMA communication state fields
+    #19 bites long in type 18
+    #1 field comes before for communication state
+    # type choice
+    msg01['state_syncstate'] = 2
+    msg01['state_slottimeout'] = 0
+    msg01['state_slotoffset'] = 1221
+
+    bits = encode(msg01)
+    nmea = uscg.create_nmea(bits)
     return
 
 ############################################################
