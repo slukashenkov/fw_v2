@@ -23,10 +23,10 @@ import unittest
 
 from aisutils.BitVector import BitVector
 
-from aisutils import aisstring
-from aisutils import binary
-from aisutils import sqlhelp
-from aisutils import uscg
+from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisstring
+from test_bl.test_trassa_plugin.structs_trassa.aisutils  import binary
+from test_bl.test_trassa_plugin.structs_trassa.aisutils import  sqlhelp
+from test_bl.test_trassa_plugin.structs_trassa.aisutils import  uscg
 
 TrueBV  = BitVector(bitstring="1")
 FalseBV = BitVector(bitstring="0")

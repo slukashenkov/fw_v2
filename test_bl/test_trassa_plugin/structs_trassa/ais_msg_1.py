@@ -20,7 +20,6 @@ import unittest
 from test_bl.test_trassa_plugin.structs_trassa.aisutils.BitVector import BitVector
 from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisstring
 from test_bl.test_trassa_plugin.structs_trassa.aisutils import binary
-from test_bl.test_trassa_plugin.structs_trassa.aisutils import sqlhelp
 from test_bl.test_trassa_plugin.structs_trassa.aisutils import uscg
 
 # FIX: check to see if these will be needed
@@ -92,13 +91,15 @@ pgTypes = {
 Lookup table for each postgis field name to get its type.
 """
 
-def encode(params, validate=False):
-    """Create a position binary message payload to pack into an AIS Msg position.
+def encode(params):
+
+    """
+    Create a position binary message payload to pack into an AIS Msg position.
 
     Fields in params:
       - MessageID(uint): AIS message number.  Must be 1 (field automatically set to "1")
       - RepeatIndicator(uint): Indicated how many times a message has been repeated
-      - UserID(uint): Unique ship identification number (MMSI)
+      - MMSI(uint): Unique ship identification number (MMSI)
       - NavigationStatus(uint): What is the vessel doing
       - ROT(int): RateOfTurn
       - SOG(udecimal): Speed over ground
@@ -114,8 +115,9 @@ def encode(params, validate=False):
       - state_syncstate(uint): Communications State - SOTDMA  Sycronization state
       - state_slottimeout(uint): Communications State - SOTDMA  Frames remaining until a new slot is selected
       - state_slotoffset(uint): Communications State - SOTDMA  In what slot will the next transmission occur. BROKEN
+
     @param params: Dictionary of field names/values.  Throws a ValueError exception if required is missing
-    @param validate: Set to true to cause checking to occur.  Runs slower.  FIX: not implemented.
+
     @rtype: BitVector
     @return: encoded binary message (for binary messages, this needs to be wrapped in a msg 8
     @note: The returned bits may not be 6 bit aligned.  It is up to you to pad out the bits.
@@ -127,24 +129,31 @@ def encode(params, validate=False):
         bvList.append(binary.setBitVectorSize(BitVector(intVal=params['RepeatIndicator']),2))
     else:
         bvList.append(binary.setBitVectorSize(BitVector(intVal=0),2))
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['UserID']),30))
+
+    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['MMSI']),30))
+
     if 'NavigationStatus' in params:
         bvList.append(binary.setBitVectorSize(BitVector(intVal=params['NavigationStatus']),4))
     else:
         bvList.append(binary.setBitVectorSize(BitVector(intVal=15),4))
+
     if 'ROT' in params:
         bvList.append(binary.bvFromSignedInt(params['ROT'],8))
     else:
         bvList.append(binary.bvFromSignedInt(-128,8))
+
     if 'SOG' in params:
         bvList.append(binary.setBitVectorSize(BitVector(intVal=int((Decimal(params['SOG'])*Decimal('10')))),10))
     else:
         bvList.append(binary.setBitVectorSize(BitVector(intVal=int(1023)),10))
+
     bvList.append(binary.setBitVectorSize(BitVector(intVal=params['PositionAccuracy']),1))
+
     if 'longitude' in params:
         bvList.append(binary.bvFromSignedInt(int(Decimal(params['longitude'])*Decimal('600000')),28))
     else:
         bvList.append(binary.bvFromSignedInt(108600000,28))
+
     if 'latitude' in params:
         bvList.append(binary.bvFromSignedInt(int(Decimal(params['latitude'])*Decimal('600000')),27))
     else:
@@ -161,10 +170,13 @@ def encode(params, validate=False):
         bvList.append(binary.setBitVectorSize(BitVector(intVal=params['TimeStamp']),6))
     else:
         bvList.append(binary.setBitVectorSize(BitVector(intVal=60),6))
+
     bvList.append(binary.setBitVectorSize(BitVector(intVal=0),4))
     bvList.append(binary.setBitVectorSize(BitVector(intVal=0),1))
+
     if params["RAIM"]: bvList.append(TrueBV)
     else: bvList.append(FalseBV)
+
     bvList.append(binary.setBitVectorSize(BitVector(intVal=params['state_syncstate']),2))
     bvList.append(binary.setBitVectorSize(BitVector(intVal=params['state_slottimeout']),3))
     bvList.append(binary.setBitVectorSize(BitVector(intVal=params['state_slotoffset']),14))
@@ -697,233 +709,8 @@ state_slottimeoutDecodeLut = {
     '7':'7 frames left',
     } # state_slottimeoutEncodeLut
 
-######################################################################
-# SQL SUPPORT
-######################################################################
-
-dbTableName='position'
-'Database table name'
-
-def sqlCreateStr(outfile=sys.stdout, fields=None, extraFields=None
-                ,addCoastGuardFields=True
-                ,dbType='postgres'
-                ):
-        """
-        Return the SQL CREATE command for this message type
-        @param outfile: file like object to print to.
-        @param fields: which fields to put in the create.  Defaults to all.
-        @param extraFields: A sequence of tuples containing (name,sql type) for additional fields
-        @param addCoastGuardFields: Add the extra fields that come after the NMEA check some from the USCG N-AIS format
-        @param dbType: Which flavor of database we are using so that the create is tailored ('sqlite' or 'postgres')
-        @type addCoastGuardFields: bool
-        @return: sql create string
-        @rtype: str
-
-        @see: sqlCreate
-        """
-        # FIX: should this sqlCreate be the same as in LaTeX (createFuncName) rather than hard coded?
-        outfile.write(str(sqlCreate(fields,extraFields,addCoastGuardFields,dbType=dbType)))
-
-def sqlCreate(fields=None, extraFields=None, addCoastGuardFields=True, dbType='postgres'):
-    """Return the sqlhelp object to create the table.
-
-    @param fields: which fields to put in the create.  Defaults to all.
-    @param extraFields: A sequence of tuples containing (name,sql type) for additional fields
-    @param addCoastGuardFields: Add the extra fields that come after the NMEA check some from the USCG N-AIS format
-    @type addCoastGuardFields: bool
-    @param dbType: Which flavor of database we are using so that the create is tailored ('sqlite' or 'postgres')
-    @return: An object that can be used to generate a return
-    @rtype: sqlhelp.create
-    """
-    if fields is None:
-        fields = fieldList
-    c = sqlhelp.create('position',dbType=dbType)
-    c.addPrimaryKey()
-    if 'MessageID' in fields: c.addInt ('MessageID')
-    if 'RepeatIndicator' in fields: c.addInt ('RepeatIndicator')
-    if 'UserID' in fields: c.addInt ('UserID')
-    if 'NavigationStatus' in fields: c.addInt ('NavigationStatus')
-    if 'ROT' in fields: c.addInt ('ROT')
-    if 'SOG' in fields: c.addDecimal('SOG',4,1)
-    if 'PositionAccuracy' in fields: c.addInt ('PositionAccuracy')
-    if dbType != 'postgres':
-        if 'longitude' in fields: c.addDecimal('longitude',8,5)
-    if dbType != 'postgres':
-        if 'latitude' in fields: c.addDecimal('latitude',8,5)
-    if 'COG' in fields: c.addDecimal('COG',4,1)
-    if 'TrueHeading' in fields: c.addInt ('TrueHeading')
-    if 'TimeStamp' in fields: c.addInt ('TimeStamp')
-    if 'RegionalReserved' in fields: c.addInt ('RegionalReserved')
-    if 'Spare' in fields: c.addInt ('Spare')
-    if 'RAIM' in fields: c.addBool('RAIM')
-    if 'state_syncstate' in fields: c.addInt ('state_syncstate')
-    if 'state_slottimeout' in fields: c.addInt ('state_slottimeout')
-    if 'state_slotoffset' in fields: c.addInt ('state_slotoffset')
-
-    if addCoastGuardFields:
-        # c.addInt('cg_s_rssi')  # Relative signal strength indicator
-        # c.addInt('cg_d_strength')  # dBm receive strength
-        # c.addVarChar('cg_x',10)  # Idonno
-        c.addInt('cg_t_arrival')  # Receive timestamp from the AIS equipment 'T'
-        c.addInt('cg_s_slotnum')  # Slot received in
-        c.addVarChar('cg_r',15)  # Receiver station ID  -  should usually be an MMSI, but sometimes is a string
-        c.addInt('cg_sec')  # UTC seconds since the epoch
-
-        c.addTimestamp('cg_timestamp') # UTC decoded cg_sec - not actually in the data stream
-
-    if dbType == 'postgres':
-        #--- EPSG 4326 : WGS 84
-        #INSERT INTO "spatial_ref_sys" ("srid","auth_name","auth_srid","srtext","proj4text") VALUES (4326,'EPSG',4326,'GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]','+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ');
-        c.addPostGIS('Position','POINT',2,SRID=4326);
-
-    return c
-
-def sqlInsertStr(params, outfile=sys.stdout, extraParams=None, dbType='postgres'):
-        """
-        Return the SQL INSERT command for this message type
-        @param params: dictionary of values keyed by field name
-        @param outfile: file like object to print to.
-        @param extraParams: A sequence of tuples containing (name,sql type) for additional fields
-        @return: sql create string
-        @rtype: str
-
-        @see: sqlCreate
-        """
-        outfile.write(str(sqlInsert(params,extraParams,dbType=dbType)))
 
 
-def sqlInsert(params,extraParams=None,dbType='postgres'):
-        """
-        Give the SQL INSERT statement
-        @param params: dict keyed by field name of values
-        @param extraParams: any extra fields that you have created beyond the normal ais message fields
-        @rtype: sqlhelp.insert
-        @return: insert class instance
-         TODO(schwehr):allow optional type checking of params?
-        @warning: this will take invalid keys happily and do what???
-        """
-
-        i = sqlhelp.insert('position',dbType=dbType)
-
-        if dbType=='postgres':
-                finished = []
-                for key in params:
-                        if key in finished:
-                                continue
-
-                        if key not in toPgFields and key not in fromPgFields:
-                                if type(params[key])==Decimal: i.add(key,float(params[key]))
-                                else: i.add(key,params[key])
-                        else:
-                                if key in fromPgFields:
-                                        val = params[key]
-                                        # Had better be a WKT type like POINT(-88.1 30.321)
-                                        i.addPostGIS(key,val)
-                                        finished.append(key)
-                                else:
-                                        # Need to construct the type.
-                                        pgName = toPgFields[key]
-                                        #valStr='GeomFromText(\''+pgTypes[pgName]+'('
-                                        valStr=pgTypes[pgName]+'('
-                                        vals = []
-                                        for nonPgKey in fromPgFields[pgName]:
-                                                vals.append(str(params[nonPgKey]))
-                                                finished.append(nonPgKey)
-                                        valStr+=' '.join(vals)+')'
-                                        i.addPostGIS(pgName,valStr)
-        else:
-                for key in params:
-                        if type(params[key])==Decimal: i.add(key,float(params[key]))
-                        else: i.add(key,params[key])
-
-        if None != extraParams:
-                for key in extraParams:
-                        i.add(key,extraParams[key])
-
-        return i
-
-######################################################################
-# LATEX SUPPORT
-######################################################################
-
-def latexDefinitionTable(outfile=sys.stdout
-                ):
-        """
-        Return the LaTeX definition table for this message type
-        @param outfile: file like object to print to.
-        @type outfile: file obj
-        @return: LaTeX table string via the outfile
-        @rtype: str
-
-        """
-        o = outfile
-
-        o.write("""
-\\begin{table}%[htb]
-\\centering
-\\begin{tabular}{|l|c|l|}
-\\hline
-Parameter & Number of bits & Description
-\\\\  \\hline\\hline
-MessageID & 6 & AIS message number.  Must be 1 \\\\ \hline
-RepeatIndicator & 2 & Indicated how many times a message has been repeated \\\\ \hline
-UserID & 30 & Unique ship identification number (MMSI) \\\\ \hline
-NavigationStatus & 4 & What is the vessel doing \\\\ \hline
-ROT & 8 & Rate of turning.  Positive right; negative left.  BROKEN! \\\\ \hline
-SOG & 10 & Speed over ground \\\\ \hline
-PositionAccuracy & 1 & Accuracy of positioning fixes \\\\ \hline
-longitude & 28 & Location of the vessel  East West location \\\\ \hline
-latitude & 27 & Location of the vessel  North South location \\\\ \hline
-COG & 12 & Course over ground \\\\ \hline
-TrueHeading & 9 & True heading (relative to true North) \\\\ \hline
-TimeStamp & 6 & UTC second when the report was generated \\\\ \hline
-RegionalReserved & 4 & Reserved for definition by a regional authority. \\\\ \hline
-Spare & 1 & Not used.  Should be set to zero. \\\\ \hline
-RAIM & 1 & Receiver autonomous integrity monitoring flag \\\\ \hline
-state\_syncstate & 2 & Communications State - SOTDMA  Sycronization state \\\\ \hline
-state\_slottimeout & 3 & Communications State - SOTDMA  Frames remaining until a new slot is selected \\\\ \hline
-state\_slotoffset & 14 & Communications State - SOTDMA  In what slot will the next transmission occur. BROKEN\\\\ \\hline \\hline
-Total bits & 168 & Appears to take 1 slot \\\\ \\hline
-\\end{tabular}
-\\caption{AIS message number 1: Scheduled position report}
-\\label{tab:position}
-\\end{table}
-""")
-
-######################################################################
-# Text Definition
-######################################################################
-
-def textDefinitionTable(outfile=sys.stdout ,delim='    '):
-    """Return the text definition table for this message type
-
-    @param outfile: file like object to print to.
-    @type outfile: file obj
-    @return: text table string via the outfile
-    @rtype: str
-
-    """
-    o = outfile
-    o.write('Parameter'+delim+'Number of bits'+delim+"""Description
-MessageID"""+delim+'6'+delim+"""AIS message number.  Must be 1
-RepeatIndicator"""+delim+'2'+delim+"""Indicated how many times a message has been repeated
-UserID"""+delim+'30'+delim+"""Unique ship identification number (MMSI)
-NavigationStatus"""+delim+'4'+delim+"""What is the vessel doing
-ROT"""+delim+'8'+delim+"""Rate of turning.  Positive right; negative left.  BROKEN!
-SOG"""+delim+'10'+delim+"""Speed over ground
-PositionAccuracy"""+delim+'1'+delim+"""Accuracy of positioning fixes
-longitude"""+delim+'28'+delim+"""Location of the vessel  East West location
-latitude"""+delim+'27'+delim+"""Location of the vessel  North South location
-COG"""+delim+'12'+delim+"""Course over ground
-TrueHeading"""+delim+'9'+delim+"""True heading (relative to true North)
-TimeStamp"""+delim+'6'+delim+"""UTC second when the report was generated
-RegionalReserved"""+delim+'4'+delim+"""Reserved for definition by a regional authority.
-Spare"""+delim+'1'+delim+"""Not used.  Should be set to zero.
-RAIM"""+delim+'1'+delim+"""Receiver autonomous integrity monitoring flag
-state_syncstate"""+delim+'2'+delim+"""Communications State - SOTDMA  Sycronization state
-state_slottimeout"""+delim+'3'+delim+"""Communications State - SOTDMA  Frames remaining until a new slot is selected
-state_slotoffset"""+delim+'14'+delim+"""Communications State - SOTDMA  In what slot will the next transmission occur. BROKEN
-Total bits"""+delim+"""168"""+delim+"""Appears to take 1 slot""")
 
 
 ######################################################################
@@ -1020,99 +807,147 @@ def addMsgOptions(parser):
     parser.add_option('--state_slotoffset-field', dest='state_slotoffsetField',metavar='uint',type='int'
         ,help='Field parameter value [default: %default]')
 
-def main():
+def test_this():
+    '''
+    msgDict = {
+        'MessageID': '1',
+        'RepeatIndicator': options.RepeatIndicatorField,
+        'UserID': options.UserIDField,
+        'NavigationStatus': options.NavigationStatusField,
+        'ROT': options.ROTField,
+        'SOG': options.SOGField,
+        'PositionAccuracy': options.PositionAccuracyField,
+        'longitude': options.longitudeField,
+        'latitude': options.latitudeField,
+        'COG': options.COGField,
+        'TrueHeading': options.TrueHeadingField,
+        'TimeStamp': options.TimeStampField,
+        'RegionalReserved': '0',
+        'Spare': '0',
+        'RAIM': options.RAIMField,
+        'state_syncstate': options.state_syncstateField,
+        'state_slottimeout': options.state_slottimeoutField,
+        'state_slotoffset': options.state_slotoffsetField,
+    }
+    '''
+    msg={}
+    msg['MessageID'] = 1
+    msg['RepeatIndicator'] = 1
+    msg['MMSI'] = 1193046
+    msg['NavigationStatus'] = 3
+    msg['ROT'] = -2
+    msg['SOG'] = Decimal('101.9')
+    msg['PositionAccuracy'] = 1
+    msg['longitude'] = Decimal('-122.16328055555556')
+    msg['latitude'] = Decimal('37.424458333333334')
+    msg['COG'] = Decimal('34.5')
+    msg['TrueHeading'] = 41
+    msg['TimeStamp'] = 35
+    msg['RegionalReserved'] = 0
+    msg['Spare'] = 0
+    msg['RAIM'] = False
+    msg['state_syncstate'] = 2
+    msg['state_slottimeout'] = 0
+    msg['state_slotoffset'] = 1221
+
+    bits = encode(msg)
+    nmea = uscg.create_nmea(bits)
+    return
+
+def test_author():
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options]")
 
-    parser.add_option('--unit-test',dest='unittest',default=False,action='store_true',
-        help='run the unit tests')
-    parser.add_option('-v','--verbose',dest='verbose',default=False,action='store_true',
-        help='Make the test output verbose')
+    parser.add_option('--unit-test', dest='unittest', default=False, action='store_true',
+                      help='run the unit tests')
+    parser.add_option('-v', '--verbose', dest='verbose', default=False, action='store_true',
+                      help='Make the test output verbose')
 
     # FIX: remove nmea from binary messages.  No way to build the whole packet?
     # FIX: or build the surrounding msg 8 for a broadcast?
-    typeChoices = ('binary','nmeapayload','nmea') # FIX: what about a USCG type message?
+    typeChoices = ('binary', 'nmeapayload', 'nmea')  # FIX: what about a USCG type message?
     parser.add_option('-t', '--type', choices=typeChoices, type='choice',
-        dest='ioType', default='nmeapayload',
-        help='What kind of string to write for encoding ('+', '.join(typeChoices)+') [default: %default]')
+                      dest='ioType', default='nmeapayload',
+                      help='What kind of string to write for encoding (' + ', '.join(
+                          typeChoices) + ') [default: %default]')
 
-
-    outputChoices = ('std','html','csv','sql' , 'kml','kml-full')
+    outputChoices = ('std', 'html', 'csv', 'sql', 'kml', 'kml-full')
     parser.add_option('-T', '--output-type', choices=outputChoices,
-        type='choice', dest='outputType', default='std',
-        help='What kind of string to output ('+', '.join(outputChoices)+') '
-        '[default: %default]')
+                      type='choice', dest='outputType', default='std',
+                      help='What kind of string to output (' + ', '.join(outputChoices) + ') '
+                                                                                          '[default: %default]')
 
-    parser.add_option('-o','--output',dest='outputFileName',default=None,
-        help='Name of the python file to write [default: stdout]')
+    parser.add_option('-o', '--output', dest='outputFileName', default=None,
+                      help='Name of the python file to write [default: stdout]')
 
     parser.add_option('-f', '--fields', dest='fieldList', default=None,
-        action='append', choices=fieldList,
-        help='Which fields to include in the output.  Currently only for csv '
-        'output [default: all]')
+                      action='append', choices=fieldList,
+                      help='Which fields to include in the output.  Currently only for csv '
+                           'output [default: all]')
 
     parser.add_option('-p', '--print-csv-field-list', dest='printCsvfieldList',
-        default=False,action='store_true',
-        help='Print the field name for csv')
+                      default=False, action='store_true',
+                      help='Print the field name for csv')
 
     parser.add_option('-c', '--sql-create', dest='sqlCreate', default=False,
-        action='store_true',
-        help='Print out an sql create command for the table.')
+                      action='store_true',
+                      help='Print out an sql create command for the table.')
 
     parser.add_option('--latex-table', dest='latexDefinitionTable',
-        default=False,action='store_true',
-        help='Print a LaTeX table of the type')
+                      default=False, action='store_true',
+                      help='Print a LaTeX table of the type')
 
     parser.add_option('--text-table', dest='textDefinitionTable', default=False,
-        action='store_true',
-        help='Print delimited table of the type (for Word table importing)')
+                      action='store_true',
+                      help='Print delimited table of the type (for Word table importing)')
 
     parser.add_option('--delimt-text-table', dest='delimTextDefinitionTable',
-        default='    ',
-        help='Delimiter for text table [default: \'%default\'] '
-        '(for Word table importing)')
+                      default='    ',
+                      help='Delimiter for text table [default: \'%default\'] '
+                           '(for Word table importing)')
 
-    dbChoices = ('sqlite','postgres')
-    parser.add_option('-D', '--db-type', dest='dbType', default='postgres',
-        choices=dbChoices,type='choice',
-        help='What kind of database ('+', '.join(dbChoices)+') '
-        '[default: %default]')
+    dbChoices = ('sqlite', 'postgres')
+    parser.add_option('-D', '--db-type',
+                      dest='dbType',
+                      default='postgres',
+                      choices=dbChoices, type='choice',
+                      help='What kind of database (' + ', '.join(dbChoices) + ') '
+                                                                              '[default: %default]')
 
     addMsgOptions(parser)
 
-    (options,args) = parser.parse_args()
+    (options, args) = parser.parse_args()
     success = True
 
     if not success: sys.exit('Something Failed')
-    del success # Hide success from epydoc
+    del success  # Hide success from epydoc
 
     if options.unittest:
-            sys.argv = [sys.argv[0]]
-            if options.verbose: sys.argv.append('-v')
-            unittest.main()
+        sys.argv = [sys.argv[0]]
+        if options.verbose: sys.argv.append('-v')
+        unittest.main()
 
     outfile = sys.stdout
-    if None!=options.outputFileName:
-            outfile = open(options.outputFileName,'w')
-
+    if None != options.outputFileName:
+        outfile = open(options.outputFileName, 'w')
 
     if options.doEncode:
         # Make sure all non required options are specified.
-        if None==options.RepeatIndicatorField: parser.error("missing value for RepeatIndicatorField")
-        if None==options.UserIDField: parser.error("missing value for UserIDField")
-        if None==options.NavigationStatusField: parser.error("missing value for NavigationStatusField")
-        if None==options.ROTField: parser.error("missing value for ROTField")
-        if None==options.SOGField: parser.error("missing value for SOGField")
-        if None==options.PositionAccuracyField: parser.error("missing value for PositionAccuracyField")
-        if None==options.longitudeField: parser.error("missing value for longitudeField")
-        if None==options.latitudeField: parser.error("missing value for latitudeField")
-        if None==options.COGField: parser.error("missing value for COGField")
-        if None==options.TrueHeadingField: parser.error("missing value for TrueHeadingField")
-        if None==options.TimeStampField: parser.error("missing value for TimeStampField")
-        if None==options.RAIMField: parser.error("missing value for RAIMField")
-        if None==options.state_syncstateField: parser.error("missing value for state_syncstateField")
-        if None==options.state_slottimeoutField: parser.error("missing value for state_slottimeoutField")
-        if None==options.state_slotoffsetField: parser.error("missing value for state_slotoffsetField")
+        if None == options.RepeatIndicatorField: parser.error("missing value for RepeatIndicatorField")
+        if None == options.UserIDField: parser.error("missing value for UserIDField")
+        if None == options.NavigationStatusField: parser.error("missing value for NavigationStatusField")
+        if None == options.ROTField: parser.error("missing value for ROTField")
+        if None == options.SOGField: parser.error("missing value for SOGField")
+        if None == options.PositionAccuracyField: parser.error("missing value for PositionAccuracyField")
+        if None == options.longitudeField: parser.error("missing value for longitudeField")
+        if None == options.latitudeField: parser.error("missing value for latitudeField")
+        if None == options.COGField: parser.error("missing value for COGField")
+        if None == options.TrueHeadingField: parser.error("missing value for TrueHeadingField")
+        if None == options.TimeStampField: parser.error("missing value for TimeStampField")
+        if None == options.RAIMField: parser.error("missing value for RAIMField")
+        if None == options.state_syncstateField: parser.error("missing value for state_syncstateField")
+        if None == options.state_slottimeoutField: parser.error("missing value for state_slottimeoutField")
+        if None == options.state_slotoffsetField: parser.error("missing value for state_slotoffsetField")
     msgDict = {
         'MessageID': '1',
         'RepeatIndicator': options.RepeatIndicatorField,
@@ -1135,13 +970,14 @@ def main():
     }
 
     bits = encode(msgDict)
+
     if 'binary' == options.ioType:
         print(str(bits))
-    elif 'nmeapayload'==options.ioType:
+    elif 'nmeapayload' == options.ioType:
         # FIX: figure out if this might be necessary at compile time
-        bitLen=len(bits)
+        bitLen = len(bits)
         if bitLen % 6 != 0:
-            bits = bits + BitVector(size=(6 - (bitLen%6)))  # Pad out to multiple of 6
+            bits = bits + BitVector(size=(6 - (bitLen % 6)))  # Pad out to multiple of 6
         print(binary.bitvectoais6(bits)[0])
 
     # FIX: Do not emit this option for the binary message payloads.  Does not make sense.
@@ -1151,56 +987,59 @@ def main():
     else:
         sys.exit('ERROR: unknown ioType.  Help!')
 
-
         if options.sqlCreate:
-                sqlCreateStr(outfile,options.fieldList,dbType=options.dbType)
+            sqlCreateStr(outfile, options.fieldList, dbType=options.dbType)
 
         if options.latexDefinitionTable:
-                latexDefinitionTable(outfile)
+            latexDefinitionTable(outfile)
 
         # For conversion to word tables
         if options.textDefinitionTable:
-                textDefinitionTable(outfile,options.delimTextDefinitionTable)
+            textDefinitionTable(outfile, options.delimTextDefinitionTable)
 
         if options.printCsvfieldList:
-                # Make a csv separated list of fields that will be displayed for csv
-                if None == options.fieldList: options.fieldList = fieldList
-                import io
-                buf = io.StringIO()
-                for field in options.fieldList:
-                        buf.write(field+',')
-                result = buf.getvalue()
-                if result[-1] == ',': print(result[:-1])
-                else: print(result)
+            # Make a csv separated list of fields that will be displayed for csv
+            if None == options.fieldList: options.fieldList = fieldList
+            import io
+            buf = io.StringIO()
+            for field in options.fieldList:
+                buf.write(field + ',')
+            result = buf.getvalue()
+            if result[-1] == ',':
+                print(result[:-1])
+            else:
+                print(result)
 
         if options.doDecode:
-                if len(args)==0: args = sys.stdin
-                for msg in args:
-                        bv = None
+            if len(args) == 0: args = sys.stdin
+            for msg in args:
+                bv = None
 
-                        if msg[0] in ('$','!') and msg[3:6] in ('VDM','VDO'):
-                                # Found nmea
-                                # FIX: do checksum
-                                bv = binary.ais6tobitvec(msg.split(',')[5])
-                        else: # either binary or nmeapayload... expect mostly nmeapayloads
-                                # assumes that an all 0 and 1 string can not be a nmeapayload
-                                binaryMsg=True
-                                for c in msg:
-                                        if c not in ('0','1'):
-                                                binaryMsg=False
-                                                break
-                                if binaryMsg:
-                                        bv = BitVector(bitstring=msg)
-                                else: # nmeapayload
-                                        bv = binary.ais6tobitvec(msg)
+                if msg[0] in ('$', '!') and msg[3:6] in ('VDM', 'VDO'):
+                    # Found nmea
+                    # FIX: do checksum
+                    bv = binary.ais6tobitvec(msg.split(',')[5])
+                else:  # either binary or nmeapayload... expect mostly nmeapayloads
+                    # assumes that an all 0 and 1 string can not be a nmeapayload
+                    binaryMsg = True
+                    for c in msg:
+                        if c not in ('0', '1'):
+                            binaryMsg = False
+                            break
+                    if binaryMsg:
+                        bv = BitVector(bitstring=msg)
+                    else:  # nmeapayload
+                        bv = binary.ais6tobitvec(msg)
 
-                        printFields(decode(bv)
-                                    ,out=outfile
-                                    ,format=options.outputType
-                                    ,fieldList=options.fieldList
-                                    ,dbType=options.dbType
-                                    )
+                printFields(decode(bv)
+                            , out=outfile
+                            , format=options.outputType
+                            , fieldList=options.fieldList
+                            , dbType=options.dbType
+                            )
+
+    return
 
 ############################################################
 if __name__=='__main__':
-    main()
+    test_this()

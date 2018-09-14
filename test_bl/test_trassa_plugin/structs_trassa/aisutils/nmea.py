@@ -17,7 +17,7 @@ per line that is required in the NMEA specification.
 import time, sys, re
 
 # Local Modules
-import test_bl.test_trassa_plugin.structs_trassa.aisutils.binary
+from test_bl.test_trassa_plugin.structs_trassa.aisutils import binary
 
 
 EOL = "\x0D\x0A"
@@ -102,25 +102,32 @@ def isChecksumValid(nmeaStr, allowTailData=True,verbose=False):
     """
 
     if allowTailData:
-	match = nmeaChecksumRE.search(nmeaStr)
-	if not match:
-            if verbose: print('Match failed')
-            return False
-	nmeaStr = nmeaStr[:match.end()]
+        match = nmeaChecksumRE.search(nmeaStr)
+        if not match:
+            if verbose:
+                print('Match failed')
+                return False
+
+    nmeaStr = nmeaStr[:match.end()]
 	#if checksum.upper()==checksumStr(nmeaStr[match.end()
-
-
     if nmeaStr[-3]!='*':
-	print 'FIX: warning... bad nmea string'
-	return False  # Bad string without proper checksum
+        print('FIX: warning... bad nmea string')
+        return False
+        # Bad string without proper checksum
+
     checksum=nmeaStr[-2:]
     if checksum.upper()==checksumStr(nmeaStr).upper():
         return True
     if verbose:
-        print 'mismatch checksums:', checksum.upper(),checksumStr(nmeaStr).upper()
-    return False
+        print('mismatch checksums:', checksum.upper(),checksumStr(nmeaStr).upper())
+        return False
 
-def buildNmea(aisBits,prefix='!',serviceType='AI',msgType='VDM',channelSeq=None,channel='A'):
+def buildNmea(aisBits,
+              prefix='!',
+              serviceType='AI',
+              msgType='VDM',
+              channelSeq=None,
+              channel='A'):
     '''
     Create one long oversized nmea string for the bits
     @param aisBits: message payload
@@ -219,12 +226,12 @@ def cabDecode(msg,validate=True):
     @todo FIX: throw an exception if not valid
     '''
     if validate and not isChecksumValid(msg,verbose=True):
-        print 'FIX: this should be an exception in cabDecode.  Bad checksum'
+        print('FIX: this should be an exception in cabDecode.  Bad checksum')
         return False
     fields=msg.split(',')
     if validate and len(fields) not in (5,6,7): # Allow for USCG station and timestamp
         # check for USCG log tail
-        print 'FIX: this should be an exception in cabDecode.  wrong number of fields'
+        print('FIX: this should be an exception in cabDecode.  wrong number of fields')
         return False
 
     # FIX: for validate... make sure that the other case from 1 is an empty string
@@ -450,7 +457,7 @@ def acaDecode(msg,validate=True):
     @todo: get a complete example to decode as a doctest
     '''
     if validate and not isChecksumValid(msg,verbose=True):
-        print 'FIX: this should be an exception in acaDecode.  Bad checksum'
+        print('FIX: this should be an exception in acaDecode.  Bad checksum')
         return False
     #assert msg[0]=='$'
     fields = msg.split(',')
@@ -515,7 +522,7 @@ def cbmDecode(msg,validate=True):
     '''
 
     if validate and not isChecksumValid(msg,verbose=True):
-        print 'FIX: this should be an exception in acaDecode.  Bad checksum'
+        print('FIX: this should be an exception in acaDecode.  Bad checksum')
         return False
     #assert msg[0]=='$'
     fields = msg.split(',')
@@ -561,7 +568,7 @@ def dlmDecode(msg, validate=True):
     '''
 
     if validate and not isChecksumValid(msg,verbose=True):
-        print 'FIX: this should be an exception in acaDecode.  Bad checksum'
+        print('FIX: this should be an exception in acaDecode.  Bad checksum')
         return False
     #assert msg[0]=='$'
     fields = msg.split(',')
@@ -928,16 +935,16 @@ if __name__=='__main__':
         argvOrig = sys.argv
 
         sys.argv= [sys.argv[0]]
-	if options.verbose: sys.argv.append('-v')
-        import doctest
-        numfail,numtests=doctest.testmod()
-        if numfail==0:
-            print
-            'ok'
-        else:
-            print
-            'FAILED'
-            success=False
+    if options.verbose:
+        sys.argv.append('-v')
+
+    import doctest
+    numfail,numtests=doctest.testmod()
+    if numfail==0:
+        print('ok')
+    else:
+        print('FAILED')
+        success=False
         sys.argv = argvOrig # Restore the original args
         del argvOrig # hide from epydoc
 

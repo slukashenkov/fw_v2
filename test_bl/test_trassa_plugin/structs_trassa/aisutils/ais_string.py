@@ -9,7 +9,9 @@ import logging
 import re
 
 
-import binary
+
+from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisstring
+from test_bl.test_trassa_plugin.structs_trassa.aisutils import binary
 from BitVector import BitVector
 
 

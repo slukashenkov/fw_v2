@@ -15,9 +15,12 @@ import unittest
 
 from BitVector import BitVector
 
-import sqlhelp
-import binary
-import nmea
+#Local modules
+from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisstring
+from test_bl.test_trassa_plugin.structs_trassa.aisutils import binary
+from test_bl.test_trassa_plugin.structs_trassa.aisutils import nmea
+#from test_bl.test_trassa_plugin.structs_trassa.aisutils import sqlhelp
+
 
 
 ######################################################################
@@ -74,7 +77,9 @@ Regular expression for parsing a USCG.
 uscg_ais_nmea_regex = re.compile(uscg_ais_nmea_regex_str,  re.VERBOSE)
 """Use this regex to parse USCG NMEA strings fields after the checksum."""
 
-def write_uscg_nmea_fields(nmea_str,out=sys.stdout,indent='\t'):
+def write_uscg_nmea_fields(nmea_str,
+                           out=sys.stdout,
+                           indent='\t'):
     """Write out the fields of a USCG nmea string.
 
     @param nmea_str: USCG style nmea string
@@ -83,6 +88,7 @@ def write_uscg_nmea_fields(nmea_str,out=sys.stdout,indent='\t'):
     @param indent: how to indent each field
     """
     match_obj = uscg_ais_nmea_regex.search(nmea_str)
+    '''
     write(out,indent+'         prefix = '+match_obj.group('prefix')+'\n')
     write(out,indent+'     stringType = '+match_obj.group('stringType')+'\n')
     write(out,indent+'          total = '+match_obj.group('total')+'\n')
@@ -100,7 +106,7 @@ def write_uscg_nmea_fields(nmea_str,out=sys.stdout,indent='\t'):
     write(out,indent+'        station = '+match_obj.group('station')+'\n')
     write(out,indent+'   station_type = '+match_obj.group('station_type')+'\n')
     write(out,indent+'      timeStamp = '+match_obj.group('timeStamp')+'\n')
-
+    '''
 
 ######################################################################
 # OLD Style
@@ -123,7 +129,9 @@ def get_contents(nmeaStr):
     return nmeaStr.split(',')[5]
 
 class UscgNmea:
-    def __init__(self,nmeaStr=None):
+
+    def __init__(self,
+                 nmeaStr=None):
         """
         Fields:
          - rssi ('s'): relative signal strength indicator
@@ -147,7 +155,7 @@ class UscgNmea:
             fields = nmeaStr.split(',')
             self.cg_sec=float(fields[-1])
             self.timestamp = datetime.datetime.utcfromtimestamp(self.cg_sec)
-            self.sqlTimestampStr = ais.sqlhelp.sec2timestamp(self.cg_sec)
+            #self.sqlTimestampStr = sqlhelp.sec2timestamp(self.cg_sec)
             # See 80_330e_PAS
             self.nmeaType=fields[0][1:]
             self.totalSentences = int(fields[1])
@@ -168,42 +176,44 @@ class UscgNmea:
             else:
                 self.msgTypeChar=None
 
-            for i in range(len(fields)-1,5,-1):
+            for i in range(len(fields)-1.5,-1):
                 if len(fields[i])==0:
                     continue # maybe it should throw a parse exception instead?
                 f = fields[i]
                 c = f[0] # first charater determines what the field is
-		if c in ('b','r','B','R'):
-		    self.station = f # FIX: think we want to keep the code in the first char
+
+                if c in ('b','r','B','R'):
+                    self.station = f # FIX: think we want to keep the code in the first char
                     self.stationTypeCode = self.station[0]
                     continue
-		    #break # Found it so ditch the for loop
-                if c == 's':
-                    self.rssi=int(f[1:])
-                    continue
-                if c == 'd':
-                    self.signalStrength = int(f[1:])
-                    continue
-                if c == 'T':
-                    try:
-                        self.timeOfArrival = float(f[1:])
-                    except:
-                        #print 'warning: bogus time of arrival: %s' % (f[1:],)
-                        pass
-                    continue
-                if c == 'S':
-                    self.slotNumber = int(f[1:])
-                    continue
-                if c == 'x':
-                    # I don't know what x is
-                    self.x = int(f[1:])
-                    continue
+                    #break # Found it so ditch the for loop
+                    if c == 's':
+                      self.rssi=int(f[1:])
+                      continue
+                    if c == 'd':
+                        self.signalStrength = int(f[1:])
+                        continue
+                    if c == 'T':
+                        try:
+                            self.timeOfArrival = float(f[1:])
+                        except:
+                            #print 'warning: bogus time of arrival: %s' % (f[1:],)
+                            pass
+                        continue
+                    if c == 'S':
+                        self.slotNumber = int(f[1:])
+                        continue
+                    if c== 'x':
+                        # I don't know what x is
+                        self.x = int(f[1:])
+                        continue
+
     def getBitVector(self):
         """
         @return: bits for the payload (even if this is a multipart)
         @rtype: BitVector
         """
-        return ais.binary.ais6tobitvec(self.contents)
+        return binary.ais6tobitvec(self.contents)
 
     def __eq__(self,other):
         # Try to be smart for speed
@@ -273,8 +283,8 @@ class TestUscgNmea(unittest.TestCase):
         self.failUnlessEqual(un.station,'r003669958')
         self.failUnlessEqual(un.stationTypeCode,'r')
         self.failUnlessEqual(un.cg_sec,float(1085889680))
-        print un.timestamp
-        print un.sqlTimestampStr  # Hmmm... they look the same
+        print(un.timestamp)
+        print(un.sqlTimestampStr)  # Hmmm... they look the same
 
 
     def testEquality(self):
@@ -321,6 +331,7 @@ def create_nmea(bits,
                 aisChannel='A',
                 station='runknown',
                 cg_sec=None):
+
     """Build a NMEA string for an AIS binary message payload.
 
     e.g. !AIVDM,1,1,,B,13UIAT001mmL=vhP1Sa:?8>l06A<,0*37,s24467,rNDBC46001,1202235568
@@ -372,7 +383,7 @@ def create_nmea(bits,
     if pad:
         # Pad out to multiple of 6
         bits = bits + BitVector(size=(6 - (bitLen%6)))
-    payload = ais.binary.bitvectoais6(bits)[0]
+    payload = binary.bitvectoais6(bits)[0]
 
     fields = [nmeaType,]
     fields.append(str(totalSentences))
@@ -382,7 +393,7 @@ def create_nmea(bits,
     fields.append(payload)
     fields.append(str(pad))
     firstStr = ','.join(fields)
-    checksum = ais.nmea.checksumStr(firstStr)
+    checksum = nmea.checksumStr(firstStr)
     fields = [firstStr+'*'+checksum,]
     fields.append(station)
     if cg_sec is None:
@@ -393,12 +404,12 @@ def create_nmea(bits,
 
 
 def test():
-    print 'doctests ...'
+    print('doctests ...')
     numfail, _ = doctest.testmod()
     if not numfail:
-        print 'ok'
+        print('ok')
     else:
-        print 'FAILED'
+        print('FAILED')
 
 
 if __name__ == '__main__':

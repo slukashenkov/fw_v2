@@ -36,7 +36,7 @@ import sys
 from BitVector import BitVector
 
 # Local
-import binary
+from test_bl.test_trassa_plugin.structs_trassa.aisutils import binary
 #import verbosity
 #from verbosity import BOMBASTIC,VERBOSE,TRACE,TERSE,ALWAYS
 
@@ -138,21 +138,24 @@ def buildDict():
     @rtype: test to stdout
     '''
     count=0
-    print 'characterDict={'
+    print( 'characterDict={')
     for i in range(len(characterLUT)):
-	count += 1
-	c = characterLUT[i]
-	if c=='\\': c='\\\\'
-  	print "'"+c+"': "+str(i)+",",
-	if count%6==0:
-	    print
-    print '}'
+        count += 1
+        c = characterLUT[i]
+        if c=='\\':
+            c='\\\\'
+            print("'"+c+"': "+str(i)+",",)
 
-    print 'characterBits={}'
+        if count%6==0:
+            print
+            print('}')
+            print('characterBits={}')
+
     for i in range(len(characterLUT)):
-	c = characterLUT[i]
-	if c=='\\': c='\\\\'
-	print "characterBits['"+c+"']"+'=binary.setBitVectorSize(BitVector(intVal='+str(i)+'),6)'
+        c = characterLUT[i]
+        if c=='\\':
+            c='\\\\'
+            print("characterBits['"+c+"']"+'=binary.setBitVectorSize(BitVector(intVal='+str(i)+'),6)')
 
 
 def decode(bits,dropAfterFirstAt=False):
@@ -167,19 +170,22 @@ def decode(bits,dropAfterFirstAt=False):
     #assert(len(bits) % 6 == 0)
     numchar=len(bits)/6
     s = []
+    '''
     for i in range(numchar): # FIX: off by one?
-	start = 6 * i
-	end = start+6 #6 * (i+1)
-	charbits=bits[start:end]
-	val = int(charbits)
-	if dropAfterFirstAt and val==0:
-	    break # 0 is the @ character which is used to pad strings.
-	s.append(characterLUT[val])
+        start = 6 * i
+        end = start+6 #6 * (i+1)
+        charbits=bits[start:end]
+        val = int(charbits)
+        if dropAfterFirstAt and val==0:
+            break # 0 is the @ character which is used to pad strings.
+	    s.append(characterLUT[val])
 
     return ''.join(s)
+    '''
 
 
-def encode(string,bitSize=None):
+def encode(string,
+           bitSize=None):
     '''
     @param string: python ascii string to encode.
     @type string: str
@@ -193,16 +199,16 @@ def encode(string,bitSize=None):
     @bug: pad with "@" to reach requested bitSize
     '''
     if bitSize:
-	assert(bitSize%6==0)
-    bv = BitVector(size=0)
+        assert(bitSize%6==0)
+        bv = BitVector(size=0)
     for i in range(len(string)):
-	bv = bv+characterBits[string[i]]
-    if bitSize:
-	if bitSize < len(bv):
-	    print 'ERROR:  string longer than specified bit count: "'+string+'"', bitSize, len(bv)
-	    assert False
-	extra = bitSize - len(bv)
-	bv = bv+BitVector(size=extra)
+        bv = bv+characterBits[string[i]]
+        if bitSize:
+            if bitSize < len(bv):
+                print('ERROR:  string longer than specified bit count: "'+string+'"', bitSize, len(bv))
+                assert False
+            extra = bitSize - len(bv)
+            bv = bv+BitVector(size=extra)
     return bv
 
 def unpad(string,removeBlanks=True):
@@ -242,10 +248,10 @@ def unpad(string,removeBlanks=True):
     @rtype: str
     """
     while len(string)>0 and string[-1]=='@':
-	string=string[:-1]
-    if removeBlanks:
-	while len(string)>0 and string[-1]==' ':
-	    string=string[:-1]
+        string=string[:-1]
+        if removeBlanks:
+            while len(string)>0 and string[-1]==' ':
+                string=string[:-1]
     return string
 
 def pad(string,length):
@@ -277,6 +283,8 @@ def pad(string,length):
 
 
 if __name__ == '__main__':
+
+    '''
     from optparse import OptionParser
     myparser = OptionParser(usage="%prog [options]",version="%prog "+__version__)
     myparser.add_option('--test','--doc-test',dest='doctest',default=False,action='store_true',
@@ -286,16 +294,21 @@ if __name__ == '__main__':
 
     success=True
 
+    
     if options.doctest:
-	import os; print os.path.basename(sys.argv[0]), 'doctests ...',
-	sys.argv= [sys.argv[0]]
-#	if options.verbosity>=VERBOSE: sys.argv.append('-v')
-	import doctest
-	numfail,numtests=doctest.testmod()
-	if numfail==0: print 'ok'
-	else:
-	    print 'FAILED'
-	    success=False
+        import os
+        sys.argv= [sys.argv[0]]
+    #	if options.verbosity>=VERBOSE: sys.argv.append('-v')
+        
+	    import doctest
+            numfail,numtests=doctest.testmod()
+    
+            if numfail==0:
+                print('ok')
+            else:
+                 print('FAILED')
+                 success=False
 
     if not success:
 	sys.exit('Something Failed')
+	'''

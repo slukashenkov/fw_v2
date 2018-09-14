@@ -70,41 +70,41 @@ class select:
 
     def setorderby(self,field,desc=False):
         """Make the returned rows come in some order."""
-        if str != type(field): print "ERROR: fix throw type exception"
+        if str != type(field): print("ERROR: fix throw type exception")
         self.orderby = field
         self.desc = desc
         return
 
     def addfield(self,fieldname):
         """Add a field name to return."""
-        if str != type(fieldname): print "ERROR: fix throw type exception"
+        if str != type(fieldname): print("ERROR: fix throw type exception")
         self.fields.append(fieldname)
         return
 
     def addwhere(self,boolTest):
         " Add expressions to chain together with ANDs"
         if str != type(boolTest):
-            print "ERROR: fix throw type exception"
+            print("ERROR: fix throw type exception")
         self.where.append(boolTest)
         return
 
     def addfrom(self,tableName):
         "Which tables the query will pull from"
         if str != type(tableName):
-            print "ERROR: fix throw type exception"
+            print("ERROR: fix throw type exception")
         self.from_tables.append(tableName)
         return
 
     def setlimit(self,numOfItems):
         "Set the maximum number of items to return"
         if int != type(numOfItems):
-            print "ERROR: fix throw type exception"
+            print("ERROR: fix throw type exception")
         self.limit = numOfItems
         return
 
     def __str__(self):
         "Return the query as a string"
-        if len(self.fields) < 1: print "ERROR: Must specify at least one from!\n  FIX: throw some exception?"
+        if len(self.fields) < 1: print("ERROR: Must specify at least one from!\n  FIX: throw some exception?")
         s = 'SELECT '
         #for i in range (len(self.fields)-1): s += self.fields[i]+','
         if dbType == 'postgres':
@@ -113,7 +113,7 @@ class select:
             s+=','.join(self.fields)
         s += self.fields[-1] + ' '
 
-        if len(self.from_tables)<1: print "ERROR: fix throw some exception"
+        if len(self.from_tables)<1: print("ERROR: fix throw some exception")
         s += 'FROM '
         for i in range (len(self.from_tables)-1):
             s += self.from_tables[i]+','

@@ -63,7 +63,7 @@ def float2bitvec(floatval):
     # FIX: make this go in one step now that bitvector 1.3 is out.
     bvList = []
     for i in range(4):
-         bv1 = setBitVectorSize(BitVector(intVal=ord(s[i])),8)
+        bv1 = setBitVectorSize(BitVector(intVal=ord(s[i])),8)
         #bv2 = BitVector(intVal=ord(s[i]),size=8)
         bvList.append(bv1)
     return joinBV(bvList)
@@ -170,8 +170,8 @@ def bvFromSignedInt(intVal,bitSize=None):
     else:
         bv = setBitVectorSize(BitVector(intVal=abs(intVal)),bitSize-1)
         if (bitSize-1!=len(bv) and bv[0] != 1 and bv[-1] != 0):
-            print 'ERROR: bitsize not right'
-            print '  ',bitSize-1,len(bv)
+            print('ERROR: bitsize not right')
+            print('  ',bitSize-1,len(bv))
             assert(False)
         if len(bv) == bitSize and bv[0] == 1: return bv
     if intVal>=0:
@@ -359,7 +359,8 @@ def getPadding(bv):
     if 6==pad: pad = 0
     return pad
 
-def bitvectoais6(bv,doPadding=True):
+def bitvectoais6(bv,
+                 doPadding=True):
     """Convert bit vector int an ITU AIS 6 bit string.  Each character represents 6 bits
 
     @param bv: message bits (must be already stuffed)
@@ -372,17 +373,17 @@ def bitvectoais6(bv,doPadding=True):
     """
     pad = 6-(len(bv)%6)
     if 6==pad: pad = 0
-    strLen = len(bv)/6
+    strLen = int(len(bv)/6)
     if pad>0: strLen+=1
     aisStrLst = []
 
     if pad!=0:
         if doPadding:
-            print 'pad befaore',len(bv)
+            print('pad befaore',len(bv))
             bv = bv + BitVector(size=pad)
-            print 'pad after',len(bv)
+            print('pad after',len(bv))
         else:
-            print 'ERROR: What are you doing with a non-align entity?  Let me pad it!'
+            print('ERROR: What are you doing with a non-align entity?  Let me pad it!')
             assert False
 
     #else: # No pad needed
@@ -437,6 +438,7 @@ if __name__ == '__main__':
 
     success=True
 
+    '''
     if options.doctest:
         import os; print os.path.basename(sys.argv[0]), 'doctests ...',
         sys.argv= [sys.argv[0]]
@@ -450,3 +452,4 @@ if __name__ == '__main__':
 
     if not success:
         sys.exit('Something Failed')
+    '''
