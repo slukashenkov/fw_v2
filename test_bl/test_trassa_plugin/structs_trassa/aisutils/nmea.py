@@ -17,7 +17,7 @@ per line that is required in the NMEA specification.
 import time, sys, re
 
 # Local Modules
-from test_bl.test_trassa_plugin.structs_trassa.aisutils import binary
+from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisbinary
 
 
 EOL = "\x0D\x0A"
@@ -147,7 +147,7 @@ def buildNmea(aisBits,
     rList.append(channel)
     rList.append(',')
 
-    payloadStr,pad = binary.bitvectoais6(aisBits) #[0]
+    payloadStr,pad = aisbinary.bitvectoais6(aisBits) #[0]
     rList.append(payloadStr)
     rList.append(','+str(pad))
     rStr = ''.join(rList)

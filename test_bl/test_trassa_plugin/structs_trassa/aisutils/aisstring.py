@@ -36,7 +36,7 @@ import sys
 from BitVector import BitVector
 
 # Local
-from test_bl.test_trassa_plugin.structs_trassa.aisutils import binary
+from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisbinary
 #import verbosity
 #from verbosity import BOMBASTIC,VERBOSE,TRACE,TERSE,ALWAYS
 
@@ -65,70 +65,70 @@ characterDict={
 
 
 characterBits={}
-characterBits['@']=binary.setBitVectorSize(BitVector(intVal=0),6)
-characterBits['A']=binary.setBitVectorSize(BitVector(intVal=1),6)
-characterBits['B']=binary.setBitVectorSize(BitVector(intVal=2),6)
-characterBits['C']=binary.setBitVectorSize(BitVector(intVal=3),6)
-characterBits['D']=binary.setBitVectorSize(BitVector(intVal=4),6)
-characterBits['E']=binary.setBitVectorSize(BitVector(intVal=5),6)
-characterBits['F']=binary.setBitVectorSize(BitVector(intVal=6),6)
-characterBits['G']=binary.setBitVectorSize(BitVector(intVal=7),6)
-characterBits['H']=binary.setBitVectorSize(BitVector(intVal=8),6)
-characterBits['I']=binary.setBitVectorSize(BitVector(intVal=9),6)
-characterBits['J']=binary.setBitVectorSize(BitVector(intVal=10),6)
-characterBits['K']=binary.setBitVectorSize(BitVector(intVal=11),6)
-characterBits['L']=binary.setBitVectorSize(BitVector(intVal=12),6)
-characterBits['M']=binary.setBitVectorSize(BitVector(intVal=13),6)
-characterBits['N']=binary.setBitVectorSize(BitVector(intVal=14),6)
-characterBits['O']=binary.setBitVectorSize(BitVector(intVal=15),6)
-characterBits['P']=binary.setBitVectorSize(BitVector(intVal=16),6)
-characterBits['Q']=binary.setBitVectorSize(BitVector(intVal=17),6)
-characterBits['R']=binary.setBitVectorSize(BitVector(intVal=18),6)
-characterBits['S']=binary.setBitVectorSize(BitVector(intVal=19),6)
-characterBits['T']=binary.setBitVectorSize(BitVector(intVal=20),6)
-characterBits['U']=binary.setBitVectorSize(BitVector(intVal=21),6)
-characterBits['V']=binary.setBitVectorSize(BitVector(intVal=22),6)
-characterBits['W']=binary.setBitVectorSize(BitVector(intVal=23),6)
-characterBits['X']=binary.setBitVectorSize(BitVector(intVal=24),6)
-characterBits['Y']=binary.setBitVectorSize(BitVector(intVal=25),6)
-characterBits['Z']=binary.setBitVectorSize(BitVector(intVal=26),6)
-characterBits['[']=binary.setBitVectorSize(BitVector(intVal=27),6)
-characterBits['\\']=binary.setBitVectorSize(BitVector(intVal=28),6)
-characterBits[']']=binary.setBitVectorSize(BitVector(intVal=29),6)
-characterBits['^']=binary.setBitVectorSize(BitVector(intVal=30),6)
-characterBits['-']=binary.setBitVectorSize(BitVector(intVal=31),6)
-characterBits[' ']=binary.setBitVectorSize(BitVector(intVal=32),6)
-characterBits['!']=binary.setBitVectorSize(BitVector(intVal=33),6)
-characterBits['"']=binary.setBitVectorSize(BitVector(intVal=34),6)
-characterBits['#']=binary.setBitVectorSize(BitVector(intVal=35),6)
-characterBits['$']=binary.setBitVectorSize(BitVector(intVal=36),6)
-characterBits['%']=binary.setBitVectorSize(BitVector(intVal=37),6)
-characterBits['&']=binary.setBitVectorSize(BitVector(intVal=38),6)
-characterBits['`']=binary.setBitVectorSize(BitVector(intVal=39),6)
-characterBits['(']=binary.setBitVectorSize(BitVector(intVal=40),6)
-characterBits[')']=binary.setBitVectorSize(BitVector(intVal=41),6)
-characterBits['*']=binary.setBitVectorSize(BitVector(intVal=42),6)
-characterBits['+']=binary.setBitVectorSize(BitVector(intVal=43),6)
-characterBits[',']=binary.setBitVectorSize(BitVector(intVal=44),6)
-characterBits['-']=binary.setBitVectorSize(BitVector(intVal=45),6)
-characterBits['.']=binary.setBitVectorSize(BitVector(intVal=46),6)
-characterBits['/']=binary.setBitVectorSize(BitVector(intVal=47),6)
-characterBits['0']=binary.setBitVectorSize(BitVector(intVal=48),6)
-characterBits['1']=binary.setBitVectorSize(BitVector(intVal=49),6)
-characterBits['2']=binary.setBitVectorSize(BitVector(intVal=50),6)
-characterBits['3']=binary.setBitVectorSize(BitVector(intVal=51),6)
-characterBits['4']=binary.setBitVectorSize(BitVector(intVal=52),6)
-characterBits['5']=binary.setBitVectorSize(BitVector(intVal=53),6)
-characterBits['6']=binary.setBitVectorSize(BitVector(intVal=54),6)
-characterBits['7']=binary.setBitVectorSize(BitVector(intVal=55),6)
-characterBits['8']=binary.setBitVectorSize(BitVector(intVal=56),6)
-characterBits['9']=binary.setBitVectorSize(BitVector(intVal=57),6)
-characterBits[':']=binary.setBitVectorSize(BitVector(intVal=58),6)
-characterBits[';']=binary.setBitVectorSize(BitVector(intVal=59),6)
-characterBits['<']=binary.setBitVectorSize(BitVector(intVal=60),6)
-characterBits['=']=binary.setBitVectorSize(BitVector(intVal=61),6)
-characterBits['>']=binary.setBitVectorSize(BitVector(intVal=62),6)
-characterBits['?']=binary.setBitVectorSize(BitVector(intVal=63),6)
+characterBits['@']=aisbinary.setBitVectorSize(BitVector(intVal=0),6)
+characterBits['A']=aisbinary.setBitVectorSize(BitVector(intVal=1),6)
+characterBits['B']=aisbinary.setBitVectorSize(BitVector(intVal=2),6)
+characterBits['C']=aisbinary.setBitVectorSize(BitVector(intVal=3),6)
+characterBits['D']=aisbinary.setBitVectorSize(BitVector(intVal=4),6)
+characterBits['E']=aisbinary.setBitVectorSize(BitVector(intVal=5),6)
+characterBits['F']=aisbinary.setBitVectorSize(BitVector(intVal=6),6)
+characterBits['G']=aisbinary.setBitVectorSize(BitVector(intVal=7),6)
+characterBits['H']=aisbinary.setBitVectorSize(BitVector(intVal=8),6)
+characterBits['I']=aisbinary.setBitVectorSize(BitVector(intVal=9),6)
+characterBits['J']=aisbinary.setBitVectorSize(BitVector(intVal=10),6)
+characterBits['K']=aisbinary.setBitVectorSize(BitVector(intVal=11),6)
+characterBits['L']=aisbinary.setBitVectorSize(BitVector(intVal=12),6)
+characterBits['M']=aisbinary.setBitVectorSize(BitVector(intVal=13),6)
+characterBits['N']=aisbinary.setBitVectorSize(BitVector(intVal=14),6)
+characterBits['O']=aisbinary.setBitVectorSize(BitVector(intVal=15),6)
+characterBits['P']=aisbinary.setBitVectorSize(BitVector(intVal=16),6)
+characterBits['Q']=aisbinary.setBitVectorSize(BitVector(intVal=17),6)
+characterBits['R']=aisbinary.setBitVectorSize(BitVector(intVal=18),6)
+characterBits['S']=aisbinary.setBitVectorSize(BitVector(intVal=19),6)
+characterBits['T']=aisbinary.setBitVectorSize(BitVector(intVal=20),6)
+characterBits['U']=aisbinary.setBitVectorSize(BitVector(intVal=21),6)
+characterBits['V']=aisbinary.setBitVectorSize(BitVector(intVal=22),6)
+characterBits['W']=aisbinary.setBitVectorSize(BitVector(intVal=23),6)
+characterBits['X']=aisbinary.setBitVectorSize(BitVector(intVal=24),6)
+characterBits['Y']=aisbinary.setBitVectorSize(BitVector(intVal=25),6)
+characterBits['Z']=aisbinary.setBitVectorSize(BitVector(intVal=26),6)
+characterBits['[']=aisbinary.setBitVectorSize(BitVector(intVal=27),6)
+characterBits['\\']=aisbinary.setBitVectorSize(BitVector(intVal=28),6)
+characterBits[']']=aisbinary.setBitVectorSize(BitVector(intVal=29),6)
+characterBits['^']=aisbinary.setBitVectorSize(BitVector(intVal=30),6)
+characterBits['-']=aisbinary.setBitVectorSize(BitVector(intVal=31),6)
+characterBits[' ']=aisbinary.setBitVectorSize(BitVector(intVal=32),6)
+characterBits['!']=aisbinary.setBitVectorSize(BitVector(intVal=33),6)
+characterBits['"']=aisbinary.setBitVectorSize(BitVector(intVal=34),6)
+characterBits['#']=aisbinary.setBitVectorSize(BitVector(intVal=35),6)
+characterBits['$']=aisbinary.setBitVectorSize(BitVector(intVal=36),6)
+characterBits['%']=aisbinary.setBitVectorSize(BitVector(intVal=37),6)
+characterBits['&']=aisbinary.setBitVectorSize(BitVector(intVal=38),6)
+characterBits['`']=aisbinary.setBitVectorSize(BitVector(intVal=39),6)
+characterBits['(']=aisbinary.setBitVectorSize(BitVector(intVal=40),6)
+characterBits[')']=aisbinary.setBitVectorSize(BitVector(intVal=41),6)
+characterBits['*']=aisbinary.setBitVectorSize(BitVector(intVal=42),6)
+characterBits['+']=aisbinary.setBitVectorSize(BitVector(intVal=43),6)
+characterBits[',']=aisbinary.setBitVectorSize(BitVector(intVal=44),6)
+characterBits['-']=aisbinary.setBitVectorSize(BitVector(intVal=45),6)
+characterBits['.']=aisbinary.setBitVectorSize(BitVector(intVal=46),6)
+characterBits['/']=aisbinary.setBitVectorSize(BitVector(intVal=47),6)
+characterBits['0']=aisbinary.setBitVectorSize(BitVector(intVal=48),6)
+characterBits['1']=aisbinary.setBitVectorSize(BitVector(intVal=49),6)
+characterBits['2']=aisbinary.setBitVectorSize(BitVector(intVal=50),6)
+characterBits['3']=aisbinary.setBitVectorSize(BitVector(intVal=51),6)
+characterBits['4']=aisbinary.setBitVectorSize(BitVector(intVal=52),6)
+characterBits['5']=aisbinary.setBitVectorSize(BitVector(intVal=53),6)
+characterBits['6']=aisbinary.setBitVectorSize(BitVector(intVal=54),6)
+characterBits['7']=aisbinary.setBitVectorSize(BitVector(intVal=55),6)
+characterBits['8']=aisbinary.setBitVectorSize(BitVector(intVal=56),6)
+characterBits['9']=aisbinary.setBitVectorSize(BitVector(intVal=57),6)
+characterBits[':']=aisbinary.setBitVectorSize(BitVector(intVal=58),6)
+characterBits[';']=aisbinary.setBitVectorSize(BitVector(intVal=59),6)
+characterBits['<']=aisbinary.setBitVectorSize(BitVector(intVal=60),6)
+characterBits['=']=aisbinary.setBitVectorSize(BitVector(intVal=61),6)
+characterBits['>']=aisbinary.setBitVectorSize(BitVector(intVal=62),6)
+characterBits['?']=aisbinary.setBitVectorSize(BitVector(intVal=63),6)
 
 
 def buildDict():
@@ -155,7 +155,7 @@ def buildDict():
         c = characterLUT[i]
         if c=='\\':
             c='\\\\'
-            print("characterBits['"+c+"']"+'=binary.setBitVectorSize(BitVector(intVal='+str(i)+'),6)')
+            print("characterBits['"+c+"']"+'=aisbinary.setBitVectorSize(BitVector(intVal='+str(i)+'),6)')
 
 
 def decode(bits,dropAfterFirstAt=False):
@@ -198,18 +198,51 @@ def encode(string,
     @bug: check that bitSize is a multple of 6
     @bug: pad with "@" to reach requested bitSize
     '''
+
+    """Convert a string to a BitVector.
+
+    TODO(schwehr): Pad with "@" to reach requested bitSize.
+
+    Args:
+      string: str to encode.
+      bit_size: integer: multiple of 6 size of the resulting bits.
+
+    Returns:
+      String representing the bits encoded as an AIS VDM armored characters.
+    """
+    '''
+    if bit_size:
+      assert bit_size % 6 == 0
+    bv = BitVector(size=0)
+    for i in range(len(string)):
+      bv += character_bits[string[i]]
+    if bit_size:
+      if bit_size < len(bv):
+        logging.error('ERROR:  Too many bits in string: "%s %s %s"',
+                      string, bit_size, len(bv))
+        assert False
+      extra = bit_size - len(bv)
+      bv += BitVector(size=extra)
+
+    return bv
+    '''
     if bitSize:
         assert(bitSize%6==0)
         bv = BitVector(size=0)
+        print(bv)
     for i in range(len(string)):
         bv = bv+characterBits[string[i]]
-        if bitSize:
-            if bitSize < len(bv):
-                print('ERROR:  string longer than specified bit count: "'+string+'"', bitSize, len(bv))
-                assert False
-            extra = bitSize - len(bv)
-            bv = bv+BitVector(size=extra)
+
+    if bitSize:
+        if bitSize < len(bv):
+            print('ERROR:  string longer than specified bit count: "'+string+'"', bitSize, len(bv))
+            assert False
+        extra = bitSize - len(bv)
+        bv = bv+BitVector(size=extra)
     return bv
+
+
+
 
 def unpad(string,removeBlanks=True):
     """

@@ -19,7 +19,7 @@ import unittest
 
 from test_bl.test_trassa_plugin.structs_trassa.aisutils.BitVector import BitVector
 from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisstring
-from test_bl.test_trassa_plugin.structs_trassa.aisutils import binary
+from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisbinary
 from test_bl.test_trassa_plugin.structs_trassa.aisutils import uscg
 
 # FIX: check to see if these will be needed
@@ -123,65 +123,65 @@ def encode(params):
     """
 
     bvList = []
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=1),6))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=1),6))
 
     if 'RepeatIndicator' in params:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=params['RepeatIndicator']),2))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['RepeatIndicator']),2))
     else:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=0),2))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0),2))
 
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['MMSI']),30))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['MMSI']),30))
 
     if 'NavigationStatus' in params:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=params['NavigationStatus']),4))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['NavigationStatus']),4))
     else:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=15),4))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=15),4))
 
     if 'ROT' in params:
-        bvList.append(binary.bvFromSignedInt(params['ROT'],8))
+        bvList.append(aisbinary.bvFromSignedInt(params['ROT'],8))
     else:
-        bvList.append(binary.bvFromSignedInt(-128,8))
+        bvList.append(aisbinary.bvFromSignedInt(-128,8))
 
     if 'SOG' in params:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=int((Decimal(params['SOG'])*Decimal('10')))),10))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=int((Decimal(params['SOG'])*Decimal('10')))),10))
     else:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=int(1023)),10))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=int(1023)),10))
 
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['PositionAccuracy']),1))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['PositionAccuracy']),1))
 
     if 'longitude' in params:
-        bvList.append(binary.bvFromSignedInt(int(Decimal(params['longitude'])*Decimal('600000')),28))
+        bvList.append(aisbinary.bvFromSignedInt(int(Decimal(params['longitude'])*Decimal('600000')),28))
     else:
-        bvList.append(binary.bvFromSignedInt(108600000,28))
+        bvList.append(aisbinary.bvFromSignedInt(108600000,28))
 
     if 'latitude' in params:
-        bvList.append(binary.bvFromSignedInt(int(Decimal(params['latitude'])*Decimal('600000')),27))
+        bvList.append(aisbinary.bvFromSignedInt(int(Decimal(params['latitude'])*Decimal('600000')),27))
     else:
-        bvList.append(binary.bvFromSignedInt(54600000,27))
+        bvList.append(aisbinary.bvFromSignedInt(54600000,27))
     if 'COG' in params:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=int((Decimal(params['COG'])*Decimal('10')))),12))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=int((Decimal(params['COG'])*Decimal('10')))),12))
     else:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=int(3600)),12))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=int(3600)),12))
     if 'TrueHeading' in params:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=params['TrueHeading']),9))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['TrueHeading']),9))
     else:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=511),9))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=511),9))
     if 'TimeStamp' in params:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=params['TimeStamp']),6))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['TimeStamp']),6))
     else:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=60),6))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=60),6))
 
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=0),4))
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=0),1))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0),4))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0),1))
 
     if params["RAIM"]: bvList.append(TrueBV)
     else: bvList.append(FalseBV)
 
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['state_syncstate']),2))
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['state_slottimeout']),3))
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['state_slotoffset']),14))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['state_syncstate']),2))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['state_slottimeout']),3))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['state_slotoffset']),14))
 
-    return binary.joinBV(bvList)
+    return aisbinary.joinBV(bvList)
 
 def decode(bv, validate=False):
     """Unpack a position message.
@@ -220,11 +220,11 @@ def decode(bv, validate=False):
     r['RepeatIndicator']=int(bv[6:8])
     r['UserID']=int(bv[8:38])
     r['NavigationStatus']=int(bv[38:42])
-    r['ROT']=binary.signedIntFromBV(bv[42:50])
+    r['ROT']=aisbinary.signedIntFromBV(bv[42:50])
     r['SOG']=Decimal(int(bv[50:60]))/Decimal('10')
     r['PositionAccuracy']=int(bv[60:61])
-    r['longitude']=Decimal(binary.signedIntFromBV(bv[61:89]))/Decimal('600000')
-    r['latitude']=Decimal(binary.signedIntFromBV(bv[89:116]))/Decimal('600000')
+    r['longitude']=Decimal(aisbinary.signedIntFromBV(bv[61:89]))/Decimal('600000')
+    r['latitude']=Decimal(aisbinary.signedIntFromBV(bv[89:116]))/Decimal('600000')
     r['COG']=Decimal(int(bv[116:128]))/Decimal('10')
     r['TrueHeading']=int(bv[128:137])
     r['TimeStamp']=int(bv[137:143])
@@ -249,7 +249,7 @@ def decodeNavigationStatus(bv, validate=False):
     return int(bv[38:42])
 
 def decodeROT(bv, validate=False):
-    return binary.signedIntFromBV(bv[42:50])
+    return aisbinary.signedIntFromBV(bv[42:50])
 
 def decodeSOG(bv, validate=False):
     return Decimal(int(bv[50:60]))/Decimal('10')
@@ -258,10 +258,10 @@ def decodePositionAccuracy(bv, validate=False):
     return int(bv[60:61])
 
 def decodelongitude(bv, validate=False):
-    return Decimal(binary.signedIntFromBV(bv[61:89]))/Decimal('600000')
+    return Decimal(aisbinary.signedIntFromBV(bv[61:89]))/Decimal('600000')
 
 def decodelatitude(bv, validate=False):
-    return Decimal(binary.signedIntFromBV(bv[89:116]))/Decimal('600000')
+    return Decimal(aisbinary.signedIntFromBV(bv[89:116]))/Decimal('600000')
 
 def decodeCOG(bv, validate=False):
     return Decimal(int(bv[116:128]))/Decimal('10')
@@ -820,7 +820,7 @@ def test_author():
 
     # FIX: remove nmea from binary messages.  No way to build the whole packet?
     # FIX: or build the surrounding msg 8 for a broadcast?
-    typeChoices = ('binary', 'nmeapayload', 'nmea')  # FIX: what about a USCG type message?
+    typeChoices = ('aisbinary', 'nmeapayload', 'nmea')  # FIX: what about a USCG type message?
     parser.add_option('-t', '--type', choices=typeChoices, type='choice',
                       dest='ioType', default='nmeapayload',
                       help='What kind of string to write for encoding (' + ', '.join(
@@ -933,7 +933,7 @@ def test_author():
         bitLen = len(bits)
         if bitLen % 6 != 0:
             bits = bits + BitVector(size=(6 - (bitLen % 6)))  # Pad out to multiple of 6
-        print(binary.bitvectoais6(bits)[0])
+        print(aisbinary.bitvectoais6(bits)[0])
 
     # FIX: Do not emit this option for the binary message payloads.  Does not make sense.
     elif 'nmea' == options.ioType:
@@ -973,7 +973,7 @@ def test_author():
                 if msg[0] in ('$', '!') and msg[3:6] in ('VDM', 'VDO'):
                     # Found nmea
                     # FIX: do checksum
-                    bv = binary.ais6tobitvec(msg.split(',')[5])
+                    bv = aisbinary.ais6tobitvec(msg.split(',')[5])
                 else:  # either binary or nmeapayload... expect mostly nmeapayloads
                     # assumes that an all 0 and 1 string can not be a nmeapayload
                     binaryMsg = True
@@ -984,7 +984,7 @@ def test_author():
                     if binaryMsg:
                         bv = BitVector(bitstring=msg)
                     else:  # nmeapayload
-                        bv = binary.ais6tobitvec(msg)
+                        bv = aisbinary.ais6tobitvec(msg)
 
                 printFields(decode(bv)
                             , out=outfile
@@ -1043,7 +1043,8 @@ def test_this():
     msg01['state_slotoffset'] = 1221
 
     bits = encode(msg01)
-    nmea = uscg.create_nmea(bits)
+    nmea = uscg.create_nmea(bits,
+                            message_type=1)
     return
 
 ############################################################

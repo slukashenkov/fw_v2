@@ -24,7 +24,7 @@ import unittest
 from BitVector import BitVector
 
 from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisstring
-from test_bl.test_trassa_plugin.structs_trassa.aisutils  import binary
+from test_bl.test_trassa_plugin.structs_trassa.aisutils  import aisbinary
 #from test_bl.test_trassa_plugin.structs_trassa.aisutils import  sqlhelp
 from test_bl.test_trassa_plugin.structs_trassa.aisutils import  uscg
 
@@ -134,40 +134,40 @@ def encode(params, validate=False):
     '''
 
     bvList = []
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=18),6))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=18),6))
 
     if 'RepeatIndicator' in params:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=params['RepeatIndicator']),2))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['RepeatIndicator']),2))
     else:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=0),2))
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['MMSI']),30))
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=0),8))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0),2))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['MMSI']),30))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0),8))
     if 'SOG' in params:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=int((Decimal(params['SOG'])*Decimal('10')))),10))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=int((Decimal(params['SOG'])*Decimal('10')))),10))
     else:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=int(1023)),10))
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['PositionAccuracy']),1))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=int(1023)),10))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['PositionAccuracy']),1))
     if 'longitude' in params:
-        bvList.append(binary.bvFromSignedInt(int(Decimal(params['longitude'])*Decimal('600000')),28))
+        bvList.append(aisbinary.bvFromSignedInt(int(Decimal(params['longitude'])*Decimal('600000')),28))
     else:
-        bvList.append(binary.bvFromSignedInt(108600000,28))
+        bvList.append(aisbinary.bvFromSignedInt(108600000,28))
     if 'latitude' in params:
-        bvList.append(binary.bvFromSignedInt(int(Decimal(params['latitude'])*Decimal('600000')),27))
+        bvList.append(aisbinary.bvFromSignedInt(int(Decimal(params['latitude'])*Decimal('600000')),27))
     else:
-        bvList.append(binary.bvFromSignedInt(54600000,27))
+        bvList.append(aisbinary.bvFromSignedInt(54600000,27))
     if 'COG' in params:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=int((Decimal(params['COG'])*Decimal('10')))),12))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=int((Decimal(params['COG'])*Decimal('10')))),12))
     else:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=int(3600)),12))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=int(3600)),12))
     if 'TrueHeading' in params:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=params['TrueHeading']),9))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['TrueHeading']),9))
     else:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=511),9))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=511),9))
     if 'TimeStamp' in params:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=params['TimeStamp']),6))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['TimeStamp']),6))
     else:
-        bvList.append(binary.setBitVectorSize(BitVector(intVal=60),6))
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=0),2))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=60),6))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0),2))
     if params["cs_unit"]: bvList.append(TrueBV)
     else: bvList.append(FalseBV)
     if params["display_flag"]: bvList.append(TrueBV)
@@ -182,18 +182,18 @@ def encode(params, validate=False):
     else: bvList.append(FalseBV)
     if params["RAIM"]: bvList.append(TrueBV)
     else: bvList.append(FalseBV)
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['CommStateSelector']),1))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['CommStateSelector']),1))
 
     #For better compatibility Comm selector vector should be formed
     #according to the transmitter type SOTDMA/ITDMA
     #both take 19 bits space but length is different
-    #bvList.append(binary.setBitVectorSize(BitVector(intVal=params['CommState']),19))
+    #bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['CommState']),19))
 
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['state_syncstate']),2))
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['state_slottimeout']),3))
-    bvList.append(binary.setBitVectorSize(BitVector(intVal=params['state_slotoffset']),14))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['state_syncstate']),2))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['state_slottimeout']),3))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['state_slotoffset']),14))
 
-    return binary.joinBV(bvList)
+    return aisbinary.joinBV(bvList)
 
 def decode(bv, validate=False):
     '''Unpack a positionb message.
@@ -237,8 +237,8 @@ def decode(bv, validate=False):
     r['Reserved1']=0
     r['SOG']=Decimal(int(bv[46:56]))/Decimal('10')
     r['PositionAccuracy']=int(bv[56:57])
-    r['longitude']=Decimal(binary.signedIntFromBV(bv[57:85]))/Decimal('600000')
-    r['latitude']=Decimal(binary.signedIntFromBV(bv[85:112]))/Decimal('600000')
+    r['longitude']=Decimal(aisbinary.signedIntFromBV(bv[57:85]))/Decimal('600000')
+    r['latitude']=Decimal(aisbinary.signedIntFromBV(bv[85:112]))/Decimal('600000')
     r['COG']=Decimal(int(bv[112:124]))/Decimal('10')
     r['TrueHeading']=int(bv[124:133])
     r['TimeStamp']=int(bv[133:139])
@@ -273,10 +273,10 @@ def decodePositionAccuracy(bv, validate=False):
     return int(bv[56:57])
 
 def decodelongitude(bv, validate=False):
-    return Decimal(binary.signedIntFromBV(bv[57:85]))/Decimal('600000')
+    return Decimal(aisbinary.signedIntFromBV(bv[57:85]))/Decimal('600000')
 
 def decodelatitude(bv, validate=False):
-    return Decimal(binary.signedIntFromBV(bv[85:112]))/Decimal('600000')
+    return Decimal(aisbinary.signedIntFromBV(bv[85:112]))/Decimal('600000')
 
 def decodeCOG(bv, validate=False):
     return Decimal(int(bv[112:124]))/Decimal('10')
@@ -1239,7 +1239,7 @@ def test_auth():
         bitLen=len(bits)
         if bitLen % 6 != 0:
             bits = bits + BitVector(size=(6 - (bitLen%6)))  # Pad out to multiple of 6
-        print(binary.bitvectoais6(bits)[0])
+        print(aisbinary.bitvectoais6(bits)[0])
 
     # FIX: Do not emit this option for the binary message payloads.  Does not make sense.
     elif 'nmea' == options.ioType:
@@ -1278,7 +1278,7 @@ def test_auth():
                         if msg[0] in ('$','!') and msg[3:6] in ('VDM','VDO'):
                                 # Found nmea
                                 # FIX: do checksum
-                                bv = binary.ais6tobitvec(msg.split(',')[5])
+                                bv = aisbinary.ais6tobitvec(msg.split(',')[5])
                         else: # either binary or nmeapayload... expect mostly nmeapayloads
                                 # assumes that an all 0 and 1 string can not be a nmeapayload
                                 binaryMsg=True
@@ -1289,7 +1289,7 @@ def test_auth():
                                 if binaryMsg:
                                         bv = BitVector(bitstring=msg)
                                 else: # nmeapayload
-                                        bv = binary.ais6tobitvec(msg)
+                                        bv = aisbinary.ais6tobitvec(msg)
 
                         printFields(decode(bv)
                                     ,out=outfile
@@ -1336,7 +1336,8 @@ def test_this():
 
 
     bits = encode(msg18)
-    nmea = uscg.create_nmea(bits)
+    nmea = uscg.create_nmea(bits,
+                            message_type=18)
     return
 
 ############################################################

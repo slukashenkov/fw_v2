@@ -1,0 +1,43 @@
+
+Протокол сопряжения с Трассой приложен к задаче PTRLB-727
+
+Плагин Трасса использует для работы с сообщениями АИС код из модуля Ais.
+
+Приложен файл [^trassa-ais-from.zip] с логами входящих и исходящих сообщений Трассы.	В плагине Трасса должен происходить приём и обработка сообщений АИС типа VDM и формирование на их основе сообщений типа PAIDD и PAISD для Трассы в соответствии с протоколом сопряжения. Сейчас по логам видно, что в Трассу не отправляются сообщения типа PAISD, формируемые на основе АИС-сообщений типа 5 (статические данные о корабле и рейсе). Необходимо обеспечить формирование и отправку сообщений PAISD в Трассу.
+
+Протокол сопряжения с Трассой приложен к задаче PTRLB-727
+
+Плагин Трасса использует для работы с сообщениями АИС код из модуля Ais.
+
+Приложен файл [^trassa-ais-from.zip] с логами входящих и исходящих сообщений Трассы.
+
+Пример сообщения АИС:
+{panel}
+NB!
+82 char including header and checksum is max len for nmea
+
+!AIVDM,2,1,9,A,544dR7P2C;2qD5UT001HJ1@4pdE:o;400000001A>PI=4uin07SSmSlSllnB,0*4A
+!AIVDM,2,2,9,A,Djh00000003,2*58
+{panel}
+Расшифровка:
+{panel}
+Parm# ↓ Parameter ↓ Value ↓ Description ↓
+01 Message ID 5
+02 Repeat indicator 0 No repeat (default)
+03 User ID (MMSI) 273359390
+04 AIS version indicator 0
+05 IMO number 9645102
+06 Call sign UAYY@@@
+07 Name VF TANKER-21@@@@@@@@
+08 Type of ship & cargo 81 Tanker, Hazardous category A
+09 Ship dimensions A=116,B=25,C=13,D=4
+10 Type of EPFD 15 Not used
+11 ETA Month 7
+12 ETA Day 3
+13 ETA Hour 22
+14 ETA Minute 0
+15 Max. static draught 3
+16 Destination NOVOROSSYISK@@@@@@@@
+17 DTE (availability) 0 DTE available
+18 Spare 0
+{panel}

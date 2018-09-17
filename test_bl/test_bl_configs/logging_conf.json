@@ -87,7 +87,7 @@
             "handlers": ["console","common_log_file"],
             "propagate": "False"
             },
-         "test_bl.test_bl_tools.external_scripts": {
+        "test_bl.test_bl_tools.external_scripts": {
             "level": "DEBUG",
             "handlers": ["console","common_log_file"],
             "propagate": "False"
@@ -107,6 +107,23 @@
             "handlers": ["console","common_log_file"],
             "propagate": "False"
             },
+        "test_bl.test_trassa_plugin.structs_trassa.aisutils.aisstring": {
+            "level": "DEBUG",
+            "handlers": ["console","common_log_file"],
+            "propagate": "False"
+            "level": "DEBUG",
+            "handlers": ["console","common_log_file"],
+            "propagate": "False"
+            },
+        "test_bl.test_trassa_plugin.structs_trassa.aisutils.aisbinary": {
+            "level": "DEBUG",
+            "handlers": ["console","common_log_file"],
+            "propagate": "False"
+            "level": "DEBUG",
+            "handlers": ["console","common_log_file"],
+            "propagate": "False"
+            },
+
         "test_bl.test_sonata_plugin.test_tools_sonata.setup_sonata_suite": {
             "level": "DEBUG",
             "handlers": ["console","common_log_file"],
