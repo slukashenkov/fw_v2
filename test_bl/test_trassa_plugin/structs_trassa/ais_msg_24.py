@@ -1149,34 +1149,42 @@ def test_auth():
                                     )
 
 def test_this():
-    msg05 = {}
+    msg24_a = {}
+    msg24_b = {}
 
-    msg05['MessageID'] = 5
-    msg05['RepeatIndicator'] = 1
-    msg05['MMSI'] = 1193046
-    msg05['AISversion'] = 0
-    msg05['IMOnumber'] = 3210
-    msg05['callsign'] = 'PIRATE1'
-    msg05['name'] = 'SDRTYSDRTYSDRTYSDRTY'
-    msg05['shipandcargo'] = 21
-    msg05['dimA'] = 10
-    msg05['dimB'] = 11
-    msg05['dimC'] = 12
-    msg05['dimD'] = 13
-    msg05['fixtype'] = 1
-    msg05['ETAmonth'] = 2
-    msg05['ETAday'] = 28
-    msg05['ETAhour'] = 9
-    msg05['ETAminute'] = 54
-    msg05['draught'] = Decimal('21.1')
-    msg05['destination'] = 'NOWHERE@@@@@@@@@@@@@'
-    msg05['dte'] = 0
-    msg05['Spare'] = 0
+    msg24_a['MessageID'] = 24
+    msg24_a['RepeatIndicator'] = 1
+    msg24_a['MMSI'] = 5678844
 
 
-    bits = encode(msg05)
-    nmea = uscg.create_nmea(bits,
-                            message_type=5)
+    msg24_b['MessageID'] = 5
+    msg24_b['RepeatIndicator'] = 1
+    msg24_b['MMSI'] = 1193046
+    msg24_b['shipandcargo'] = 21
+
+    msg24_b['vendor_id'] = 0
+    msg24_b['unit_model'] = 0
+    msg24_b['serial_num'] = 0
+    msg24_b['callsign'] = 'FGRTUSP'
+    msg24_b['name'] = 'PTYDRPTYDRTFGRDTFGRD'
+
+    msg24_b['dimA'] = 10
+    msg24_b['dimB'] = 11
+    msg24_b['dimC'] = 12
+    msg24_b['dimD'] = 13
+
+    msg24_b['mother_ship_mmsi'] = 567432
+    msg24_b['Spare'] = 0
+
+
+    bits_a = encode(msg24_a,
+                    type="A")
+    bits_b = encode(msg24_b,
+                    type="B")
+    nmea = uscg.create_nmea(bits_a,
+                            message_type=24)
+    nmea = uscg.create_nmea(bits_a,
+                            message_type=24)
     return
 
 ############################################################
