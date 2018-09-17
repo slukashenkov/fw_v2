@@ -28,24 +28,38 @@ omitting the spare 7 bits at the end.
 Implementers should be permissive about this.
 [IALA] does not describe this message type; format information is thanks to Kurt Schwehr.
 
-Field	Len	Description	Member	T	Units
-0-5	6	Message Type	type	u	Constant: 24
-6-7	2	Repeat Indicator	repeat	u	As in CNB
-8-37	30	MMSI	mmsi	u	9 digits
-38-39	2	Part Number	partno	u	0-1
-40-159	120	Vessel Name	shipname	t	(Part A) 20 sixbit chars
-160-167	8	Spare		x	(Part A) Not used
-40-47	8	Ship Type	shiptype	e	(Part B) See "Ship Types"
-48-65	18	Vendor ID	vendorid	t	(Part B) 3 six-bit chars
-66-69	4	Unit Model Code	model	u	(Part B)
-70-89	20	Serial Number	serial	u	(Part B)
-90-131	42	Call Sign	callsign	t	(Part B) As in Message Type 5
-132-140	9	Dimension to Bow	to_bow	u	(Part B) Meters
-141-149	9	Dimension to Stern	to_stern	u	(Part B) Meters
-150-155	6	Dimension to Port	to_port	u	(Part B) Meters
-156-161	6	Dimension to Starboard	to_starboard	u	(Part B) Meters
-132-161	30	Mothership MMSI	mothership_mmsi	u	(Part B) See below
-162-167	6	Spare		x	(Part B) Not used
+u	Unsigned integer
+U   Unsigned integer with scale - renders as float, suffix is decimal places
+i   Signed integer
+I   Signed integer with scale - renders as float, suffix is decimal places
+b   Boolean
+e   Enumerated type (controlled vocabulary)
+x   Spare or reserved bit
+t   String (packed six-bit ASCII)
+d   Data (uninterpreted binary)
+a   Array boundary, numeric suffix is maximum array size.
+    ^ before suffix means preceding fields is the length.
+    Following fields are repeated to end of message
+
+Field	    Len	    Description	        Member	    T	    Units
+0-5	        6	    Message Type	    type	    u	    Constant: 24
+6-7	        2	    Repeat Indicator	repeat	    u	    As in CNB
+8-37	    30	    MMSI	            mmsi	    u	    9 digits
+38-39	    2	    Part Number	        partno	    u	    0-1
+40-159	    120	    Vessel Name	        shipname	t	    (Part A) 20 sixbit chars
+160-167	    8	    Spare		                    x	    (Part A) Not used
+40-47	    8	    Ship Type	        shiptype	e	    (Part B) See "Ship Types"
+48-65	    18	    Vendor ID	        vendorid	t	    (Part B) 3 six-bit chars
+66-69	    4	    Unit Model Code	    model	    u	    (Part B)
+70-89	    20	    Serial Number	    serial	    u	    (Part B)
+90-131	    42	    Call Sign	        callsign	t	    (Part B) As in Message Type 5
+132-140	    9	    Dimension to Bow	to_bow	    u	    (Part B) Meters
+141-149	    9	    Dimension to Stern	to_stern	u	    (Part B) Meters
+150-155	    6	    Dimension to Port	to_port	    u	    (Part B) Meters
+156-161	    6	    Dimension to
+                    Starboard	to_starboard	    u	    (Part B) Meters
+132-161	    30	    Mothership MMSI	mothership_mmsi	u	    (Part B) See below
+162-167	    6	    Spare		                    x	    (Part B) Not used
 
 
 """
@@ -154,14 +168,6 @@ def encode(params,
 
         # PartNumber = 1 for B
         bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=1), 2))
-        # vesselName
-        if 'name' in params:
-            bvList.append(aisstring.encode(params['name'], 120))
-        else:
-            bvList.append(aisstring.encode('@@@@@@@@@@@@@@@@@@@@', 120))
-
-        # Spare
-        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0), 8))
 
         if 'shipandcargo' in params:
             bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['shipandcargo']), 8))
@@ -171,17 +177,18 @@ def encode(params,
         if 'vendor_id' in params:
             bvList.append(aisstring.encode(params['vendor_id'], 18))
         else:
-            bvList.append(aisstring.encode('@@@@@@@', 18))
+            bvList.append(aisstring.encode('@@@', 18))
 
         if 'unit_model' in params:
-            bvList.append(aisstring.encode(params['unit_model'], 4))
+            bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['unit_model']),4))
         else:
-            bvList.append(aisstring.encode('@@@@@@@', 4))
+            bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0), 4))
+
 
         if 'serial_num' in params:
-            bvList.append(aisstring.encode(params['serial_num'], 20))
+            bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['serial_num']), 20))
         else:
-            bvList.append(aisstring.encode('@@@@@@@', 20))
+            bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0), 20))
 
 
 
@@ -209,10 +216,12 @@ def encode(params,
         else:
             bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0), 6))
 
+        '''
         if 'mother_ship_mmsi' in params:
             bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['mother_ship_mmsi']), 30))
         else:
             bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0), 4))
+        '''
 
         #Spare
         bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0), 6))
@@ -1151,20 +1160,20 @@ def test_auth():
 def test_this():
     msg24_a = {}
     msg24_b = {}
-
+#-----------------------------------
     msg24_a['MessageID'] = 24
     msg24_a['RepeatIndicator'] = 1
     msg24_a['MMSI'] = 5678844
 
-
-    msg24_b['MessageID'] = 5
+#-----------------------------------
+    msg24_b['MessageID'] = 24
     msg24_b['RepeatIndicator'] = 1
     msg24_b['MMSI'] = 1193046
-    msg24_b['shipandcargo'] = 21
+    msg24_b['shipandcargo'] = 55
 
-    msg24_b['vendor_id'] = 0
-    msg24_b['unit_model'] = 0
-    msg24_b['serial_num'] = 0
+    msg24_b['vendor_id'] = "VND"
+    msg24_b['unit_model'] = 1
+    msg24_b['serial_num'] = 2
     msg24_b['callsign'] = 'FGRTUSP'
     msg24_b['name'] = 'PTYDRPTYDRTFGRDTFGRD'
 
@@ -1173,18 +1182,20 @@ def test_this():
     msg24_b['dimC'] = 12
     msg24_b['dimD'] = 13
 
-    msg24_b['mother_ship_mmsi'] = 567432
+    msg24_b['mother_ship_mmsi'] = 0
     msg24_b['Spare'] = 0
-
+# -----------------------------------
 
     bits_a = encode(msg24_a,
                     type="A")
     bits_b = encode(msg24_b,
                     type="B")
-    nmea = uscg.create_nmea(bits_a,
-                            message_type=24)
-    nmea = uscg.create_nmea(bits_a,
-                            message_type=24)
+    nmea_a = uscg.create_nmea(bits_a,
+                            message_type=24,
+                              aisChannel="A")
+    nmea_b = uscg.create_nmea(bits_b,
+                            message_type=24,
+                              aisChannel="B")
     return
 
 ############################################################
