@@ -1160,6 +1160,7 @@ def test_auth():
 def test_this():
     msg24_a = {}
     msg24_b = {}
+    msg24_aux = {}
 #-----------------------------------
     msg24_a['MessageID'] = 24
     msg24_a['RepeatIndicator'] = 1
@@ -1185,10 +1186,31 @@ def test_this():
     msg24_b['mother_ship_mmsi'] = 0
     msg24_b['Spare'] = 0
 # -----------------------------------
+    msg24_aux['MessageID'] = 24
+    msg24_aux['RepeatIndicator'] = 1
+    msg24_aux['MMSI'] = 1193046
+    msg24_aux['shipandcargo'] = 55
+
+    msg24_aux['vendor_id'] = "VND"
+    msg24_aux['unit_model'] = 1
+    msg24_aux['serial_num'] = 2
+    msg24_aux['callsign'] = 'FGRTUSP'
+    msg24_aux['name'] = 'PTYDRPTYDRTFGRDTFGRD'
+
+    msg24_aux['dimA'] = 10
+    msg24_aux['dimB'] = 11
+    msg24_aux['dimC'] = 12
+    msg24_aux['dimD'] = 13
+
+    msg24_aux['mother_ship_mmsi'] = 0
+    msg24_aux['Spare'] = 0
+# -----------------------------------
 
     bits_a = encode(msg24_a,
                     type="A")
     bits_b = encode(msg24_b,
+                    type="B")
+    bits_aux = encode(msg24_aux,
                     type="B")
     nmea_a = uscg.create_nmea(bits_a,
                             message_type=24,
@@ -1196,6 +1218,9 @@ def test_this():
     nmea_b = uscg.create_nmea(bits_b,
                             message_type=24,
                               aisChannel="B")
+    nmea_aux = uscg.create_nmea(bits_aux,
+                                message_type=24,
+                                aisChannel="B")
     return
 
 ############################################################
