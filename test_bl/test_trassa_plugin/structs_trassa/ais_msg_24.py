@@ -227,6 +227,57 @@ def encode(params,
         bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0), 6))
 
         return aisbinary.joinBV(bvList)
+    elif type == "aux":
+        bvList = []
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=24), 6))
+
+        if 'RepeatIndicator' in params:
+            bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['RepeatIndicator']), 2))
+        else:
+            bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0), 2))
+
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['MMSI']), 30))
+
+        # PartNumber = 1 for B
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=1), 2))
+
+        if 'shipandcargo' in params:
+            bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['shipandcargo']), 8))
+        else:
+            bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0), 8))
+
+        if 'vendor_id' in params:
+            bvList.append(aisstring.encode(params['vendor_id'], 18))
+        else:
+            bvList.append(aisstring.encode('@@@', 18))
+
+        if 'unit_model' in params:
+            bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['unit_model']),4))
+        else:
+            bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0), 4))
+
+
+        if 'serial_num' in params:
+            bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['serial_num']), 20))
+        else:
+            bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0), 20))
+
+
+
+        if 'callsign' in params:
+            bvList.append(aisstring.encode(params['callsign'], 42))
+        else:
+            bvList.append(aisstring.encode('@@@@@@@', 42))
+
+        if 'mother_ship_mmsi' in params:
+            bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['mother_ship_mmsi']), 30))
+        else:
+            bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0), 30))
+
+        #Spare
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0), 6))
+
+        return aisbinary.joinBV(bvList)
 
 def decode(bv, validate=False):
     '''Unpack a shipdata message.
@@ -1169,7 +1220,7 @@ def test_this():
 #-----------------------------------
     msg24_b['MessageID'] = 24
     msg24_b['RepeatIndicator'] = 1
-    msg24_b['MMSI'] = 1193046
+    msg24_b['MMSI'] = 119304633
     msg24_b['shipandcargo'] = 55
 
     msg24_b['vendor_id'] = "VND"
@@ -1188,7 +1239,7 @@ def test_this():
 # -----------------------------------
     msg24_aux['MessageID'] = 24
     msg24_aux['RepeatIndicator'] = 1
-    msg24_aux['MMSI'] = 1193046
+    msg24_aux['MMSI'] = 982031010
     msg24_aux['shipandcargo'] = 55
 
     msg24_aux['vendor_id'] = "VND"
@@ -1197,12 +1248,7 @@ def test_this():
     msg24_aux['callsign'] = 'FGRTUSP'
     msg24_aux['name'] = 'PTYDRPTYDRTFGRDTFGRD'
 
-    msg24_aux['dimA'] = 10
-    msg24_aux['dimB'] = 11
-    msg24_aux['dimC'] = 12
-    msg24_aux['dimD'] = 13
-
-    msg24_aux['mother_ship_mmsi'] = 0
+    msg24_aux['mother_ship_mmsi'] =12039567
     msg24_aux['Spare'] = 0
 # -----------------------------------
 
@@ -1211,7 +1257,7 @@ def test_this():
     bits_b = encode(msg24_b,
                     type="B")
     bits_aux = encode(msg24_aux,
-                    type="B")
+                    type="aux")
     nmea_a = uscg.create_nmea(bits_a,
                             message_type=24,
                               aisChannel="A")
