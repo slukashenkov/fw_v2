@@ -111,14 +111,8 @@
             "level": "DEBUG",
             "handlers": ["console","common_log_file"],
             "propagate": "False"
-            "level": "DEBUG",
-            "handlers": ["console","common_log_file"],
-            "propagate": "False"
             },
         "test_bl.test_trassa_plugin.structs_trassa.aisutils.aisbinary": {
-            "level": "DEBUG",
-            "handlers": ["console","common_log_file"],
-            "propagate": "False"
             "level": "DEBUG",
             "handlers": ["console","common_log_file"],
             "propagate": "False"
