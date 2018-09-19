@@ -15,11 +15,23 @@ class TXT(TalkerSentence):
     """ Waypoint Arrival Alarm
     """
     fields = (
-        ("Sentences Total", "sentns_total"),
-        ("Sentence order num", "sentns_order_num"),
+        ("Sentences Total", "sntns_total"),
+        ("Sentence order num", "sntns_order_num"),
         ("Status code", "stat_code"),
         ("Status description", "stat_descr"),
     )
+
+'''
+class TXT(TalkerSentence):
+    """ Text Transmission
+    """
+    fields = (
+        ("Number of Messages", "num_msg"),
+        ("Message Number", "msg_num"),
+        ("Type of Message", "msg_type"),
+        ("Text", "text"),
+    )
+'''
 
 class ALR(TalkerSentence):
     """ Waypoint Arrival Alarm
@@ -36,7 +48,7 @@ class MST(TalkerSentence):
     """ Waypoint Arrival Alarm
     """
     fields = (
-        ("Sentences time", "sentns_time"),
+        ("Sentences time", "sntns_time"),
         ("Eqipment state", "eq_state"),
     )
 
@@ -428,15 +440,7 @@ class TRF(TalkerSentence):
     )
 
 
-class TXT(TalkerSentence):
-    """ Text Transmission
-    """
-    fields = (
-        ("Number of Messages", "num_msg"),
-        ("Message Number", "msg_num"),
-        ("Type of Message", "msg_type"),
-        ("Text", "text"),
-    )
+
 
 
 class VBW(TalkerSentence, ValidVBWFix):

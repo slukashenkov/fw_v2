@@ -1,5 +1,4 @@
-import re
-import operator
+import re,operator
 from functools import reduce
 
 
@@ -16,7 +15,11 @@ class ChecksumError(ParseError):
 
 class NMEASentenceType(type):
     sentence_types = {}
-    def __init__(cls, name, bases, dct):
+    def __init__(cls,
+                 name,
+                 bases,
+                 dct):
+
         type.__init__(cls, name, bases, dct)
         base = bases[0]
         if base is object:
@@ -30,7 +33,7 @@ NMEASentenceBase = NMEASentenceType('NMEASentenceBase', (object,), {})
 
 
 class NMEASentence(NMEASentenceBase):
-    '''
+    """
     Base NMEA Sentence
 
     Parses and generates NMEA strings
@@ -39,7 +42,7 @@ class NMEASentence(NMEASentenceBase):
 
     >>> s = NMEASentence.parse("$GPGGA,184353.07,1929.045,S,02410.506,E,1,04,2.6,100.00,M,-33.9,M,,0000*6D")
     >>> print(s)
-    '''
+    """
 
     sentence_re = re.compile(r'''
         # start of string, optional whitespace, optional '$'
@@ -214,7 +217,10 @@ class NMEASentence(NMEASentenceBase):
 
 class TalkerSentence(NMEASentence):
     sentence_types = {}
-    def __init__(self, talker, sentence_type, data):
+    def __init__(self,
+                 talker,
+                 sentence_type,
+                 data):
         self.talker = talker
         self.sentence_type = sentence_type
         self.data = list(data)
@@ -245,7 +251,3 @@ class ProprietarySentence(NMEASentence):
         return 'P%s' % (self.manufacturer)
 
 
-def test_this():
-    nmea_snts = NMEASentence()
-if __name__=="__main__":
-    test_this()
