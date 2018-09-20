@@ -68,7 +68,6 @@ from decimal import Decimal
 import unittest
 
 from test_bl.test_trassa_plugin.structs_trassa.aisutils.BitVector import BitVector
-
 from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisstring
 from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisbinary
 from test_bl.test_trassa_plugin.structs_trassa.aisutils import uscg

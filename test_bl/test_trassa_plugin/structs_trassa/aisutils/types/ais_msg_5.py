@@ -46,7 +46,7 @@ Field	Len	    Description	        Member/Type	    T	    Encoding
 294-301	8	    Draught	draught	U1	Meters/10
 302-421	120	    Destination	        destination	t	        20  6-bit characters
 422-422	1	    DTE	dte	b	                                0=Data terminal ready, 1=Not ready (default).
-423-423	1	    Spare		        x	            Not used
+423-423	1	    Spare		        x	                    Not used
 
 [INLAND] specifies the following:
 •	the IMO Number field should be zeroed for inland vessels.
