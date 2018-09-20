@@ -19,7 +19,8 @@ class NMEASentenceType(type):
                  name,
                  bases,
                  dct):
-
+        print("NMEASentenceType Init \n" + "cls" + str(type(cls)) + "\nname: " + name + "\nbases:" + str(
+            bases) + "\ndct" + str(dct))
         type.__init__(cls, name, bases, dct)
         base = bases[0]
         if base is object:
@@ -202,7 +203,9 @@ class NMEASentence(NMEASentenceBase):
         raise NotImplementedError
 
     def render(self, checksum=True, dollar=True, newline=False):
-        res = self.identifier() + ','.join(self.data)
+        ident=self.identifier()
+        data = ','.join(self.data)
+        res = ident + data
         if checksum:
             res += '*%02X' % NMEASentence.checksum(res)
         if dollar:
@@ -248,6 +251,9 @@ class ProprietarySentence(NMEASentence):
         self.data = list(data)
 
     def identifier(self):
-        return 'P%s' % (self.manufacturer)
+        if self.manufacturer in ["AIDD","CMST"]:
+            return 'P%s,' % (self.manufacturer)
+        else:
+            return 'P%s' % (self.manufacturer)
 
 

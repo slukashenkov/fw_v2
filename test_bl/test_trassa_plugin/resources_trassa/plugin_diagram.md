@@ -2,8 +2,8 @@
 @startuml
 participant AIS 
 participant KD  
-participant ASTD 
 participant TRASSA
+participant ASTD 
 
 autonumber 01
 group exchange_1
