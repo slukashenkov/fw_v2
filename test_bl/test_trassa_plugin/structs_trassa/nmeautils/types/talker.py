@@ -12,7 +12,7 @@ from _decimal import Decimal
 #pylint: disable=no-init
 #pylint: disable=too-few-public-methods
 class TXT(TalkerSentence):
-    """ Waypoint Arrival Alarm
+    """ AITXT - Transas AIS diagnostic text message
     """
     fields = (
         ("Sentences Total", "sntns_total"),
@@ -20,10 +20,9 @@ class TXT(TalkerSentence):
         ("Status code", "stat_code"),
         ("Status description", "stat_descr"),
     )
-
 '''
 class TXT(TalkerSentence):
-    """ Text Transmission
+    """ Text Transmission (generic NMEA)
     """
     fields = (
         ("Number of Messages", "num_msg"),
@@ -32,9 +31,8 @@ class TXT(TalkerSentence):
         ("Text", "text"),
     )
 '''
-
 class ALR(TalkerSentence):
-    """ Waypoint Arrival Alarm
+    """ AITALR- Transas AIS eqipment status message
     """
     fields = (
         ("Failure time", "fail_time"),
@@ -45,12 +43,77 @@ class ALR(TalkerSentence):
     )
 
 class MST(TalkerSentence):
-    """ Waypoint Arrival Alarm
+    """ PCMST - Proprietary "T" equipment status
+
     """
     fields = (
-        ("Sentences time", "sntns_time"),
+        ("Sentences Timestamp", "sntns_tmstmp"),
         ("Eqipment state", "eq_state"),
     )
+
+class IDD(TalkerSentence):
+    """PAIDD - AIS data for FOR CUSTOM eqipment
+
+        data comes from into
+        $PAIDD
+        from
+        --------------------
+        AIVDM type 1 or 18
+        from fields
+        --------------------
+        AIVDM to PAIDD mapping
+
+        AIVDM Field: MMSI
+        AIVDM Field: Longitude
+
+            Hemisphere_sign_n_s -> Calculated
+
+        AIVDM Field: Latitude
+
+            Hemisphere_sign_e_w -> Calculated
+
+        AIVDM Field: Speed Over Ground(SOG)
+        AIVDM Field: True Heading(HDG)
+        AIVDM Field: Course Over Ground(COG)
+
+            timestamp -> Calculated
+    """
+    fields = (
+        ("MMSI", "mmsi"),
+        ("Longitude", "lon"),
+        ("Hemisphere_sign_n_s", "hem_n_s"),
+        ("Latitude", "lat"),
+        ("Hemisphere_sign_e_w", "hem_e_w"),
+        ("Speed Over Ground(SOG)", "sog"),
+        ("True Heading(HDG)", "hdg"),
+        ("Course Over Ground(COG)", "cog"),
+        ("Timestamp", "tmstmp"),
+    )
+
+class ISD(TalkerSentence):
+    """PAISD - AIS data for FOR CUSTOM equipment
+
+        data comes from into
+        $PAISD
+        from
+        --------------------
+        AIVDM type 5 or 24
+        from fields
+        --------------------
+        AIVDM to PAISD mapping:
+
+        AIVDM Field: MMSI
+        AIVDM Field:  IMO Number
+        AIVDM Field: Call Sign
+        AIVDM Field: Vessel Name
+    """
+    fields = (
+        ("MMSI", "mmsi"),
+        ("IMO Number", "imo_num"),
+        ("Call Sign", "c_sign"),
+        ("Vessel Name", "v_name"),
+    )
+
 
 class AAM(TalkerSentence):
     """ Waypoint Arrival Alarm

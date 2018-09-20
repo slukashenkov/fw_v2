@@ -5,11 +5,9 @@ participant KD
 participant ASTD 
 participant TRASSA
 
-
-
 autonumber 01
 group exchange_1
-    AIS ->KD: PCMST(A/V)
+    TRASSA ->KD: PCMST(A/V)
     KD ->ASTD: ASTD Bin MSG
 end
 
