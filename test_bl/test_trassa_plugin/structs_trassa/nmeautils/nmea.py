@@ -1,3 +1,144 @@
+"""
+This lib was designed to parse/generate nmea messages
+with a standard in view.
+To have a reminder of its guidelines here is an excerpt:
+
+NMEA Encoding Conventions
+-------------------------
+Data is transmitted in serial async, 1 start-bit, 8 data-bits, 1 stop-bit, no parity.
+1) Data-bits are in least-significant-bit order.
+2) The standard specifies 4800 as the speed, but this is no longer common. The most-signifacant-bit is always zero.
+
+Structure
+     1  2    3                        4 5   6
+     |  |    |                        | |   |
+ex. $GPVTG,108.53,T,,M,0.04,N,0.07,K,A*31<CR><LF>
+
+1) An NMEA sentence consists of a start delimiter(1), followed by a comma-separated sequence of fields ex.(3) till (4),
+followed by the character * (ASCII 42), the checksum and an end-of-line marker.
+
+2) The start delimiter is normally $ (ASCII 36) ex.(1). Packets of AIVDM/AIVDO data, which are otherwise formatted like NMEA, use !. Up to 4.00 these are the only permitted start characters [ANON].
+
+3) The first field of a sentence ex (2) is called the "tag" and normally consists of a two-letter talker ID followed by a three-letter type code (ex. GP-talker id;  VTG-code).
+
+4) Where a numeric |latitude| or |longitude| is given, the two digits immediately to the left of the decimal point are whole minutes,
+to the right are decimals of minutes, and the remaining digits to the left of the whole minutes are whole degrees.
+
+Eg. 4533.35 is 45 degrees and 33.35 minutes. ".35" of a minute is exactly 21 seconds.
+
+Eg. 16708.033 is 167 degrees and 8.033 minutes. ".033" of a minute is about 2 seconds.
+
+5) In NMEA 3.01 (and possibly some earlier versions), the character "^" (HEX 5E) is reserved as an introducer for two-character hex escapes using 0-9 and A-F, expressing an ISO 8859-1 (Latin-1) character [ANON].
+
+6) The Checksum ex.(5) is mandatory, and the last field in a sentance. It is the 8-bit XOR of all characters in the sentance,
+exclusing the "$", "I", or "*" characters; but including all "," and "^". It is encoded as two hexadecimal characters (0-9, A-F),
+the most-significant-nibble being sent first.
+
+7) Sentences are terminated by a <CR><LF> sequence ex.(7).
+
+8) Maximum sentence length, including the $ and <CR><LF> is 82 bytes.
+
+NB!
+According to [UNMEA], the NMEA standard requires that a field (such as altitude, latitude, or longitude)
+must be left empty when the GPS has no valid data for it. However, many receivers violate this. It’s common,
+for example, to see latitude/longitude/altitude figures filled with zeros when the GPS has no valid data.
+
+Talker IDs
+----------
+NMEA sentences do not identify the individual device that issued them;
+the format was originally designed for shipboard multidrop networks on which it’s possible only to broadcast to all devices, not address a specific one.
+
+NMEA sentences do, however, include a "talker ID" a two-character prefix that identifies the type of the transmitting unit.
+By far the most common talker ID is "GP", identifying a generic GPS, but all of the following are well known:
+
+
+Big list of talker IDs
+-----------------------
+AB Independent AIS Base Station
+AD Dependent AIS Base Station
+AG Autopilot - General
+AP Autopilot - Magnetic
+BN Bridge navigational watch alarm system
+CC Computer - Programmed Calculator (obsolete)
+CD Communications - Digital Selective Calling (DSC)
+CM Computer - Memory Data (obsolete)
+CS Communications - Satellite
+CT Communications - Radio-Telephone (MF/HF)
+CV Communications - Radio-Telephone (VHF)
+CX Communications - Scanning Receiver
+DE DECCA Navigation (obsolete)
+DF Direction Finder
+DU Duplex repeater station
+EC Electronic Chart Display & Information System (ECDIS)
+EP Emergency Position Indicating Beacon (EPIRB)
+ER Engine Room Monitoring Systems
+GP Global Positioning System (GPS)
+HC Heading - Magnetic Compass
+HE Heading - North Seeking Gyro
+HN Heading - Non North Seeking Gyro
+II Integrated Instrumentation
+IN Integrated Navigation
+LA Loran A (obsolete)
+LC Loran C (obsolete)
+MP Microwave Positioning System (obsolete)
+NL Navigation light controller
+OM OMEGA Navigation System (obsolete)
+OS Distress Alarm System (obsolete)
+RA RADAR and/or ARPA
+SD Sounder, Depth
+SN Electronic Positioning System, other/general
+SS Sounder, Scanning
+TI Turn Rate Indicator
+TR TRANSIT Navigation System
+U# # is a digit 0 … 9; User Configured
+UP Microprocessor controller
+VD Velocity Sensor, Doppler, other/general
+DM Velocity Sensor, Speed Log, Water, Magnetic
+VW Velocity Sensor, Speed Log, Water, Mechanical
+WI Weather Instruments
+YC Transducer - Temperature (obsolete)
+YD Transducer - Displacement, Angular or Linear (obsolete)
+YF Transducer - Frequency (obsolete)
+YL Transducer - Level (obsolete)
+YP Transducer - Pressure (obsolete)
+YR Transducer - Flow Rate (obsolete)
+YT Transducer - Tachometer (obsolete)
+YV Transducer - Volume (obsolete)
+YX Transducer
+ZA Timekeeper - Atomic Clock
+ZC Timekeeper - Chronometer
+ZQ Timekeeper - Quartz
+ZV Timekeeper - Radio Update, WWV or WWVH
+
+TMVTD - Transas VTS / SML tracking system report
+$TMVTD,DDMMYY,hhmmss.ss,a,xxxx,c—c,llll.llll,a,yyyyy.yyyy,a,x.x,a,x.x,a,a*hh<CR><LF>
+‘TM’ indicates message generated by SML tracking system. ‘VTD’ is name of the message.
+Transas is a mnanufacturer of proprietary ECDIS systems.
+
+General Sentence Format
+--------------------------
+All data is transmitted in the form of sentences.
+Only printable ASCII characters are allowed, plus CR (carriage return)
+and LF (line feed). Each sentence starts with a "$" sign and ends with CRLF.
+There are three basic kinds of sentences: talker sentences, proprietary sentences
+and query sentences.
+Talker Sentences
+----------------
+The general format for a talker sentence is:
+$ttsss,d1,d2,....CRLF
+
+The first two letters following the „$” are the talker identifier.
+The next three characters (sss) are the sentence identifier, followed
+by a number of data fields separated by commas, followed by an optional
+checksum, and terminated by carriage return/line feed.
+The data fields are uniquely defined for each sentence type.
+Proprietary Sentences
+---------------------
+Proprietary sentences can either be output from the gps or used as input
+to control information.
+They always start with P which is followed by a 3 character manufactures
+code and additional characters to define the sentence type.
+"""
 import re,operator
 from functools import reduce
 
@@ -11,7 +152,6 @@ class SentenceTypeError(ParseError):
 
 class ChecksumError(ParseError):
     pass
-
 
 class NMEASentenceType(type):
     sentence_types = {}
@@ -55,16 +195,15 @@ class NMEASentence(NMEASentenceBase):
             (?P<sentence_type>
 
                 # proprietary sentence
-                (P\w{3})|
+                (P\w{3,},)|
 
                 # query sentence, ie: 'CCGPQ,GGA'
                 # NOTE: this should have no data
                 (\w{2}\w{2}Q,\w{3})|
 
                 # taker sentence, ie: 'GPGGA'
-                (\w{2}\w{3},)
-            )
-
+                (\w{2}\w{3,},)
+            )     
             # rest of message
             (?P<data>[^*]*)
 
@@ -77,11 +216,11 @@ class NMEASentence(NMEASentenceBase):
         ''', re.X | re.IGNORECASE)
 
     talker_re = \
-        re.compile(r'^(?P<talker>\w{2})(?P<sentence>\w{3}),$')
+        re.compile(r'^(?P<talker>[^P]\w{2})(?P<sentence>\w{3,}),$')
     query_re = \
         re.compile(r'^(?P<talker>\w{2})(?P<listener>\w{2})Q,(?P<sentence>\w{3})$')
     proprietary_re = \
-        re.compile(r'^P(?P<manufacturer>\w{3})$')
+        re.compile(r'^P(?P<manufacturer>\w{3})(?P<p_data_type>\w{1,})')
 
     name_to_idx = {}
     fields = ()
@@ -144,8 +283,13 @@ class NMEASentence(NMEASentenceBase):
         proprietary_match = NMEASentence.proprietary_re.match(sentence_type)
         if proprietary_match:
             manufacturer = proprietary_match.group('manufacturer')
+            datatype = proprietary_match.group('p_data_type')
+            #classname = manufacturer + datatype
             cls = ProprietarySentence.sentence_types.get(manufacturer, ProprietarySentence)
-            return cls(manufacturer, data)
+
+            return cls(manufacturer,
+                       datatype,
+                       data)
 
         raise ParseError(
             'could not parse sentence type: %r' % sentence_type, line)
@@ -211,7 +355,7 @@ class NMEASentence(NMEASentenceBase):
         if dollar:
             res = '$' + res
         if newline:
-            res += (newline is True) and '\r\n' or newline
+            res +=  '\r\n'
         return res
 
     def __str__(self):
@@ -246,14 +390,16 @@ class QuerySentence(NMEASentence):
 
 class ProprietarySentence(NMEASentence):
     sentence_types = {}
-    def __init__(self, manufacturer, data):
-        self.manufacturer = manufacturer
-        self.data = list(data)
+    def __init__(self,
+                 manufacturer,
+                 datatype,
+                 data):
+
+        self.manufacturer   = manufacturer
+        self.datatype       = datatype
+        self.data           = list(data)
 
     def identifier(self):
-        if self.manufacturer in ["AIDD","CMST"]:
-            return 'P%s,' % (self.manufacturer)
-        else:
-            return 'P%s' % (self.manufacturer)
+            return 'P%s' % (self.datatype+",")
 
 
