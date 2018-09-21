@@ -12,7 +12,7 @@ class NmeaMsg():
     def get_aix_alr(self):
         return str(talker.ALR('AI', 'ALR', ('1', '1', '01', 'V', 'V', 'Tx malfunction')))
     def get_pc_mst(self):
-        return str(talker.ALR('PC', 'MST', ('095530.09', 'A')))
+        return str(talker.MST('PC', 'MST', ('095530.09', 'A')))
 
     def get_pa_isd(self):
         return str(talker.ISD('PA', 'ISD', ('8989999', '001100', 'Vsl_cl_sgn', 'Vsl_name')))
@@ -62,6 +62,8 @@ def test_this():
     test_nmea['aialr'] = nmea_msg.get_aix_alr()
     test_nmea['pcmst'] = nmea_msg.get_pc_mst()
 
+
+
     # stuct for parsing
     #test_nmea['paidd'] = nmea_msg.get_pa_idd()
     test_nmea['paidd'] = nmea_msg.get_p_aid_d_private()
@@ -93,25 +95,21 @@ def test_this():
     stat_code = aitxt_parsed.stat_code
     stat_descr = aitxt_parsed.stat_descr
 
-    '''
-    paidd_parsed_talker = nmea_msg.parse_paisd(test_nmea['paidd'])
-    mmsi01 = paidd_parsed_talker.mmsi
-    lon01 = paidd_parsed_talker.lon
-    hem_n_s01 =paidd_parsed_talker.hem_n_s
-    lat01 =paidd_parsed_talker.lat
-    hem_e_w01 =paidd_parsed_talker.hem_e_w
-    sog01 =paidd_parsed_talker.sog
-    hdg01 =paidd_parsed_talker.hdg
-    cog01 =paidd_parsed_talker.cog
-    tmstmp01 =paidd_parsed_talker.tmstmp
-    '''
+    aialr_parsed = nmea_msg.parse_paisd(test_nmea['aialr'])
+    fail_time  = aialr_parsed.fail_time
+    fail_code  = aialr_parsed.fail_code
+    fail_stat  = aialr_parsed.fail_stat
+    tct_stat   = aialr_parsed.tct_stat
+    fail_descr = aialr_parsed.fail_descr
+
+    pcmst_parsed = nmea_msg.parse_paisd(test_nmea['pcmst'])
+    sntns_tmstmp = pcmst_parsed.sntns_tmstmp
+    eq_state =  pcmst_parsed.eq_state
 
     for key in test_nmea.keys():
         print("mgs type: " + key + " message_nmea: " + test_nmea[key])
 
     return
-
-
 
 if __name__=="__main__":
     test_this()

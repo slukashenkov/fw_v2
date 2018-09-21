@@ -202,8 +202,8 @@ class NMEASentence(NMEASentenceBase):
                 (\w{2}\w{2}Q,\w{3})|
 
                 # taker sentence, ie: 'GPGGA'
-                (\w{2}\w{3,},)
-            )     
+                (\w{2}\w{3})
+            ),    
             # rest of message
             (?P<data>[^*]*)
 
@@ -216,7 +216,7 @@ class NMEASentence(NMEASentenceBase):
         ''', re.X | re.IGNORECASE)
 
     talker_re = \
-        re.compile(r'^(?P<talker>[^P]\w{2})(?P<sentence>\w{3,}),$')
+        re.compile(r'^(?P<talker>\w{2})(?P<sentence>\w{3})$')
     query_re = \
         re.compile(r'^(?P<talker>\w{2})(?P<listener>\w{2})Q,(?P<sentence>\w{3})$')
     proprietary_re = \

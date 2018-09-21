@@ -32,7 +32,7 @@ class TXT(TalkerSentence):
     )
 '''
 class ALR(TalkerSentence):
-    """ AITALR- Transas AIS eqipment status message
+    """ AIALR- Transas AIS eqipment status message
     """
     fields = (
         ("Failure time", "fail_time"),
