@@ -1,0 +1,41 @@
+part A
+!AIVDM,1,1,,B,H1c2;qA@PU>0U>060<h5=>0:1Dp,2*7F
+Parm#  ↓	Parameter  ↓	Value  ↓	Description  ↓
+01	Message ID	24
+02	Repeat indicator	0
+03	User ID (MMSI)	112233445
+04	Message part number	0	0 = Part A
+05	Name	THIS IS A CLASS B UN
+
+!AIVDM,1,1,,A,H44dQn08u8ET000000000000002,2*51
+Parm#  ↓	Parameter  ↓	Value  ↓	Description  ↓
+01	Message ID	24
+02	Repeat indicator	0
+03	User ID (MMSI)	273359320
+04	Message part number	0	0 = Part A
+05	Name	BOREY@@@@@@@@@@@@@@@
+
+part B
+!AIVDM,1,1,,B,H1c2;qDTijklmno31<<C970`43<1,0*2A
+Parm#  ↓	Parameter  ↓	Value  ↓	Description  ↓
+01	Message ID	24
+02	Repeat indicator	0
+03	User ID (MMSI)	112233445
+04	Message part number	1	1 = Part B
+05	Type of ship & cargo	36	Sailing
+06	Vendor ID	1234567
+07	Call sign	CALLSIG
+08	Ship dimensions	A=5,B=4,C=3,D=12
+09	Spare	1
+
+!AIVDM,1,1,,A,H44dQn4R4I138D0E238o001P8550,0*1A
+Parm#  ↓	Parameter  ↓	Value  ↓	Description  ↓
+01	Message ID	24
+02	Repeat indicator	0
+03	User ID (MMSI)	273359320
+04	Message part number	1	1 = Part B
+05	Type of ship & cargo	34	Diving ops
+06	Vendor ID	DYACHT@
+07	Call sign	UBCH7@@
+08	Ship dimensions	A=12,B=8,C=5,D=5
+09	Spare	0

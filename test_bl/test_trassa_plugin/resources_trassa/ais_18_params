@@ -1,0 +1,23 @@
+      - MessageID(uint): AIS message number.  Must be 18 (field automatically set to "18")
+      - RepeatIndicator(uint): Indicated how many times a message has been repeated
+      - UserID(uint): Unique ship identification number (MMSI)
+      - Reserved1(uint): Reseverd for definition by a compentent regional or local authority.  Should be set to zero. (field automatically set to "0")
+      - SOG(udecimal): Speed over ground
+      - PositionAccuracy(uint): Accuracy of positioning fixes
+      - longitude(decimal): Location of the vessel  East West location
+      - latitude(decimal): Location of the vessel  North South location
+      - COG(udecimal): Course over ground
+      - TrueHeading(uint): True heading (relative to true North)
+      - TimeStamp(uint): UTC second when the report was generated
+      - Spare(uint): Not used.  Should be set to zero. (field automatically set to "0")
+
+
+      - cs_unit(bool): Does this unit do Carrier Sense?
+      - display_flag(bool): Does this class B unit have an integrated display?
+      - dsc_flag(bool): Does it have dedicated or time-shared DSC radio function?
+      - band_flag(bool): How flexible is the freq handling of the unit?
+      - msg22_flag(bool): Can the unit handle msg 22?
+      - mode_flag(bool): Assigned mode wrt to VDL slots
+      - RAIM(bool): Receiver autonomous integrity monitoring flag
+      - CommStateSelector(uint): SOTDMA or ITDMA
+      - CommState(uint): Not decoded by this software yet
