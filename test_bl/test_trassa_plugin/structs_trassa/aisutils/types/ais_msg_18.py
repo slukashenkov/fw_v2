@@ -15,7 +15,30 @@ The generated code uses translators.py, binary.py, and aisstring.py
 which should be packaged with the resulting files.
 
 
- TODO(schwehr):FIX: put in a description of the message here with fields and types.
+Type 18: Standard Class B CS Position Report
+
+Field	Len	Description	Member	T	Units
+0-5	6	Message Type	type	u	Constant: 18
+6-7	2	Repeat Indicator	repeat	u	As in Common Navigation Block
+8-37	30	MMSI	mmsi	u	9 decimal digits
+38-45	8	Regional Reserved	reserved	x	Not used
+46-55	10	Speed Over Ground	speed	U1	As in common navigation block
+56-56	1	Position Accuracy	accuracy	b	See below
+57-84	28	Longitude	lon	I4	Minutes/10000 (as in CNB)
+85-111	27	Latitude	lat	I4	Minutes/10000 (as in CNB)
+112-123	12	Course Over Ground	course	U1	0.1 degrees from true north
+124-132	9	True Heading	heading	u	0 to 359 degrees, 511 = N/A
+133-138	6	Time Stamp	second	u	Second of UTC timestamp.
+139-140	2	Regional reserved	regional	u	Uninterpreted
+141-141	1	CS Unit	cs	b	0=Class B SOTDMA unit 1=Class B CS (Carrier Sense) unit
+142-142	1	Display flag	display	b	0=No visual display, 1=Has display, (Probably not reliable).
+143-143	1	DSC Flag	dsc	b	If 1, unit is attached to a VHF voice radio with DSC capability.
+144-144	1	Band flag	band	b	Base stations can command units to switch frequency. If this flag is 1, the unit can use any part of the marine channel.
+145-145	1	Message 22 flag	msg22	b	If 1, unit can accept a channel assignment via Message Type 22.
+146-146	1	Assigned	assigned	b	Assigned-mode flag: 0 = autonomous mode (default), 1 = assigned mode.
+147-147	1	RAIM flag	raim	b	As for common navigation block
+148-167	20	Radio status	radio	u	See [IALA] for details.
+
 """
 import sys
 from decimal import Decimal
@@ -56,50 +79,6 @@ fieldList = (
     'CommState',
 )
 
-fieldListPostgres = (
-    'MessageID',
-    'RepeatIndicator',
-    'UserID',
-    'Reserved1',
-    'SOG',
-    'PositionAccuracy',
-    'Position',    # PostGIS data type
-    'COG',
-    'TrueHeading',
-    'TimeStamp',
-    'Spare',
-    'cs_unit',
-    'display_flag',
-    'dsc_flag',
-    'band_flag',
-    'msg22_flag',
-    'mode_flag',
-    'RAIM',
-    'CommStateSelector',
-    'CommState',
-)
-
-toPgFields = {
-    'longitude':'Position',
-    'latitude':'Position',
-}
-"""
-Go to the Postgis field names from the straight field name
-"""
-
-fromPgFields = {
-    'Position':('longitude','latitude',),
-}
-"""
-Go from the Postgis field names to the straight field name
-"""
-
-pgTypes = {
-    'Position':'POINT',
-}
-"""
-Lookup table for each postgis field name to get its type.
-"""
 
 def encode(params, validate=False):
     '''Create a positionb binary message payload to pack into an AIS Msg positionb.
@@ -562,92 +541,6 @@ def printKml(params, out=sys.stdout):
     out.write("        </Point>\n")
     out.write("    </Placemark>\n")
 
-def printFields(params, out=sys.stdout, format='std', fieldList=None, dbType='postgres'):
-    '''Print a positionb message to stdout.
-
-    Fields in params:
-      - MessageID(uint): AIS message number.  Must be 18 (field automatically set to "18")
-      - RepeatIndicator(uint): Indicated how many times a message has been repeated
-      - UserID(uint): Unique ship identification number (MMSI)
-      - Reserved1(uint): Reseverd for definition by a compentent regional or local authority.  Should be set to zero. (field automatically set to "0")
-      - SOG(udecimal): Speed over ground
-      - PositionAccuracy(uint): Accuracy of positioning fixes
-      - longitude(decimal): Location of the vessel  East West location
-      - latitude(decimal): Location of the vessel  North South location
-      - COG(udecimal): Course over ground
-      - TrueHeading(uint): True heading (relative to true North)
-      - TimeStamp(uint): UTC second when the report was generated
-      - Spare(uint): Not used.  Should be set to zero. (field automatically set to "0")
-      - cs_unit(bool): Does this unit do Carrier Sense?
-      - display_flag(bool): Does this class B unit have an integrated display?
-      - dsc_flag(bool): Does it have dedicated or time-shared DSC radio function?
-      - band_flag(bool): How flexible is the freq handling of the unit?
-      - msg22_flag(bool): Can the unit handle msg 22?
-      - mode_flag(bool): Assigned mode wrt to VDL slots
-      - RAIM(bool): Receiver autonomous integrity monitoring flag
-      - CommStateSelector(uint): SOTDMA or ITDMA
-      - CommState(uint): Not decoded by this software yet
-    @param params: Dictionary of field names/values.
-    @param out: File like object to write to.
-    @rtype: stdout
-    @return: text to out
-    '''
-
-    if 'std'==format:
-        out.write("positionb:\n")
-        if 'MessageID' in params: out.write("    MessageID:          "+str(params['MessageID'])+"\n")
-        if 'RepeatIndicator' in params: out.write("    RepeatIndicator:    "+str(params['RepeatIndicator'])+"\n")
-        if 'UserID' in params: out.write("    UserID:             "+str(params['UserID'])+"\n")
-        if 'Reserved1' in params: out.write("    Reserved1:          "+str(params['Reserved1'])+"\n")
-        if 'SOG' in params: out.write("    SOG:                "+str(params['SOG'])+"\n")
-        if 'PositionAccuracy' in params: out.write("    PositionAccuracy:   "+str(params['PositionAccuracy'])+"\n")
-        if 'longitude' in params: out.write("    longitude:          "+str(params['longitude'])+"\n")
-        if 'latitude' in params: out.write("    latitude:           "+str(params['latitude'])+"\n")
-        if 'COG' in params: out.write("    COG:                "+str(params['COG'])+"\n")
-        if 'TrueHeading' in params: out.write("    TrueHeading:        "+str(params['TrueHeading'])+"\n")
-        if 'TimeStamp' in params: out.write("    TimeStamp:          "+str(params['TimeStamp'])+"\n")
-        if 'Spare' in params: out.write("    Spare:              "+str(params['Spare'])+"\n")
-        if 'cs_unit' in params: out.write("    cs_unit:            "+str(params['cs_unit'])+"\n")
-        if 'display_flag' in params: out.write("    display_flag:       "+str(params['display_flag'])+"\n")
-        if 'dsc_flag' in params: out.write("    dsc_flag:           "+str(params['dsc_flag'])+"\n")
-        if 'band_flag' in params: out.write("    band_flag:          "+str(params['band_flag'])+"\n")
-        if 'msg22_flag' in params: out.write("    msg22_flag:         "+str(params['msg22_flag'])+"\n")
-        if 'mode_flag' in params: out.write("    mode_flag:          "+str(params['mode_flag'])+"\n")
-        if 'RAIM' in params: out.write("    RAIM:               "+str(params['RAIM'])+"\n")
-        if 'CommStateSelector' in params: out.write("    CommStateSelector:  "+str(params['CommStateSelector'])+"\n")
-        if 'CommState' in params: out.write("    CommState:          "+str(params['CommState'])+"\n")
-        elif 'csv'==format:
-                if None == params.fieldList:
-                    params.fieldList = fieldList
-
-                needComma = False;
-
-                for field in fieldList:
-                        if needComma: out.write(',')
-                        needComma = True
-                        if field in params:
-                                out.write(str(params[field]))
-                        # else: leave it empty
-                out.write("\n")
-    elif 'html'==format:
-        printHtml(params,out)
-    elif 'sql'==format:
-                sqlInsertStr(params,out,dbType=dbType)
-    elif 'kml'==format:
-        printKml(params,out)
-    elif 'kml-full'==format:
-        out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
-        out.write("<kml xmlns=\"http://earth.google.com/kml/2.1\">\n")
-        out.write("<Document>\n")
-        out.write("    <name>positionb</name>\n")
-        printKml(params,out)
-        out.write("</Document>\n")
-        out.write("</kml>\n")
-    else:
-        print("ERROR: unknown format:",format)
-        assert False
-
-    return # Nothing to return
 
 RepeatIndicatorEncodeLut = {
     'default':'0',
@@ -770,243 +663,6 @@ CommStateSelectorDecodeLut = {
     '0':'SOTDMA',
     '1':'ITDMA',
     } # CommStateSelectorEncodeLut
-
-######################################################################
-# SQL SUPPORT
-######################################################################
-
-dbTableName='positionb'
-'Database table name'
-
-def sqlCreateStr(outfile=sys.stdout, fields=None, extraFields=None
-                ,addCoastGuardFields=True
-                ,dbType='postgres'
-                ):
-        """
-        Return the SQL CREATE command for this message type
-        @param outfile: file like object to print to.
-        @param fields: which fields to put in the create.  Defaults to all.
-        @param extraFields: A sequence of tuples containing (name,sql type) for additional fields
-        @param addCoastGuardFields: Add the extra fields that come after the NMEA check some from the USCG N-AIS format
-        @param dbType: Which flavor of database we are using so that the create is tailored ('sqlite' or 'postgres')
-        @type addCoastGuardFields: bool
-        @return: sql create string
-        @rtype: str
-
-        @see: sqlCreate
-        """
-        # FIX: should this sqlCreate be the same as in LaTeX (createFuncName) rather than hard coded?
-        outfile.write(str(sqlCreate(fields,extraFields,addCoastGuardFields,dbType=dbType)))
-
-def sqlCreate(fields=None, extraFields=None, addCoastGuardFields=True, dbType='postgres'):
-    """Return the sqlhelp object to create the table.
-
-    @param fields: which fields to put in the create.  Defaults to all.
-    @param extraFields: A sequence of tuples containing (name,sql type) for additional fields
-    @param addCoastGuardFields: Add the extra fields that come after the NMEA check some from the USCG N-AIS format
-    @type addCoastGuardFields: bool
-    @param dbType: Which flavor of database we are using so that the create is tailored ('sqlite' or 'postgres')
-    @return: An object that can be used to generate a return
-    @rtype: sqlhelp.create
-    """
-    if fields is None:
-        fields = fieldList
-    c = sqlhelp.create('positionb',dbType=dbType)
-    c.addPrimaryKey()
-    if 'MessageID' in fields: c.addInt ('MessageID')
-    if 'RepeatIndicator' in fields: c.addInt ('RepeatIndicator')
-    if 'UserID' in fields: c.addInt ('UserID')
-    if 'Reserved1' in fields: c.addInt ('Reserved1')
-    if 'SOG' in fields: c.addDecimal('SOG',4,1)
-    if 'PositionAccuracy' in fields: c.addInt ('PositionAccuracy')
-    if dbType != 'postgres':
-        if 'longitude' in fields: c.addDecimal('longitude',8,5)
-    if dbType != 'postgres':
-        if 'latitude' in fields: c.addDecimal('latitude',8,5)
-    if 'COG' in fields: c.addDecimal('COG',4,1)
-    if 'TrueHeading' in fields: c.addInt ('TrueHeading')
-    if 'TimeStamp' in fields: c.addInt ('TimeStamp')
-    if 'Spare' in fields: c.addInt ('Spare')
-    if 'cs_unit' in fields: c.addBool('cs_unit')
-    if 'display_flag' in fields: c.addBool('display_flag')
-    if 'dsc_flag' in fields: c.addBool('dsc_flag')
-    if 'band_flag' in fields: c.addBool('band_flag')
-    if 'msg22_flag' in fields: c.addBool('msg22_flag')
-    if 'mode_flag' in fields: c.addBool('mode_flag')
-    if 'RAIM' in fields: c.addBool('RAIM')
-    if 'CommStateSelector' in fields: c.addInt ('CommStateSelector')
-    if 'CommState' in fields: c.addInt ('CommState')
-
-    if addCoastGuardFields:
-        # c.addInt('cg_s_rssi')  # Relative signal strength indicator
-        # c.addInt('cg_d_strength')  # dBm receive strength
-        # c.addVarChar('cg_x',10)  # Idonno
-        c.addInt('cg_t_arrival')  # Receive timestamp from the AIS equipment 'T'
-        c.addInt('cg_s_slotnum')  # Slot received in
-        c.addVarChar('cg_r',15)  # Receiver station ID  -  should usually be an MMSI, but sometimes is a string
-        c.addInt('cg_sec')  # UTC seconds since the epoch
-
-        c.addTimestamp('cg_timestamp') # UTC decoded cg_sec - not actually in the data stream
-
-    if dbType == 'postgres':
-        #--- EPSG 4326 : WGS 84
-        #INSERT INTO "spatial_ref_sys" ("srid","auth_name","auth_srid","srtext","proj4text") VALUES (4326,'EPSG',4326,'GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]','+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs ');
-        c.addPostGIS('Position','POINT',2,SRID=4326);
-
-    return c
-
-def sqlInsertStr(params, outfile=sys.stdout, extraParams=None, dbType='postgres'):
-        """
-        Return the SQL INSERT command for this message type
-        @param params: dictionary of values keyed by field name
-        @param outfile: file like object to print to.
-        @param extraParams: A sequence of tuples containing (name,sql type) for additional fields
-        @return: sql create string
-        @rtype: str
-
-        @see: sqlCreate
-        """
-        outfile.write(str(sqlInsert(params,extraParams,dbType=dbType)))
-
-
-def sqlInsert(params,extraParams=None,dbType='postgres'):
-        """
-        Give the SQL INSERT statement
-        @param params: dict keyed by field name of values
-        @param extraParams: any extra fields that you have created beyond the normal ais message fields
-        @rtype: sqlhelp.insert
-        @return: insert class instance
-         TODO(schwehr):allow optional type checking of params?
-        @warning: this will take invalid keys happily and do what???
-        """
-
-        i = sqlhelp.insert('positionb',dbType=dbType)
-
-        if dbType=='postgres':
-                finished = []
-                for key in params:
-                        if key in finished:
-                                continue
-
-                        if key not in toPgFields and key not in fromPgFields:
-                                if type(params[key])==Decimal: i.add(key,float(params[key]))
-                                else: i.add(key,params[key])
-                        else:
-                                if key in fromPgFields:
-                                        val = params[key]
-                                        # Had better be a WKT type like POINT(-88.1 30.321)
-                                        i.addPostGIS(key,val)
-                                        finished.append(key)
-                                else:
-                                        # Need to construct the type.
-                                        pgName = toPgFields[key]
-                                        #valStr='GeomFromText(\''+pgTypes[pgName]+'('
-                                        valStr=pgTypes[pgName]+'('
-                                        vals = []
-                                        for nonPgKey in fromPgFields[pgName]:
-                                                vals.append(str(params[nonPgKey]))
-                                                finished.append(nonPgKey)
-                                        valStr+=' '.join(vals)+')'
-                                        i.addPostGIS(pgName,valStr)
-        else:
-                for key in params:
-                        if type(params[key])==Decimal: i.add(key,float(params[key]))
-                        else: i.add(key,params[key])
-
-        if None != extraParams:
-                for key in extraParams:
-                        i.add(key,extraParams[key])
-
-        return i
-
-######################################################################
-# LATEX SUPPORT
-######################################################################
-
-def latexDefinitionTable(outfile=sys.stdout
-                ):
-        """
-        Return the LaTeX definition table for this message type
-        @param outfile: file like object to print to.
-        @type outfile: file obj
-        @return: LaTeX table string via the outfile
-        @rtype: str
-
-        """
-        o = outfile
-
-        o.write("""
-\\begin{table}%[htb]
-\\centering
-\\begin{tabular}{|l|c|l|}
-\\hline
-Parameter & Number of bits & Description
-\\\\  \\hline\\hline
-MessageID & 6 & AIS message number.  Must be 18 \\\\ \hline
-RepeatIndicator & 2 & Indicated how many times a message has been repeated \\\\ \hline
-UserID & 30 & Unique ship identification number (MMSI) \\\\ \hline
-Reserved1 & 8 & Reseverd for definition by a compentent regional or local authority.  Should be set to zero. \\\\ \hline
-SOG & 10 & Speed over ground \\\\ \hline
-PositionAccuracy & 1 & Accuracy of positioning fixes \\\\ \hline
-longitude & 28 & Location of the vessel  East West location \\\\ \hline
-latitude & 27 & Location of the vessel  North South location \\\\ \hline
-COG & 12 & Course over ground \\\\ \hline
-TrueHeading & 9 & True heading (relative to true North) \\\\ \hline
-TimeStamp & 6 & UTC second when the report was generated \\\\ \hline
-Spare & 2 & Not used.  Should be set to zero. \\\\ \hline
-cs\_unit & 1 & Does this unit do Carrier Sense? \\\\ \hline
-display\_flag & 1 & Does this class B unit have an integrated display? \\\\ \hline
-dsc\_flag & 1 & Does it have dedicated or time-shared DSC radio function? \\\\ \hline
-band\_flag & 1 & How flexible is the freq handling of the unit? \\\\ \hline
-msg22\_flag & 1 & Can the unit handle msg 22? \\\\ \hline
-mode\_flag & 1 & Assigned mode wrt to VDL slots \\\\ \hline
-RAIM & 1 & Receiver autonomous integrity monitoring flag \\\\ \hline
-CommStateSelector & 1 & SOTDMA or ITDMA \\\\ \hline
-CommState & 19 & Not decoded by this software yet\\\\ \\hline \\hline
-Total bits & 168 & Appears to take 1 slot \\\\ \\hline
-\\end{tabular}
-\\caption{AIS message number 18: Standard Class B equipment position report}
-\\label{tab:positionb}
-\\end{table}
-""")
-
-######################################################################
-# Text Definition
-######################################################################
-
-def textDefinitionTable(outfile=sys.stdout ,delim='    '):
-    """Return the text definition table for this message type
-
-    @param outfile: file like object to print to.
-    @type outfile: file obj
-    @return: text table string via the outfile
-    @rtype: str
-
-    """
-    o = outfile
-    o.write('Parameter'+delim+'Number of bits'+delim+"""Description
-MessageID"""+delim+'6'+delim+"""AIS message number.  Must be 18
-RepeatIndicator"""+delim+'2'+delim+"""Indicated how many times a message has been repeated
-UserID"""+delim+'30'+delim+"""Unique ship identification number (MMSI)
-Reserved1"""+delim+'8'+delim+"""Reseverd for definition by a compentent regional or local authority.  Should be set to zero.
-SOG"""+delim+'10'+delim+"""Speed over ground
-PositionAccuracy"""+delim+'1'+delim+"""Accuracy of positioning fixes
-longitude"""+delim+'28'+delim+"""Location of the vessel  East West location
-latitude"""+delim+'27'+delim+"""Location of the vessel  North South location
-COG"""+delim+'12'+delim+"""Course over ground
-TrueHeading"""+delim+'9'+delim+"""True heading (relative to true North)
-TimeStamp"""+delim+'6'+delim+"""UTC second when the report was generated
-Spare"""+delim+'2'+delim+"""Not used.  Should be set to zero.
-cs_unit"""+delim+'1'+delim+"""Does this unit do Carrier Sense?
-display_flag"""+delim+'1'+delim+"""Does this class B unit have an integrated display?
-dsc_flag"""+delim+'1'+delim+"""Does it have dedicated or time-shared DSC radio function?
-band_flag"""+delim+'1'+delim+"""How flexible is the freq handling of the unit?
-msg22_flag"""+delim+'1'+delim+"""Can the unit handle msg 22?
-mode_flag"""+delim+'1'+delim+"""Assigned mode wrt to VDL slots
-RAIM"""+delim+'1'+delim+"""Receiver autonomous integrity monitoring flag
-CommStateSelector"""+delim+'1'+delim+"""SOTDMA or ITDMA
-CommState"""+delim+'19'+delim+"""Not decoded by this software yet
-Total bits"""+delim+"""168"""+delim+"""Appears to take 1 slot""")
 
 
 ######################################################################

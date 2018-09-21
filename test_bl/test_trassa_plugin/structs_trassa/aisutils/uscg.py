@@ -450,6 +450,106 @@ def create_nmea(bits,
 
         return (msg01, msg02)
 
+    elif (message_type == 24) and ((aisChannel == 'A') or (aisChannel == 'B')):  #Type 1 messages are 1 sentence long
+        nmeaType = '!AIVDM'
+        #aisChannel = 'B'
+        bitLen = len(bits)
+        assert bitLen <= 168
+        #params appropriate for message type1
+        totalSentences = 1
+        sentenceNum = 1
+        sequentialMsgId = ''
+
+        pad = 6 - (bitLen % 6)
+        if 6 == pad:
+            pad = 0
+        if pad:
+            # Pad out to multiple of 6
+            bits = bits + BitVector(size=(6 - (bitLen % 6)))
+
+        payload = aisbinary.bitvectoais6(bits)[0]
+        ais_str_len = len(payload)
+        ais_str_len = ais_str_len + 12
+        # if ais_str_len > 82:
+        payload01 = payload[0:30]
+        payload02 = payload[30:ais_str_len]
+
+        fields = [nmeaType, ]
+        fields.append(str(totalSentences))
+        fields.append(str(sentenceNum))
+        fields.append(sequentialMsgId)
+        fields.append(aisChannel)
+        fields.append(payload)
+        fields.append(str(pad))
+        firstStr = ','.join(fields)
+        checksum = nmea.checksumStr(firstStr)
+        fields = [firstStr + '*' + checksum, ]
+        return ','.join(fields)
+
+    elif (message_type == 24) and (aisChannel == 'C'):  #Type 5 messages are always multiline (2 sentences long)
+        bitLen  = len(bits)
+        '''
+        Check len for type 24 radio B
+        '''
+        assert bitLen <= 424
+        '''
+        Fields for type 5
+        '''
+        nmeaType = '!AIVDM'
+        totalSentences=2
+        sentenceNum = 1
+        if sequentialMsgId!=None:
+            sequentialMsgId = 7
+        aisChannel ='A'
+        '''
+        Check 6 bit padding
+        '''
+        pad = 6 - (bitLen%6)
+        if 6 == pad:
+            pad = 0
+        if pad:
+            # Pad out to multiple of 6
+            bits = bits + BitVector(size=(6 - (bitLen%6)))
+
+        '''
+        Build nmea
+        '''
+        payload = aisbinary.bitvectoais6(bits)[0]
+        ais_str_len=len(payload)
+        split_point=round(ais_str_len/2)
+        #if ais_str_len > 82:
+        payload01=payload[0:split_point]
+        payload02 = payload[split_point:ais_str_len]
+
+
+        fields = [nmeaType,]
+        fields.append(str(totalSentences))
+        fields.append(str(sentenceNum))
+        fields.append(str(sequentialMsgId))
+        fields.append(aisChannel)
+        fields.append(payload01)
+        fields.append(str(pad))
+        firstStr = ','.join(fields)
+        checksum = nmea.checksumStr(firstStr)
+        fields = [firstStr+'*'+checksum,]
+
+
+        fields02 = [nmeaType,]
+        fields02.append(str(totalSentences))
+        fields02.append(str(sentenceNum+1))
+        fields02.append(str(sequentialMsgId))
+        fields02.append(aisChannel)
+        fields02.append(payload02)
+        fields02.append(str(pad))
+        firstStr = ','.join(fields02)
+        checksum = nmea.checksumStr(firstStr)
+        fields02 = [firstStr+'*'+checksum,]
+
+        msg01=','.join(fields)
+        msg02=','.join(fields02)
+
+        return (msg01, msg02)
+
 
 def test():
     print('doctests ...')

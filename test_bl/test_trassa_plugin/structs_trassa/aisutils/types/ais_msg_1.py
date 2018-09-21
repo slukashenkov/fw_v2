@@ -11,7 +11,48 @@ deserialize: ais binary to python
 The generated code uses translators.py, binary.py, and aisstring.py
 which should be packaged with the resulting files.
 
-TODO(schwehr):FIX: put in a description of the message here with fields and types.
+"Types 1, 2 and 3: Position Report Class A
+Type 1, 2 and 3 messages share a common reporting structure for navigational information; we’ll call it the Common Navigation Block (CNB).
+This is the information most likely to be of interest for decoding software. Total of 168 bits, occupying one AIVDM sentence."
+
+Common Navigation Block
+
+Field	Len	        Description	                Member	        T	        Units
+0-5	     6	        Message Type	            type	        u	        Constant: 1-3
+43287	2	        Repeat Indicator	        repeat	        u	        Message repeat count
+13728	30	        MMSI	                    mmsi	        u	        9 decimal digits
+38-41	4	        Navigation Status	        status	        e	        See "Navigation Status"
+42-49	8	        Rate of Turn (ROT)	        turn	        I3	        See below
+50-59	10	        Speed Over Ground (SOG)	    speed	        U1	        See below
+60-60	1	        Position Accuracy	        accuracy	    b	S       ee below
+61-88	28	        Longitude	                lon	            I4	        Minutes/10000 (see below)
+89-115	27	        Latitude	                lat	            I4	        Minutes/10000 (see below)
+116-127	12	        Course Over Ground (COG)	course	        U1	        Relative to true north, to 0.1 degree precision
+128-136	9	        True Heading (HDG)	        heading	        u	        0 to 359 degrees, 511 = not available.
+137-142	6	        Time Stamp	                second	        u	        Second of UTC timestamp
+143-144	2	        Maneuver Indicator	        maneuver	    e	        See "Maneuver Indicator"
+145-147	3	        Spare		                                x	        Not used
+148-148	1	        RAIM flag	                raim	        b	        See below
+149-167	19	        Radio status	            radio	        u	        See below
+
+Navigation Status
+0	Under way using engine
+1	At anchor
+2	Not under command
+3	Restricted manoeuverability
+4	Constrained by her draught
+5	Moored
+6	Aground
+7	Engaged in Fishing
+8	Under way sailing
+9	Reserved for future amendment of Navigational Status for HSC
+10	Reserved for future amendment of Navigational Status for WIG
+11	Reserved for future use
+12	Reserved for future use
+13	Reserved for future use
+14	AIS-SART is active
+15	Not defined (default)
+
 """
 import sys
 from decimal import Decimal
@@ -48,48 +89,6 @@ fieldList = (
     'state_slottimeout',
     'state_slotoffset',
 )
-
-fieldListPostgres = (
-    'MessageID',
-    'RepeatIndicator',
-    'UserID',
-    'NavigationStatus',
-    'ROT',
-    'SOG',
-    'PositionAccuracy',
-    'Position',    # PostGIS data type
-    'COG',
-    'TrueHeading',
-    'TimeStamp',
-    'RegionalReserved',
-    'Spare',
-    'RAIM',
-    'state_syncstate',
-    'state_slottimeout',
-    'state_slotoffset',
-)
-
-toPgFields = {
-    'longitude':'Position',
-    'latitude':'Position',
-}
-"""
-Go to the Postgis field names from the straight field name
-"""
-
-fromPgFields = {
-    'Position':('longitude','latitude',),
-}
-"""
-Go from the Postgis field names to the straight field name
-"""
-
-pgTypes = {
-    'Position':'POINT',
-}
-"""
-Lookup table for each postgis field name to get its type.
-"""
 
 def encode(params):
     """
