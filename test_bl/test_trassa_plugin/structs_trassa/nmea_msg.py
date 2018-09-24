@@ -1,4 +1,4 @@
-from test_bl.test_trassa_plugin.structs_trassa.nmeautils import nmea
+from test_bl.test_trassa_plugin.structs_trassa.nmeautils import nmea, nmea_utils
 from test_bl.test_trassa_plugin.structs_trassa.nmeautils.types import talker
 from test_bl.test_trassa_plugin.structs_trassa.nmeautils.types.proprietary import ais
 from test_bl.test_trassa_plugin.structs_trassa.nmeautils.types.proprietary import aid
@@ -12,7 +12,8 @@ class NmeaMsg():
     def get_aix_alr(self):
         return str(talker.ALR('AI', 'ALR', ('1', '1', '01', 'V', 'V', 'Tx malfunction')))
     def get_pc_mst(self):
-        return str(talker.MST('PC', 'MST', ('095530.09', 'A')))
+        timestamp = nmea_utils.timestamp('133930.40')
+        return str(talker.MST('PC', 'MST', ('133930.40', 'A')))
 
     def get_pa_isd(self):
         return str(talker.ISD('PA', 'ISD', ('8989999', '001100', 'Vsl_cl_sgn', 'Vsl_name')))
