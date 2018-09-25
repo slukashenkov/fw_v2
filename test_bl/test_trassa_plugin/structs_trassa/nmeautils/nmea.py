@@ -161,7 +161,10 @@ class NMEASentenceType(type):
                  dct):
         print("NMEASentenceType Init \n" + "cls" + str(type(cls)) + "\nname: " + name + "\nbases:" + str(
             bases) + "\ndct" + str(dct))
-        type.__init__(cls, name, bases, dct)
+        type.__init__(cls,
+                      name,
+                      bases,
+                      dct)
         base = bases[0]
         if base is object:
             return
@@ -176,9 +179,7 @@ NMEASentenceBase = NMEASentenceType('NMEASentenceBase', (object,), {})
 class NMEASentence(NMEASentenceBase):
     """
     Base NMEA Sentence
-
     Parses and generates NMEA strings
-
     Examples:
 
     >>> s = NMEASentence.parse("$GPGGA,184353.07,1929.045,S,02410.506,E,1,04,2.6,100.00,M,-33.9,M,,0000*6D")

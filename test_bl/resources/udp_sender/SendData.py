@@ -44,7 +44,13 @@ def keyboard_input():
         elif line == 'c' and pause_flag:
             pause_flag = False
 
-def send_messages(udp_ip, udp_port, udp_msgs, lines, delay, verbose, no_loop):
+def send_messages(udp_ip,
+                  udp_port,
+                  udp_msgs,
+                  lines=None,
+                  delay=None,
+                  verbose=None,
+                  no_loop=None):
     global pause_flag, quit_flag
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -121,6 +127,7 @@ def load_messages(filename, msg_filter):
     return udp_msgs
 
 if __name__ == '__main__':
+    '''
     parser = create_parser()
     args = parser.parse_args(sys.argv[1:] if len(sys.argv) > 1 else ['-h'])
 
@@ -133,8 +140,13 @@ if __name__ == '__main__':
     print('Delay between messages (in 0.1 seconds):', args.delay)
     print('Input file:', args.input_file)
     print('Loop sending:', not args.no_loop)
+    #path_to_file = args.input_file
+    '''
 
-    udp_msgs = load_messages(args.input_file, msg_filter)
+    path_to_file="C:\\Users\\vialuk\\python_vdi\\vdm.txt"
+    msg_filter = ""
+
+    udp_msgs = load_messages(path_to_file, msg_filter)
     if len(udp_msgs) == 0:
         print("  nothing to send")
         exit(0)
@@ -149,6 +161,16 @@ if __name__ == '__main__':
 
     print("Total lines to process:", len(udp_msgs))
 
-    send_messages(args.address, int(args.port), udp_msgs, int(args.lines), int(args.delay), args.verbose, args.no_loop)
+    address = "10.11.10.11"
+    port =  47300
+    lines = 1
+    delay = 0
+    verbose = None
+    no_loop = None
+
+
+
+
+    send_messages(address, int(port), udp_msgs, int(lines), int(delay), verbose, no_loop)
 
     keyboard_thread.join()

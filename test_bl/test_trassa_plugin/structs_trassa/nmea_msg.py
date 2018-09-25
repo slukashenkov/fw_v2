@@ -9,11 +9,13 @@ class NmeaMsg():
 
     def get_aix_txt(self):
         return str(talker.TXT('AI', 'TXT', ('1', '1', '21', 'External DGNSS in use')))
+
     def get_aix_alr(self):
         return str(talker.ALR('AI', 'ALR', ('1', '1', '01', 'V', 'V', 'Tx malfunction')))
+
     def get_pc_mst(self):
         timestamp = nmea_utils.timestamp('133930.40')
-        return str(talker.MST('PC', 'MST', ('133930.40', 'A')))
+        return str(talker.MST('PC', 'MST', ('133930.40', 'V')))
 
     def get_pa_isd(self):
         return str(talker.ISD('PA', 'ISD', ('8989999', '001100', 'Vsl_cl_sgn', 'Vsl_name')))
@@ -77,6 +79,7 @@ def test_this():
     paisd_c_sign=   paisd_parsed.c_sign
     paisd_v_name=   paisd_parsed.v_name
 
+    test_nmea['paidd']='$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,061354.00*57'
     paidd_parsed = nmea_msg.parse_paisd(test_nmea['paidd'])
     paidd_mmsi = paidd_parsed.mmsi
     paidd_lon = paidd_parsed.lon
@@ -102,6 +105,7 @@ def test_this():
     fail_stat  = aialr_parsed.fail_stat
     tct_stat   = aialr_parsed.tct_stat
     fail_descr = aialr_parsed.fail_descr
+
 
     pcmst_parsed = nmea_msg.parse_paisd(test_nmea['pcmst'])
     sntns_tmstmp = pcmst_parsed.sntns_tmstmp
