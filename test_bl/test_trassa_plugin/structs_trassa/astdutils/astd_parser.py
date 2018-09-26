@@ -10,13 +10,6 @@ class astd_meta(type):
                 bases,
                 attr_dict
                 ):
-        print('-----------------------------------')
-        print("inside meta")
-        print( "Allocating memory for class")
-        print(name_of_the_cr_cls)
-        print(bases)
-        print(attr_dict)
-
         return super(astd_meta, cls_to_create).__new__(cls_to_create,
                                                         name_of_the_cr_cls,
                                                         bases,
@@ -27,12 +20,7 @@ class astd_meta(type):
                 bases,
                 attr_dict
                 ):
-        print('-----------------------------------')
-        print("inside meta")
-        print("Initializing class")
-        print(name_of_the_cr_cls)
-        print(bases)
-        print(attr_dict)
+   
         super(astd_meta, cls_to_create).__init__(name_of_the_cr_cls,
                                                  bases,
                                                  attr_dict
@@ -105,8 +93,9 @@ class trassa(astd_msgs):
     @staticmethod
     def parse_payload(last_field):
 
-        r_msg_payload = re.compile(r'''
-                                        (?P<signal_type>^KD1)
+        r_msg_payload = re.compile(r''' ^.*
+                                        (?P<signal_type>KD1)
+                                        .*
                                         (?P<trassa_msg>                        
                                                         # payload 
                                                         (.*\w{1}$)
