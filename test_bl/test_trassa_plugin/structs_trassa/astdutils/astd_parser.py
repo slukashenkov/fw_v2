@@ -21,10 +21,10 @@ class astd_meta(type):
                                                         attr_dict)
 
     def __init__(cls_to_create,
-        name_of_the_cr_cls,
-        bases,
-        attr_dict
-        ):
+                name_of_the_cr_cls,
+                bases,
+                attr_dict
+                ):
         print('-----------------------------------')
         print("inside meta")
         print("Initializing class")
@@ -32,26 +32,56 @@ class astd_meta(type):
         print(bases)
         print(attr_dict)
         super(astd_meta, cls_to_create).__init__(name_of_the_cr_cls,
-                                                    bases,
-                                                    attr_dict
-                                                    )
-        cls_to_create.classes_fields[name_of_the_cr_cls] = name_of_the_cr_cls
+                                                 bases,
+                                                 attr_dict
+                                                 )
+        cls_to_create.created_classes[name_of_the_cr_cls] = name_of_the_cr_cls
+        if 'fields' in attr_dict.keys():
+            cls_to_create.classes_fields[name_of_the_cr_cls] = dict((f[1], i) for i, f in enumerate(attr_dict['fields']))
 
-class astd_msgs(object, metaclass= astd_meta):
-    head=True
+class astd_msgs(object,
+                metaclass= astd_meta):
     created_classes={}
     classes_fields={}
 
     def __init__(self,
-                sub_cls,
-                filelds):
+                sub_cls = None,
+                fields  = None):
 
-        self.filelds = filelds
-        name_sub=type(sub_cls).__name__
+        if sub_cls is not None and fields is not None:
+            name_sub = type(sub_cls).__name__
+            self.created_classes[name_sub]=sub_cls
+            self.classes_fields[name_sub] = dict((f[1], i) for i, f in enumerate(sub_cls.fields))
 
-        self.created_classes[name_sub]=sub_cls
-        self.classes_fields[name_sub] = dict((f[1], i) for i, f in enumerate(sub_cls.fields))
-        pass
+        return
+
+    #@staticmethod
+    def parse(self,
+              line):
+
+        parsed_data={}
+
+        if type(line) is str:
+            astd_fields = line.split('.')
+        else:
+            raise Exception("Message is not a string")
+
+        message_type=str(astd_fields[1]).lower()
+        r_msg_type = re.compile(message_type)
+
+        if message_type in self.created_classes.keys():
+            num_of_fields_reg = len(self.classes_fields[message_type]) - 1
+            num_of_fields_res = len(astd_fields)
+            if num_of_fields_reg == num_of_fields_res:
+
+                for fld_name in self.classes_fields[message_type]:
+                    idx = self.classes_fields[message_type][fld_name]
+                    parsed_data[fld_name]=astd_fields[idx]
+
+            return parsed_data
+        else:
+            raise Exception("Message type subclass is not named as deviceId in ASTD message as it MUST")
+
 
     def __getattr__(self,
                     name):
@@ -85,14 +115,11 @@ class astd_msgs(object, metaclass= astd_meta):
         i = t.name_to_idx[name]
         self.data[i] = str(value)
 
-class trassa_astd_fields(astd_msgs):
+class trassa(astd_msgs):
     """
     trassa ASTD message example: S.TRASSA.FE.KD1G
     """
-    head = False
-    def __init__(self):
-
-        self.fields= (
+    fields= (
             ('signal_type', 'signal_type'),
             ('device_id', 'device_id'),
             ('network_type', 'network_type'),
@@ -100,63 +127,22 @@ class trassa_astd_fields(astd_msgs):
             ('payload', 'trassa_status'),
         )
 
-        super().__init__(self,
-                         self.fields)
+class other(astd_msgs):
 
-
-
-class other_astd_fields(astd_msgs):
-    head = False
-    def __init__(self
-                    ):
-
-        self.fields=(
-            ('signal_type', 'signal_type'),
+    fields=(
+            ('signal_type', 'other'),
             ('device_id', 'device_id'),
             ('network_type','network_type'),
             ('kd_id', 'kd_id' ),
             ('payload', 'other_msg'),
         )
-        self.srch_patterns = {}
-        message_re = re.compile(r'''
-               # start of string, optional whitespace, optional '$'
-               ^\s*\$?
 
-               # message (from '$' or start to checksum or end, non-inclusve)
-               (?P<nmea_str>
-                   # sentence type identifier
-                   (?P<sentence_type>
-
-                       # proprietary sentence
-                       (P\w{3,},)|
-
-                       # query sentence, ie: 'CCGPQ,GGA'
-                       # NOTE: this should have no data
-                       (\w{2}\w{2}Q,\w{3})|
-
-                       # taker sentence, ie: 'GPGGA'
-                       (\w{2}\w{3})
-                   ),    
-                   # rest of message
-                   (?P<data>[^*]*)
-
-               )
-               # checksum: *HH
-               (?:[*](?P<checksum>[A-F0-9]{2}))?
-
-               # optional trailing whitespace
-               \s*[\r\n]*$
-               ''', re.X | re.IGNORECASE)
-
-        self.srch_patterns['message_lvl'] = message_re
-
-        super().__init__(self,
-                        self.fields)
-
+def test_this():
+    astd_msg_g  = 'S.TRASSA.FE.KD1G'
+    astd_msg_f  = 'S.TRASSA.FE.KD1F'
+    trassa_astd_msgs = astd_msgs()
+    trassa_astd_msgs.parse(astd_msg_f)
 
 if __name__=="__main__":
+    test_this()
 
-    in_fld = trassa_astd_fields()
-    in_fld = other_astd_fields()
-    a=1
-    #cbl=commonBaseCls()

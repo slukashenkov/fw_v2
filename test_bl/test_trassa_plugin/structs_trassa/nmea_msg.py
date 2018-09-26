@@ -36,26 +36,23 @@ class NmeaMsg():
 
     def get_p_aid_d_private(self):
         PAIDD_OBJ = aid.AIDD('AID','AIDD',('7776666',
-                                    '89.5',
-                                    'N',
-                                    '67.0',
-                                    'E',
-                                    '67',
-                                    '30.7',
-                                    '32.5',
-                                    '111430.07')
-                         )
+                                            '89.5',
+                                            'N',
+                                            '67.0',
+                                            'E',
+                                            '67',
+                                            '30.7',
+                                            '32.5',
+                                            '111430.07')
+                            )
         PAIDD_STR = PAIDD_OBJ.render()
-
         return PAIDD_STR
 
     def parse_paisd(self,
                     nmea_msg):
         paisd_obj = nmea.NMEASentence.parse(nmea_msg)
-
-
-
         return paisd_obj
+
 def test_this():
     nmea_msg = NmeaMsg()
     test_nmea = {}
@@ -68,8 +65,7 @@ def test_this():
 
 
     # stuct for parsing
-    #test_nmea['paidd'] = nmea_msg.get_pa_idd()
-    test_nmea['paidd'] = nmea_msg.get_p_aid_d_private()
+
 
     #test_nmea['paisd'] = nmea_msg.get_pa_isd()
     test_nmea['paisd'] = nmea_msg.get_p_ais_d_private()
@@ -79,6 +75,8 @@ def test_this():
     paisd_c_sign=   paisd_parsed.c_sign
     paisd_v_name=   paisd_parsed.v_name
 
+    #test_nmea['paidd'] = nmea_msg.get_pa_idd()
+    test_nmea['paidd'] = nmea_msg.get_p_aid_d_private()
     #test_nmea['paidd']='$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,061354.00*57'
     paidd_parsed = nmea_msg.parse_paisd(test_nmea['paidd'])
     paidd_mmsi = paidd_parsed.mmsi

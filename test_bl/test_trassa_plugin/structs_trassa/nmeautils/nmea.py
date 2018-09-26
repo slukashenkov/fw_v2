@@ -280,7 +280,7 @@ class NMEASentence(NMEASentenceBase):
         query_match = NMEASentence.query_re.match(sentence_type)
 
         if query_match and not data_str:
-            talker = query_match.group('talker')
+            talker   = query_match.group('talker')
             listener = query_match.group('listener')
             sentence = query_match.group('sentence')
 
@@ -290,9 +290,11 @@ class NMEASentence(NMEASentenceBase):
 
         if proprietary_match:
             manufacturer = proprietary_match.group('manufacturer')
-            datatype = proprietary_match.group('p_data_type')
-            #classname = manufacturer + datatype
-            cls = ProprietarySentence.sentence_types.get(manufacturer, ProprietarySentence)
+            datatype     = proprietary_match.group('p_data_type')
+            #classname   = manufacturer + datatype
+
+            cls = ProprietarySentence.sentence_types.get(manufacturer,
+                                                         ProprietarySentence)
 
             return cls(manufacturer,
                        datatype,
