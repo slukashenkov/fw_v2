@@ -11,7 +11,7 @@ class AIS(nmea.ProprietarySentence):
                 datatype,
                 data):
 
-        name = manufacturer + datatype
+        name =  datatype
         cls = _cls.sentence_types.get(name, _cls)
         return super(AIS, cls).__new__(cls)
 
@@ -19,7 +19,7 @@ class AIS(nmea.ProprietarySentence):
                  manufacturer,
                  datatype,
                  data):
-        self.sentence_type = manufacturer +  datatype
+        self.sentence_type =   datatype
         super(AIS, self).__init__(manufacturer,
                                   datatype,
                                   data)

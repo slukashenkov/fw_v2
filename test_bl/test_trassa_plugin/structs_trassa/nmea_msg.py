@@ -79,7 +79,7 @@ def test_this():
     paisd_c_sign=   paisd_parsed.c_sign
     paisd_v_name=   paisd_parsed.v_name
 
-    test_nmea['paidd']='$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,061354.00*57'
+    #test_nmea['paidd']='$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,061354.00*57'
     paidd_parsed = nmea_msg.parse_paisd(test_nmea['paidd'])
     paidd_mmsi = paidd_parsed.mmsi
     paidd_lon = paidd_parsed.lon

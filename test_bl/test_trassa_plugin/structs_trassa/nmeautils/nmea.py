@@ -231,7 +231,8 @@ class NMEASentence(NMEASentenceBase):
         return reduce(operator.xor, map(ord, nmea_str), 0)
 
     @staticmethod
-    def parse(line, check=False):
+    def parse(line,
+              check=False):
         '''
         parse(line)
 
@@ -263,6 +264,7 @@ class NMEASentence(NMEASentenceBase):
                 'strict checking requested but checksum missing', data)
 
         talker_match = NMEASentence.talker_re.match(sentence_type)
+
         if talker_match:
             talker = talker_match.group('talker')
             sentence = talker_match.group('sentence')
@@ -272,16 +274,20 @@ class NMEASentence(NMEASentenceBase):
                 # TODO instantiate base type instead of fail
                 raise SentenceTypeError(
                     'Unknown sentence type %s' % sentence_type, line)
+
             return cls(talker, sentence, data)
 
         query_match = NMEASentence.query_re.match(sentence_type)
+
         if query_match and not data_str:
             talker = query_match.group('talker')
             listener = query_match.group('listener')
             sentence = query_match.group('sentence')
+
             return QuerySentence(talker, listener, sentence)
 
         proprietary_match = NMEASentence.proprietary_re.match(sentence_type)
+
         if proprietary_match:
             manufacturer = proprietary_match.group('manufacturer')
             datatype = proprietary_match.group('p_data_type')
@@ -347,7 +353,11 @@ class NMEASentence(NMEASentenceBase):
     def identifier(self):
         raise NotImplementedError
 
-    def render(self, checksum=True, dollar=True, newline=False):
+    def render(self,
+               checksum = True,
+               dollar   = True,
+               newline  = True):
+
         ident=self.identifier()
         data = ','.join(self.data)
         res = ident + data

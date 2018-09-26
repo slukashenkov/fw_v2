@@ -10,7 +10,7 @@ class AID(nmea.ProprietarySentence):
                 manufacturer,
                 datatype,
                 data):
-        name = manufacturer + datatype
+        name = datatype
         cls = _cls.sentence_types.get(name, _cls)
         return super(AID, cls).__new__(cls)
 
@@ -18,7 +18,7 @@ class AID(nmea.ProprietarySentence):
                  manufacturer,
                  datatype,
                  data):
-        self.sentence_type = manufacturer + datatype
+        self.sentence_type = datatype
         super(AID, self).__init__(manufacturer,
                                   datatype,
                                   data)
