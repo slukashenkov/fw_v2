@@ -89,37 +89,6 @@ class astd_msgs(object,
             raise Exception("Message type subclass is not named as deviceId in ASTD message as it MUST")
 
 
-    def __getattr__(self,
-                    name):
-        #pylint: disable=invalid-name
-        t = type(self)
-        try:
-            i = t.classes_fields[name]
-        except KeyError:
-            raise AttributeError(name)
-        f = t.fields[i]
-        if i < len(self.data):
-            v = self.data[i]
-        else:
-            v = ''
-        if len(f) >= 3:
-            if v == '':
-                return None
-            try:
-                return f[2](v)
-            except:
-                return v
-        else:
-            return v
-
-    def __setattr__(self, name, value):
-        #pylint: disable=invalid-name
-        t = type(self)
-        if name not in t.classes_fields:
-            return object.__setattr__(self, name, value)
-
-        i = t.name_to_idx[name]
-        self.data[i] = str(value)
 
 class trassa(astd_msgs):
     """
