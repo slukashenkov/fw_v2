@@ -175,6 +175,7 @@ class SetupSonataSuite:
                                                            server_id        = server_id)
 
                         '''get the queue to read from'''
+                        '''TODO check sonata is works when we pass buffer further '''
                         received_q = self.sr.get_received_queue(server_id)
                         logging.debug("DATA RECEIVED: ==>" + str(received_q) + "\n")
                         if parser ==None:

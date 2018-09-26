@@ -50,7 +50,10 @@ class UdpPayloadHandler(socketserver.BaseRequestHandler):
             ending='works with: ' + str(self.request) + 'before it is appended to the storage struct: ' + str(self.data_in_store) + 'as' + str(self.request[0]) ,
             logger=self.logger
             )
-        data = str(self.request[0])
+
+        #data = str(self.request[0])
+        '''TODO deal with datatype when reading from the RESEIVE Q'''
+        data = self.request[0]
         self.data_in_store.put(data)
         self.data_in_status.put("received")
 
@@ -61,7 +64,7 @@ class UdpPayloadHandler(socketserver.BaseRequestHandler):
         self.banner(server_name='<------------------ Handle udp payload -----------------> ' + 'UDP SERVER PayLoad HANDLER',
                        server_ip=self.server_in.ip_address,
                         server_port=self.server_in.port,
-                        ending=' starts to handle: ' + data + ' and append it to storage struct: ' + str(self.data_in_store),
+                        ending=' starts to handle: ' + str(data) + ' and append it to storage struct: ' + str(self.data_in_store),
                         logger=self.logger
                         )
 
