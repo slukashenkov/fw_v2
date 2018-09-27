@@ -8,11 +8,11 @@ from test_bl.test_bl_tools import received_data, read_test_data, var_utils, \
                                   logging_tools, config_test_env, send_receive, \
                                   process_received_data, external_scripts
 
-from  test_bl.test_sonata_plugin.test_tools_sonata import sonata_test_parser
-from  test_bl.test_sonata_plugin.structs_sonata import sonata_msg
-from  test_bl.test_sonata_plugin.test_tools_sonata import config_sonata_suite
+from  test_bl.test_trassa_plugin.test_tools_trassa import trassa_test_parser
+from  test_bl.test_trassa_plugin.structs_trassa import ais_msg, nmea_msg, astd_msg
+from  test_bl.test_trassa_plugin.test_tools_trassa import config_trassa_suite
 
-class SetupSonataSuite:
+class SetupTrassaSuite:
     def __init__(self):
         """
         """
@@ -32,8 +32,8 @@ class SetupSonataSuite:
         '''
         GET TEST SUITE PREFERENCES
         '''
-        self.s_prefs=config_sonata_suite.ConfigSonataSuite()
-        self.g_prefs.set_suite_conf(self.s_prefs.get_sonata_configuration())
+        self.s_prefs=config_trassa_suite.ConfigTrassaSuite()
+        self.g_prefs.set_suite_conf(self.s_prefs.get_trassa_configuration())
         '''-----------------------------------------------------------------------------------------------------------
         CONFIG LOGGING
         '''
@@ -73,7 +73,7 @@ class SetupSonataSuite:
         TEST SUITE TEST DATA
         path_to_data is module specific
         '''
-        self.path_to_test_data = self.s_prefs.get_path_to_sonata_data(project_path=self.g_prefs.get_proj_dir_path())
+        self.path_to_test_data = self.s_prefs.get_path_to_trassa_data(project_path=self.g_prefs.get_proj_dir_path())
         '''
         TEST DATA READER  
         '''
@@ -353,7 +353,7 @@ class SetupSonataSuite:
         self.ext_scripts.ssh_scp_content_location = self.g_prefs.get_sut_config_files_path()
         self.ext_scripts.ssh_target_dir = self.g_prefs.get_sut_ssh_target_dir()
 
-        self.ext_scripts.sut_start_commands = self.s_prefs.get_sonata_start_commands()
+        self.ext_scripts.sut_start_commands = self.s_prefs.get_trassa_start_commands()
         self.ext_scripts.sut_stop_commands = self.s_prefs.get_sonata_stop_commands()
         return
 
@@ -374,7 +374,7 @@ class SetupSonataSuite:
         return res
 
 def test_this():
-    s_sonata = SetupSonataSuite()
+    s_sonata = SetupTrassaSuite()
     s_sonata.setup_external_scripts()
     #s_sonata.start_logserver()
     #s_sonata.setup_vir_env()

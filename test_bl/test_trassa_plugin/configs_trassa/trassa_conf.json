@@ -12,9 +12,9 @@
     "sut_control_commands_start": {
                       "test_exec":"./testScr_param.bash TESTING_LAST_COMMAND_SUCCESS_ON_SETUP",
                       "com00":"cd /usr/bin/dolphin",
-                      "com01":"/bin/tar -xzvf /usr/bin/dolphin/bl_tests_sonata.tar.gz",
+                      "com01":"/bin/tar -xzvf /usr/bin/dolphin/bl_tests_trassa.tar.gz",
                       "com02":"cd /usr/bin/dolphin/bl_tests/",
-                      "com03":"./StartSonataOnly.bash",
+                      "com03":"./StartTrassaOnly.bash",
                       "com04":"cd /usr/bin/dolphin",
                       "com05":"ps afx | egrep \".*./[W]atchDogServer --start .*\""
                       },
@@ -22,14 +22,18 @@
     "sut_control_commands_stop": {
                       "test_exec": "./testScr_param.bash TESTING_LAST_COMMAND_SUCCESS_ON_TEARINGDOWN",
                       "com00": "cd /usr/bin/dolphin/bl_tests",
-                      "com01": " ./StopSonataOnly.bash"
+                      "com01": " ./StopTrassaOnly.bash"
                       },
 
       "send_receive_prefs": {
-              "udp_ip_to": "10.11.10.11",
-               "udp_port_to": "55555",
-               "udp_ip_from": "10.11.10.12",
-               "udp_port_from": 55556,
+              "udp_ip_to_01": "10.11.10.11",
+               "udp_port_to_01": "55555",
+               "udp_ip_from_01": "10.11.10.12",
+               "udp_port_from_01": 55555,
+               "udp_ip_to_02": "10.11.10.11",
+               "udp_port_to_02": "55556",
+               "udp_ip_from_02": "10.11.10.12",
+               "udp_port_from_02": 55556,
                "udp_buffsize_from": "4096"
      }
     }
