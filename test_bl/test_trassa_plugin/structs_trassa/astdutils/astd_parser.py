@@ -20,7 +20,7 @@ class astd_meta(type):
                 bases,
                 attr_dict
                 ):
-   
+
         super(astd_meta, cls_to_create).__init__(name_of_the_cr_cls,
                                                  bases,
                                                  attr_dict
@@ -44,7 +44,6 @@ class astd_msgs(object,
             name_sub = type(sub_cls).__name__
             self.created_classes[name_sub]=sub_cls
             self.classes_fields[name_sub] = dict((f[1], i) for i, f in enumerate(sub_cls.fields))
-
         return
 
     #@staticmethod
