@@ -14,7 +14,6 @@ class NmeaMsg():
         return str(talker.ALR('AI', 'ALR', ('1', '1', '01', 'V', 'V', 'Tx malfunction')))
 
     def get_pc_mst(self):
-        timestamp = nmea_utils.timestamp('133930.40')
         return str(talker.MST('PC', 'MST', ('133930.40', 'V')))
 
     def get_pa_isd(self):

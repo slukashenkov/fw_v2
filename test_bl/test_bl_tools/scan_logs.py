@@ -50,6 +50,7 @@ class ScanLogs():
         '''
         matches_02 = self.parse_all(lines_in=full_text,
                                     pattern_in=pattern)
+        log_for_parsing.close()
         return comp_result
 
     def parse_line(self,
@@ -77,6 +78,7 @@ class ScanLogs():
             print("You must specify a valid file to parse")
             print(__doc__)
             sys.exit(1)
+
         return log
 
 

@@ -82,7 +82,12 @@ class SonataTestParser:
 
         data_to_parse = self.data_from[self.packet_indx]
 
-        print(data_to_parse)
+        #print("!!!!!!!@@@@@" + str(data_to_parse))
+        '''NB! VERY IMPORTANT ADDITION'''
+        '''BEFORE CONVERSION INTO DESIRED '''
+        data_to_parse = str(data_to_parse)
+        #print("!!!!!!!@@@@@" + data_to_parse)
+
         ind_values=data_to_parse.split(",")
 
         indx = 0

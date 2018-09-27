@@ -51,8 +51,9 @@ class UdpPayloadHandler(socketserver.BaseRequestHandler):
             logger=self.logger
             )
 
-        #data = str(self.request[0])
+
         '''TODO deal with datatype when reading from the RESEIVE Q'''
+        #data = str(self.request[0])
         data = self.request[0]
         self.data_in_store.put(data)
         self.data_in_status.put("received")
