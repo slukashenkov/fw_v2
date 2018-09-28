@@ -9,7 +9,7 @@ from test_bl.test_bl_tools import received_data, read_test_data, var_utils, \
                                   process_received_data, external_scripts
 
 from  test_bl.test_trassa_plugin.test_tools_trassa import trassa_test_parser
-from  test_bl.test_trassa_plugin.structs_trassa import ais_msg, nmea_msg, astd_msg
+from  test_bl.test_trassa_plugin.structs_trassa import ais_msg, nmea_msg, astd_msg, trassa_msg
 from  test_bl.test_trassa_plugin.test_tools_trassa import config_trassa_suite
 
 class SetupTrassaSuite:
@@ -32,8 +32,8 @@ class SetupTrassaSuite:
         '''
         GET TEST SUITE PREFERENCES
         '''
-        self.s_prefs=config_trassa_suite.ConfigTrassaSuite()
-        self.g_prefs.set_suite_conf(self.s_prefs.get_trassa_configuration())
+        self.t_prefs=config_trassa_suite.ConfigTrassaSuite()
+        self.g_prefs.set_suite_conf(self.t_prefs.get_trassa_configuration())
         '''-----------------------------------------------------------------------------------------------------------
         CONFIG LOGGING
         '''
@@ -56,13 +56,38 @@ class SetupTrassaSuite:
         '''
         UDP SENDER (process based)
         '''
-        self.udp_snd_name = self.sr.set_udp_sender(ip_to    =self.g_prefs.get_udp_ip_to(),
-                                                    port_to =self.g_prefs.get_udp_port_to())
+        '''Generally
+        send receive preferences should hold 
+        all connections params for the test
+        '''
+        send_res_prefs = self.t_prefs.get_send_res_prefs()
+
+        ip_sender_01 = send_res_prefs["udp_ip_to_01"]
+        port_sender_01 = send_res_prefs["udp_port_to_01"]
+        ip_sender_02 = send_res_prefs["udp_ip_to_02"]
+        port_sender_02 = send_res_prefs["udp_port_to_02"]
+
+        '''2 senders will be needed
+        1-for AIS msgs
+        2-for NMEA msgs
+        '''
+        self.udp_snd_name_01 = self.sr.set_udp_sender(ip_to   =ip_sender_01,
+                                                      port_to =port_sender_01
+                                                      )
+        self.udp_snd_name_02 = self.sr.set_udp_sender(ip_to   =ip_sender_02,
+                                                      port_to =port_sender_02
+                                                      )
         '''
         UDP SERVER (thread based)
         '''
-        self.udp_srv_name = self.sr.set_udp_server(ip_address   =self.g_prefs.get_udp_ip_from(),
-                                                    port        =self.g_prefs.get_udp_port_from())
+        ip_server_01 = send_res_prefs["udp_ip_from_01"]
+        port_server_01 = send_res_prefs["udp_port_from_01"]
+        ip_server_02 = send_res_prefs["udp_ip_from_02"]
+        port_server_02 = send_res_prefs["udp_port_from_02"]
+        self.udp_srv_name_01 = self.sr.set_udp_server(ip_address =ip_server_01,
+                                                      port       =port_server_01)
+        self.udp_srv_name_02 = self.sr.set_udp_server(ip_address =ip_server_02,
+                                                      port       =port_server_02)
 
         '''-----------------------------------------------------------------------------------------------------------
         DATA PROCESSING
@@ -73,20 +98,20 @@ class SetupTrassaSuite:
         TEST SUITE TEST DATA
         path_to_data is module specific
         '''
-        self.path_to_test_data = self.s_prefs.get_path_to_trassa_data(project_path=self.g_prefs.get_proj_dir_path())
+        self.path_to_test_data = self.t_prefs.get_path_to_trassa_data(project_path=self.g_prefs.get_proj_dir_path())
         '''
         TEST DATA READER  
         '''
         self.rd = read_test_data.ReadData(data_location=self.path_to_test_data,
                                           test_data_type=read_test_data.test_data_type.json)
         '''
-        TARGET MESSAGE STRUCTURE (Sonata)
+        TARGET MESSAGE STRUCTURE (Trassa)
         '''
-        self.sonata_msg_struct = sonata_msg.SonataMsg()
+        self.trassa_msg_struct = trassa_msg.TrassaMsg()
         '''
         GET TEST DATA FOR MANIPULATIONS
         '''
-        self._test_suite_test_data = self.rd.get_testsuite_data(self.sonata_msg_struct)
+        self._test_suite_test_data = self.rd.get_testsuite_data(self.trassa_msg_struct)
         '''------------------------------------------------------------------------------------------------------------
         TESTS TO EXCLUDE
         '''
@@ -99,7 +124,7 @@ class SetupTrassaSuite:
         PARSER (module specific) 
         used by processing class       
         '''
-        self._s_parser = sonata_test_parser.SonataTestParser()
+        self._s_parser = trassa_test_parser.TrassaTestParser()
         '''
         RECEIVED TEST DATA PROCESSING
         processing class doing parsing of the received data and comparison with the data been sent out
@@ -353,8 +378,8 @@ class SetupTrassaSuite:
         self.ext_scripts.ssh_scp_content_location = self.g_prefs.get_sut_config_files_path()
         self.ext_scripts.ssh_target_dir = self.g_prefs.get_sut_ssh_target_dir()
 
-        self.ext_scripts.sut_start_commands = self.s_prefs.get_trassa_start_commands()
-        self.ext_scripts.sut_stop_commands = self.s_prefs.get_sonata_stop_commands()
+        self.ext_scripts.sut_start_commands = self.t_prefs.get_trassa_start_commands()
+        self.ext_scripts.sut_stop_commands = self.t_prefs.get_sonata_stop_commands()
         return
 
     def setup_vir_env(self):

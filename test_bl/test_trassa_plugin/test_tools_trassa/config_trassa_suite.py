@@ -23,12 +23,12 @@ class ConfigTrassaSuite:
                 self.trassa_suite_config_json = self.vm_logsrv_cnf_location = os.path.join(self.module_abs_path,
                                                                                       "..\\configs_trassa\\trassa_conf.json")
             elif self.syst == 'Linux':
-                self.sonata_suite_config_json = self.vm_logsrv_cnf_location = os.path.join(self.module_abs_path,
+                self.trassa_suite_config_json = self.vm_logsrv_cnf_location = os.path.join(self.module_abs_path,
                                                                                       "../configs_trassa/trassa_conf.json")
             '''get some tools ready'''
             self.__utils__=var_utils.Varutils()
             '''MAP OF CONFIG PARAMS FROM JSON'''
-            self.trassa_suite_config = self.__utils__.read_json_to_map(data_location=self.sonata_suite_config_json)
+            self.trassa_suite_config = self.__utils__.read_json_to_map(data_location=self.trassa_suite_config_json)
 
         '''GETTERS for CONFIG VALUES'''
         def get_trassa_configuration(self):
@@ -39,13 +39,20 @@ class ConfigTrassaSuite:
             else:
                 raise Exception("No TEST_BL config map")
 
+        def get_send_res_prefs(self):
+            if self.trassa_suite_config:
+                conf_map = self.get_trassa_configuration()
+            send_res_prefs=conf_map["send_receive_prefs"]
+            return send_res_prefs
+
+
         def get_path_to_trassa_data(self,
                                     project_path,
                                     key=None):
-            if self.sonata_suite_config:
+            if self.trassa_suite_config_json:
                 conf_map= self.get_trassa_configuration()
                 if key == None:
-                    path_to_data = conf_map["test_data_sonata"]
+                    path_to_data = conf_map["test_data_trassa"]
                 else:
                     path_to_data = conf_map[key]
 
@@ -58,7 +65,7 @@ class ConfigTrassaSuite:
 
         def get_trassa_start_commands(self,
                                       key=None):
-            if self.sonata_suite_config:
+            if self.trassa_suite_config:
                 conf_map= self.get_trassa_configuration()
                 if key == None:
                     sut_start_commands = conf_map["sut_control_commands_start"]
@@ -67,9 +74,9 @@ class ConfigTrassaSuite:
                     sut_start_commands = conf_map[key]
                     return sut_start_commands
 
-        def get_sonata_stop_commands(self,
+        def get_trassa_stop_commands(self,
                                      key=None):
-            if self.sonata_suite_config:
+            if self.trassa_suite_config:
                 conf_map = self.get_trassa_configuration()
                 if key == None:
                     sut_stop_commands = conf_map["sut_control_commands_stop"]

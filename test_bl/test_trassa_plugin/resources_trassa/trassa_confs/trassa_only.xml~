@@ -1,0 +1,100 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+<objects>
+
+        <udp-connection name="ais-messages-in" mode="server">
+            <source-address>10.11.10.11</source-address>
+            <source-port>47300</source-port>
+        </udp-connection>
+
+        <udp-connection name="trassa-messages-in" mode="server">
+            <source-address>10.11.10.11</source-address>
+            <source-port>47302</source-port>
+        </udp-connection>
+
+        <udp-connection name="trassa-messages-out">
+            <destination-address>10.11.10.12</destination-address>
+            <destination-port>47302</destination-port>
+        </udp-connection>
+
+        <udp-connection name="astd-messages-out">
+            <destination-address>10.11.10.12</destination-address>
+            <destination-port>47300</destination-port>
+        </udp-connection>
+
+        <udp-connection name="arm-messages-out">
+            <destination-address>10.11.10.12</destination-address>
+            <destination-port>47305</destination-port>
+        </udp-connection>
+
+        <file-output name="trassa-out-probe">
+		<filename>/usr/bin/dolphin/trassa_confs/logs/_trassa-out-probe</filename>
+            <rotate>true</rotate>
+        </file-output>
+
+        <file-output name="ais-in-probe">
+		<filename>/usr/bin/dolphin/trassa_confs/logs/_ais-in-probe</filename>
+            <!--format>from-trassa</format>
+            <rotate>true</rotate-->
+        </file-output>
+
+        <file-output name="ais-nmea-probe">
+		<filename>/usr/bin/dolphin/trassa_confs/logs/_ais-nmea-probe</filename>
+            <!--format>from-trassa</format>
+            <rotate>true</rotate-->
+        </file-output>
+
+        <file-output name="trassa-msg-in-messages-probe">
+		<filename>/usr/bin/dolphin/trassa_confs/logs/_trassa-msg-in-messages-probe</filename>
+            <rotate>true</rotate>
+        </file-output>
+
+        <file-output name="trassa-astd-probe">
+		<filename>/usr/bin/dolphin/trassa_confs/logs/_trassa-astd-probe</filename>
+            <rotate>true</rotate>
+        </file-output>
+
+        <ascii-extractor type="ais" name="ais-extractor"/>
+        <ascii-extractor type="nmea" name="ais-nmea-extractor"/>
+
+</objects>
+
+    <applications>
+        <application name="trassa-app">
+
+            <trassa-dispatcher name="trassa-tren">
+                <astd-param name="S.TRASSA.FE.KD1"/>
+                <astd-notifier name="trassa-astd-notifier"/>
+
+                <trassa-notifier name="trassa-notifier"/>
+
+                <subscriber name="trassa-in-subscriber"/>
+                <ais-subscriber name="ais-subscriber"/>
+            </trassa-dispatcher>
+
+            <data-flow notifier="trassa-notifier" subscriber="trassa-out-probe"/>
+            <data-flow notifier="trassa-notifier" subscriber="trassa-messages-out"/>
+
+            <data-flow notifier="trassa-astd-notifier" subscriber="trassa-astd-probe"/>
+            <data-flow notifier="trassa-astd-notifier" subscriber="astd-messages-out"/>
+
+            <data-flow notifier="trassa-messages-in" subscriber="trassa-in-subscriber"/>
+            <data-flow notifier="trassa-messages-in" subscriber="trassa-msg-in-messages-probe"/>
+
+            <data-flow notifier="ais-extractor" subscriber="ais-subscriber"/>
+            <data-flow notifier="ais-nmea-extractor" subscriber="ais-subscriber"/>
+
+            <!--data-flow notifier="ais-messages" subscriber="ais-in-probe"/-->
+            <data-flow notifier="ais-messages-in" subscriber="ais-extractor"/>
+            <data-flow notifier="ais-messages-in" subscriber="ais-nmea-extractor"/>
+            <data-flow notifier="ais-extractor" subscriber="ais-in-probe"/>
+            <data-flow notifier="ais-nmea-extractor" subscriber="ais-nmea-probe"/>
+
+        </application>
+    </applications>
+
+</configuration>
