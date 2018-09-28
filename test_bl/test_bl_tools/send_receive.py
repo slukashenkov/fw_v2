@@ -12,10 +12,10 @@ class SendReceive:
     This is a testing support class.
     It should be a centralised place
     where test designer can
-    establish control over sending/receiving
+    establish control over sending/receiving test data over network
     needed for testing facilities in generalised way.
     The idea is to provide plain interface
-    for receiving sending data
+    for receiving/sending data
     """
     def __init__(self,
                  q_based            = None,

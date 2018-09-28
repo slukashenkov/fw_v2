@@ -379,7 +379,7 @@ class SetupTrassaSuite:
         self.ext_scripts.ssh_target_dir = self.g_prefs.get_sut_ssh_target_dir()
 
         self.ext_scripts.sut_start_commands = self.t_prefs.get_trassa_start_commands()
-        self.ext_scripts.sut_stop_commands = self.t_prefs.get_sonata_stop_commands()
+        self.ext_scripts.sut_stop_commands = self.t_prefs.get_trassa_stop_commands()
         return
 
     def setup_vir_env(self):
@@ -399,17 +399,21 @@ class SetupTrassaSuite:
         return res
 
 def test_this():
-    s_sonata = SetupTrassaSuite()
-    s_sonata.setup_external_scripts()
+    s_trassa = SetupTrassaSuite()
+    '''
+    TODO:
+    finish with setup
+    '''
+    #s_trassa.setup_external_scripts()
     #s_sonata.start_logserver()
     #s_sonata.setup_vir_env()
-    t_case_name=["test_sonata_messages01","test_sonata_messages02"]
-    s_sonata.send_receive_tdata(test_case_ids=t_case_name)
-    s_sonata.compare_sent_received_tdata(test_case_ids=t_case_name)
-    s_sonata.stop_udp_server()
-    s_sonata.stop_udp_sender()
-    #s_sonata.stop_test_env()
-    #s_sonata.stop_logserver()
+    #t_case_name=["test_trassa_messages01","test_trassa_messages02"]
+    #s_trassa.send_receive_tdata(test_case_ids=t_case_name)
+    #s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
+    #s_trassa.stop_udp_server()
+    #s_trassa.stop_udp_sender()
+    #s_trassa.stop_test_env()
+    #s_trassa.stop_logserver()
 
     return
 

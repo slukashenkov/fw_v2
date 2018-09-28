@@ -96,12 +96,20 @@ class ReadData:
                     test messages are allowed   
                     '''
                     curr_test_data = msg_struct.set_values_from_json_map(msg)
+                    '''
+                    Find out whether we deal withdfata
+                    for positive 
+                    or 
+                    negative test (two types are not allowed to mix)
+                    because we either want to scan log or analyze 
+                    networked data
+                    '''
                     curr_type = str(curr_test_data[2])
                     if prev_type == "":
                             prev_type = curr_type
                             first_data = curr_test_data
                             first_data_name = msg_name
-                    elif prev_type == curr_type and first_data !=None and first_data_name!=None:
+                    elif prev_type == curr_type and first_data != None and first_data_name!= None:
                             if first_data != None:
                                 msgs_data_map[first_data_name]  = first_data
                                 msgs_data_map[msg_name]         = curr_test_data
