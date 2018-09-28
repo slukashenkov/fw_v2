@@ -43,6 +43,54 @@
                                 "state_slottimeout":0,
                                 "state_slotoffset":1221
                       },
+                    "t01_ais_type05": {
+                                                    "test_conditions":{
+                                                                      "pass": [
+                                                                      "MessageID",
+                                                                      "RepeatIndicator",
+                                                                      "MMSI",
+                                                                      "AISversion",
+                                                                      "IMOnumber",
+                                                                      "callsign",
+                                                                      "name",
+                                                                      "shipandcargo",
+                                                                      "dimA",
+                                                                      "dimB",
+                                                                      "dimC",
+                                                                      "dimD",
+                                                                      "fixtype",
+                                                                      "ETAmonth",
+                                                                      "ETAday",
+                                                                      "ETAhour",
+                                                                      "ETAminute",
+                                                                      "draught",
+                                                                      "destination",
+                                                                      "dte",
+                                                                      "Spare"
+                                                                      ]
+                                                    },
+                                                    "MessageID": 5,
+                                                    "RepeatIndicator": 1,
+                                                    "MMSI": 1193046,
+                                                    "AISversion": 0,
+                                                    "IMOnumber": 3210,
+                                                    "callsign": "PIRATE1",
+                                                    "name": "SDRTYSDRTYSDRTYSDRTY",
+                                                    "shipandcargo": 21,
+                                                    "dimA": 10,
+                                                    "dimB": 11,
+                                                    "dimC": 12,
+                                                    "dimD": 13,
+                                                    "fixtype": 1,
+                                                    "ETAmonth": 2,
+                                                    "ETAday": 28,
+                                                    "ETAhour": 9,
+                                                    "ETAminute": 54,
+                                                    "draught": 21.1,
+                                                    "destination": "NOWHERE@@@@@@@@@@@@@",
+                                                    "dte": 0,
+                                                    "Spare": 0
+                                          },
                       "t01_ais_type18": {
                                 "test_conditions":{
                                                   "pass": [
@@ -98,53 +146,61 @@
                                 "state_slottimeout":0,
                                 "state_slotoffset":1221
                       },
-                       "t01_ais_type05": {
+                       "t01_ais_type24a": {
                                                   "test_conditions":{
                                                                     "pass": [
                                                                     "MessageID",
                                                                     "RepeatIndicator",
-                                                                    "MMSI",
-                                                                    "AISversion",
-                                                                    "IMOnumber",
-                                                                    "callsign",
-                                                                    "name",
-                                                                    "shipandcargo",
-                                                                    "dimA",
-                                                                    "dimB",
-                                                                    "dimC",
-                                                                    "dimD",
-                                                                    "fixtype",
-                                                                    "ETAmonth",
-                                                                    "ETAday",
-                                                                    "ETAhour",
-                                                                    "ETAminute",
-                                                                    "draught",
-                                                                    "destination",
-                                                                    "dte",
-                                                                    "Spare"
+                                                                    "MMSI"
                                                                     ]
                                                   },
-                                                  "MessageID": 5,
-                                                  "RepeatIndicator": 1,
-                                                  "MMSI": 1193046,
-                                                  "AISversion": 0,
-                                                  "IMOnumber": 3210,
-                                                  "callsign": "PIRATE1",
-                                                  "name": "SDRTYSDRTYSDRTYSDRTY",
-                                                  "shipandcargo": 21,
-                                                  "dimA": 10,
-                                                  "dimB": 11,
-                                                  "dimC": 12,
-                                                  "dimD": 13,
-                                                  "fixtype": 1,
-                                                  "ETAmonth": 2,
-                                                  "ETAday": 28,
-                                                  "ETAhour": 9,
-                                                  "ETAminute": 54,
-                                                  "draught": 21.1,
-                                                  "destination": "NOWHERE@@@@@@@@@@@@@",
-                                                  "dte": 0,
-                                                  "Spare": 0
+                                        "MessageID": 24,
+                                        "RepeatIndicator": 1,
+                                        "MMSI": 5678844                                
+                    
+                                        },
+                       "t01_ais_type24b": {
+                                                  "test_conditions":{
+                                                                    "pass": [
+                                                                            "MessageID",
+                                                                            "RepeatIndicator",
+                                                                            "MMSI",
+                                                                            "shipandcargo",
+                                                                    
+                                                                            "vendor_id",
+                                                                            "unit_model",
+                                                                            "serial_num",
+                                                                            "callsign",
+                                                                            "name",
+                                                                    
+                                                                            "dimA",
+                                                                            "dimB",
+                                                                            "dimC",
+                                                                            "dimD",
+                                                                    
+                                                                            "mother_ship_mmsi",
+                                                                            "Spare"
+                                                                    ]
+                                                  },
+                           
+                                        "MessageID": 24,
+                                        "RepeatIndicator": 1,
+                                        "MMSI": 119304633,
+                                        "shipandcargo": 55,
+                                
+                                        "vendor_id": "VND",
+                                        "unit_model": 1,
+                                        "serial_num": 2,
+                                        "callsign": 'FGRTUSP',
+                                        "name": 'PTYDRPTYDRTFGRDTFGRD',
+                                
+                                        "dimA": 10,
+                                        "dimB": 11,
+                                        "dimC": 12,
+                                        "dimD": 13,
+                                
+                                        "mother_ship_mmsi": 0,
+                                        "Spare": 0
                                         },
 
 
