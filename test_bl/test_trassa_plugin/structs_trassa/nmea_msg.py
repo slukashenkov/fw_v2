@@ -7,14 +7,28 @@ class NmeaMsg():
     def __init__(self):
         return
 
-    def get_aix_txt(self):
-        return str(talker.TXT('AI', 'TXT', ('1', '1', '21', 'External DGNSS in use')))
+    def get_ai(self,
+               type,  #can be TXT or ALR
+               ai_flds):
+        if type == "TXT":
+            aitxt_obj = talker.TXT('AI', 'TXT', ai_flds)
+            ai_txt_str = aitxt_obj.render()
+            return ai_txt_str
+        elif type =="ALR":
+            aialr_obj = talker.ALR('AI', 'ALR', ai_flds)
+            ai_alr_str = aialr_obj.render()
+            return ai_alr_str
 
     def get_aix_alr(self):
-        return str(talker.ALR('AI', 'ALR', ('1', '1', '01', 'V', 'V', 'Tx malfunction')))
+        #return str(talker.TXT('AI', 'TXT', ('1', '1', '21', 'External DGNSS in use')))
+        return str(talker.ALR('AI', 'ALR', ('133930.40', '01', 'V', 'V', 'Tx malfunction')))
 
-    def get_pc_mst(self):
-        return str(talker.MST('PC', 'MST', ('133930.40', 'V')))
+    def get_pc_mst(self,
+                   mst_flds):
+        #str(talker.MST('PC', 'MST', ('133930.40', 'V')))
+        pcmst_obj = talker.MST('PC', 'MST', mst_flds)
+        pcmst_str = pcmst_obj.render()
+        return pcmst_str
 
     def get_pa_isd(self):
         return str(talker.ISD('PA', 'ISD', ('8989999', '001100', 'Vsl_cl_sgn', 'Vsl_name')))
@@ -56,10 +70,19 @@ def test_this():
     nmea_msg = NmeaMsg()
     test_nmea = {}
 
+    #stuct for sending
+    aitxt_msg = ('1', '1', '21', 'External DGNSS in use')
+    test_nmea['aitxt'] = nmea_msg.get_ai(type ='TXT',
+                                         ai_flds = aitxt_msg)
+
     # stuct for sending
-    test_nmea['aitxt'] = nmea_msg.get_aix_txt()
-    test_nmea['aialr'] = nmea_msg.get_aix_alr()
-    test_nmea['pcmst'] = nmea_msg.get_pc_mst()
+    aialr_msg = ('133930.40', '01', 'V', 'V', 'Tx malfunction')
+    test_nmea['aialr'] = nmea_msg.get_aix_alr(type ='ALR',
+                                               ai_flds = aialr_msg)
+
+    # stuct for sending
+    pcmst_msg = ('133930.40', 'V')
+    test_nmea['pcmst'] = nmea_msg.get_pc_mst(mst_flds=pcmst_msg)
 
 
 

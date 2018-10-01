@@ -25,6 +25,7 @@ class ReadData:
         self.test_suite_sut_data = []
         self.test_type_k_word = "test_type"
         self.test_skip_k_word = "skip"
+        self.msg_ptrn_k_word = "res_ptrn"
         self.test_data_k_ignore = [self.test_type_k_word,self.test_skip_k_word]
         return
 
@@ -109,11 +110,13 @@ class ReadData:
                             prev_type = curr_type
                             first_data = curr_test_data
                             first_data_name = msg_name
+                            msgs_data_map[first_data_name] = first_data
+
                     elif prev_type == curr_type and first_data != None and first_data_name!= None:
                             if first_data != None:
-                                msgs_data_map[first_data_name]  = first_data
-                                msgs_data_map[msg_name]         = curr_test_data
+                                msgs_data_map[msg_name] = curr_test_data
                                 first_data = None
+
                     elif prev_type != curr_type:
                             self.test_suite_map.clear()
                             raise Exception("DATA FOR POSITIVE AND NEGATIVE CASES CANNOT MIX")
@@ -197,6 +200,21 @@ class ReadData:
                 test_data_arr = self.test_suite_map[test_case_id]
                 test_type = test_data_arr[self.test_type_k_word]
                 return test_type
+        else:
+            raise Exception("No such test case ID")
+
+    def get_msg_ptrn(self,
+                     test_case_id
+                     ):
+        if test_case_id in self.test_suite_map.keys():
+                test_data_arr = self.test_suite_map[test_case_id]
+                msg_ptrn=[]
+                for key in test_data_arr:
+                    if key != self.test_skip_k_word and key != self.test_type_k_word:
+                        msg=test_data_arr[key]
+                        ptrn= msg[1][self.msg_ptrn_k_word]
+                        msg_ptrn.append(ptrn)
+                return msg_ptrn
         else:
             raise Exception("No such test case ID")
 

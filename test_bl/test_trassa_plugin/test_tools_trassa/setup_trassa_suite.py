@@ -84,11 +84,13 @@ class SetupTrassaSuite:
         port_server_01 = send_res_prefs["udp_port_from_01"]
         ip_server_02 = send_res_prefs["udp_ip_from_02"]
         port_server_02 = send_res_prefs["udp_port_from_02"]
+
+
         self.udp_srv_name_01 = self.sr.set_udp_server(ip_address =ip_server_01,
                                                       port       =port_server_01)
+
         self.udp_srv_name_02 = self.sr.set_udp_server(ip_address =ip_server_02,
                                                       port       =port_server_02)
-
         '''-----------------------------------------------------------------------------------------------------------
         DATA PROCESSING
         '''
@@ -172,11 +174,23 @@ class SetupTrassaSuite:
                     data_sent = self._get_test_data(test_case_id)
                     test_case_type = self.get_test_type(test_case_id)
 
+
+                    '''case when we want to filter some
+                    of 
+                    the arriving messages'''
+                    ptrn_for_res = self.get_msg_ptrn(test_case_id)
+                    if udp_server_id != None:
+                        server = self.sr.udp_servers[udp_server_id]
+                        pttrn_to_search = re.compile(r'''ptrn_for_res[0]''')
+                        server.res_filter = pttrn_to_search
+
                     if test_case_type == self.positive_test_kword:
+
                         '''
                         PASS ARRAY OF TEST MESSAGES TO SENDer`s Q
                         and START sending and receiving for positive cases
                         '''
+
                         sender_id=""
                         server_id=""
                         if udp_sender_id != None:
@@ -190,14 +204,9 @@ class SetupTrassaSuite:
                         '''
                         TEST THAT ALL MESSAGES SENT BEING RECEIVED
                         '''
-                        if udp_server_id !=None:
-                            server_id=udp_server_id
-                            self.sr.test_messages_received(messages_list    = messages_to_send,
-                                                            server_id       = udp_server_id)
-                        else:
-                            server_id=self.udp_srv_name
-                            self.sr.test_messages_received(messages_list    = messages_to_send,
-                                                           server_id        = server_id)
+                        self.sr.test_messages_received_filter(messages_list = messages_to_send,
+                                                                  server_id     = udp_server_id,
+                                                                  flt_regex     = ptrn_for_res)
 
                         '''get the queue to read from'''
                         '''TODO check sonata is works when we pass buffer further '''
@@ -338,14 +347,25 @@ class SetupTrassaSuite:
             test_type = self.rd.get_test_type(test_case_id=test_id)
         return test_type
 
+    def get_msg_ptrn(self,
+                     test_id):
+        if test_id in self._test_suite_test_data.keys():
+            test_type = self.rd.get_msg_ptrn(test_case_id=test_id)
+        return test_type
+
+
 
 
     def stop_udp_sender(self):
         self.sr.stop_sender(self.udp_snd_name)
         return
 
-    def stop_udp_server(self):
-        self.sr.stop_udp_server(self.udp_srv_name)
+    def stop_udp_server(self,
+                        udp_srv_name=None):
+        if udp_srv_name==None:
+            self.sr.stop_udp_server(self.udp_srv_name)
+        else:
+            self.sr.stop_udp_server(udp_srv_name)
         return
 
     def start_logserver(self):
@@ -408,7 +428,17 @@ def test_this():
     #s_sonata.start_logserver()
     #s_sonata.setup_vir_env()
     #t_case_name=["test_trassa_messages01","test_trassa_messages02"]
-    #s_trassa.send_receive_tdata(test_case_ids=t_case_name)
+    #test_case_ids,
+    udp_sender_id = None
+    udp_server_id = None
+    parser = None
+    t_case_name = ["test_trassa_messages01"]
+    sender_id = s_trassa.udp_snd_name_01
+    server_id = s_trassa.udp_srv_name_01
+    s_trassa.stop_udp_server(server_id)
+    s_trassa.send_receive_tdata(test_case_ids=t_case_name,
+                                udp_sender_id=sender_id,
+                                udp_server_id=server_id)
     #s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
     #s_trassa.stop_udp_server()
     #s_trassa.stop_udp_sender()

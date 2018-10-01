@@ -97,8 +97,8 @@ fieldList = (
     'Spare',
 )
 
-def encode(params,
-           type,
+def encode(type,
+           params,
            validate=False):
     '''Create a shipdata binary message payload to pack into an AIS Msg shipdata.
 
@@ -195,7 +195,6 @@ def encode(params,
             bvList.append(aisstring.encode(params['callsign'], 42))
         else:
             bvList.append(aisstring.encode('@@@@@@@', 42))
-
         if 'dimA' in params:
             bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['dimA']), 9))
         else:

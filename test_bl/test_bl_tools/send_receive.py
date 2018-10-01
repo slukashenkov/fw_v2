@@ -1,4 +1,4 @@
-import socket, random, collections, threading, multiprocessing, queue, logging, pytest
+import socket, random, collections, threading, multiprocessing, queue, logging, pytest,re
 from time import sleep
 from copy import deepcopy
 
@@ -344,7 +344,6 @@ class SendReceive:
                     received_message = curr_status_q.get()
                     if received_message == "received":
                         received_counter = received_counter + 1
-
                 if num_of_attemps == 0:
                     self.logger.debug(
                         '=======================================================================================')
@@ -400,6 +399,70 @@ class SendReceive:
                     self.logger.debug(
                         '=======================================================================================')
                     break
+
+    def test_messages_received_filter(self,
+                                       messages_list=None,
+                                       server_id=None,
+                                       flt_regex=None
+                                       ):
+        '''----------------------------------------------------------------------------------------------------------'''
+        '''SETUP ALL TO CHECK COMPLETENESS OF SENDING/AND RECEIVING'''
+        if messages_list != None:
+            msgs_sent_counter = len(messages_list)
+            received_counter = 0
+            num_of_attemps = 5
+            search_packet=[re.compile(regex) for regex in flt_regex ]
+            matched_packet = None
+        else:
+            raise Exception("No messages to compare against")
+
+        if server_id in self.udp_servers.keys():
+            curr_receive_q = self.udp_servers[server_id].data_in_queue
+            curr_status_q = self.udp_servers[server_id].status_queue
+        else:
+            raise Exception("No such UDP server")
+
+        if self.q_based == 1:
+            # while msgs_sent_counter != received_counter:
+            # while self.event_msg_received.isSet():
+            while 1:
+                # Check whether we have received particular messages as a reply to the msg sent
+                if not curr_receive_q.empty():
+                    while not curr_receive_q.empty():
+                        msg_res_bin = curr_receive_q.get()
+                        msg_str = str(msg_res_bin)
+                        ptrn = search_packet[0]
+                        match = ptrn.match(msg_str)
+
+                        #matched_packets = [i.match(msg_str) for i in search_packet]
+
+                        #if len(matched_packets) == msgs_sent_counter:
+                        if match:
+                           # for msg in matched_packets:
+                            self.messages_received.append(msg_str)
+                            break
+
+                        received_counter = received_counter + 1
+                        num_of_attemps = num_of_attemps - 1
+
+                        if received_counter == msgs_sent_counter:
+                                        self.logger.debug(
+                                            '=======================================================================================')
+                                        self.logger.debug(
+                                            'UDP SERVER RECEIVED ALL THE SENT MESSAGES. TOTAL: ' + str(
+                                                received_counter) + " <-- received_counter_mgs")
+                                        self.logger.debug(
+                                            '=======================================================================================')
+                                        break
+                        if num_of_attemps == 0:
+                                    self.logger.debug(
+                                        '=======================================================================================')
+                                    self.logger.debug(
+                                        'UDP SERVER EXCEEDED NUM OF ATTEMPTS TO RECONCILE ITS COUNTERS')
+                                    self.logger.debug(
+                                        '=======================================================================================')
+                                    break
+
 
     def test_num_messages(self,
                           messages_list=None):

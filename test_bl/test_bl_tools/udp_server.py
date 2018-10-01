@@ -17,6 +17,10 @@ class UdpPayloadHandler(socketserver.BaseRequestHandler):
         self.data_in_status = server_in.status_queue
         self.logger = server_in.logger
         self.banner = server_in.udp_server_banner
+        if self.server_in.res_filter != None:
+            self.res_filter = server_in.res_filter
+        else:
+            self.res_filter = None
         self.banner(server_name='UDP SERVER PayLoad HANDLER',
                                     server_ip=self.server_in.ip_address,
                                     server_port=self.server_in.port,
@@ -55,8 +59,18 @@ class UdpPayloadHandler(socketserver.BaseRequestHandler):
         '''TODO deal with datatype when reading from the RESEIVE Q'''
         #data = str(self.request[0])
         data = self.request[0]
-        self.data_in_store.put(data)
-        self.data_in_status.put("received")
+        if self.res_filter != None:
+            data_str = str(data)
+            match = self.res_filter.match(data_str)
+            if match:
+                self.logger("$$$$$$$$$$$$$$$$regex MATCHED $$$$$$$$$$$$$ ")
+                self.logger(data_str)
+                self.logger("$$$$$$$$$$$$$$$$regex MATCHED $$$$$$$$$$$$$ ")
+                self.data_in_store.put(data)
+                self.data_in_status.put("received")
+        else:
+            self.data_in_store.put(data)
+            self.data_in_status.put("received")
 
 
         if self.server.msg_res_event != None:
@@ -83,7 +97,8 @@ class UdpServer(socketserver.ThreadingUDPServer):
                  data_in_queue  = None,
                  status_queue   = None,
                  conf_in        = None,
-                 msg_res_event  = None
+                 msg_res_event  = None,
+                 res_filter = None
                  ):
         """
 
@@ -97,6 +112,7 @@ class UdpServer(socketserver.ThreadingUDPServer):
         '''
         LETS NOT DO ANYTHING WITHOUT PROPER LOGGER
         '''
+        self.res_filter=res_filter
         self.logger = logging.getLogger(__name__)
 
         self.name=None
