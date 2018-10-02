@@ -63,6 +63,7 @@ class SetupSonataSuite:
         '''
         self.udp_srv_name = self.sr.set_udp_server(ip_address   =self.g_prefs.get_udp_ip_from(),
                                                     port        =self.g_prefs.get_udp_port_from())
+        self.sr.start_udp_server(self.udp_srv_name)
 
         '''-----------------------------------------------------------------------------------------------------------
         DATA PROCESSING

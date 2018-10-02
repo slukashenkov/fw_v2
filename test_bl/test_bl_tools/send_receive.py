@@ -294,13 +294,22 @@ class SendReceive:
         self.udp_servers_cnt = self.udp_servers_cnt + 1
         udp_server.name      = curr_udp_server_name
         self.udp_servers[curr_udp_server_name] = udp_server
-
-        self.logger.info('Starting up UDP Server to listen traffic from KD')
-        t = threading.Thread(target=udp_server.serve_forever)
-        self.udp_servers_treads[curr_udp_server_name]=t
-        t.setDaemon(True)  # don't hang on exit
-        t.start()
+        #self.start_udp_server(curr_udp_server_name)
         return curr_udp_server_name
+
+    def start_udp_server(self,
+                         srv_id):
+
+        if srv_id in self.udp_servers.keys():
+            self.logger.info('Starting up UDP Server to listen traffic from KD')
+            curr_udp_srv = self.udp_servers[srv_id]
+            t = threading.Thread(target=curr_udp_srv.serve_forever)
+            self.udp_servers_treads[srv_id]=t
+            t.setDaemon(True)  # don't hang on exit
+            t.start()
+        else:
+            raise Exception("UDP server is not KNOWN, check its ID")
+
 
 
     def stop_udp_server(self,

@@ -82,12 +82,18 @@ class SetupTrassaSuite:
         '''
         ip_server_01 = send_res_prefs["udp_ip_from_01"]
         port_server_01 = send_res_prefs["udp_port_from_01"]
+
         ip_server_02 = send_res_prefs["udp_ip_from_02"]
         port_server_02 = send_res_prefs["udp_port_from_02"]
 
-
+        '''
+        TRASSA is the case when we want to filter some
+        of 
+        the arriving messages
+        '''
         self.udp_srv_name_01 = self.sr.set_udp_server(ip_address =ip_server_01,
-                                                      port       =port_server_01)
+                                                      port       =port_server_01
+                                                    )
 
         self.udp_srv_name_02 = self.sr.set_udp_server(ip_address =ip_server_02,
                                                       port       =port_server_02)
@@ -174,16 +180,6 @@ class SetupTrassaSuite:
                     data_sent = self._get_test_data(test_case_id)
                     test_case_type = self.get_test_type(test_case_id)
 
-
-                    '''case when we want to filter some
-                    of 
-                    the arriving messages'''
-                    ptrn_for_res = self.get_msg_ptrn(test_case_id)
-                    if udp_server_id != None:
-                        server = self.sr.udp_servers[udp_server_id]
-                        pttrn_to_search = re.compile(r'''ptrn_for_res[0]''')
-                        server.res_filter = pttrn_to_search
-
                     if test_case_type == self.positive_test_kword:
 
                         '''
@@ -204,9 +200,9 @@ class SetupTrassaSuite:
                         '''
                         TEST THAT ALL MESSAGES SENT BEING RECEIVED
                         '''
-                        self.sr.test_messages_received_filter(messages_list = messages_to_send,
-                                                                  server_id     = udp_server_id,
-                                                                  flt_regex     = ptrn_for_res)
+                        self.sr.test_messages_received(messages_list = messages_to_send,
+                                                                  server_id     = udp_server_id
+                                                                  )
 
                         '''get the queue to read from'''
                         '''TODO check sonata is works when we pass buffer further '''
@@ -435,7 +431,19 @@ def test_this():
     t_case_name = ["test_trassa_messages01"]
     sender_id = s_trassa.udp_snd_name_01
     server_id = s_trassa.udp_srv_name_01
-    s_trassa.stop_udp_server(server_id)
+    #s_trassa.stop_udp_server(server_id)
+    '''
+    case when we want to filter some
+    of 
+    the arriving messages'''
+    udp_server_id = s_trassa.udp_srv_name_01
+    ptrn_for_res = s_trassa.get_msg_ptrn(t_case_name[0])
+    server = s_trassa.sr.udp_servers[udp_server_id]
+    pttrn_to_search = re.compile(str(ptrn_for_res[0]))
+    m = pttrn_to_search.match('$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,071705.00*56')
+    server.res_filter = pttrn_to_search
+    s_trassa.sr.start_udp_server(udp_server_id)
+
     s_trassa.send_receive_tdata(test_case_ids=t_case_name,
                                 udp_sender_id=sender_id,
                                 udp_server_id=server_id)

@@ -63,11 +63,20 @@ class UdpPayloadHandler(socketserver.BaseRequestHandler):
             data_str = str(data)
             match = self.res_filter.match(data_str)
             if match:
-                self.logger("$$$$$$$$$$$$$$$$regex MATCHED $$$$$$$$$$$$$ ")
-                self.logger(data_str)
-                self.logger("$$$$$$$$$$$$$$$$regex MATCHED $$$$$$$$$$$$$ ")
+                self.logger.debug("$$$$$$$$$$$$$$$$regex MATCHED $$$$$$$$$$$$$ ")
+                self.logger.debug(data_str)
+                self.logger.debug("$$$$$$$$$$$$$$$$regex MATCHED $$$$$$$$$$$$$ ")
                 self.data_in_store.put(data)
                 self.data_in_status.put("received")
+
+                self.banner(
+                    server_name='<------------------ Handle FILTERED udp payload -----------------> ' + 'UDP SERVER PayLoad HANDLER',
+                    server_ip=self.server_in.ip_address,
+                    server_port=self.server_in.port,
+                    ending=' starts to handle: ' + str(data) + ' and append it to storage struct: ' + str(
+                        self.data_in_store),
+                    logger=self.logger
+                    )
         else:
             self.data_in_store.put(data)
             self.data_in_status.put("received")

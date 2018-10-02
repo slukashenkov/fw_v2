@@ -130,11 +130,16 @@ class UdpSenderProcess(multiprocessing.Process):
                     #self.logger.debug("Killed by POISON PILL")
                     exit(0)
                 else:
-                    print("sending msg: " + next_task + "to:" + str(self.ip_to) + ":" + str(self.port_to) + "\n")
+                    print("sending msg: " + next_task + " to:" + str(self.ip_to) + ":" + str(self.port_to) + "\n")
                     #self.logger.debug("sending msg: " + next_task + "\n")
+                    encoded = str.encode(next_task)
+                    self.sock.sendto(encoded, (self.ip_to,
+                                               self.port_to))
+                    '''
                     self.sock.sendto(str.encode(str(next_task)),
                                      (self.ip_to,
                                       self.port_to))
+                    '''
                     self.event_msg_send.clear()
                     self.msg_sent_status_queue.put("done")
                 cnt = cnt + 1
