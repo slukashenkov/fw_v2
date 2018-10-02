@@ -178,6 +178,39 @@ class TrassaTestParser():
             return self.trassa_data_parsed_map
 
         elif m_type  == trassa_msg_types.PAISD:
+            '''
+            type 5 fields:
+            
+            "MessageID": 5,
+            "RepeatIndicator": 1,
+            "MMSI": 1193046,
+            "AISversion": 0,
+            "IMOnumber": 3210,
+            "callsign": "PIRATE1",
+            "name": "SDRTYSDRTYSDRTYSDRTY",
+            "shipandcargo": 21,
+            "dimA": 10,
+            "dimB": 11,
+            "dimC": 12,
+            "dimD": 13,
+            "fixtype": 1,
+            "ETAmonth": 2,
+            "ETAday": 28,
+            "ETAhour": 9,
+            "ETAminute": 54,
+            "draught": 21.1,
+            "destination": "NOWHERE@@@@@@@@@@@@@",
+            "dte": 0,
+            "Spare": 0
+            
+            '''
+            paisd_parsed = self.nmea_msg_helper.parse_nmea(nmea_msg=data_to_parse)
+            self.trassa_data_parsed_map["MMSI"] = paisd_parsed.mmsi
+            self.trassa_data_parsed_map["IMOnumber"] = paisd_parsed.imo_num
+            self.trassa_data_parsed_map["callsign"] = paisd_parsed.c_sign
+            self.trassa_data_parsed_map["name"] = paisd_parsed.v_name
+            return self.trassa_data_parsed_map
+
             paisd_map = paidd_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
             return self.trassa_data_parsed_map
 

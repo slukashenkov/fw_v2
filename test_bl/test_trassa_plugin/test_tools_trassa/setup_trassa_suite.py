@@ -248,8 +248,6 @@ class SetupTrassaSuite:
                                                                    path_to_sut_log = self.g_prefs.get_sut_logging_log_file_dir(),
                                                                    data_sent=data_sent)
                         self.test_suite_parsed_data[test_case_id] = parsed_data
-
-
                 else:
                     raise Exception("TEST CASE NAME IS UNKNOWN")
             return
