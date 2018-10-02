@@ -384,7 +384,10 @@ def create_nmea(bits,
         firstStr = ','.join(fields)
         checksum = nmea.checksumStr(firstStr)
         fields = [firstStr + '*' + checksum, ]
-        return ','.join(fields)
+        nmea_string = ','.join(fields)
+        nmea_string_terminated =''.join([nmea_string, '\r\n'])
+
+        return  nmea_string_terminated
 
     elif message_type == 5:  #Type 5 messages are always multiline (2 sentences long)
         bitLen  = len(bits)

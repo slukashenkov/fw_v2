@@ -189,22 +189,31 @@ class SetupTrassaSuite:
 
                         sender_id=""
                         server_id=""
+
                         if udp_sender_id != None:
                             sender_id = udp_sender_id
-                            self.sr.udp_send_to(messages_list   = messages_to_send,
-                                                sender_id       = udp_sender_id)
+                            self.sr.udp_send_to(messages_list = messages_to_send,
+                                                sender_id     = udp_sender_id)
                         else:
                             sender_id = self.udp_snd_name
-                            self.sr.udp_send_to(messages_list   = messages_to_send,
-                                                sender_id       = sender_id)
+                            self.sr.udp_send_to(messages_list = messages_to_send,
+                                                sender_id     = sender_id)
                         '''
                         TEST THAT ALL MESSAGES SENT BEING RECEIVED
                         '''
-                        self.sr.test_messages_received(messages_list = messages_to_send,
-                                                                  server_id     = udp_server_id
-                                                                  )
 
-                        '''get the queue to read from'''
+                        if udp_server_id != None:
+                            server_id = udp_server_id
+                            self.sr.test_messages_received(messages_list = messages_to_send,
+                                                           server_id     = server_id)
+                        else:
+                            server_id = self.udp_srv_name
+                            self.sr.test_messages_received(messages_list = messages_to_send,
+                                                           server_id     = server_id)
+
+                        '''
+                        GET the queue to read from
+                        '''
                         '''TODO check sonata is works when we pass buffer further '''
                         received_q = self.sr.get_received_queue(server_id)
                         logging.debug("DATA RECEIVED: ==>" + str(received_q) + "\n")
