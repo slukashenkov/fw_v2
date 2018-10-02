@@ -385,8 +385,7 @@ def create_nmea(bits,
         checksum = nmea.checksumStr(firstStr)
         fields = [firstStr + '*' + checksum, ]
         nmea_string = ','.join(fields)
-        nmea_string_terminated =''.join([nmea_string, '\r\n'])
-
+        nmea_string_terminated =''.join([nmea_string,'\r\n'])
         return  nmea_string_terminated
 
     elif message_type == 5:  #Type 5 messages are always multiline (2 sentences long)
@@ -451,7 +450,9 @@ def create_nmea(bits,
         msg01=','.join(fields)
         msg02=','.join(fields02)
 
-        return (msg01, msg02)
+        nmea_string_terminated_msg01 = ''.join([msg01, '\r\n'])
+        nmea_string_terminated_msg02 = ''.join([msg02, '\r\n'])
+        return (nmea_string_terminated_msg01, nmea_string_terminated_msg02)
 
     elif (message_type == 24) and ((aisChannel == 'A') or (aisChannel == 'B')):  #Type 1 messages are 1 sentence long
         nmeaType = '!AIVDM'
@@ -487,7 +488,10 @@ def create_nmea(bits,
         firstStr = ','.join(fields)
         checksum = nmea.checksumStr(firstStr)
         fields = [firstStr + '*' + checksum, ]
-        return ','.join(fields)
+
+        nmea_string = ','.join(fields)
+        nmea_string_terminated = ''.join([nmea_string, '\r\n'])
+        return nmea_string_terminated
 
     elif (message_type == 24) and (aisChannel == 'C'):  #Type 5 messages are always multiline (2 sentences long)
         bitLen  = len(bits)
@@ -551,7 +555,9 @@ def create_nmea(bits,
         msg01=','.join(fields)
         msg02=','.join(fields02)
 
-        return (msg01, msg02)
+        nmea_string_terminated_msg01 = ''.join([msg01, '\r\n'])
+        nmea_string_terminated_msg02 = ''.join([msg02, '\r\n'])
+        return (nmea_string_terminated_msg01, nmea_string_terminated_msg02)
 
 
 def test():

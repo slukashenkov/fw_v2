@@ -1,14 +1,15 @@
 import logging, math, re, enum
 import os.path
-from test_bl.test_bl_tools.logging_tools import LoggingTools
+
 from test_bl.test_bl_tools.scan_logs import ScanLogs
+from test_bl.test_trassa_plugin.structs_trassa import nmea_msg, ais_msg, astd_msg
 
 class trassa_msg_types(enum.Enum):
                         PAIDD = 1
                         PAISD = 2
                         AITXT = 3
                         AIALR = 4
-                        PCMST = 5
+                        PEIST = 5
 
 class TrassaTestParser():
 
@@ -101,17 +102,24 @@ class TrassaTestParser():
         PCMST msg
         '$PCMST,133930.40,V*2E'
         '''
-        self.pcmst_regex = re.compile(r'''
-                                      ^.*PCMST.*
+        self.peist_regex = re.compile(r'''
+                                      ^.*PEIST.*
                                       ''',re.X | re.IGNORECASE)
-        self.regex_dict[trassa_msg_types.PCMST] = self.pcmst_regex
+        self.regex_dict[trassa_msg_types.PEIST] = self.peist_regex
 
         self.logger.debug("TRASSA Parser is SET")
+
+        '''
+        Helper classes that do actual parsing 
+        '''
+        self.nmea_msg_helper = nmea_msg.NmeaMsg()
+        self.astd_msg_helper = astd_msg.AstdMsg()
 
     def parse_from(self):
         """
         :return:
         """
+        self.trassa_data_parsed_map.clear()
         '''
         GET PARTICULAR PAKET
         by index
@@ -130,11 +138,61 @@ class TrassaTestParser():
 
         '''NB! VERY IMPORTANT ADDITION'''
         '''BEFORE CONVERSION INTO DESIRED '''
-        data_to_parse = str(data_to_parse)
+        data_to_parse = str(data_to_parse.decode())
         m_type = self.msg_type(data_to_parse)
+        '''
+        Get structures for different
+        msg types  
+        '''
         if m_type == trassa_msg_types.PAIDD:
-            ind_values=data_to_parse.split(",")
+            '''
+          "MessageID": 1,
+          "RepeatIndicator": 1,
+          "MMSI": 1193046,
+          "NavigationStatus": 3,
+          "ROT": -2,
+          "SOG": 101.9,
+          "PositionAccuracy": 1,
+          "longitude": -122.16328055555556,
+          "latitude": 37.424458333333334,
+          "COG": 34.5,
+          "TrueHeading": 41,
+          "TimeStamp": 35,
+          "RegionalReserved": 0,
+          "Spare": 0,
+          "RAIM": false,
+          "state_syncstate": 2,
+          "state_slottimeout": 0,
+          "state_slotoffset": 1221
+            '''
+            paidd_parsed = self.nmea_msg_helper.parse_nmea(nmea_msg=data_to_parse)
+            self.trassa_data_parsed_map["MMSI"] = paidd_parsed.mmsi
+            self.trassa_data_parsed_map["longitude"] = paidd_parsed.lon
+            self.trassa_data_parsed_map["hem_n_s"] = paidd_parsed.hem_n_s
+            self.trassa_data_parsed_map["latitude"] = paidd_parsed.lat
+            self.trassa_data_parsed_map["hem_e_w"] = paidd_parsed.hem_e_w
+            self.trassa_data_parsed_map["SOG"] = paidd_parsed.sog
+            self.trassa_data_parsed_map["TrueHeading"] = paidd_parsed.hdg
+            self.trassa_data_parsed_map["COG"] = paidd_parsed.cog
+            self.trassa_data_parsed_map["TimeStamp"] = paidd_parsed.tmstmp
             return self.trassa_data_parsed_map
+
+        elif m_type  == trassa_msg_types.PAISD:
+            paisd_map = paidd_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
+            return self.trassa_data_parsed_map
+
+        elif m_type  == trassa_msg_types.PEIST:
+            paisd_map = paidd_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
+            return self.trassa_data_parsed_map
+
+        elif m_type  == trassa_msg_types.AITXT:
+            paisd_map = paidd_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
+            return self.trassa_data_parsed_map
+
+        elif m_type  == trassa_msg_types.AIALR:
+            paisd_map = paidd_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
+            return self.trassa_data_parsed_map
+
 
     def msg_type(self,
                  data_to_parse):

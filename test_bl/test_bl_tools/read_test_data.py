@@ -1,4 +1,4 @@
-import json, platform, copy, logging
+import json, platform, copy, logging, re
 from enum import Enum
 
 
@@ -208,13 +208,17 @@ class ReadData:
                      ):
         if test_case_id in self.test_suite_map.keys():
                 test_data_arr = self.test_suite_map[test_case_id]
-                msg_ptrn=[]
+                msg_ptrn            = []
+                msg_ptrn_compiled   = []
                 for key in test_data_arr:
                     if key != self.test_skip_k_word and key != self.test_type_k_word:
                         msg=test_data_arr[key]
                         ptrn= msg[1][self.msg_ptrn_k_word]
-                        msg_ptrn.append(ptrn)
-                return msg_ptrn
+                        if ptrn not in  msg_ptrn:
+                           msg_ptrn.append(ptrn)
+                           cmpled_ptrn = re.compile(ptrn)
+                           msg_ptrn_compiled.append(cmpled_ptrn)
+                return msg_ptrn_compiled
         else:
             raise Exception("No such test case ID")
 

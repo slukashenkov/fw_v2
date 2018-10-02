@@ -61,8 +61,8 @@ class NmeaMsg():
         PAIDD_STR = PAIDD_OBJ.render()
         return PAIDD_STR
 
-    def parse_paisd(self,
-                    nmea_msg):
+    def parse_nmea(self,
+                   nmea_msg):
         paisd_obj = nmea.NMEASentence.parse(nmea_msg)
         return paisd_obj
 
@@ -84,14 +84,12 @@ def test_this():
     pcmst_msg = ('133930.40', 'V')
     test_nmea['pcmst'] = nmea_msg.get_pc_mst(mst_flds=pcmst_msg)
 
-
-
     # stuct for parsing
 
 
     #test_nmea['paisd'] = nmea_msg.get_pa_isd()
     test_nmea['paisd'] = nmea_msg.get_p_ais_d_private()
-    paisd_parsed = nmea_msg.parse_paisd(test_nmea['paisd'])
+    paisd_parsed = nmea_msg.parse_nmea(test_nmea['paisd'])
     paisd_mmsi =   paisd_parsed.mmsi
     paisd_imo_num =   paisd_parsed.imo_num
     paisd_c_sign=   paisd_parsed.c_sign
@@ -100,7 +98,7 @@ def test_this():
     #test_nmea['paidd'] = nmea_msg.get_pa_idd()
     test_nmea['paidd'] = nmea_msg.get_p_aid_d_private()
     #test_nmea['paidd']='$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,061354.00*57'
-    paidd_parsed = nmea_msg.parse_paisd(test_nmea['paidd'])
+    paidd_parsed = nmea_msg.parse_nmea(test_nmea['paidd'])
     paidd_mmsi = paidd_parsed.mmsi
     paidd_lon = paidd_parsed.lon
     paidd_hem_n_s =paidd_parsed.hem_n_s
@@ -113,13 +111,13 @@ def test_this():
 
 
 
-    aitxt_parsed = nmea_msg.parse_paisd(test_nmea['aitxt'])
+    aitxt_parsed = nmea_msg.parse_nmea(test_nmea['aitxt'])
     sntns_total = aitxt_parsed.sntns_total
     sntns_order_num = aitxt_parsed.sntns_order_num
     stat_code = aitxt_parsed.stat_code
     stat_descr = aitxt_parsed.stat_descr
 
-    aialr_parsed = nmea_msg.parse_paisd(test_nmea['aialr'])
+    aialr_parsed = nmea_msg.parse_nmea(test_nmea['aialr'])
     fail_time  = aialr_parsed.fail_time
     fail_code  = aialr_parsed.fail_code
     fail_stat  = aialr_parsed.fail_stat
@@ -127,7 +125,7 @@ def test_this():
     fail_descr = aialr_parsed.fail_descr
 
 
-    pcmst_parsed = nmea_msg.parse_paisd(test_nmea['pcmst'])
+    pcmst_parsed = nmea_msg.parse_nmea(test_nmea['pcmst'])
     sntns_tmstmp = pcmst_parsed.sntns_tmstmp
     eq_state =  pcmst_parsed.eq_state
 

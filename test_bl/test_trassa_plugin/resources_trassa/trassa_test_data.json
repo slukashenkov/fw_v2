@@ -47,9 +47,10 @@
           "state_slotoffset": 1221
         }
       },
-      "t01_ais_type01_02": {
-        "msg_type": "ais_type01",
+      "t01_ais_type18": {
+        "msg_type": "ais_type18",
         "test_conditions": {
+          "msg_type": "ais_type18",
           "pass": [
             "MessageID",
             "RepeatIndicator",
@@ -65,34 +66,104 @@
             "TimeStamp",
             "RegionalReserved",
             "Spare",
+            "cs_unit",
+            "display_flag",
+            "dsc_flag",
+            "band_flag",
+            "msg22_flag",
+            "mode_flag",
             "RAIM",
+            "CommStateSelector",
             "state_syncstate",
             "state_slottimeout",
             "state_slotoffset"
           ]
         },
-        "res_ptrn": "^.*PAIDD.*",
+      "res_ptrn": "^.*PAIDD.*",
         "fields": {
           "MessageID": 1,
           "RepeatIndicator": 1,
-          "MMSI": 1193046,
-          "NavigationStatus": 3,
+          "MMSI": 1193047,
+          "NavigationStatus": 4,
           "ROT": -2,
-          "SOG": 101.9,
+          "SOG": 80.9,
           "PositionAccuracy": 1,
           "longitude": -122.16328055555556,
           "latitude": 37.424458333333334,
           "COG": 34.5,
           "TrueHeading": 41,
           "TimeStamp": 35,
-          "RegionalReserved": 0,
           "Spare": 0,
+          "cs_unit": false,
+          "display_flag": false,
+          "dsc_flag": false,
+          "band_flag": false,
+          "msg22_flag": false,
+          "mode_flag": false,
           "RAIM": false,
+          "CommStateSelector": 0,
           "state_syncstate": 2,
           "state_slottimeout": 0,
           "state_slotoffset": 1221
         }
+      },
+      "t02_ais_type24a": {
+      "msg_type": "ais_type24a",
+      "test_conditions": {
+        "pass": [
+          "MessageID",
+          "RepeatIndicator",
+          "MMSI"
+        ]
+      },
+      "res_ptrn": "^.*PAISD.*",
+      "fields": {
+        "MessageID": 24,
+        "RepeatIndicator": 1,
+        "MMSI": 5678844
       }
+    },
+      "t02_ais_type24b": {
+      "msg_type": "ais_type24b",
+      "test_conditions": {
+        "pass": [
+          "MessageID",
+          "RepeatIndicator",
+          "MMSI",
+          "shipandcargo",
+          "vendor_id",
+          "unit_model",
+          "serial_num",
+          "callsign",
+          "name",
+          "dimA",
+          "dimB",
+          "dimC",
+          "dimD",
+          "mother_ship_mmsi",
+          "Spare"
+        ]
+      },
+      "res_ptrn": "^.*PAISD.*",
+      "fields": {
+        "MessageID": 24,
+        "RepeatIndicator": 1,
+        "MMSI": 119304633,
+        "shipandcargo": 55,
+        "vendor_id": "VND",
+        "unit_model": 1,
+        "serial_num": 2,
+        "callsign": "FGRTUSP",
+        "name": "PTYDRPTYDRTFGRDTFGRD",
+        "dimA": 10,
+        "dimB": 11,
+        "dimC": 12,
+        "dimD": 13,
+        "mother_ship_mmsi": 0,
+        "Spare": 0
+      }
+    }
+
     },
   "test_trassa_messages02": {
     "skip": true,
@@ -607,6 +678,58 @@
       "fields": {
         "sntns_tmstmp": "133930.40",
         "eq_state": "V"
+      }
+    },
+      "t01_ais_type05": {
+      "msg_type": "ais_type05",
+      "test_conditions": {
+        "pass": [
+          "MessageID",
+          "RepeatIndicator",
+          "MMSI",
+          "AISversion",
+          "IMOnumber",
+          "callsign",
+          "name",
+          "shipandcargo",
+          "dimA",
+          "dimB",
+          "dimC",
+          "dimD",
+          "fixtype",
+          "ETAmonth",
+          "ETAday",
+          "ETAhour",
+          "ETAminute",
+          "draught",
+          "destination",
+          "dte",
+          "Spare"
+        ]
+      },
+      "res_ptrn": "^.*PAISD.*",
+      "fields": {
+        "MessageID": 5,
+        "RepeatIndicator": 1,
+        "MMSI": 1193046,
+        "AISversion": 0,
+        "IMOnumber": 3210,
+        "callsign": "PIRATE1",
+        "name": "SDRTYSDRTYSDRTYSDRTY",
+        "shipandcargo": 21,
+        "dimA": 10,
+        "dimB": 11,
+        "dimC": 12,
+        "dimD": 13,
+        "fixtype": 1,
+        "ETAmonth": 2,
+        "ETAday": 28,
+        "ETAhour": 9,
+        "ETAminute": 54,
+        "draught": 21.1,
+        "destination": "NOWHERE@@@@@@@@@@@@@",
+        "dte": 0,
+        "Spare": 0
       }
     }
   }

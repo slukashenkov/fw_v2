@@ -199,7 +199,6 @@ class SetupTrassaSuite:
                         '''
                         TEST THAT ALL MESSAGES SENT BEING RECEIVED
                         '''
-
                         if udp_server_id != None:
                             server_id = udp_server_id
                             self.sr.test_messages_received(messages_list = messages_to_send,
@@ -448,7 +447,7 @@ def test_this():
     server = s_trassa.sr.udp_servers[udp_server_id]
     pttrn_to_search = re.compile(str(ptrn_for_res[0]))
     m = pttrn_to_search.match('$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,071705.00*56')
-    server.res_filter = pttrn_to_search
+    server.res_filter = ptrn_for_res
     s_trassa.sr.start_udp_server(udp_server_id)
 
     s_trassa.send_receive_tdata(test_case_ids=t_case_name,
