@@ -132,7 +132,7 @@ class SetupTrassaSuite:
         PARSER (module specific) 
         used by processing class       
         '''
-        self._s_parser = trassa_test_parser.TrassaTestParser()
+        self._t_parser = trassa_test_parser.TrassaTestParser()
         '''
         RECEIVED TEST DATA PROCESSING
         processing class doing parsing of the received data and comparison with the data been sent out
@@ -181,12 +181,10 @@ class SetupTrassaSuite:
                     test_case_type = self.get_test_type(test_case_id)
 
                     if test_case_type == self.positive_test_kword:
-
                         '''
                         PASS ARRAY OF TEST MESSAGES TO SENDer`s Q
                         and START sending and receiving for positive cases
                         '''
-
                         sender_id=""
                         server_id=""
 
@@ -217,8 +215,8 @@ class SetupTrassaSuite:
                         '''TODO check sonata is works when we pass buffer further '''
                         received_q = self.sr.get_received_queue(server_id)
                         logging.debug("DATA RECEIVED: ==>" + str(received_q) + "\n")
-                        if parser ==None:
-                            parsed_data = self.proc_data.parse_received_data(parser=self._s_parser,
+                        if parser == None:
+                            parsed_data = self.proc_data.parse_received_data(parser=self._t_parser,
                                                                              received_data=received_q)
                             self.test_suite_parsed_data[test_case_id] = deepcopy(parsed_data)
                             self.test_suite_sent_data[test_case_id] = deepcopy(data_sent)
@@ -247,7 +245,7 @@ class SetupTrassaSuite:
                         '''
                         TEST for ERROR MESSAGES IN LOG FILES
                         '''
-                        parsed_data = self.proc_data.parse_sut_log(parser = self._s_parser,
+                        parsed_data = self.proc_data.parse_sut_log(parser = self._t_parser,
                                                                    path_to_sut_log = self.g_prefs.get_sut_logging_log_file_dir(),
                                                                    data_sent=data_sent)
                         self.test_suite_parsed_data[test_case_id] = parsed_data
@@ -269,7 +267,7 @@ class SetupTrassaSuite:
                     data_sent = self.test_suite_sent_data[test_case_id]
                     data_received = self.test_suite_parsed_data[test_case_id]
                     if parser == None:
-                        result[test_case_id] = self.proc_data.compare_sent_received(parser=self._s_parser,
+                        result[test_case_id] = self.proc_data.compare_sent_received(parser=self._t_parser,
                                                                                     data_sent=data_sent,
                                                                                     data_received=data_received)
                     else:
@@ -456,8 +454,8 @@ def test_this():
     s_trassa.send_receive_tdata(test_case_ids=t_case_name,
                                 udp_sender_id=sender_id,
                                 udp_server_id=server_id)
-    #s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
-    #s_trassa.stop_udp_server()
+    s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
+    s_trassa.stop_udp_server(udp_srv_name=udp_server_id)
     #s_trassa.stop_udp_sender()
     #s_trassa.stop_test_env()
     #s_trassa.stop_logserver()

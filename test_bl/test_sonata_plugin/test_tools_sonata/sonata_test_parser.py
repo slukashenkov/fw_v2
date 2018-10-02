@@ -55,11 +55,6 @@ class SonataTestParser:
         self.key_sent = None
         self.key_received = None
 
-        '''
-        SETUP FOR LOG FILE RAKING
-        '''
-        self.log_dir_name
-
         self.logger.debug("Sonata Parser is SET")
 
     def parse_from(self):

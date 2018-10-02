@@ -77,7 +77,7 @@ def test_this():
 
     # stuct for sending
     aialr_msg = ('133930.40', '01', 'V', 'V', 'Tx malfunction')
-    test_nmea['aialr'] = nmea_msg.get_aix_alr(type ='ALR',
+    test_nmea['aialr'] = nmea_msg.get_ai(type ='ALR',
                                                ai_flds = aialr_msg)
 
     # stuct for sending
