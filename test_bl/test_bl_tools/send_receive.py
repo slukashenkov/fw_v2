@@ -371,7 +371,7 @@ class SendReceive:
                         self.logger.debug(
                             '=======================================================================================')
                         break
-                    num_of_attemps = num_of_attemps - 1
+                num_of_attemps = num_of_attemps - 1
         else:
             while msgs_sent_counter != received_counter:
                 # Check whether we have received as many packets as sent
@@ -471,6 +471,10 @@ class SendReceive:
                                         '=======================================================================================')
                                     break
 
+    def test_receive_only(self,
+                          *var_args):
+        sleep(120)
+        return
 
     def test_num_messages(self,
                           messages_list=None):

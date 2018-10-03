@@ -163,7 +163,8 @@ class SetupTrassaSuite:
                            test_case_ids,
                            udp_sender_id=None,
                            udp_server_id=None,
-                           parser=None):
+                           parser=None,
+                           receive_only=None):
             """
             :param test_case_ids: list of testcases` ids
             :param udp_sender_id:
@@ -174,7 +175,7 @@ class SetupTrassaSuite:
             for test_case_id in test_case_ids:
                 if test_case_id in self._test_suite_test_data.keys():
                     '''
-                    TODO: think about preloading data into obenveloping object
+                    TODO: think about preloading data into enveloping object
                     '''
                     messages_to_send = self._get_test_messages(test_case_id)
                     data_sent = self._get_test_data(test_case_id)
@@ -199,10 +200,13 @@ class SetupTrassaSuite:
                         '''
                         TEST THAT ALL MESSAGES SENT BEING RECEIVED
                         '''
-                        if udp_server_id != None:
+                        if udp_server_id != None and receive_only == None:
                             server_id = udp_server_id
                             self.sr.test_messages_received(messages_list = messages_to_send,
                                                            server_id     = server_id)
+                        elif udp_server_id != None and receive_only == True:
+                            server_id = udp_server_id
+                            self.sr.test_receive_only()
                         else:
                             server_id = self.udp_srv_name
                             self.sr.test_messages_received(messages_list = messages_to_send,
@@ -215,13 +219,13 @@ class SetupTrassaSuite:
                         received_q = self.sr.get_received_queue(server_id)
                         logging.debug("DATA RECEIVED: ==>" + str(received_q) + "\n")
                         if parser == None:
-                            parsed_data = self.proc_data.parse_received_data(parser=self._t_parser,
-                                                                             received_data=received_q)
+                            parsed_data = self.proc_data.parse_received_data(parser         = self._t_parser,
+                                                                             received_data  = received_q)
                             self.test_suite_parsed_data[test_case_id] = deepcopy(parsed_data)
                             self.test_suite_sent_data[test_case_id] = deepcopy(data_sent)
                         else:
-                            parsed_data = self.proc_data.parse_received_data(parser=parser,
-                                                                             received_data=received_q)
+                            parsed_data = self.proc_data.parse_received_data(parser         = parser,
+                                                                             received_data  = received_q)
                             self.test_suite_parsed_data[test_case_id] = deepcopy(parsed_data)
                             self.test_suite_sent_data[test_case_id] = deepcopy(data_sent)
 
@@ -545,8 +549,59 @@ def test_this_aialr():
     #s_trassa.stop_logserver()
     return
 
+def test_this_peist():
+    '''
+    general test focused on PEIST
+    uses different sender and UDP receiving server
+    '''
+    s_trassa = SetupTrassaSuite()
+
+    '''
+    TODO:
+    finish with setup
+    '''
+    #s_trassa.setup_external_scripts()
+    #s_sonata.start_logserver()
+    #s_sonata.setup_vir_env()
+    #t_case_name=["test_trassa_messages01","test_trassa_messages02"]
+    #test_case_ids,
+    udp_sender_id = None
+    udp_server_id = None
+    parser = None
+
+    sender_id = s_trassa.udp_snd_name_01
+    server_id = s_trassa.udp_srv_name_01
+
+    '''
+    case when we want to filter some
+    of 
+    the arriving messages'''
+    t_case_name = ["test_trassa_messages04"]
+    udp_server_id     = s_trassa.udp_srv_name_01
+    ptrn_for_res      = s_trassa.get_msg_ptrn(t_case_name[0])
+
+    pttrn_to_search   = ptrn_for_res[0]
+    match             = pttrn_to_search.match('$PEIST,141714.00,A*30')
+
+    server = s_trassa.sr.udp_servers[udp_server_id]
+    server.res_filter = ptrn_for_res
+    s_trassa.sr.start_udp_server(server_id)
+    s_trassa.send_receive_tdata(test_case_ids=t_case_name,
+                                udp_sender_id=sender_id,
+                                udp_server_id=server_id,
+                                receive_only=True)
+
+    s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
+    s_trassa.stop_udp_server(udp_srv_name=server_id)
+
+    #s_trassa.stop_udp_sender()
+    #s_trassa.stop_test_env()
+    #s_trassa.stop_logserver()
+    return
+
 
 if __name__ == "__main__":
     #test_this()
     #test_this_astd()
-    test_this_aialr()
+    #test_this_aialr()
+    test_this_peist()

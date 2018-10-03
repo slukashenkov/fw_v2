@@ -180,7 +180,7 @@
     }
   },
   "test_trassa_messages03": {
-    "skip": false,
+    "skip": true,
 
     "t01_nmea_AITXT": {
       "msg_type": "aitxt",
@@ -221,7 +221,31 @@
       }
     }
   },
-  "test_trassa_messages04": {
+    "test_trassa_messages04": {
+    "skip": false,
+
+    "t01_nmea_AITXT": {
+      "msg_type": "aitxt",
+      "res_ptrn": ".*PEIST,....1[1-4].*",
+      "test_conditions": {
+        "pass": [
+          "sntns_total",
+          "sntns_order_num",
+          "stat_code",
+          "stat_descr"
+        ]
+      },
+      "fields": {
+        "sntns_total": "1",
+        "sntns_order_num": "1",
+        "stat_code": "21",
+        "stat_descr": "External DGNSS in use"
+      }
+    }
+
+  },
+
+  "test_trassa_messages05": {
     "skip": true,
     "t03_ais_type01": {
       "msg_type": "ais_type01",

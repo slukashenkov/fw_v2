@@ -219,14 +219,9 @@ class TrassaTestParser():
             self.trassa_data_parsed_map["name"] = paisd_parsed.v_name
             return self.trassa_data_parsed_map
 
-        elif m_type  == trassa_msg_types.PEIST:
-            peist_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
-
-            return self.trassa_data_parsed_map
 
         elif m_type  == trassa_msg_types.AITXT:
             aixtxt_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
-
             '''
              = aitxt_parsed.sntns_total
              = aitxt_parsed.sntns_order_num
@@ -242,7 +237,6 @@ class TrassaTestParser():
 
         elif m_type  == trassa_msg_types.AIALR:
             aialr_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
-
             '''
             fail_time = aialr_parsed.fail_time
             fail_code = aialr_parsed.fail_code
@@ -261,6 +255,11 @@ class TrassaTestParser():
         elif m_type == trassa_msg_types.ASTD:
             astd_map = self.astd_msg_helper.parse_astd(data_to_parse)
             return astd_map
+
+        elif m_type  == trassa_msg_types.PEIST:
+            peist_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
+
+            return self.trassa_data_parsed_map
 
 
     def msg_type(self,
