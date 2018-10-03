@@ -293,7 +293,7 @@ class SendReceive:
         curr_udp_server_name = self.udp_server_name + str(self.udp_servers_cnt)
         self.udp_servers_cnt = self.udp_servers_cnt + 1
         udp_server.name      = curr_udp_server_name
-        self.udp_servers[curr_udp_server_name] = udp_server
+        udp_server= self.udp_servers.get(curr_udp_server_name)
         #self.start_udp_server(curr_udp_server_name)
         return curr_udp_server_name
 
