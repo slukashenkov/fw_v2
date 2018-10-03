@@ -419,6 +419,7 @@ class SetupTrassaSuite:
         return res
 
 def test_this():
+    '''general test focused on AIVDM'''
     s_trassa = SetupTrassaSuite()
     '''
     TODO:
@@ -440,11 +441,11 @@ def test_this():
     case when we want to filter some
     of 
     the arriving messages'''
-    udp_server_id = s_trassa.udp_srv_name_01
-    ptrn_for_res = s_trassa.get_msg_ptrn(t_case_name[0])
-    server = s_trassa.sr.udp_servers[udp_server_id]
-    pttrn_to_search = re.compile(str(ptrn_for_res[0]))
-    m = pttrn_to_search.match('$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,071705.00*56')
+    udp_server_id     = s_trassa.udp_srv_name_01
+    ptrn_for_res      = s_trassa.get_msg_ptrn(t_case_name[0])
+    server            = s_trassa.sr.udp_servers[udp_server_id]
+    pttrn_to_search   = re.compile(str(ptrn_for_res[0]))
+    m                 = pttrn_to_search.match('$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,071705.00*56')
     server.res_filter = ptrn_for_res
     s_trassa.sr.start_udp_server(udp_server_id)
 
@@ -456,8 +457,96 @@ def test_this():
     #s_trassa.stop_udp_sender()
     #s_trassa.stop_test_env()
     #s_trassa.stop_logserver()
-
     return
 
+def test_this_astd():
+    '''
+    general test focused on ASTD
+    uses different sender and UDP receiving server
+    '''
+    s_trassa = SetupTrassaSuite()
+
+    '''
+    TODO:
+    finish with setup
+    '''
+    #s_trassa.setup_external_scripts()
+    #s_sonata.start_logserver()
+    #s_sonata.setup_vir_env()
+    #t_case_name=["test_trassa_messages01","test_trassa_messages02"]
+    #test_case_ids,
+    udp_sender_id = None
+    udp_server_id = None
+    parser = None
+    t_case_name = ["test_trassa_messages02"]
+    sender_id = s_trassa.udp_snd_name_02
+    server_id = s_trassa.udp_srv_name_02
+
+    s_trassa.sr.start_udp_server(server_id)
+    s_trassa.send_receive_tdata(test_case_ids=t_case_name,
+                                udp_sender_id=sender_id,
+                                udp_server_id=server_id)
+
+    s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
+    s_trassa.stop_udp_server(udp_srv_name=server_id)
+
+    #s_trassa.stop_udp_sender()
+    #s_trassa.stop_test_env()
+    #s_trassa.stop_logserver()
+    return
+
+
+def test_this_aialr():
+    '''
+    general test focused on ASTD
+    uses different sender and UDP receiving server
+    '''
+    s_trassa = SetupTrassaSuite()
+
+    '''
+    TODO:
+    finish with setup
+    '''
+    #s_trassa.setup_external_scripts()
+    #s_sonata.start_logserver()
+    #s_sonata.setup_vir_env()
+    #t_case_name=["test_trassa_messages01","test_trassa_messages02"]
+    #test_case_ids,
+    udp_sender_id = None
+    udp_server_id = None
+    parser = None
+
+    sender_id = s_trassa.udp_snd_name_01
+    server_id = s_trassa.udp_srv_name_01
+
+    '''
+    case when we want to filter some
+    of 
+    the arriving messages'''
+    t_case_name = ["test_trassa_messages03"]
+    udp_server_id     = s_trassa.udp_srv_name_01
+    ptrn_for_res      = s_trassa.get_msg_ptrn(t_case_name[0])
+
+    pttrn_to_search   = ptrn_for_res[1]
+    match             = pttrn_to_search.match('$AIALR,133930.40,01,V,V,Tx malfunction*35')
+
+    server = s_trassa.sr.udp_servers[udp_server_id]
+    server.res_filter = ptrn_for_res
+    s_trassa.sr.start_udp_server(server_id)
+    s_trassa.send_receive_tdata(test_case_ids=t_case_name,
+                                udp_sender_id=sender_id,
+                                udp_server_id=server_id)
+
+    s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
+    s_trassa.stop_udp_server(udp_srv_name=server_id)
+
+    #s_trassa.stop_udp_sender()
+    #s_trassa.stop_test_env()
+    #s_trassa.stop_logserver()
+    return
+
+
 if __name__ == "__main__":
-    test_this()
+    #test_this()
+    #test_this_astd()
+    test_this_aialr()

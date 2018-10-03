@@ -299,14 +299,16 @@ class SendReceive:
 
     def start_udp_server(self,
                          srv_id):
-            self.logger.info('Starting up UDP Server to listen traffic from KD')
             curr_udp_srv = self.udp_servers.get(srv_id)
+            ip   = curr_udp_srv.ip_address
+            port = curr_udp_srv.port
+            self.logger.info('Starting up UDP Server to listen traffic from KD')
+            self.logger.info('on:'+str(curr_udp_srv.ip_address)+":"+str(port))
+
             t = threading.Thread(target=curr_udp_srv.serve_forever)
             self.udp_servers_treads[srv_id]=t
             t.setDaemon(True)  # don't hang on exit
             t.start()
-
-
 
 
     def stop_udp_server(self,

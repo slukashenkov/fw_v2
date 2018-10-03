@@ -10,6 +10,7 @@ class trassa_msg_types(enum.Enum):
                         AITXT = 3
                         AIALR = 4
                         PEIST = 5
+                        ASTD  = 6
 
 class TrassaTestParser():
 
@@ -80,6 +81,15 @@ class TrassaTestParser():
         self.regex_dict[trassa_msg_types.PAISD] = self.paisd_regex
 
         '''
+        ASTD msg
+        S.TRASSA.FE.KD1F
+        '''
+        self.astd_regex = re.compile(r'''
+                                      .*TRASSA.FE.KD.*
+                                      ''',re.X | re.IGNORECASE)
+        self.regex_dict[trassa_msg_types.ASTD] = self.astd_regex
+
+        '''
         AITXT msg
         $AITXT,1,1,21,External DGNSS in use*67
         '''
@@ -96,7 +106,6 @@ class TrassaTestParser():
                                       ^.*AIALR.*
                                       ''',re.X | re.IGNORECASE)
         self.regex_dict[trassa_msg_types.AIALR] = self.aialr_regex
-
 
         '''
         PCMST msg
@@ -201,8 +210,7 @@ class TrassaTestParser():
             "draught": 21.1,
             "destination": "NOWHERE@@@@@@@@@@@@@",
             "dte": 0,
-            "Spare": 0
-            
+            "Spare": 0            
             '''
             paisd_parsed = self.nmea_msg_helper.parse_nmea(nmea_msg=data_to_parse)
             self.trassa_data_parsed_map["MMSI"] = paisd_parsed.mmsi
@@ -211,20 +219,48 @@ class TrassaTestParser():
             self.trassa_data_parsed_map["name"] = paisd_parsed.v_name
             return self.trassa_data_parsed_map
 
-            paisd_map = paidd_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
-            return self.trassa_data_parsed_map
-
         elif m_type  == trassa_msg_types.PEIST:
-            paisd_map = paidd_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
+            peist_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
+
             return self.trassa_data_parsed_map
 
         elif m_type  == trassa_msg_types.AITXT:
-            paisd_map = paidd_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
+            aixtxt_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
+
+            '''
+             = aitxt_parsed.sntns_total
+             = aitxt_parsed.sntns_order_num
+             = aitxt_parsed.stat_code
+             = aitxt_parsed.stat_descr
+            '''
+            self.trassa_data_parsed_map["sntns_total"] = aixtxt_map.sntns_total
+            self.trassa_data_parsed_map["sntns_order_num"] = aixtxt_map.sntns_order_num
+            self.trassa_data_parsed_map["stat_code"] = aixtxt_map.stat_code
+            self.trassa_data_parsed_map["stat_descr"] = aixtxt_map.stat_descr
+
             return self.trassa_data_parsed_map
 
         elif m_type  == trassa_msg_types.AIALR:
-            paisd_map = paidd_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
+            aialr_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
+
+            '''
+            fail_time = aialr_parsed.fail_time
+            fail_code = aialr_parsed.fail_code
+            fail_stat = aialr_parsed.fail_stat
+            tct_stat = aialr_parsed.tct_stat
+            fail_descr = aialr_parsed.fail_descr
+            '''
+            self.trassa_data_parsed_map["fail_time"] = aialr_map.fail_time
+            self.trassa_data_parsed_map["fail_code"] = aialr_map.fail_code
+            self.trassa_data_parsed_map["fail_stat"] = aialr_map.fail_stat
+            self.trassa_data_parsed_map["tct_stat"] = aialr_map.tct_stat
+            self.trassa_data_parsed_map["fail_descr"] = aialr_map.fail_descr
+
             return self.trassa_data_parsed_map
+
+        elif m_type == trassa_msg_types.ASTD:
+            astd_map = self.astd_msg_helper.parse_astd(data_to_parse)
+            return astd_map
 
 
     def msg_type(self,
