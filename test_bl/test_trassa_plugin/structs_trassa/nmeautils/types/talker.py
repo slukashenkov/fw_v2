@@ -42,14 +42,7 @@ class ALR(TalkerSentence):
         ("Failure description", "fail_descr"),
     )
 
-class MST(TalkerSentence):
-    """ PCMST - Proprietary "T" equipment status
 
-    """
-    fields = (
-        ("Sentences Timestamp", "sntns_tmstmp"),
-        ("Eqipment state", "eq_state"),
-    )
 
 class IDD(TalkerSentence):
     """PAIDD - AIS data for FOR CUSTOM eqipment

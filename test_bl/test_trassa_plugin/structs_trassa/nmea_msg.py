@@ -1,7 +1,7 @@
 from test_bl.test_trassa_plugin.structs_trassa.nmeautils import nmea, nmea_utils
 from test_bl.test_trassa_plugin.structs_trassa.nmeautils.types import talker
-from test_bl.test_trassa_plugin.structs_trassa.nmeautils.types.proprietary import ais
-from test_bl.test_trassa_plugin.structs_trassa.nmeautils.types.proprietary import aid
+from test_bl.test_trassa_plugin.structs_trassa.nmeautils.types.proprietary import ais, aid, eis, cms
+
 
 class NmeaMsg():
     def __init__(self):
@@ -23,10 +23,11 @@ class NmeaMsg():
         #return str(talker.TXT('AI', 'TXT', ('1', '1', '21', 'External DGNSS in use')))
         return str(talker.ALR('AI', 'ALR', ('133930.40', '01', 'V', 'V', 'Tx malfunction')))
 
+
     def get_pc_mst(self,
                    mst_flds):
         #str(talker.MST('PC', 'MST', ('133930.40', 'V')))
-        pcmst_obj = talker.MST('PC', 'MST', mst_flds)
+        pcmst_obj = cms.CMS('CMS', 'CMST', mst_flds)
         pcmst_str = pcmst_obj.render()
         return pcmst_str
 
@@ -61,6 +62,13 @@ class NmeaMsg():
         PAIDD_STR = PAIDD_OBJ.render()
         return PAIDD_STR
 
+    def get_p_eis_t_private(self,
+                            peist_fields):
+        PEIST_OBJ = eis.EIST('EIS','EIST', peist_fields)
+
+        PEIST_STR = PEIST_OBJ.render()
+        return PEIST_STR
+
     def parse_nmea(self,
                    nmea_msg):
         paisd_obj = nmea.NMEASentence.parse(nmea_msg)
@@ -70,21 +78,46 @@ def test_this():
     nmea_msg = NmeaMsg()
     test_nmea = {}
 
-    #stuct for sending
+    #STRUCTURES for sending
     aitxt_msg = ('1', '1', '21', 'External DGNSS in use')
     test_nmea['aitxt'] = nmea_msg.get_ai(type ='TXT',
                                          ai_flds = aitxt_msg)
+    aitxt_parsed = nmea_msg.parse_nmea(test_nmea['aitxt'])
+    sntns_total = aitxt_parsed.sntns_total
+    sntns_order_num = aitxt_parsed.sntns_order_num
+    stat_code = aitxt_parsed.stat_code
+    stat_descr = aitxt_parsed.stat_descr
 
     # stuct for sending
     aialr_msg = ('133930.40', '01', 'V', 'V', 'Tx malfunction')
     test_nmea['aialr'] = nmea_msg.get_ai(type ='ALR',
                                                ai_flds = aialr_msg)
 
+    aialr_parsed = nmea_msg.parse_nmea(test_nmea['aialr'])
+    fail_time  = aialr_parsed.fail_time
+    fail_code  = aialr_parsed.fail_code
+    fail_stat  = aialr_parsed.fail_stat
+    tct_stat   = aialr_parsed.tct_stat
+    fail_descr = aialr_parsed.fail_descr
+
     # stuct for sending
     pcmst_msg = ('133930.40', 'V')
     test_nmea['pcmst'] = nmea_msg.get_pc_mst(mst_flds=pcmst_msg)
+    pcmst_parsed        =nmea_msg.parse_nmea(test_nmea['pcmst'])
+    pcmst_sntns_tmstmp  = pcmst_parsed.sntns_tmstmp
+    pcmst_eq_state      = pcmst_parsed.eq_state
 
-    # stuct for parsing
+
+
+    # STRUCTURES for parsing
+    # test creation and conversion into
+    #
+    # PEIST IMS keepelive msg
+    msg_flds = ('142418.00','A')
+    test_nmea['peist'] = nmea_msg.get_p_eis_t_private(peist_fields=msg_flds)
+    peist_parsed = nmea_msg.parse_nmea(test_nmea['peist'])
+    peist_timestamp = peist_parsed.time_stamp
+    peist_ims_stat  = peist_parsed.ims_status
 
 
     #test_nmea['paisd'] = nmea_msg.get_pa_isd()
@@ -111,20 +144,12 @@ def test_this():
 
 
 
-    aitxt_parsed = nmea_msg.parse_nmea(test_nmea['aitxt'])
-    sntns_total = aitxt_parsed.sntns_total
-    sntns_order_num = aitxt_parsed.sntns_order_num
-    stat_code = aitxt_parsed.stat_code
-    stat_descr = aitxt_parsed.stat_descr
-
-    aialr_parsed = nmea_msg.parse_nmea(test_nmea['aialr'])
-    fail_time  = aialr_parsed.fail_time
-    fail_code  = aialr_parsed.fail_code
-    fail_stat  = aialr_parsed.fail_stat
-    tct_stat   = aialr_parsed.tct_stat
-    fail_descr = aialr_parsed.fail_descr
 
 
+
+    '''
+    TEST PCMST parsing
+    '''
     pcmst_parsed = nmea_msg.parse_nmea(test_nmea['pcmst'])
     sntns_tmstmp = pcmst_parsed.sntns_tmstmp
     eq_state =  pcmst_parsed.eq_state

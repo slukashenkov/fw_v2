@@ -12,7 +12,8 @@ class AIS(nmea.ProprietarySentence):
                 data):
 
         name =  datatype
-        cls = _cls.sentence_types.get(name, _cls)
+        cls = _cls.sentence_types.get(name,
+                                      _cls)
         return super(AIS, cls).__new__(cls)
 
     def __init__(self,

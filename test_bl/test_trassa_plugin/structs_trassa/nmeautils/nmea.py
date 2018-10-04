@@ -143,6 +143,7 @@ import re,operator
 from functools import reduce
 
 
+
 class ParseError(ValueError):
     def __init__(self, message, data):
         super(ParseError, self).__init__((message, data))
@@ -263,9 +264,51 @@ class NMEASentence(NMEASentenceBase):
             raise ChecksumError(
                 'strict checking requested but checksum missing', data)
 
+        '''
+        TEST whether the sentence is a proprietary sentence
+        '''
+        proprietary_match = NMEASentence.proprietary_re.match(sentence_type)
+        '''
+        TEST whether the sentence is query sentence
+        '''
+        query_match = NMEASentence.query_re.match(sentence_type)
+        '''
+        TEST whether the sentence is a talker sentence
+        '''
         talker_match = NMEASentence.talker_re.match(sentence_type)
 
-        if talker_match:
+
+        '''
+        Build object with accessible data fields 
+        based on NMEA sentence type         
+        '''
+        if proprietary_match:
+            manufacturer = proprietary_match.group('manufacturer')
+            datatype = proprietary_match.group('p_data_type')
+            # classname   = manufacturer + datatype
+            if manufacturer == "CMS" and datatype =="T":
+                datatype = manufacturer+datatype
+            elif manufacturer == "EIS" and datatype =="T":
+                datatype = manufacturer + datatype
+            elif manufacturer == "AIS" and datatype =="D":
+                datatype = manufacturer + datatype
+            elif manufacturer == "AID" and datatype =="D":
+                datatype = manufacturer + datatype
+
+            cls = ProprietarySentence.sentence_types.get(manufacturer,
+                                                         ProprietarySentence)
+            return cls(manufacturer,
+                       datatype,
+                       data)
+
+        elif query_match and not data_str:
+            talker   = query_match.group('talker')
+            listener = query_match.group('listener')
+            sentence = query_match.group('sentence')
+
+            return QuerySentence(talker, listener, sentence)
+
+        elif talker_match:
             talker = talker_match.group('talker')
             sentence = talker_match.group('sentence')
             cls = TalkerSentence.sentence_types.get(sentence)
@@ -276,29 +319,6 @@ class NMEASentence(NMEASentenceBase):
                     'Unknown sentence type %s' % sentence_type, line)
 
             return cls(talker, sentence, data)
-
-        query_match = NMEASentence.query_re.match(sentence_type)
-
-        if query_match and not data_str:
-            talker   = query_match.group('talker')
-            listener = query_match.group('listener')
-            sentence = query_match.group('sentence')
-
-            return QuerySentence(talker, listener, sentence)
-
-        proprietary_match = NMEASentence.proprietary_re.match(sentence_type)
-
-        if proprietary_match:
-            manufacturer = proprietary_match.group('manufacturer')
-            datatype     = proprietary_match.group('p_data_type')
-            #classname   = manufacturer + datatype
-
-            cls = ProprietarySentence.sentence_types.get(manufacturer,
-                                                         ProprietarySentence)
-
-            return cls(manufacturer,
-                       datatype,
-                       data)
 
         raise ParseError(
             'could not parse sentence type: %r' % sentence_type, line)
@@ -413,6 +433,9 @@ class ProprietarySentence(NMEASentence):
         self.data           = list(data)
 
     def identifier(self):
-            return 'P%s' % (self.datatype+",")
+            if (self.datatype == "EIST") or (self.datatype == "CMST") or (self.datatype == "AIDD") or (self.datatype == "AISD"):
+                return 'P%s' % (self.datatype + ",")
+            else:
+                return 'P%s' % (self.manufacturer+self.datatype+",")
 
 

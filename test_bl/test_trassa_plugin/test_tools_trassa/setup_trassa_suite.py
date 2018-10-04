@@ -575,7 +575,8 @@ def test_this_peist():
     '''
     case when we want to filter some
     of 
-    the arriving messages'''
+    the arriving messages
+    '''
     t_case_name = ["test_trassa_messages04"]
     udp_server_id     = s_trassa.udp_srv_name_01
     ptrn_for_res      = s_trassa.get_msg_ptrn(t_case_name[0])
@@ -583,8 +584,8 @@ def test_this_peist():
     pttrn_to_search   = ptrn_for_res[0]
     match             = pttrn_to_search.match('$PEIST,141714.00,A*30')
 
-    server = s_trassa.sr.udp_servers[udp_server_id]
-    server.res_filter = ptrn_for_res
+    server              = s_trassa.sr.udp_servers[udp_server_id]
+    server.res_filter   = ptrn_for_res
     s_trassa.sr.start_udp_server(server_id)
     s_trassa.send_receive_tdata(test_case_ids=t_case_name,
                                 udp_sender_id=sender_id,

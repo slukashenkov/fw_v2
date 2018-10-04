@@ -258,6 +258,12 @@ class TrassaTestParser():
 
         elif m_type  == trassa_msg_types.PEIST:
             peist_map = self.nmea_msg_helper.parse_nmea(data_to_parse)
+            '''
+            peist_timestamp = peist_parsed.time_stamp
+            peist_ims_stat  = peist_parsed.ims_status
+            '''
+            self.trassa_data_parsed_map["time_stamp"] = peist_map.time_stamp
+            self.trassa_data_parsed_map["ims_status"] = peist_map.ims_status
 
             return self.trassa_data_parsed_map
 
@@ -272,7 +278,7 @@ class TrassaTestParser():
                  return key
 
     def compare_fields(self,
-                       msg_data_sent,
+                       msg_data_sent=None,
                        msg_data_received=None):
         """
         :param msg_data_sent: data gathered at the time when packet is formed
@@ -280,10 +286,40 @@ class TrassaTestParser():
         :return:
         """
         comparison_results = {}
+        '''
+        TRASSA deals with different kind of messages
+        some of which do not assume sending anything for instance 
+        so we need to find out what type of message 
+        we are dealing with
+        from sent 
+        '''
+        msg_type = self.get_msg_type(msg_data_sent)
+        if msg_type == trassa_msg_types.PEIST:
+            return self.get_test_type(msg_data_sent,
+                                      msg_data_received,
+                                      comparison_results)
+        if msg_type == trassa_msg_types.PAISD:
+            return
+        if msg_type == trassa_msg_types.AITXT:
+            return
+        if msg_type == trassa_msg_types.AIALR:
+            return
+        if msg_type == trassa_msg_types.PAIDD:
+            return
+        if msg_type == trassa_msg_types.ASTD:
+            return
+
+
+    def get_test_type(self,
+                      msg_data_sent,
+                      msg_data_received,
+                      comparison_results):
+
         if msg_data_received == None and "fail" in msg_data_sent.keys():
             pattern_to_search = msg_data_sent["fail"]
             self.parse_log(pattern_to_search)
             return comparison_results
+
         elif msg_data_received != None and "pass" in msg_data_sent.keys():
             self.trassa_data_parsed_map = msg_data_received
             self.data_to = msg_data_sent
@@ -291,3 +327,53 @@ class TrassaTestParser():
             for key in keys:
                 comparison_results[key] = self.__do_comparison(key)
             return comparison_results
+
+    def get_msg_type(self,
+                     msg_data_sent):
+        msg_type = msg_data_sent[0]['msg_type']
+        if msg_type == 'aitxt':
+            return trassa_msg_types.AITXT
+        if msg_type == 'paisd':
+            return trassa_msg_types.PAISD
+        if msg_type == 'peist':
+            return trassa_msg_types.PEIST
+
+    def parse_log(self,
+                       msg_data_sent,
+                       path_to_log
+                       ):
+        '''For each element sent test for substring'''
+        if os.path.exists(path_to_log):
+            pattern_in = []
+            try:
+                if "fail" in msg_data_sent.keys():
+                    pattern_in.append(msg_data_sent[self.search_pttrn_keyword])
+            except:
+                raise Exception("Something is wrong with our assumption that we can iterate over sent messages list")
+
+            try:
+                for pattern in pattern_in:
+                    search_substr = ScanLogs(logs_location=path_to_log,
+                                              search_pttrn =pattern)
+                    result = search_substr.scan_logs()
+                    return result
+            except:
+                raise Exception("Something is wrong with our assumption that we formed a list of patterns")
+            return
+
+    def __do_comparison(self,
+                        key):
+        result = False
+        if "sonata_id" == key and ((key in self.data_to) and (key in self.sonata_nmea_parsed_map)):
+            field_sent = self.data_to[key]
+            field_received = int(self.sonata_nmea_parsed_map[key])
+            try:
+                assert field_sent == field_received, "Fields ARE NOT equal"
+                result = True
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " was successful")
+                return (result, field_sent, field_received)
+            except:
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " FAILED MISERABLY")
+                return (result, field_sent, field_received)

@@ -94,12 +94,19 @@ class ProcessReceivedData:
         :return:
         """
         data_compared = []
+        '''
+        TODO: WTF is this test doing in SONATA
+        '''
         if len(data_sent) == len(data_received):
             num_of_elem = len(data_sent)
             proc_elem = 0
-        result = []
-        result = copy.deepcopy([parser.compare_fields(msg_data_sent,msg_data_received) for msg_data_sent, msg_data_received in zip(data_sent, data_received)])
-        return result
+            result = []
+            result = copy.deepcopy([parser.compare_fields(msg_data_sent,msg_data_received) for msg_data_sent, msg_data_received in zip(data_sent, data_received)])
+            return result
+        else:
+            result = parser.compare_fields(msg_data_sent = data_sent,
+                                           msg_data_received = data_received)
+
 
 
     '''

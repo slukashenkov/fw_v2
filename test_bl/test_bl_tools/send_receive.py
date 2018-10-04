@@ -473,7 +473,7 @@ class SendReceive:
 
     def test_receive_only(self,
                           *var_args):
-        sleep(120)
+        sleep(65)
         return
 
     def test_num_messages(self,

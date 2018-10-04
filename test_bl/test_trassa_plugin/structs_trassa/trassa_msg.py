@@ -197,22 +197,22 @@ class TrassaMsg():
 
         elif "ais_type24b" == message_type_str:
             msg24_b = {}
-            msg24_b['MessageID'] = test_data['fields']['MessageID']
-            msg24_b['RepeatIndicator'] = test_data['fields']['RepeatIndicator']
-            msg24_b['MMSI'] = test_data['fields']['MMSI']
-            msg24_b['shipandcargo'] = test_data['fields']['shipandcargo']
+            msg24_b['MessageID']        = test_data['fields']['MessageID']
+            msg24_b['RepeatIndicator']  = test_data['fields']['RepeatIndicator']
+            msg24_b['MMSI']             = test_data['fields']['MMSI']
+            msg24_b['shipandcargo']     = test_data['fields']['shipandcargo']
 
-            msg24_b['vendor_id'] = test_data['fields']['vendor_id']
-            msg24_b['unit_model'] = test_data['fields']['unit_model']
-            msg24_b['serial_num'] = test_data['fields']['serial_num']
-            msg24_b['callsign'] = test_data['fields']['callsign']
-            msg24_b['name'] = test_data['fields']['name']
+            msg24_b['vendor_id']   = test_data['fields']['vendor_id']
+            msg24_b['unit_model']  = test_data['fields']['unit_model']
+            msg24_b['serial_num']  = test_data['fields']['serial_num']
+            msg24_b['callsign']    = test_data['fields']['callsign']
+            msg24_b['name']        = test_data['fields']['name']
 
-            msg24_b['dimA'] = test_data['fields']['dimA']
-            msg24_b['dimB'] = test_data['fields']['dimB']
-            msg24_b['dimC'] = test_data['fields']['dimC']
-            msg24_b['dimD'] = test_data['fields']['dimD']
-            msg24_b['Spare'] =  test_data['fields']['Spare']
+            msg24_b['dimA']  = test_data['fields']['dimA']
+            msg24_b['dimB']  = test_data['fields']['dimB']
+            msg24_b['dimC']  = test_data['fields']['dimC']
+            msg24_b['dimD']  = test_data['fields']['dimD']
+            msg24_b['Spare'] = test_data['fields']['Spare']
 
 
             test_msg = self.ais_msgs.get_type_24( type="B",
@@ -252,10 +252,18 @@ class TrassaMsg():
         elif "pcmst" == message_type_str:
 
             msg_pcmst = (test_data['fields']['sntns_tmstmp'],
-                         test_data['fields']['eq_state']
-            )
+                         test_data['fields']['eq_state'])
+            test_msg = self.nmea_msgs.get_pc_mst(mst_flds =msg_pcmst)
+            t_data = copy.deepcopy(test_data)
+            return (test_msg,
+                    t_data,
+                    test_type)
+        elif "peist" == message_type_str:
+            msg_peist = (test_data['fields']['time_stamp'],
+                         test_data['fields']['ims_status']
+                         )
+            test_msg = self.nmea_msgs.get_p_eis_t_private(peist_fields=msg_peist)
 
-            test_msg = self.nmea_msgs.get_pc_mst(mst_flds=msg_pcmst)
             t_data = copy.deepcopy(test_data)
             return (test_msg,
                     t_data,

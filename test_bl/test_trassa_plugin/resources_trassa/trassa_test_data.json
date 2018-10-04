@@ -221,25 +221,22 @@
       }
     }
   },
-    "test_trassa_messages04": {
+  "test_trassa_messages04": {
     "skip": false,
-
-    "t01_nmea_AITXT": {
-      "msg_type": "aitxt",
+    "t04_peist_type": {
+                      "msg_type": "peist",
+                      "test_conditions": {
+                        "pass": [
+                          "sntns_total",
+                          "sntns_order_num",
+                          "stat_code",
+                          "stat_descr"
+                        ]
+                      },
       "res_ptrn": ".*PEIST,....1[1-4].*",
-      "test_conditions": {
-        "pass": [
-          "sntns_total",
-          "sntns_order_num",
-          "stat_code",
-          "stat_descr"
-        ]
-      },
       "fields": {
-        "sntns_total": "1",
-        "sntns_order_num": "1",
-        "stat_code": "21",
-        "stat_descr": "External DGNSS in use"
+               "time_stamp":"142418.00",
+               "ims_status":"A"
       }
     }
 
