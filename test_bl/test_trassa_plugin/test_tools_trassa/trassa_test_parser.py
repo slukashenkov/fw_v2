@@ -52,6 +52,8 @@ class TrassaTestParser():
         self.trassa_nmea_from_parsed = {}
 
 
+
+
         '''
         SPECIFIC VALUES TO COMPARE
         '''
@@ -315,15 +317,20 @@ class TrassaTestParser():
                       msg_data_received,
                       comparison_results):
 
-        if msg_data_received == None and "fail" in msg_data_sent.keys():
+        test_type = msg_data_sent[0]["test_conditions"]
+
+        if msg_data_received == None and "fail" in test_type.keys():
             pattern_to_search = msg_data_sent["fail"]
             self.parse_log(pattern_to_search)
             return comparison_results
 
-        elif msg_data_received != None and "pass" in msg_data_sent.keys():
+        elif msg_data_received != None and "pass" in test_type.keys():
             self.trassa_data_parsed_map = msg_data_received
             self.data_to = msg_data_sent
-            keys = msg_data_sent["pass"]
+            keys = test_type["pass"]
+            '''TODO:
+            accomodate logic for not equality test
+            '''
             for key in keys:
                 comparison_results[key] = self.__do_comparison(key)
             return comparison_results

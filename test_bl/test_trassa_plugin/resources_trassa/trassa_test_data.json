@@ -226,12 +226,9 @@
     "t04_peist_type": {
                       "msg_type": "peist",
                       "test_conditions": {
-                        "pass": [
-                          "sntns_total",
-                          "sntns_order_num",
-                          "stat_code",
-                          "stat_descr"
-                        ]
+                        "pass": [ {"time_stamp":1},
+                                  {"ims_status":"A"}
+                                ]
                       },
       "res_ptrn": ".*PEIST,....1[1-4].*",
       "fields": {
