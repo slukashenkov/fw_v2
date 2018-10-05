@@ -50,8 +50,9 @@ class SetupTrassaSuite:
         '''-----------------------------------------------------------------------------------------------------------
         SEND RECEIVE 
         '''
-        self.positive_test_kword = "pass"
-        self.negative_test_kword = "fail"
+        self.positive_test_kword     = "pass"
+        self.negative_test_kword     = "fail"
+        self.no_data_sent_test_kword = "no_msg_sent"
         self.sr = send_receive.SendReceive(q_based=True)
         '''
         UDP SENDER (process based)
@@ -62,10 +63,10 @@ class SetupTrassaSuite:
         '''
         send_res_prefs = self.t_prefs.get_send_res_prefs()
 
-        ip_sender_01 = send_res_prefs["udp_ip_to_01"]
-        port_sender_01 = send_res_prefs["udp_port_to_01"]
-        ip_sender_02 = send_res_prefs["udp_ip_to_02"]
-        port_sender_02 = send_res_prefs["udp_port_to_02"]
+        ip_sender_01    = send_res_prefs["udp_ip_to_01"]
+        port_sender_01  = send_res_prefs["udp_port_to_01"]
+        ip_sender_02    = send_res_prefs["udp_ip_to_02"]
+        port_sender_02  = send_res_prefs["udp_port_to_02"]
 
         '''2 senders will be needed
         1-for AIS msgs
@@ -143,9 +144,9 @@ class SetupTrassaSuite:
         stuctures to hold sent and received data 
         for further comparison
         '''
-        self.test_suite_parsed_data = {}
-        self.test_suite_compared_data = None
-        self.test_suite_sent_data = {}
+        self.test_suite_parsed_data     = {}
+        self.test_suite_compared_data   = None
+        self.test_suite_sent_data       = {}
 
         '''------------------------------------------------------------------------------------------------------------
         SETUP VIRTUAL ENV FOR TESTS
@@ -161,10 +162,9 @@ class SetupTrassaSuite:
     '''
     def send_receive_tdata(self,
                            test_case_ids,
-                           udp_sender_id=None,
-                           udp_server_id=None,
-                           parser=None,
-                           receive_only=None):
+                           udp_sender_id    =   None,
+                           udp_server_id    =   None,
+                           parser           =   None):
             """
             :param test_case_ids: list of testcases` ids
             :param udp_sender_id:
@@ -204,9 +204,6 @@ class SetupTrassaSuite:
                             server_id = udp_server_id
                             self.sr.test_messages_received(messages_list = messages_to_send,
                                                            server_id     = server_id)
-                        elif udp_server_id != None and receive_only == True:
-                            server_id = udp_server_id
-                            self.sr.test_receive_only()
                         else:
                             server_id = self.udp_srv_name
                             self.sr.test_messages_received(messages_list = messages_to_send,
@@ -252,6 +249,28 @@ class SetupTrassaSuite:
                                                                    path_to_sut_log = self.g_prefs.get_sut_logging_log_file_dir(),
                                                                    data_sent=data_sent)
                         self.test_suite_parsed_data[test_case_id] = parsed_data
+                    elif test_case_type == self.no_data_sent_test_kword:
+                        server_id = udp_server_id
+                        self.sr.test_receive_only()
+                        '''
+                        GET the queue to read from
+                        '''
+                        '''TODO check sonata is works when we pass buffer further '''
+                        received_q = self.sr.get_received_queue(server_id)
+                        logging.debug("DATA RECEIVED: ==>" + str(received_q) + "\n")
+                        if parser == None:
+                            parsed_data = self.proc_data.parse_received_data(parser=self._t_parser,
+                                                                             received_data=received_q)
+                            self.test_suite_parsed_data[test_case_id] = deepcopy(parsed_data)
+                            self.test_suite_sent_data[test_case_id] = deepcopy(data_sent)
+                        else:
+                            parsed_data = self.proc_data.parse_received_data(parser=parser,
+                                                                             received_data=received_q)
+                            self.test_suite_parsed_data[test_case_id] = deepcopy(parsed_data)
+                            self.test_suite_sent_data[test_case_id] = deepcopy(data_sent)
+
+
+                        return
                 else:
                     raise Exception("TEST CASE NAME IS UNKNOWN")
             return
@@ -264,9 +283,11 @@ class SetupTrassaSuite:
         for test_case_id in test_case_ids:
             if test_case_id in self._test_suite_test_data.keys():
                 test_case_type = self.get_test_type(test_case_id)
+
                 if test_case_type == self.positive_test_kword:
                     data_sent = self.test_suite_sent_data[test_case_id]
                     data_received = self.test_suite_parsed_data[test_case_id]
+
                     if parser == None:
                         result[test_case_id] = self.proc_data.compare_sent_received(parser=self._t_parser,
                                                                                     data_sent=data_sent,
@@ -275,7 +296,6 @@ class SetupTrassaSuite:
                         result[test_case_id] = self.proc_data.compare_sent_received(parser=parser,
                                                                                     data_sent=data_sent,
                                                                                     data_received=data_received)
-
                         for result in result[test_case_id]:
                             for comparison in result:
                                 self.logger.error(comparison + ":==> " + str(result[comparison]))
@@ -288,8 +308,29 @@ class SetupTrassaSuite:
                                         self.logger.error(comparison + ":==> " + str(result[comparison]))
                                         self.logger.error('\n')
                                 '''
-        self.test_suite_compared_data = deepcopy(result)
-        return result
+                                self.test_suite_compared_data = deepcopy(result)
+                                return result
+
+                elif test_case_type == self.no_data_sent_test_kword:
+                    data_sent = self.test_suite_sent_data[test_case_id]
+                    data_received = self.test_suite_parsed_data[test_case_id]
+                    if parser == None:
+                        result[test_case_id] = self.proc_data.compare_sent_received(parser=self._t_parser,
+                                                                                    data_sent=data_sent,
+                                                                                    data_received=data_received)
+                        for t_records in result[test_case_id]:
+                            for record in t_records:
+                                self.logger.error("comparison result :==>" + str(record))
+                                self.logger.error('\n')
+                    else:
+                        result[test_case_id] = self.proc_data.compare_sent_received(parser=parser,
+                                                                                    data_sent=data_sent,
+                                                                                    data_received=data_received)
+
+                self.test_suite_compared_data = deepcopy(result)
+                return result
+
+
     '''---------------------------------------------------------------------------------------------------------------
     UTILITY FUNCTIONS
     '''
@@ -589,10 +630,10 @@ def test_this_peist():
     s_trassa.sr.start_udp_server(server_id)
     s_trassa.send_receive_tdata(test_case_ids=t_case_name,
                                 udp_sender_id=sender_id,
-                                udp_server_id=server_id,
-                                receive_only=True)
+                                udp_server_id=server_id
+                                )
 
-    s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
+    result = s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
     s_trassa.stop_udp_server(udp_srv_name=server_id)
 
     #s_trassa.stop_udp_sender()

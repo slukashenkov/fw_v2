@@ -262,10 +262,12 @@ class SonataTestParser:
         :return:
         """
         comparison_results = {}
+
         if msg_data_received == None and "fail" in msg_data_sent.keys():
             pattern_to_search = msg_data_sent["fail"]
             self.parse_log(pattern_to_search)
             return comparison_results
+
         elif msg_data_received != None and "pass" in msg_data_sent.keys():
             self.sonata_nmea_parsed_map = msg_data_received
             self.data_to = msg_data_sent
@@ -273,7 +275,6 @@ class SonataTestParser:
             for key in keys:
                 comparison_results[key] = self.__do_comparison(key)
             return comparison_results
-
 
     def __do_comparison(self,
                         key):

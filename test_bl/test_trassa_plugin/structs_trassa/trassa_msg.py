@@ -61,11 +61,13 @@ class TrassaMsg():
         '''
         Find out test conditions
         '''
-        test_type = test_data["test_conditions"]
-        if "pass" in test_type.keys():
+        test_type_dict = test_data["test_conditions"]
+        if "pass" in test_type_dict.keys():
             test_type="pass"
-        else:
+        elif "fail" in test_type_dict.keys():
             test_type="fail"
+        elif "no_msg_sent" in test_type_dict.keys():
+            test_type="no_msg_sent"
 
         '''
         Find out what kind of message 

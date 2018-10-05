@@ -12,6 +12,12 @@ class trassa_msg_types(enum.Enum):
                         PEIST = 5
                         ASTD  = 6
 
+
+class trassa_test_types(enum.Enum):
+                        PASS        = 1
+                        FAIL        = 2
+                        NO_MSG_SENT = 3
+
 class TrassaTestParser():
 
     def __init__(self,
@@ -295,11 +301,24 @@ class TrassaTestParser():
         we are dealing with
         from sent 
         '''
+
         msg_type = self.get_msg_type(msg_data_sent)
+        '''
+        TRASSA goes beyond "what is sent eq what is recent" check
+        so test conditions have additions 
+        and anyway it is better to extract them beforehand
+        '''
+        comp_cond = msg_data_sent[0]['test_conditions']
+
         if msg_type == trassa_msg_types.PEIST:
-            return self.get_test_type(msg_data_sent,
-                                      msg_data_received,
-                                      comparison_results)
+            test_type = self.get_test_type(msg_data_sent,
+                                           msg_data_received)
+
+            if test_type == trassa_test_types.NO_MSG_SENT:
+                comparison_results = self.__do_received_msg_check(rec_data   = msg_data_received,
+                                                                  conditions = comp_cond)
+            return comparison_results
+
         if msg_type == trassa_msg_types.PAISD:
             return
         if msg_type == trassa_msg_types.AITXT:
@@ -314,26 +333,17 @@ class TrassaTestParser():
 
     def get_test_type(self,
                       msg_data_sent,
-                      msg_data_received,
-                      comparison_results):
+                      msg_data_received):
 
         test_type = msg_data_sent[0]["test_conditions"]
 
-        if msg_data_received == None and "fail" in test_type.keys():
-            pattern_to_search = msg_data_sent["fail"]
-            self.parse_log(pattern_to_search)
-            return comparison_results
-
+        if   msg_data_received == None and "fail" in test_type.keys():
+            return trassa_test_types.FAIL
         elif msg_data_received != None and "pass" in test_type.keys():
-            self.trassa_data_parsed_map = msg_data_received
-            self.data_to = msg_data_sent
-            keys = test_type["pass"]
-            '''TODO:
-            accomodate logic for not equality test
-            '''
-            for key in keys:
-                comparison_results[key] = self.__do_comparison(key)
-            return comparison_results
+            return trassa_test_types.PASS
+        elif msg_data_received != None and "no_msg_sent" in test_type.keys():
+            return trassa_test_types.NO_MSG_SENT
+
 
     def get_msg_type(self,
                      msg_data_sent):
@@ -345,7 +355,7 @@ class TrassaTestParser():
         if msg_type == 'peist':
             return trassa_msg_types.PEIST
 
-    def parse_log(self,
+    def __do_log_parsing(self,
                        msg_data_sent,
                        path_to_log
                        ):
@@ -384,3 +394,36 @@ class TrassaTestParser():
                 self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
                     field_received) + " in field named: " + key + " FAILED MISERABLY")
                 return (result, field_sent, field_received)
+
+    def __do_received_msg_check(self,
+                                rec_data,
+                                conditions):
+
+        if "no_msg_sent" in conditions.keys():
+            send_period = conditions["no_msg_sent"][0]["time_stamp"]
+            flag        = conditions["no_msg_sent"][1]["ims_status"]
+            result = {}
+            message_type = "peist"
+            if rec_data:
+                t_stamp_01 = rec_data[1]["time_stamp"]
+                t_stamp_02 = rec_data[2]["time_stamp"]
+                msg_01_sec = int(t_stamp_01[-4])
+                msg_02_sec = int(t_stamp_02[-4])
+
+                comp = msg_02_sec - msg_01_sec
+                res_flag = rec_data[1]["ims_status"]
+
+                if comp == send_period and res_flag == flag:
+                    result[message_type] = (True, comp, res_flag)
+                    return result
+                else:
+                    result[message_type] = (False, comp, res_flag)
+                    return result
+            else:
+                raise Exception("Received data dataset is empty. KD is not on MOST likely!")
+
+    def parse_log_auto(self,
+                       msg_data_sent,
+                       path_to_log):
+
+        return

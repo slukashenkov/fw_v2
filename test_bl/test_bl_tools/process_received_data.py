@@ -104,8 +104,9 @@ class ProcessReceivedData:
             result = copy.deepcopy([parser.compare_fields(msg_data_sent,msg_data_received) for msg_data_sent, msg_data_received in zip(data_sent, data_received)])
             return result
         else:
-            result = parser.compare_fields(msg_data_sent = data_sent,
+            result = parser.compare_fields(msg_data_sent        = data_sent,
                                            msg_data_received = data_received)
+            return result
 
 
 

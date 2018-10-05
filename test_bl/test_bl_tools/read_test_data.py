@@ -196,7 +196,6 @@ class ReadData:
                       test_case_id
                       ):
         if test_case_id in self.test_suite_map.keys():
-            if test_case_id in self.test_suite_map.keys():
                 test_data_arr = self.test_suite_map[test_case_id]
                 test_type = test_data_arr[self.test_type_k_word]
                 return test_type

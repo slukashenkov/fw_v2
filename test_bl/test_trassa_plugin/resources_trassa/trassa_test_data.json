@@ -226,9 +226,10 @@
     "t04_peist_type": {
                       "msg_type": "peist",
                       "test_conditions": {
-                        "pass": [ {"time_stamp":1},
-                                  {"ims_status":"A"}
-                                ]
+                        "no_msg_sent": [
+                                        {"time_stamp":1},
+                                        {"ims_status":"A"}
+                                        ]
                       },
       "res_ptrn": ".*PEIST,....1[1-4].*",
       "fields": {

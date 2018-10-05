@@ -246,11 +246,11 @@ class SetupSonataSuite:
 
                 elif test_case_type == self.negative_test_kword:
                                 result = self.test_suite_parsed_data
-                                '''
+
                                 for comparison in result:
                                         self.logger.error(comparison + ":==> " + str(result[comparison]))
                                         self.logger.error('\n')
-                                '''
+
         self.test_suite_compared_data = deepcopy(result)
         return result
     '''---------------------------------------------------------------------------------------------------------------
