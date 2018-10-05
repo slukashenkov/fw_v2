@@ -138,7 +138,6 @@ class SonataTestParser:
         self.sonata_nmea_parsed_map = data_from
         return self.sonata_nmea_parsed_map
 
-
     def compare_fields_old(self,
                         sonata_id   =   None,
                         lat         =   None,

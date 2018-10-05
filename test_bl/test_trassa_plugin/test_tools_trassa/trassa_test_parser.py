@@ -286,13 +286,15 @@ class TrassaTestParser():
                  return key
 
     def compare_fields(self,
-                       msg_data_sent=None,
-                       msg_data_received=None):
+                       msg_data_sent     = None,
+                       msg_data_received = None,
+                       res_only          = None):
         """
         :param msg_data_sent: data gathered at the time when packet is formed
         :param msg_data_received: data gathered fro SUT in UDP server
         :return:
         """
+        self.res_only = res_only
         comparison_results = {}
         '''
         TRASSA deals with different kind of messages
@@ -301,14 +303,18 @@ class TrassaTestParser():
         we are dealing with
         from sent 
         '''
-
         msg_type = self.get_msg_type(msg_data_sent)
         '''
         TRASSA goes beyond "what is sent eq what is recent" check
         so test conditions have additions 
         and anyway it is better to extract them beforehand
         '''
-        comp_cond = msg_data_sent[0]['test_conditions']
+
+
+        if self.res_only == True:
+            comp_cond = msg_data_sent[0]['test_conditions']
+        else:
+            comp_cond = msg_data_sent['test_conditions']
 
         if msg_type == trassa_msg_types.PEIST:
             test_type = self.get_test_type(msg_data_sent,
@@ -326,16 +332,30 @@ class TrassaTestParser():
         if msg_type == trassa_msg_types.AIALR:
             return
         if msg_type == trassa_msg_types.PAIDD:
-            return
+            if "pass" in msg_data_sent["test_conditions"].keys():
+                '''
+                Initialise what we will search on
+                '''
+                self.trassa_data_parsed_map = msg_data_received
+                self.data_to = msg_data_sent["fields"]
+                keys = msg_data_sent["test_conditions"]["pass"]
+                for key in keys:
+                    comparison_results[key] = self.__do_comparison(key)
+                return comparison_results
+            if "fail" in msg_data_sent["test_conditions"].keys:
+                return
+
         if msg_type == trassa_msg_types.ASTD:
             return
-
 
     def get_test_type(self,
                       msg_data_sent,
                       msg_data_received):
 
-        test_type = msg_data_sent[0]["test_conditions"]
+        if self.res_only == True:
+            test_type = msg_data_sent[0]["test_conditions"]
+        else:
+            test_type = msg_data_sent["test_conditions"]
 
         if   msg_data_received == None and "fail" in test_type.keys():
             return trassa_test_types.FAIL
@@ -347,13 +367,21 @@ class TrassaTestParser():
 
     def get_msg_type(self,
                      msg_data_sent):
-        msg_type = msg_data_sent[0]['msg_type']
+        if self.res_only == True:
+            msg_type = msg_data_sent[0]['msg_type']
+        else:
+            msg_type = msg_data_sent['msg_type']
+
         if msg_type == 'aitxt':
             return trassa_msg_types.AITXT
         if msg_type == 'paisd':
             return trassa_msg_types.PAISD
         if msg_type == 'peist':
             return trassa_msg_types.PEIST
+        if msg_type == 'peist':
+            return trassa_msg_types.PEIST
+        if msg_type == 'ais_type01':
+            return trassa_msg_types.PAIDD
 
     def __do_log_parsing(self,
                        msg_data_sent,
@@ -381,9 +409,9 @@ class TrassaTestParser():
     def __do_comparison(self,
                         key):
         result = False
-        if "sonata_id" == key and ((key in self.data_to) and (key in self.sonata_nmea_parsed_map)):
+        if "MMSI" == key and ((key in self.data_to) and (key in self.trassa_data_parsed_map)):
             field_sent = self.data_to[key]
-            field_received = int(self.sonata_nmea_parsed_map[key])
+            field_received = int(self.trassa_data_parsed_map[key])
             try:
                 assert field_sent == field_received, "Fields ARE NOT equal"
                 result = True

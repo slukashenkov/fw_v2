@@ -105,7 +105,8 @@ class ProcessReceivedData:
             return result
         else:
             result = parser.compare_fields(msg_data_sent        = data_sent,
-                                           msg_data_received = data_received)
+                                           msg_data_received    = data_received,
+                                           res_only             = True )
             return result
 
 

@@ -200,7 +200,7 @@ class SetupTrassaSuite:
                         '''
                         TEST THAT ALL MESSAGES SENT BEING RECEIVED
                         '''
-                        if udp_server_id != None and receive_only == None:
+                        if udp_server_id != None:
                             server_id = udp_server_id
                             self.sr.test_messages_received(messages_list = messages_to_send,
                                                            server_id     = server_id)
@@ -330,7 +330,6 @@ class SetupTrassaSuite:
                 self.test_suite_compared_data = deepcopy(result)
                 return result
 
-
     '''---------------------------------------------------------------------------------------------------------------
     UTILITY FUNCTIONS
     '''
@@ -399,8 +398,6 @@ class SetupTrassaSuite:
         return test_type
 
 
-
-
     def stop_udp_sender(self):
         self.sr.stop_sender(self.udp_snd_name)
         return
@@ -463,7 +460,7 @@ class SetupTrassaSuite:
             res += [attr]
         return res
 
-def test_this():
+def test_this_paidd():
     '''general test focused on AIVDM'''
     s_trassa = SetupTrassaSuite()
     '''
@@ -489,8 +486,51 @@ def test_this():
     udp_server_id     = s_trassa.udp_srv_name_01
     ptrn_for_res      = s_trassa.get_msg_ptrn(t_case_name[0])
     server            = s_trassa.sr.udp_servers[udp_server_id]
+    pttrn = ptrn_for_res[0]
+    m                 = pttrn.match('$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,071705.00*56')
+    server.res_filter = ptrn_for_res
+    s_trassa.sr.start_udp_server(udp_server_id)
+    #sleep(40)
+
+    s_trassa.send_receive_tdata(test_case_ids=t_case_name,
+                                udp_sender_id=sender_id,
+                                udp_server_id=server_id)
+    s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
+    s_trassa.stop_udp_server(udp_srv_name=udp_server_id)
+    #s_trassa.stop_udp_sender()
+    #s_trassa.stop_test_env()
+    #s_trassa.stop_logserver()
+    return
+
+def test_this_paisd():
+    '''general test focused on AIVDM'''
+    s_trassa = SetupTrassaSuite()
+    '''
+    TODO:
+    finish with setup
+    '''
+    #s_trassa.setup_external_scripts()
+    #s_sonata.start_logserver()
+    #s_sonata.setup_vir_env()
+    #t_case_name=["test_trassa_messages01","test_trassa_messages02"]
+    #test_case_ids,
+    udp_sender_id = None
+    udp_server_id = None
+    parser = None
+    t_case_name = ["test_trassa_messages02"]
+    sender_id = s_trassa.udp_snd_name_01
+    server_id = s_trassa.udp_srv_name_01
+    #s_trassa.stop_udp_server(server_id)
+    '''
+    case when we want to filter some
+    of 
+    the arriving messages
+    '''
+    udp_server_id     = s_trassa.udp_srv_name_01
+    ptrn_for_res      = s_trassa.get_msg_ptrn(t_case_name[0])
+    server            = s_trassa.sr.udp_servers[udp_server_id]
     pttrn_to_search   = re.compile(str(ptrn_for_res[0]))
-    m                 = pttrn_to_search.match('$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,071705.00*56')
+    m                 = pttrn_to_search.match('$PAISD,8989999,001100,Vsl_cl_sgn,Vsl_name*5B')
     server.res_filter = ptrn_for_res
     s_trassa.sr.start_udp_server(udp_server_id)
 
@@ -618,7 +658,7 @@ def test_this_peist():
     of 
     the arriving messages
     '''
-    t_case_name = ["test_trassa_messages04"]
+    t_case_name = ["test_trassa_messages05"]
     udp_server_id     = s_trassa.udp_srv_name_01
     ptrn_for_res      = s_trassa.get_msg_ptrn(t_case_name[0])
 
@@ -633,8 +673,8 @@ def test_this_peist():
                                 udp_server_id=server_id
                                 )
 
-    result = s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
-    s_trassa.stop_udp_server(udp_srv_name=server_id)
+    result = s_trassa.compare_sent_received_tdata(test_case_ids = t_case_name)
+    s_trassa.stop_udp_server(udp_srv_name = server_id)
 
     #s_trassa.stop_udp_sender()
     #s_trassa.stop_test_env()
@@ -643,7 +683,7 @@ def test_this_peist():
 
 
 if __name__ == "__main__":
-    #test_this()
+    test_this_paidd()
     #test_this_astd()
     #test_this_aialr()
-    test_this_peist()
+    #test_this_peist()
