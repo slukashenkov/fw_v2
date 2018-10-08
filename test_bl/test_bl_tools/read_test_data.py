@@ -65,7 +65,7 @@ class ReadData:
             test_names.append(key)
         return test_names
 
-    def  get_testsuite_data(self,
+    def get_testsuite_data(self,
                            msg_struct):
         """
         :param msg_struct:  class that knows how to make actual message from data
@@ -175,6 +175,18 @@ class ReadData:
             return test_messages
         else:
             raise Exception("No such test case ID")
+
+    def get_message_type(self,
+                         test_case_id):
+
+        if test_case_id in self.test_suite_map.keys():
+            test_messages_arr=self.test_suite_map[test_case_id]
+            msg_type= []
+            for key in test_messages_arr:
+                if key not in self.test_data_k_ignore:
+                    data_tuple = test_messages_arr[key]
+                    msg_type.append(data_tuple[1]['msg_type'])
+        return msg_type
 
 
     def get_testcase_data(self,

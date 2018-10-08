@@ -177,7 +177,12 @@ class SetupTrassaSuite:
                     '''
                     TODO: think about preloading data into enveloping object
                     '''
-                    messages_to_send = self._get_test_messages(test_case_id)
+                    msg_type = self._get_msg_type(test_id=test_case_id)
+                    if 'ais_type05' in msg_type:
+                        ais_type05Arr = self._get_test_messages(test_case_id)
+                        messages_to_send = ais_type05Arr[0]
+                    else:
+                        messages_to_send = self._get_test_messages(test_case_id)
                     data_sent = self._get_test_data(test_case_id)
                     test_case_type = self.get_test_type(test_case_id)
 
@@ -376,6 +381,12 @@ class SetupTrassaSuite:
         if test_id in self._test_suite_test_data.keys():
             test_messages = self.rd.get_testcase_messages(test_case_id=test_id)
         return test_messages
+    def _get_msg_type(self,
+                      test_id
+                      ):
+        if test_id in self._test_suite_test_data.keys():
+            msg_type = self.rd.get_message_type(test_case_id=test_id)
+        return msg_type
 
     def _get_test_data(self,
                        test_id
@@ -475,7 +486,12 @@ def test_this_paidd():
     udp_sender_id = None
     udp_server_id = None
     parser = None
-    t_case_name = ["test_trassa_messages01"]
+    '''AIS Type 01 data'''
+    #t_case_name = ["test_trassa_messages01"]
+    '''AIS Type 18 data'''
+    t_case_name = ["test_trassa_messages07"]
+
+
     sender_id = s_trassa.udp_snd_name_01
     server_id = s_trassa.udp_srv_name_01
     #s_trassa.stop_udp_server(server_id)
@@ -488,6 +504,7 @@ def test_this_paidd():
     server            = s_trassa.sr.udp_servers[udp_server_id]
     pttrn = ptrn_for_res[0]
     m                 = pttrn.match('$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,071705.00*56')
+
     server.res_filter = ptrn_for_res
     s_trassa.sr.start_udp_server(udp_server_id)
     #sleep(40)
@@ -495,7 +512,7 @@ def test_this_paidd():
     s_trassa.send_receive_tdata(test_case_ids=t_case_name,
                                 udp_sender_id=sender_id,
                                 udp_server_id=server_id)
-    s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
+    result=s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
     s_trassa.stop_udp_server(udp_srv_name=udp_server_id)
     #s_trassa.stop_udp_sender()
     #s_trassa.stop_test_env()
@@ -517,6 +534,9 @@ def test_this_paisd():
     udp_sender_id = None
     udp_server_id = None
     parser = None
+    '''
+    AIS Type 5
+    '''
     t_case_name = ["test_trassa_messages02"]
     sender_id = s_trassa.udp_snd_name_01
     server_id = s_trassa.udp_srv_name_01
@@ -529,7 +549,7 @@ def test_this_paisd():
     udp_server_id     = s_trassa.udp_srv_name_01
     ptrn_for_res      = s_trassa.get_msg_ptrn(t_case_name[0])
     server            = s_trassa.sr.udp_servers[udp_server_id]
-    pttrn_to_search   = re.compile(str(ptrn_for_res[0]))
+    pttrn_to_search   = ptrn_for_res[0]
     m                 = pttrn_to_search.match('$PAISD,8989999,001100,Vsl_cl_sgn,Vsl_name*5B')
     server.res_filter = ptrn_for_res
     s_trassa.sr.start_udp_server(udp_server_id)
@@ -683,7 +703,8 @@ def test_this_peist():
 
 
 if __name__ == "__main__":
-    test_this_paidd()
+    #test_this_paidd()
+    test_this_paisd()
     #test_this_astd()
     #test_this_aialr()
     #test_this_peist()

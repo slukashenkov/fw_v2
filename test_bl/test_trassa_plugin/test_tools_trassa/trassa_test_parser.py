@@ -374,13 +374,13 @@ class TrassaTestParser():
 
         if msg_type == 'aitxt':
             return trassa_msg_types.AITXT
-        if msg_type == 'paisd':
+        if msg_type == 'ais_type05' or msg_type == 'ais_type24a' or msg_type == 'ais_type24b':
             return trassa_msg_types.PAISD
         if msg_type == 'peist':
             return trassa_msg_types.PEIST
         if msg_type == 'peist':
             return trassa_msg_types.PEIST
-        if msg_type == 'ais_type01':
+        if msg_type == 'ais_type01' or msg_type == 'ais_type18':
             return trassa_msg_types.PAIDD
 
     def __do_log_parsing(self,
@@ -408,6 +408,60 @@ class TrassaTestParser():
 
     def __do_comparison(self,
                         key):
+        '''
+        PAIDD fields:
+        ("MMSI", "MMSI"),
+        ("Longitude", "lon"),
+        ("Hemisphere_sign_n_s", "hem_n_s"),
+        ("Latitude", "lat"),
+        ("Hemisphere_sign_e_w", "hem_e_w"),
+        ("Speed Over Ground(SOG)", "sog"),
+        ("True Heading(HDG)", "hdg"),
+        ("Course Over Ground(COG)", "cog"),
+        ("Timestamp", "tmstmp"),
+
+
+        AIS 1,18 fields
+          "MessageID": 1,
+          "RepeatIndicator": 1,
+          "MMSI": 1193046,
+          "NavigationStatus": 3,
+          "ROT": -2,
+          "SOG": 101.9,
+          "PositionAccuracy": 1,
+          "longitude": -122.16328055555556,
+          "latitude": 37.424458333333334,
+          "COG": 34.5,
+          "TrueHeading": 41,
+          "TimeStamp": 35,
+          "RegionalReserved": 0,
+          "Spare": 0,
+          "RAIM": false,
+          "state_syncstate": 2,
+          "state_slottimeout": 0,
+          "state_slotoffset": 1221
+
+          "MMSI"
+          "longitude"
+          "latitude"
+          "SOG"
+          "COG"
+          "TrueHeading"
+
+
+
+
+        :param key:
+        :return:
+        '''
+        '''
+          "MMSI"
+          "longitude"
+          "latitude"
+          "SOG"
+          "COG"
+          "TrueHeading"
+        '''
         result = False
         if "MMSI" == key and ((key in self.data_to) and (key in self.trassa_data_parsed_map)):
             field_sent = self.data_to[key]
@@ -422,6 +476,78 @@ class TrassaTestParser():
                 self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
                     field_received) + " in field named: " + key + " FAILED MISERABLY")
                 return (result, field_sent, field_received)
+
+        if "longitude" == key and ((key in self.data_to) and (key in self.trassa_data_parsed_map)):
+            field_sent = self.data_to[key]
+            field_received = float(self.trassa_data_parsed_map[key])
+            try:
+                assert field_sent == field_received, "Fields ARE NOT equal"
+                result = True
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " was successful")
+                return (result, field_sent, field_received)
+            except:
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " FAILED MISERABLY")
+                return (result, field_sent, field_received)
+
+        if "latitude" == key and ((key in self.data_to) and (key in self.trassa_data_parsed_map)):
+            field_sent = self.data_to[key]
+            field_received = float(self.trassa_data_parsed_map[key])
+            try:
+                assert field_sent == field_received, "Fields ARE NOT equal"
+                result = True
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " was successful")
+                return (result, field_sent, field_received)
+            except:
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " FAILED MISERABLY")
+                return (result, field_sent, field_received)
+
+        if "SOG" == key and ((key in self.data_to) and (key in self.trassa_data_parsed_map)):
+            field_sent = self.data_to[key]
+            field_received = float(self.trassa_data_parsed_map[key])
+            try:
+                assert field_sent == field_received, "Fields ARE NOT equal"
+                result = True
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " was successful")
+                return (result, field_sent, field_received)
+            except:
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " FAILED MISERABLY")
+                return (result, field_sent, field_received)
+
+        if "COG" == key and ((key in self.data_to) and (key in self.trassa_data_parsed_map)):
+            field_sent = self.data_to[key]
+            field_received = float(self.trassa_data_parsed_map[key])
+            try:
+                assert field_sent == field_received, "Fields ARE NOT equal"
+                result = True
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " was successful")
+                return (result, field_sent, field_received)
+            except:
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " FAILED MISERABLY")
+                return (result, field_sent, field_received)
+
+        if "TrueHeading" == key and ((key in self.data_to) and (key in self.trassa_data_parsed_map)):
+            field_sent = float(self.data_to[key])
+            field_received = float(self.trassa_data_parsed_map[key])
+            try:
+                assert field_sent == field_received, "Fields ARE NOT equal"
+                result = True
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " was successful")
+                return (result, field_sent, field_received)
+            except:
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " FAILED MISERABLY")
+                return (result, field_sent, field_received)
+
+
 
     def __do_received_msg_check(self,
                                 rec_data,

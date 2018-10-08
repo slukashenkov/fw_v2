@@ -28,8 +28,9 @@ class AisMsg():
                    msg05):
 
         bits = ais_msg_5.encode(msg05)
-        nmea = uscg.create_nmea(bits,
-                                message_type=5)
+        nmea = list(uscg.create_nmea(bits,
+                                message_type=5))
+
         return nmea
 
     def get_type_24(self,

@@ -51,15 +51,19 @@ class AIDD(AID):
 
             timestamp -> Calculated
     """
+
     fields = (
         ("MMSI", "mmsi"),
-        ("Longitude", "lon"),
+        ("Latitude", "lat"  ),
         ("Hemisphere_sign_n_s", "hem_n_s"),
-        ("Latitude", "lat"),
+        ("Longitude", "lon"),
         ("Hemisphere_sign_e_w", "hem_e_w"),
         ("Speed Over Ground(SOG)", "sog"),
-        ("True Heading(HDG)", "hdg"),
         ("Course Over Ground(COG)", "cog"),
+        ("True Heading(HDG)", "hdg"),
         ("Timestamp", "tmstmp"),
+
+
+
     )
 
