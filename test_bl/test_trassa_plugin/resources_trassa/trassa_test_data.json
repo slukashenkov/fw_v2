@@ -137,7 +137,7 @@
   "test_trassa_messages04": {
     "skip": false,
 
-    "t01_nmea_AITXT": {
+    "t04_nmea_AITXT": {
       "msg_type": "aitxt",
       "res_ptrn": ".*AITXT.*",
       "test_conditions": {
@@ -155,7 +155,7 @@
         "stat_descr": "External DGNSS in use"
       }
     },
-    "t01_nmea_AIALR": {
+    "t04_nmea_AIALR": {
       "msg_type": "aialr",
       "test_conditions": {
         "pass": [

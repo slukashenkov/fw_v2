@@ -632,7 +632,7 @@ def test_this_aialr():
     case when we want to filter some
     of 
     the arriving messages'''
-    t_case_name = ["test_trassa_messages03"]
+    t_case_name = ["test_trassa_messages04"]
     udp_server_id     = s_trassa.udp_srv_name_01
     ptrn_for_res      = s_trassa.get_msg_ptrn(t_case_name[0])
 
@@ -646,7 +646,7 @@ def test_this_aialr():
                                 udp_sender_id=sender_id,
                                 udp_server_id=server_id)
 
-    s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
+    result=s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
     s_trassa.stop_udp_server(udp_srv_name=server_id)
 
     #s_trassa.stop_udp_sender()
@@ -709,6 +709,6 @@ def test_this_peist():
 if __name__ == "__main__":
     #test_this_paidd()
     #test_this_paisd()
-    test_this_astd()
-    #test_this_aialr()
+    #test_this_astd()
+    test_this_aialr()
     #test_this_peist()

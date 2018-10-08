@@ -340,10 +340,21 @@ class TrassaTestParser():
                 return
 
             return
-        if msg_type == trassa_msg_types.AITXT:
+        if (msg_type == trassa_msg_types.AITXT) or (msg_type == trassa_msg_types.AIALR):
+            if "pass" in msg_data_sent["test_conditions"].keys():
+                '''
+                Initialise what we will search on
+                '''
+                self.trassa_data_parsed_map = msg_data_received
+                self.data_to = msg_data_sent["fields"]
+                keys = msg_data_sent["test_conditions"]["pass"]
+                for key in keys:
+                    comparison_results[key] = self.__do_comparison_aitxt_alr(key)
+                return comparison_results
+            if "fail" in msg_data_sent["test_conditions"].keys:
+                return
             return
-        if msg_type == trassa_msg_types.AIALR:
-            return
+
         if msg_type == trassa_msg_types.PAIDD:
             if "pass" in msg_data_sent["test_conditions"].keys():
                 '''
@@ -402,8 +413,8 @@ class TrassaTestParser():
             return trassa_msg_types.PAISD
         if msg_type == 'peist':
             return trassa_msg_types.PEIST
-        if msg_type == 'peist':
-            return trassa_msg_types.PEIST
+        if (msg_type == 'aitxt') or (msg_type == 'aialr'):
+            return trassa_msg_types.AIALR
         if msg_type == 'ais_type01' or msg_type == 'ais_type18':
             return trassa_msg_types.PAIDD
         if msg_type == 'pcmst':
@@ -432,6 +443,32 @@ class TrassaTestParser():
             except:
                 raise Exception("Something is wrong with our assumption that we formed a list of patterns")
             return
+
+    def __do_comparison_aitxt_alr(self,
+                              key):
+        '''
+
+        :param key:
+        :return:
+        '''
+        '''
+  
+        '''
+        result = False
+        if (key in self.data_to) and (key in self.trassa_data_parsed_map):
+            field_sent = self.data_to[key]
+            field_received = self.trassa_data_parsed_map[key]
+            try:
+                assert field_sent == field_received, "Fields ARE NOT equal"
+                result = True
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " was successful")
+                return (result, field_sent, field_received)
+            except:
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " FAILED MISERABLY")
+                return (result, field_sent, field_received)
+
 
     def __do_comparison_paidd(self,
                               key):
