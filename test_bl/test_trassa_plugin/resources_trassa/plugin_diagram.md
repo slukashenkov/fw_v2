@@ -17,7 +17,7 @@ KD -> TRASSA: PEIST(A/V)\nnevery 1 sec
 end
 autonumber 01
 group exchange_3
-    AIS ->KD: AIALR/AITXT 
+    AIS ->KD: AIALR/AITXT UDP\n port B
     KD -->TRASSA: AIALR/AITXT\n as is
 end
 autonumber stop

@@ -537,7 +537,11 @@ def test_this_paisd():
     '''
     AIS Type 5
     '''
-    t_case_name = ["test_trassa_messages02"]
+    #t_case_name = ["test_trassa_messages02"]
+    '''
+    AIS Type 24ab
+    '''
+    t_case_name = ["test_trassa_messages08"]
     sender_id = s_trassa.udp_snd_name_01
     server_id = s_trassa.udp_srv_name_01
     #s_trassa.stop_udp_server(server_id)
@@ -583,7 +587,7 @@ def test_this_astd():
     udp_sender_id = None
     udp_server_id = None
     parser = None
-    t_case_name = ["test_trassa_messages02"]
+    t_case_name = ["test_trassa_messages03"]
     sender_id = s_trassa.udp_snd_name_02
     server_id = s_trassa.udp_srv_name_02
 
@@ -592,7 +596,7 @@ def test_this_astd():
                                 udp_sender_id=sender_id,
                                 udp_server_id=server_id)
 
-    s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
+    result=s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
     s_trassa.stop_udp_server(udp_srv_name=server_id)
 
     #s_trassa.stop_udp_sender()
@@ -704,7 +708,7 @@ def test_this_peist():
 
 if __name__ == "__main__":
     #test_this_paidd()
-    test_this_paisd()
-    #test_this_astd()
+    #test_this_paisd()
+    test_this_astd()
     #test_this_aialr()
     #test_this_peist()

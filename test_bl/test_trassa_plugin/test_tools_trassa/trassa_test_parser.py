@@ -359,6 +359,17 @@ class TrassaTestParser():
                 return
 
         if msg_type == trassa_msg_types.ASTD:
+            if "pass" in msg_data_sent["test_conditions"].keys():
+                '''
+                Initialise what we will search on
+                '''
+                self.trassa_data_parsed_map = msg_data_received
+                self.data_to = msg_data_sent["fields"]
+                keys = msg_data_sent["test_conditions"]["pass"]
+                comparison_results = self.__do_comparison_astd(keys)
+                return comparison_results
+            if "fail" in msg_data_sent["test_conditions"].keys:
+                return
             return
 
     def get_test_type(self,
@@ -395,6 +406,9 @@ class TrassaTestParser():
             return trassa_msg_types.PEIST
         if msg_type == 'ais_type01' or msg_type == 'ais_type18':
             return trassa_msg_types.PAIDD
+        if msg_type == 'pcmst':
+            return trassa_msg_types.ASTD
+
 
     def __do_log_parsing(self,
                        msg_data_sent,
@@ -658,6 +672,76 @@ class TrassaTestParser():
                 return (result, field_sent, field_received)
 
 
+
+    def __do_comparison_astd(self,
+                              key):
+        '''
+        PAIDD fields:
+        ("MMSI", "MMSI"),
+        ("Longitude", "lon"),
+        ("Hemisphere_sign_n_s", "hem_n_s"),
+        ("Latitude", "lat"),
+        ("Hemisphere_sign_e_w", "hem_e_w"),
+        ("Speed Over Ground(SOG)", "sog"),
+        ("True Heading(HDG)", "hdg"),
+        ("Course Over Ground(COG)", "cog"),
+        ("Timestamp", "tmstmp"),
+
+
+        AIS 1,18 fields
+          "MessageID": 1,
+          "RepeatIndicator": 1,
+          "MMSI": 1193046,
+          "NavigationStatus": 3,
+          "ROT": -2,
+          "SOG": 101.9,
+          "PositionAccuracy": 1,
+          "longitude": -122.16328055555556,
+          "latitude": 37.424458333333334,
+          "COG": 34.5,
+          "TrueHeading": 41,
+          "TimeStamp": 35,
+          "RegionalReserved": 0,
+          "Spare": 0,
+          "RAIM": false,
+          "state_syncstate": 2,
+          "state_slottimeout": 0,
+          "state_slotoffset": 1221
+
+          "MMSI"
+          "longitude"
+          "latitude"
+          "SOG"
+          "COG"
+          "TrueHeading"
+        :param key:
+        :return:
+        '''
+        '''
+          "MMSI"
+          "longitude"
+          "latitude"
+          "SOG"
+          "COG"
+          "TrueHeading"
+        '''
+        result = False
+        keys_sent = self.data_to.keys()
+        keys_rec  = self.trassa_data_parsed_map.keys()
+
+        if ("eq_state" in keys_sent) and ("trassa_status" in keys_rec):
+            field_sent = str(self.data_to["eq_state"])
+            field_received = str(self.trassa_data_parsed_map["trassa_status"])
+            try:
+                if (field_sent == "V" and field_received == "F") or (field_sent == "A" and field_received == "G"):
+                    result = True
+                    self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                        field_received) + "was successful")
+                    return (result, field_sent, field_received)
+            except:
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received)  + " FAILED MISERABLY")
+                return (result, field_sent, field_received)
 
 
     def __do_received_msg_check(self,
