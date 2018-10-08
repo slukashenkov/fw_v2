@@ -557,7 +557,7 @@ def test_this_paisd():
     s_trassa.send_receive_tdata(test_case_ids=t_case_name,
                                 udp_sender_id=sender_id,
                                 udp_server_id=server_id)
-    s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
+    result = s_trassa.compare_sent_received_tdata(test_case_ids=t_case_name)
     s_trassa.stop_udp_server(udp_srv_name=udp_server_id)
     #s_trassa.stop_udp_sender()
     #s_trassa.stop_test_env()

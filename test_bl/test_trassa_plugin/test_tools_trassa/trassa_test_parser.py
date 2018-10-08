@@ -326,6 +326,19 @@ class TrassaTestParser():
             return comparison_results
 
         if msg_type == trassa_msg_types.PAISD:
+            if "pass" in msg_data_sent["test_conditions"].keys():
+                '''
+                Initialise what we will search on
+                '''
+                self.trassa_data_parsed_map = msg_data_received
+                self.data_to = msg_data_sent["fields"]
+                keys = msg_data_sent["test_conditions"]["pass"]
+                for key in keys:
+                    comparison_results[key] = self.__do_comparison_paisd(key)
+                return comparison_results
+            if "fail" in msg_data_sent["test_conditions"].keys:
+                return
+
             return
         if msg_type == trassa_msg_types.AITXT:
             return
@@ -340,7 +353,7 @@ class TrassaTestParser():
                 self.data_to = msg_data_sent["fields"]
                 keys = msg_data_sent["test_conditions"]["pass"]
                 for key in keys:
-                    comparison_results[key] = self.__do_comparison(key)
+                    comparison_results[key] = self.__do_comparison_paidd(key)
                 return comparison_results
             if "fail" in msg_data_sent["test_conditions"].keys:
                 return
@@ -406,8 +419,8 @@ class TrassaTestParser():
                 raise Exception("Something is wrong with our assumption that we formed a list of patterns")
             return
 
-    def __do_comparison(self,
-                        key):
+    def __do_comparison_paidd(self,
+                              key):
         '''
         PAIDD fields:
         ("MMSI", "MMSI"),
@@ -546,6 +559,104 @@ class TrassaTestParser():
                 self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
                     field_received) + " in field named: " + key + " FAILED MISERABLY")
                 return (result, field_sent, field_received)
+
+    def __do_comparison_paisd(self,
+                              key):
+        '''
+        PAISD Fields
+            ("MMSI", "mmsi"),
+            ("IMO Number", "imo_num"),
+            ("Call Sign", "c_sign"),
+            ("Vessel Name", "v_name"),
+
+        AIS 5 fields
+          "res_ptrn": "^.*PAISD.*",
+          "fields":{
+          "MessageID": 5,
+          "RepeatIndicator": 1,
+          "MMSI": 1193046,
+          "AISversion": 0,
+          "IMOnumber": 3210,
+          "callsign": "PIRATE1",
+          "name": "SDRTYSDRTYSDRTYSDRTY",
+          "shipandcargo": 21,
+          "dimA": 10,
+          "dimB": 11,
+          "dimC": 12,
+          "dimD": 13,
+          "fixtype": 1,
+          "ETAmonth": 2,
+          "ETAday": 28,
+          "ETAhour": 9,
+          "ETAminute": 54,
+          "draught": 21.1,
+          "destination": "NOWHERE@@@@@@@@@@@@@",
+          "dte": 0,
+          "Spare": 0
+
+      :param key:
+      :return:
+      '''
+
+        '''
+        '''
+        result = False
+        if "MMSI" == key and ((key in self.data_to) and (key in self.trassa_data_parsed_map)):
+            field_sent = self.data_to[key]
+            field_received = int(self.trassa_data_parsed_map[key])
+            try:
+                assert field_sent == field_received, "Fields ARE NOT equal"
+                result = True
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " was successful")
+                return (result, field_sent, field_received)
+            except:
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " FAILED MISERABLY")
+                return (result, field_sent, field_received)
+
+        if "name" == key and ((key in self.data_to) and (key in self.trassa_data_parsed_map)):
+            field_sent = self.data_to[key]
+            field_received = str(self.trassa_data_parsed_map[key])
+            try:
+                assert field_sent == field_received, "Fields ARE NOT equal"
+                result = True
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " was successful")
+                return (result, field_sent, field_received)
+            except:
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " FAILED MISERABLY")
+                return (result, field_sent, field_received)
+
+        if "callsign" == key and ((key in self.data_to) and (key in self.trassa_data_parsed_map)):
+            field_sent = self.data_to[key]
+            field_received = str(self.trassa_data_parsed_map[key])
+            try:
+                assert field_sent == field_received, "Fields ARE NOT equal"
+                result = True
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " was successful")
+                return (result, field_sent, field_received)
+            except:
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " FAILED MISERABLY")
+                return (result, field_sent, field_received)
+
+        if "IMOnumber" == key and ((key in self.data_to) and (key in self.trassa_data_parsed_map)):
+            field_sent = self.data_to[key]
+            field_received = int(self.trassa_data_parsed_map[key])
+            try:
+                assert field_sent == field_received, "Fields ARE NOT equal"
+                result = True
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " was successful")
+                return (result, field_sent, field_received)
+            except:
+                self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
+                    field_received) + " in field named: " + key + " FAILED MISERABLY")
+                return (result, field_sent, field_received)
+
 
 
 
