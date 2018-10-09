@@ -6,27 +6,25 @@ Filter to a list of AIS receivers/basestations.
 
 TODO: For speed, provide functions that only parse the timestamp, station, etc.
 """
-import doctest
 import datetime
+import doctest
 import re
 import sys
-import time
 import unittest
 
 from BitVector import BitVector
 
-#Local modules
-from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisstring
+# Local modules
 from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisbinary
 from test_bl.test_trassa_plugin.structs_trassa.aisutils import nmea
-#from test_bl.test_trassa_plugin.structs_trassa.aisutils import sqlhelp
 
+# from test_bl.test_trassa_plugin.structs_trassa.aisutils import sqlhelp
 
 
 ######################################################################
 # NEW Regular Expression Parsing Style
 
-#FIX: make the field names be name1_name2 rather than camel case
+# FIX: make the field names be name1_name2 rather than camel case
 
 # USCG has some receivers that emit corrupted fields, so loosen from this
 #  | (,s(?P<s_rssi>\d*))
@@ -74,500 +72,518 @@ Regular expression for parsing a USCG.
 @bug: make this conform to the python coding style guides... time_stamp
 """
 
-uscg_ais_nmea_regex = re.compile(uscg_ais_nmea_regex_str,  re.VERBOSE)
+uscg_ais_nmea_regex = re.compile(uscg_ais_nmea_regex_str, re.VERBOSE)
 """Use this regex to parse USCG NMEA strings fields after the checksum."""
 
-def write_uscg_nmea_fields(nmea_str,
-                           out=sys.stdout,
-                           indent='\t'):
-    """Write out the fields of a USCG nmea string.
 
-    @param nmea_str: USCG style nmea string
-    @param out: stream object to write to
-    @param separator: string to put between each field
-    @param indent: how to indent each field
-    """
-    match_obj = uscg_ais_nmea_regex.search(nmea_str)
-    '''
-    write(out,indent+'         prefix = '+match_obj.group('prefix')+'\n')
-    write(out,indent+'     stringType = '+match_obj.group('stringType')+'\n')
-    write(out,indent+'          total = '+match_obj.group('total')+'\n')
-    write(out,indent+'         senNum = '+match_obj.group('senNum')+'\n')
-    write(out,indent+'          seqId = '+match_obj.group('seqId')+'\n')
-    write(out,indent+'           chan = '+match_obj.group('chan')+'\n')
-    write(out,indent+'           body = '+match_obj.group('body')+'\n')
-    write(out,indent+'       fillBits = '+match_obj.group('fillBits')+'\n')
-    write(out,indent+'       checksum = '+match_obj.group('checksum')+'\n')
-    write(out,indent+'           slot = '+match_obj.group('slot')+'\n')
-    write(out,indent+'              s = '+match_obj.group('s')+'\n')
-    write(out,indent+'signal_strength = '+match_obj.group('signal_strength')+'\n')
-    write(out,indent+'time_of_arrival = '+match_obj.group('time_of_arrival')+'\n')
-    write(out,indent+'              x = '+match_obj.group('x')+'\n')
-    write(out,indent+'        station = '+match_obj.group('station')+'\n')
-    write(out,indent+'   station_type = '+match_obj.group('station_type')+'\n')
-    write(out,indent+'      timeStamp = '+match_obj.group('timeStamp')+'\n')
-    '''
+def write_uscg_nmea_fields (nmea_str,
+							out = sys.stdout,
+							indent = '\t'):
+	"""Write out the fields of a USCG nmea string.
+
+	@param nmea_str: USCG style nmea string
+	@param out: stream object to write to
+	@param separator: string to put between each field
+	@param indent: how to indent each field
+	"""
+	match_obj = uscg_ais_nmea_regex.search(nmea_str)
+	'''
+	write(out,indent+'         prefix = '+match_obj.group('prefix')+'\n')
+	write(out,indent+'     stringType = '+match_obj.group('stringType')+'\n')
+	write(out,indent+'          total = '+match_obj.group('total')+'\n')
+	write(out,indent+'         senNum = '+match_obj.group('senNum')+'\n')
+	write(out,indent+'          seqId = '+match_obj.group('seqId')+'\n')
+	write(out,indent+'           chan = '+match_obj.group('chan')+'\n')
+	write(out,indent+'           body = '+match_obj.group('body')+'\n')
+	write(out,indent+'       fillBits = '+match_obj.group('fillBits')+'\n')
+	write(out,indent+'       checksum = '+match_obj.group('checksum')+'\n')
+	write(out,indent+'           slot = '+match_obj.group('slot')+'\n')
+	write(out,indent+'              s = '+match_obj.group('s')+'\n')
+	write(out,indent+'signal_strength = '+match_obj.group('signal_strength')+'\n')
+	write(out,indent+'time_of_arrival = '+match_obj.group('time_of_arrival')+'\n')
+	write(out,indent+'              x = '+match_obj.group('x')+'\n')
+	write(out,indent+'        station = '+match_obj.group('station')+'\n')
+	write(out,indent+'   station_type = '+match_obj.group('station_type')+'\n')
+	write(out,indent+'      timeStamp = '+match_obj.group('timeStamp')+'\n')
+	'''
+
 
 ######################################################################
 # OLD Style
 
 
-def get_station(nmeaStr):
-    """Return the station without doing anything else.  Try to be fast"""
-    fields = nmeaStr.split(',')
-    station = None
-    for i in range(len(fields)-1,5,-1):
-        if len(fields[i])==0:
-            continue # maybe it should throw a parse exception instead?
-        if fields[i][0] in ('b','r'):
-            station = fields[i]
-            continue
-    return station
+def get_station (nmeaStr):
+	"""Return the station without doing anything else.  Try to be fast"""
+	fields = nmeaStr.split(',')
+	station = None
+	for i in range(len(fields) - 1, 5, -1):
+		if len(fields[i]) == 0:
+			continue  # maybe it should throw a parse exception instead?
+		if fields[i][0] in ('b', 'r'):
+			station = fields[i]
+			continue
+	return station
 
-def get_contents(nmeaStr):
-    """Return the AIS msg string.  AIS goo"""
-    return nmeaStr.split(',')[5]
+
+def get_contents (nmeaStr):
+	"""Return the AIS msg string.  AIS goo"""
+	return nmeaStr.split(',')[5]
+
 
 class UscgNmea:
+	
+	
+	def __init__ (self,
+				  nmeaStr = None):
+		"""
+		Fields:
+		 - rssi ('s'): relative signal strength indicator
+		 - signalStrength ('d') - signal strendth in dBm
+		 - timeOfArrival ('T') - time of arrive from receiver - seconds within the minute
+		 - slotNumber ('S') - Receive slot number
+		 - station ('r' or 'b') - station name or id that received the message
+		 - stationTypeCode - first letter of the station name indicating 'b'asestation or 'r'eceive only (I think)
+		 - cg_sec - receive time of the message from the logging software.  Unix UTC second timestamp
+		 - timestamp - python datetime object in UTC derived from the cg_sec
 
-    def __init__(self,
-                 nmeaStr=None):
-        """
-        Fields:
-         - rssi ('s'): relative signal strength indicator
-         - signalStrength ('d') - signal strendth in dBm
-         - timeOfArrival ('T') - time of arrive from receiver - seconds within the minute
-         - slotNumber ('S') - Receive slot number
-         - station ('r' or 'b') - station name or id that received the message
-         - stationTypeCode - first letter of the station name indicating 'b'asestation or 'r'eceive only (I think)
-         - cg_sec - receive time of the message from the logging software.  Unix UTC second timestamp
-         - timestamp - python datetime object in UTC derived from the cg_sec
+		@todo: parse the other fields?
 
-        @todo: parse the other fields?
+		@see: Maritime navigation and radiocommunication equipment and
+			  systems - Digital interfaces - Part 100: Single talker
+			  and multiple listeners - Extra requirements to IEC
+			  61162-1 for the UAIS. (80_330e_PAS) Draft...
 
-        @see: Maritime navigation and radiocommunication equipment and
-              systems - Digital interfaces - Part 100: Single talker
-              and multiple listeners - Extra requirements to IEC
-              61162-1 for the UAIS. (80_330e_PAS) Draft...
+		"""
+		if None != nmeaStr:
+			fields = nmeaStr.split(',')
+			self.cg_sec = float(fields[-1])
+			self.timestamp = datetime.datetime.utcfromtimestamp(self.cg_sec)
+			# self.sqlTimestampStr = sqlhelp.sec2timestamp(self.cg_sec)
+			# See 80_330e_PAS
+			self.nmeaType = fields[0][1:]
+			self.totalSentences = int(fields[1])
+			self.sentenceNum = int(fields[2])
+			tmp = fields[3]
+			if len(tmp) > 0:
+				self.sequentialMsgId = int(tmp)
+			else:
+				self.sequentialMsgId = None
+			# FIX: make an int if the above is set
+			self.aisChannel = fields[4]  # 'A' or 'B'
+			self.contents = fields[5]
+			self.fillbits = int(fields[6].split('*')[0])
+			self.checksumStr = fields[6].split('*')[1]  # FIX: this is a hex string.  Convert?
+			
+			if self.sentenceNum == 1:
+				self.msgTypeChar = fields[5][0]
+			else:
+				self.msgTypeChar = None
+			
+			for i in range(len(fields) - 1.5, -1):
+				if len(fields[i]) == 0:
+					continue  # maybe it should throw a parse exception instead?
+				f = fields[i]
+				c = f[0]  # first charater determines what the field is
+				
+				if c in ('b', 'r', 'B', 'R'):
+					self.station = f  # FIX: think we want to keep the code in the first char
+					self.stationTypeCode = self.station[0]
+					continue
+					# break # Found it so ditch the for loop
+					if c == 's':
+						self.rssi = int(f[1:])
+						continue
+					if c == 'd':
+						self.signalStrength = int(f[1:])
+						continue
+					if c == 'T':
+						try:
+							self.timeOfArrival = float(f[1:])
+						except:
+							# print 'warning: bogus time of arrival: %s' % (f[1:],)
+							pass
+						continue
+					if c == 'S':
+						self.slotNumber = int(f[1:])
+						continue
+					if c == 'x':
+						# I don't know what x is
+						self.x = int(f[1:])
+						continue
+	
+	
+	def getBitVector (self):
+		"""
+		@return: bits for the payload (even if this is a multipart)
+		@rtype: BitVector
+		"""
+		return aisbinary.ais6tobitvec(self.contents)
+	
+	
+	def __eq__ (self, other):
+		# Try to be smart for speed
+		if self.cg_sec != other.cg_sec: return False
+		if self.sentenceNum != other.sentenceNum: return False
+		if self.totalSentences != other.totalSentences: return False
+		if self.sequentialMsgId != other.sequentialMsgId: return False
+		if self.aisChannel != other.aisChannel: return False
+		if self.checksumStr != other.checksumStr: return False
+		if self.fillbits != other.fillbits: return False
+		if self.station != other.station: return False
+		if self.contents != other.contents: return False
+		
+		# FIX: probably should check for the existance of rssi, signalStrength, etc
+		return True
+	
+	
+	def __ne__ (self, other):
+		return not self.__eq__(other)
+	
+	
+	def __str__ (self):
+		return self.buildNmea()
+	
+	
+	def buildNmea (self):
+		"""Use the values in this message to reconstruct a single line nmea string"""
+		
+		parts = ['!' + self.nmeaType, str(self.totalSentences), str(self.sentenceNum)]
+		if self.sequentialMsgId is None:
+			parts.append('')
+		else:
+			parts.append(str(self.sequentialMsgId))
+		parts.append(self.aisChannel)
+		parts.append(self.contents)
+		parts.append(str(self.fillbits) + '*' + self.checksumStr)
+		
+		if 'rssi' in self.__dict__: parts.append('s' + str(self.rssi))
+		if 'signalStrength' in self.__dict__: parts.append('d' + str(self.signalStrength))
+		if 'timeOfArrival' in self.__dict__: parts.append('T' + str(self.timeOfArrival))
+		if 'slotNumber' in self.__dict__: parts.append('S' + str(self.slotNumber))
+		if 'x' in self.__dict__: parts.append('x' + str(self.x))
+		
+		if self.station: parts.append(self.station)
+		parts.append(str(self.cg_sec))  # Always last
+		return ','.join(parts)
 
-        """
-        if None!=nmeaStr:
-            fields = nmeaStr.split(',')
-            self.cg_sec=float(fields[-1])
-            self.timestamp = datetime.datetime.utcfromtimestamp(self.cg_sec)
-            #self.sqlTimestampStr = sqlhelp.sec2timestamp(self.cg_sec)
-            # See 80_330e_PAS
-            self.nmeaType=fields[0][1:]
-            self.totalSentences = int(fields[1])
-            self.sentenceNum = int(fields[2])
-            tmp = fields[3]
-            if len(tmp) > 0:
-                self.sequentialMsgId = int(tmp)
-            else:
-                self.sequentialMsgId = None
-            # FIX: make an int if the above is set
-            self.aisChannel = fields[4] # 'A' or 'B'
-            self.contents = fields[5]
-            self.fillbits = int(fields[6].split('*')[0])
-            self.checksumStr = fields[6].split('*')[1] # FIX: this is a hex string.  Convert?
-
-            if self.sentenceNum==1:
-                self.msgTypeChar=fields[5][0]
-            else:
-                self.msgTypeChar=None
-
-            for i in range(len(fields)-1.5,-1):
-                if len(fields[i])==0:
-                    continue # maybe it should throw a parse exception instead?
-                f = fields[i]
-                c = f[0] # first charater determines what the field is
-
-                if c in ('b','r','B','R'):
-                    self.station = f # FIX: think we want to keep the code in the first char
-                    self.stationTypeCode = self.station[0]
-                    continue
-                    #break # Found it so ditch the for loop
-                    if c == 's':
-                      self.rssi=int(f[1:])
-                      continue
-                    if c == 'd':
-                        self.signalStrength = int(f[1:])
-                        continue
-                    if c == 'T':
-                        try:
-                            self.timeOfArrival = float(f[1:])
-                        except:
-                            #print 'warning: bogus time of arrival: %s' % (f[1:],)
-                            pass
-                        continue
-                    if c == 'S':
-                        self.slotNumber = int(f[1:])
-                        continue
-                    if c== 'x':
-                        # I don't know what x is
-                        self.x = int(f[1:])
-                        continue
-
-    def getBitVector(self):
-        """
-        @return: bits for the payload (even if this is a multipart)
-        @rtype: BitVector
-        """
-        return aisbinary.ais6tobitvec(self.contents)
-
-    def __eq__(self,other):
-        # Try to be smart for speed
-        if self.cg_sec != other.cg_sec: return False
-        if self.sentenceNum != other.sentenceNum: return False
-        if self.totalSentences != other.totalSentences: return False
-        if self.sequentialMsgId != other.sequentialMsgId: return False
-        if self.aisChannel != other.aisChannel: return False
-        if self.checksumStr != other.checksumStr: return False
-        if self.fillbits != other.fillbits: return False
-        if self.station != other.station: return False
-        if self.contents != other.contents: return False
-
-        # FIX: probably should check for the existance of rssi, signalStrength, etc
-        return True
-
-    def __ne__(self,other):
-        return not self.__eq__(other)
-
-    def __str__(self):
-        return self.buildNmea()
-
-    def buildNmea(self):
-        """Use the values in this message to reconstruct a single line nmea string"""
-
-        parts=['!'+self.nmeaType,str(self.totalSentences),str(self.sentenceNum)]
-        if self.sequentialMsgId is None:
-            parts.append('')
-        else:
-            parts.append(str(self.sequentialMsgId))
-        parts.append(self.aisChannel)
-        parts.append(self.contents)
-        parts.append(str(self.fillbits)+'*'+self.checksumStr)
-
-        if 'rssi' in self.__dict__: parts.append('s'+str(self.rssi))
-        if 'signalStrength' in self.__dict__: parts.append('d'+str(self.signalStrength))
-        if 'timeOfArrival' in self.__dict__: parts.append('T'+str(self.timeOfArrival))
-        if 'slotNumber' in self.__dict__: parts.append('S'+str(self.slotNumber))
-        if 'x' in self.__dict__: parts.append('x'+str(self.x))
-
-        if self.station: parts.append(self.station)
-        parts.append(str(self.cg_sec)) # Always last
-        return ','.join(parts)
 
 #    def getDriver(self):
 #        """
 #        Return the python module that handles this message type
 #        """
-        # FIX: where did I do this nicely?
+# FIX: where did I do this nicely?
 
 class TestUscgNmea(unittest.TestCase):
-    def testUscgNmea(self):
-        un = UscgNmea('!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
-
-        self.failUnlessEqual(un.nmeaType,'AIVDM')
-        self.failUnlessEqual(un.totalSentences,1)
-        self.failUnlessEqual(un.sentenceNum,1)
-        self.failUnlessEqual(un.sequentialMsgId,None)
-        self.failUnlessEqual(un.aisChannel,'B')
-        self.failUnlessEqual(un.fillbits,0)
-        self.failUnlessEqual(un.checksumStr,'63')
-
-        self.failUnlessEqual(un.rssi,1234)
-        self.failUnlessEqual(un.signalStrength,-119)
-        self.failUnlessEqual(un.timeOfArrival,12.34567123)
-        self.failUnlessEqual(un.slotNumber,4321)
-        self.failUnlessEqual(un.station,'r003669958')
-        self.failUnlessEqual(un.stationTypeCode,'r')
-        self.failUnlessEqual(un.cg_sec,float(1085889680))
-        print(un.timestamp)
-        print(un.sqlTimestampStr)  # Hmmm... they look the same
-
-
-    def testEquality(self):
-        m1 = UscgNmea('!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
-        m1same = UscgNmea('!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
-        # A whole bunch of mangled fields
-        m2 = UscgNmea('!AIVDM,2,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
-        m3 = UscgNmea('!AIVDM,1,2,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
-        m4 = UscgNmea('!AIVDM,1,1,7,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
-        m5 = UscgNmea('!AIVDM,1,1,,A,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
-        m6 = UscgNmea('!AIVDM,1,1,,B,25Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
-        m7 = UscgNmea('!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,1*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
-        m8 = UscgNmea('!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*64,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
-        #m9 = UscgNmea('!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s123,d-119,T12.34567123,r003669958,S4321,1085889680')
-        #m10 = UscgNmea('!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-120,T12.34567123,r003669958,S4321,1085889680')
-        #m11 = UscgNmea('!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T11.34567123,r003669958,S4321,1085889680')
-        m12 = UscgNmea('!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669959,S4321,1085889680')
-        #m13 = UscgNmea('!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S432,1085889680')
-        m14 = UscgNmea('!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889681')
-        self.failUnless(m1==m1)
-        self.failUnless(m1==m1same)
-        self.failUnless(m1!=m2)
-        self.failUnless(m1!=m3)
-        self.failUnless(m1!=m4)
-        self.failUnless(m1!=m5)
-        self.failUnless(m1!=m6)
-        self.failUnless(m1!=m7)
-        self.failUnless(m1!=m8)
-        #self.failUnless(m1!=m9)
-        #self.failUnless(m1!=m10)
-        #self.failUnless(m1!=m11)
-        self.failUnless(m1!=m12)
-        #self.failUnless(m1!=m13)
-        self.failUnless(m1!=m14)
-
-
-
-
-def create_nmea(bits,
-                nmeaType='!AIVDM',  # Could also use $.
-                message_type=None,
-                sequentialMsgId=None,
-                aisChannel='A'):
-
-    """Build a NMEA string for an AIS binary message payload.
-    e.g. !AIVDM,1,1,,B,13UIAT001mmL=vhP1Sa:?8>l06A<,0*37,s24467,rNDBC46001,1202235568
-
-    >>> bv=BitVector(bitstring='0010000001010000100110000110000011001100010110'
-                               '1110111111001100101011000101101101011110011111'
-                               '0010001100110011000001110100011001000000000000'
-                               '000000000000111001111000000000')
-    >>> create_nmea(bv,cg_sec=1202235568)
-    'AIVDM,1,1,,A,852HH<iKgk:iKG_j<k1lI0000qp0,0*13,runknown,1202235568'
-
-    @type bits: BitVector
-    @param cg_sec: seconds since the epoch in UTC or if None, the current time will be used
-    @param totalSentences: defaults to 1.  Eventually will calculated for multi-line
-    @type totalSentences: positive int
-    @param sentences: defaults to 1.  Eventually will calculated for multi-line
-    @type sentenceNum: positive int
-    @param sequentialMsgId: the number 1..9 for this group of messages.  Defaults to blank
-    @type sequentialMsgId: positive int
-
-    @todo: handle the rest of the uscg fields
-    @todo: handle multi-line messages
-    """
-    bitLen=None
-    if (message_type == 1) or (message_type == 18):  #Type 1 messages are 1 sentence long
-        bitLen = len(bits)
-        assert bitLen <= 168
-        #params appropriate for message type1
-        totalSentences = 1
-        sentenceNum = 1
-        sequentialMsgId = ''
-
-        pad = 6 - (bitLen % 6)
-        if 6 == pad:
-            pad = 0
-        if pad:
-            # Pad out to multiple of 6
-            bits = bits + BitVector(size=(6 - (bitLen % 6)))
-
-        payload = aisbinary.bitvectoais6(bits)[0]
-        ais_str_len = len(payload)
-        ais_str_len = ais_str_len + 12
-        # if ais_str_len > 82:
-        payload01 = payload[0:30]
-        payload02 = payload[30:ais_str_len]
-
-        fields = [nmeaType, ]
-        fields.append(str(totalSentences))
-        fields.append(str(sentenceNum))
-        fields.append(sequentialMsgId)
-        fields.append(aisChannel)
-        fields.append(payload)
-        fields.append(str(pad))
-        firstStr = ','.join(fields)
-        checksum = nmea.checksumStr(firstStr)
-        fields = [firstStr + '*' + checksum, ]
-        nmea_string = ','.join(fields)
-        nmea_string_terminated =''.join([nmea_string,'\r\n'])
-        return  nmea_string_terminated
-
-    elif message_type == 5:  #Type 5 messages are always multiline (2 sentences long)
-        bitLen  = len(bits)
-        '''
-        Check len for type 5
-        '''
-        assert bitLen <= 424
-        '''
-        Fields for type 5
-        '''
-        nmeaType = '!AIVDM'
-        totalSentences=2
-        sentenceNum = 1
-        if sequentialMsgId!=None:
-            sequentialMsgId = 7
-        aisChannel ='A'
-        '''
-        Check 6 bit padding
-        '''
-        pad = 6 - (bitLen%6)
-        if 6 == pad:
-            pad = 0
-        if pad:
-            # Pad out to multiple of 6
-            bits = bits + BitVector(size=(6 - (bitLen%6)))
-
-        '''
-        Build nmea
-        '''
-        payload = aisbinary.bitvectoais6(bits)[0]
-        ais_str_len=len(payload)
-        split_point=round(ais_str_len/2)
-        #if ais_str_len > 82:
-        payload01=payload[0:split_point]
-        payload02 = payload[split_point:ais_str_len]
+	
+	
+	def testUscgNmea (self):
+		un = UscgNmea(
+			'!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
+		
+		self.failUnlessEqual(un.nmeaType, 'AIVDM')
+		self.failUnlessEqual(un.totalSentences, 1)
+		self.failUnlessEqual(un.sentenceNum, 1)
+		self.failUnlessEqual(un.sequentialMsgId, None)
+		self.failUnlessEqual(un.aisChannel, 'B')
+		self.failUnlessEqual(un.fillbits, 0)
+		self.failUnlessEqual(un.checksumStr, '63')
+		
+		self.failUnlessEqual(un.rssi, 1234)
+		self.failUnlessEqual(un.signalStrength, -119)
+		self.failUnlessEqual(un.timeOfArrival, 12.34567123)
+		self.failUnlessEqual(un.slotNumber, 4321)
+		self.failUnlessEqual(un.station, 'r003669958')
+		self.failUnlessEqual(un.stationTypeCode, 'r')
+		self.failUnlessEqual(un.cg_sec, float(1085889680))
+		print(un.timestamp)
+		print(un.sqlTimestampStr)  # Hmmm... they look the same
+	
+	
+	def testEquality (self):
+		m1 = UscgNmea(
+			'!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
+		m1same = UscgNmea(
+			'!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
+		# A whole bunch of mangled fields
+		m2 = UscgNmea(
+			'!AIVDM,2,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
+		m3 = UscgNmea(
+			'!AIVDM,1,2,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
+		m4 = UscgNmea(
+			'!AIVDM,1,1,7,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
+		m5 = UscgNmea(
+			'!AIVDM,1,1,,A,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
+		m6 = UscgNmea(
+			'!AIVDM,1,1,,B,25Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
+		m7 = UscgNmea(
+			'!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,1*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
+		m8 = UscgNmea(
+			'!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*64,s1234,d-119,T12.34567123,r003669958,S4321,1085889680')
+		# m9 = UscgNmea('!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s123,d-119,T12.34567123,r003669958,S4321,1085889680')
+		# m10 = UscgNmea('!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-120,T12.34567123,r003669958,S4321,1085889680')
+		# m11 = UscgNmea('!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T11.34567123,r003669958,S4321,1085889680')
+		m12 = UscgNmea(
+			'!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669959,S4321,1085889680')
+		# m13 = UscgNmea('!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S432,1085889680')
+		m14 = UscgNmea(
+			'!AIVDM,1,1,,B,15Cjtd0Oj;Jp7ilG7=UkKBoB0<06,0*63,s1234,d-119,T12.34567123,r003669958,S4321,1085889681')
+		self.failUnless(m1 == m1)
+		self.failUnless(m1 == m1same)
+		self.failUnless(m1 != m2)
+		self.failUnless(m1 != m3)
+		self.failUnless(m1 != m4)
+		self.failUnless(m1 != m5)
+		self.failUnless(m1 != m6)
+		self.failUnless(m1 != m7)
+		self.failUnless(m1 != m8)
+		# self.failUnless(m1!=m9)
+		# self.failUnless(m1!=m10)
+		# self.failUnless(m1!=m11)
+		self.failUnless(m1 != m12)
+		# self.failUnless(m1!=m13)
+		self.failUnless(m1 != m14)
 
 
-        fields = [nmeaType,]
-        fields.append(str(totalSentences))
-        fields.append(str(sentenceNum))
-        fields.append(str(sequentialMsgId))
-        fields.append(aisChannel)
-        fields.append(payload01)
-        fields.append(str(pad))
-        firstStr = ','.join(fields)
-        checksum = nmea.checksumStr(firstStr)
-        fields = [firstStr+'*'+checksum,]
+def create_nmea (bits,
+				 nmeaType = '!AIVDM',  # Could also use $.
+				 message_type = None,
+				 sequentialMsgId = None,
+				 aisChannel = 'A'):
+	"""Build a NMEA string for an AIS binary message payload.
+	e.g. !AIVDM,1,1,,B,13UIAT001mmL=vhP1Sa:?8>l06A<,0*37,s24467,rNDBC46001,1202235568
+
+	>>> bv=BitVector(bitstring='0010000001010000100110000110000011001100010110'
+							   '1110111111001100101011000101101101011110011111'
+							   '0010001100110011000001110100011001000000000000'
+							   '000000000000111001111000000000')
+	>>> create_nmea(bv,cg_sec=1202235568)
+	'AIVDM,1,1,,A,852HH<iKgk:iKG_j<k1lI0000qp0,0*13,runknown,1202235568'
+
+	@type bits: BitVector
+	@param cg_sec: seconds since the epoch in UTC or if None, the current time will be used
+	@param totalSentences: defaults to 1.  Eventually will calculated for multi-line
+	@type totalSentences: positive int
+	@param sentences: defaults to 1.  Eventually will calculated for multi-line
+	@type sentenceNum: positive int
+	@param sequentialMsgId: the number 1..9 for this group of messages.  Defaults to blank
+	@type sequentialMsgId: positive int
+
+	@todo: handle the rest of the uscg fields
+	@todo: handle multi-line messages
+	"""
+	bitLen = None
+	if (message_type == 1) or (message_type == 18):  # Type 1 messages are 1 sentence long
+		bitLen = len(bits)
+		assert bitLen <= 168
+		# params appropriate for message type1
+		totalSentences = 1
+		sentenceNum = 1
+		sequentialMsgId = ''
+		
+		pad = 6 - (bitLen % 6)
+		if 6 == pad:
+			pad = 0
+		if pad:
+			# Pad out to multiple of 6
+			bits = bits + BitVector(size = (6 - (bitLen % 6)))
+		
+		payload = aisbinary.bitvectoais6(bits)[0]
+		ais_str_len = len(payload)
+		ais_str_len = ais_str_len + 12
+		# if ais_str_len > 82:
+		payload01 = payload[0:30]
+		payload02 = payload[30:ais_str_len]
+		
+		fields = [nmeaType, ]
+		fields.append(str(totalSentences))
+		fields.append(str(sentenceNum))
+		fields.append(sequentialMsgId)
+		fields.append(aisChannel)
+		fields.append(payload)
+		fields.append(str(pad))
+		firstStr = ','.join(fields)
+		checksum = nmea.checksumStr(firstStr)
+		fields = [firstStr + '*' + checksum, ]
+		nmea_string = ','.join(fields)
+		nmea_string_terminated = ''.join([nmea_string, '\r\n'])
+		return nmea_string_terminated
+	
+	elif message_type == 5:  # Type 5 messages are always multiline (2 sentences long)
+		bitLen = len(bits)
+		'''
+		Check len for type 5
+		'''
+		assert bitLen <= 424
+		'''
+		Fields for type 5
+		'''
+		nmeaType = '!AIVDM'
+		totalSentences = 2
+		sentenceNum = 1
+		if sequentialMsgId != None:
+			sequentialMsgId = 7
+		aisChannel = 'A'
+		'''
+		Check 6 bit padding
+		'''
+		pad = 6 - (bitLen % 6)
+		if 6 == pad:
+			pad = 0
+		if pad:
+			# Pad out to multiple of 6
+			bits = bits + BitVector(size = (6 - (bitLen % 6)))
+		
+		'''
+		Build nmea
+		'''
+		payload = aisbinary.bitvectoais6(bits)[0]
+		ais_str_len = len(payload)
+		split_point = round(ais_str_len / 2)
+		# if ais_str_len > 82:
+		payload01 = payload[0:split_point]
+		payload02 = payload[split_point:ais_str_len]
+		
+		fields = [nmeaType, ]
+		fields.append(str(totalSentences))
+		fields.append(str(sentenceNum))
+		fields.append(str(sequentialMsgId))
+		fields.append(aisChannel)
+		fields.append(payload01)
+		fields.append(str(pad))
+		firstStr = ','.join(fields)
+		checksum = nmea.checksumStr(firstStr)
+		fields = [firstStr + '*' + checksum, ]
+		
+		fields02 = [nmeaType, ]
+		fields02.append(str(totalSentences))
+		fields02.append(str(sentenceNum + 1))
+		fields02.append(str(sequentialMsgId))
+		fields02.append(aisChannel)
+		fields02.append(payload02)
+		fields02.append(str(pad))
+		firstStr = ','.join(fields02)
+		checksum = nmea.checksumStr(firstStr)
+		fields02 = [firstStr + '*' + checksum, ]
+		
+		msg01 = ','.join(fields)
+		msg02 = ','.join(fields02)
+		
+		nmea_string_terminated_msg01 = ''.join([msg01, '\r\n'])
+		nmea_string_terminated_msg02 = ''.join([msg02, '\r\n'])
+		return (nmea_string_terminated_msg01, nmea_string_terminated_msg02)
+	
+	elif (message_type == 24) and ((aisChannel == 'A') or (aisChannel == 'B')):  # Type 1 messages are 1 sentence long
+		nmeaType = '!AIVDM'
+		# aisChannel = 'B'
+		bitLen = len(bits)
+		assert bitLen <= 168
+		# params appropriate for message type1
+		totalSentences = 1
+		sentenceNum = 1
+		sequentialMsgId = ''
+		
+		pad = 6 - (bitLen % 6)
+		if 6 == pad:
+			pad = 0
+		if pad:
+			# Pad out to multiple of 6
+			bits = bits + BitVector(size = (6 - (bitLen % 6)))
+		
+		payload = aisbinary.bitvectoais6(bits)[0]
+		ais_str_len = len(payload)
+		ais_str_len = ais_str_len + 12
+		# if ais_str_len > 82:
+		payload01 = payload[0:30]
+		payload02 = payload[30:ais_str_len]
+		
+		fields = [nmeaType, ]
+		fields.append(str(totalSentences))
+		fields.append(str(sentenceNum))
+		fields.append(sequentialMsgId)
+		fields.append(aisChannel)
+		fields.append(payload)
+		fields.append(str(pad))
+		firstStr = ','.join(fields)
+		checksum = nmea.checksumStr(firstStr)
+		fields = [firstStr + '*' + checksum, ]
+		
+		nmea_string = ','.join(fields)
+		nmea_string_terminated = ''.join([nmea_string, '\r\n'])
+		return nmea_string_terminated
+	
+	elif (message_type == 24) and (aisChannel == 'C'):  # Type 5 messages are always multiline (2 sentences long)
+		bitLen = len(bits)
+		'''
+		Check len for type 24 radio B
+		'''
+		assert bitLen <= 424
+		'''
+		Fields for type 5
+		'''
+		nmeaType = '!AIVDM'
+		totalSentences = 2
+		sentenceNum = 1
+		if sequentialMsgId != None:
+			sequentialMsgId = 7
+		aisChannel = 'A'
+		'''
+		Check 6 bit padding
+		'''
+		pad = 6 - (bitLen % 6)
+		if 6 == pad:
+			pad = 0
+		if pad:
+			# Pad out to multiple of 6
+			bits = bits + BitVector(size = (6 - (bitLen % 6)))
+		
+		'''
+		Build nmea
+		'''
+		payload = aisbinary.bitvectoais6(bits)[0]
+		ais_str_len = len(payload)
+		split_point = round(ais_str_len / 2)
+		# if ais_str_len > 82:
+		payload01 = payload[0:split_point]
+		payload02 = payload[split_point:ais_str_len]
+		
+		fields = [nmeaType, ]
+		fields.append(str(totalSentences))
+		fields.append(str(sentenceNum))
+		fields.append(str(sequentialMsgId))
+		fields.append(aisChannel)
+		fields.append(payload01)
+		fields.append(str(pad))
+		firstStr = ','.join(fields)
+		checksum = nmea.checksumStr(firstStr)
+		fields = [firstStr + '*' + checksum, ]
+		
+		fields02 = [nmeaType, ]
+		fields02.append(str(totalSentences))
+		fields02.append(str(sentenceNum + 1))
+		fields02.append(str(sequentialMsgId))
+		fields02.append(aisChannel)
+		fields02.append(payload02)
+		fields02.append(str(pad))
+		firstStr = ','.join(fields02)
+		checksum = nmea.checksumStr(firstStr)
+		fields02 = [firstStr + '*' + checksum, ]
+		
+		msg01 = ','.join(fields)
+		msg02 = ','.join(fields02)
+		
+		nmea_string_terminated_msg01 = ''.join([msg01, '\r\n'])
+		nmea_string_terminated_msg02 = ''.join([msg02, '\r\n'])
+		return (nmea_string_terminated_msg01, nmea_string_terminated_msg02)
 
 
-        fields02 = [nmeaType,]
-        fields02.append(str(totalSentences))
-        fields02.append(str(sentenceNum+1))
-        fields02.append(str(sequentialMsgId))
-        fields02.append(aisChannel)
-        fields02.append(payload02)
-        fields02.append(str(pad))
-        firstStr = ','.join(fields02)
-        checksum = nmea.checksumStr(firstStr)
-        fields02 = [firstStr+'*'+checksum,]
-
-        msg01=','.join(fields)
-        msg02=','.join(fields02)
-
-        nmea_string_terminated_msg01 = ''.join([msg01, '\r\n'])
-        nmea_string_terminated_msg02 = ''.join([msg02, '\r\n'])
-        return (nmea_string_terminated_msg01, nmea_string_terminated_msg02)
-
-    elif (message_type == 24) and ((aisChannel == 'A') or (aisChannel == 'B')):  #Type 1 messages are 1 sentence long
-        nmeaType = '!AIVDM'
-        #aisChannel = 'B'
-        bitLen = len(bits)
-        assert bitLen <= 168
-        #params appropriate for message type1
-        totalSentences = 1
-        sentenceNum = 1
-        sequentialMsgId = ''
-
-        pad = 6 - (bitLen % 6)
-        if 6 == pad:
-            pad = 0
-        if pad:
-            # Pad out to multiple of 6
-            bits = bits + BitVector(size=(6 - (bitLen % 6)))
-
-        payload = aisbinary.bitvectoais6(bits)[0]
-        ais_str_len = len(payload)
-        ais_str_len = ais_str_len + 12
-        # if ais_str_len > 82:
-        payload01 = payload[0:30]
-        payload02 = payload[30:ais_str_len]
-
-        fields = [nmeaType, ]
-        fields.append(str(totalSentences))
-        fields.append(str(sentenceNum))
-        fields.append(sequentialMsgId)
-        fields.append(aisChannel)
-        fields.append(payload)
-        fields.append(str(pad))
-        firstStr = ','.join(fields)
-        checksum = nmea.checksumStr(firstStr)
-        fields = [firstStr + '*' + checksum, ]
-
-        nmea_string = ','.join(fields)
-        nmea_string_terminated = ''.join([nmea_string, '\r\n'])
-        return nmea_string_terminated
-
-    elif (message_type == 24) and (aisChannel == 'C'):  #Type 5 messages are always multiline (2 sentences long)
-        bitLen  = len(bits)
-        '''
-        Check len for type 24 radio B
-        '''
-        assert bitLen <= 424
-        '''
-        Fields for type 5
-        '''
-        nmeaType = '!AIVDM'
-        totalSentences=2
-        sentenceNum = 1
-        if sequentialMsgId!=None:
-            sequentialMsgId = 7
-        aisChannel ='A'
-        '''
-        Check 6 bit padding
-        '''
-        pad = 6 - (bitLen%6)
-        if 6 == pad:
-            pad = 0
-        if pad:
-            # Pad out to multiple of 6
-            bits = bits + BitVector(size=(6 - (bitLen%6)))
-
-        '''
-        Build nmea
-        '''
-        payload = aisbinary.bitvectoais6(bits)[0]
-        ais_str_len=len(payload)
-        split_point=round(ais_str_len/2)
-        #if ais_str_len > 82:
-        payload01=payload[0:split_point]
-        payload02 = payload[split_point:ais_str_len]
-
-
-        fields = [nmeaType,]
-        fields.append(str(totalSentences))
-        fields.append(str(sentenceNum))
-        fields.append(str(sequentialMsgId))
-        fields.append(aisChannel)
-        fields.append(payload01)
-        fields.append(str(pad))
-        firstStr = ','.join(fields)
-        checksum = nmea.checksumStr(firstStr)
-        fields = [firstStr+'*'+checksum,]
-
-
-        fields02 = [nmeaType,]
-        fields02.append(str(totalSentences))
-        fields02.append(str(sentenceNum+1))
-        fields02.append(str(sequentialMsgId))
-        fields02.append(aisChannel)
-        fields02.append(payload02)
-        fields02.append(str(pad))
-        firstStr = ','.join(fields02)
-        checksum = nmea.checksumStr(firstStr)
-        fields02 = [firstStr+'*'+checksum,]
-
-        msg01=','.join(fields)
-        msg02=','.join(fields02)
-
-        nmea_string_terminated_msg01 = ''.join([msg01, '\r\n'])
-        nmea_string_terminated_msg02 = ''.join([msg02, '\r\n'])
-        return (nmea_string_terminated_msg01, nmea_string_terminated_msg02)
-
-
-def test():
-    print('doctests ...')
-    numfail, _ = doctest.testmod()
-    if not numfail:
-        print('ok')
-    else:
-        print('FAILED')
+def test ():
+	print('doctests ...')
+	numfail, _ = doctest.testmod()
+	if not numfail:
+		print('ok')
+	else:
+		print('FAILED')
 
 
 if __name__ == '__main__':
-    test()
+	test()
