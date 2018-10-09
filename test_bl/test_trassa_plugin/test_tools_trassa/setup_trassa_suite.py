@@ -514,16 +514,17 @@ def test_this_paidd ():
 	'''AIS Type 18 data'''
 	t_case_name = ["test_trassa_messages07"]
 	
-	sender_id = s_trassa.udp_snd_name_01
-	server_id = s_trassa.udp_srv_name_01
+	
+
 	# s_trassa.stop_udp_server(server_id)
 	'''
 	case when we want to filter some
 	of 
 	the arriving messages'''
-	udp_server_id = s_trassa.udp_srv_name_01
+	sender_id = s_trassa.udp_snd_name_01
+	server_id = s_trassa.udp_srv_name_01
 	ptrn_for_res = s_trassa.get_msg_ptrn(t_case_name[0])
-	server = s_trassa.sr.udp_servers[udp_server_id]
+	server = s_trassa.sr.udp_servers[server_id]
 	pttrn = ptrn_for_res[0]
 	m = pttrn.match('$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,071705.00*56')
 	
@@ -535,7 +536,7 @@ def test_this_paidd ():
 								udp_sender_id = sender_id,
 								udp_server_id = server_id)
 	result = s_trassa.compare_sent_received_tdata(test_case_ids = t_case_name)
-	s_trassa.stop_udp_server(udp_srv_name = udp_server_id)
+	s_trassa.stop_udp_server(udp_srv_name = server_id)
 	# s_trassa.stop_udp_sender()
 	# s_trassa.stop_test_env()
 	# s_trassa.stop_logserver()
@@ -736,4 +737,4 @@ if __name__ == "__main__":
 	# test_this_paisd()
 	# test_this_astd()
 	test_this_aialr()
-# test_this_peist()
+	#test_this_peist()
