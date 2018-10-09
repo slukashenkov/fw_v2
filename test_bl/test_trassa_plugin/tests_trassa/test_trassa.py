@@ -47,7 +47,7 @@ class TrassaTests(unittest.TestCase):
 		'''
 		SETUP TEST ENV
 		'''
-		self.trassa_setup.start_logserver()
+		# self.trassa_setup.start_logserver()
 		# self.trassa_setup.setup_vir_env()
 		return
 	
@@ -86,7 +86,7 @@ class TrassaTests(unittest.TestCase):
 			as well as for choice of UDP sender and Server
 			since 2 data "channels" are configured on KD under test
 			'''
-			if t_case_name == 'test_trassa_messages01':
+			if self.curr_test_id == "test_trassa_messages01":
 				'''
 				We want to filter PAIDD messages for comparison from the stream
 				'''

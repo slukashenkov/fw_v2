@@ -137,44 +137,45 @@
   "test_trassa_messages04": {
     "skip": false,
 
-    "t04_nmea_AITXT": {
-      "msg_type": "aitxt",
-      "res_ptrn": ".*AITXT.*",
-      "test_conditions": {
-        "pass": [
-          "sntns_total",
-          "sntns_order_num",
-          "stat_code",
-          "stat_descr"
-        ]
-      },
-      "fields": {
-        "sntns_total": "1",
-        "sntns_order_num": "1",
-        "stat_code": "21",
-        "stat_descr": "External DGNSS in use"
-      }
-    },
-    "t04_nmea_AIALR": {
-      "msg_type": "aialr",
-      "test_conditions": {
-        "pass": [
-          "fail_time",
-          "fail_code",
-          "fail_stat",
-          "tct_stat",
-          "fail_descr"
-        ]
-      },
-      "res_ptrn": ".*AIALR.*",
-      "fields": {
-        "fail_time": "133930.40",
-        "fail_code": "01",
-        "fail_stat": "V",
-        "tct_stat": "V",
-        "fail_descr": "Tx malfunction"
-      }
-    }
+                  "t04_nmea_AITXT": {
+                    "msg_type": "aitxt",
+                    "test_conditions": {
+                      "pass": [
+                        "sntns_total",
+                        "sntns_order_num",
+                        "stat_code",
+                        "stat_descr"
+                      ]
+                    },
+                    "res_ptrn": ".*AITXT.*",
+                    "fields": {
+                      "sntns_total": "1",
+                      "sntns_order_num": "1",
+                      "stat_code": "21",
+                      "stat_descr": "External DGNSS in use"
+                    }
+                  },
+
+                "t04_nmea_AIALR": {
+                  "msg_type":"aialr",
+                  "test_conditions": {
+                    "pass": [
+                      "fail_time",
+                      "fail_code",
+                      "fail_stat",
+                      "tct_stat",
+                      "fail_descr"
+                      ]
+                  },
+                  "res_ptrn":".*AIALR.*",
+                  "fields": {
+                    "fail_time": "133930.40",
+                    "fail_code": "01",
+                    "fail_stat": "V",
+                    "tct_stat": "V",
+                    "fail_descr": "Tx malfunction"
+                  }
+                }
   },
   "test_trassa_messages05": {
     "skip": true,

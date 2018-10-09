@@ -529,7 +529,7 @@ def test_this_paidd ():
 	m = pttrn.match('$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,071705.00*56')
 	
 	server.res_filter = ptrn_for_res
-	s_trassa.sr.start_udp_server(udp_server_id)
+	s_trassa.sr.start_udp_server(server_id)
 	# sleep(40)
 	
 	s_trassa.send_receive_tdata(test_case_ids = t_case_name,
@@ -733,8 +733,8 @@ def test_this_peist ():
 
 
 if __name__ == "__main__":
-	# test_this_paidd()
+	test_this_paidd()
 	# test_this_paisd()
 	# test_this_astd()
-	test_this_aialr()
+	#test_this_aialr()
 	#test_this_peist()
