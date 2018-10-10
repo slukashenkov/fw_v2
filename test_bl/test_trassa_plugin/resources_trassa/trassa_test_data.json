@@ -261,7 +261,7 @@
     }
   },
   "test_trassa_messages06": {
-    "skip": false,
+    "skip": true,
     "t04_nmea_AITXT": {
       "msg_type": "aitxt",
       "test_conditions": {
@@ -302,7 +302,7 @@
     }
   },
   "test_trassa_messages07": {
-    "skip": true,
+    "skip": false,
     "t04_peist_type": {
       "msg_type": "peist",
       "test_conditions": {

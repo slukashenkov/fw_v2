@@ -110,7 +110,8 @@ class TrassaTests(unittest.TestCase):
 				or (self.curr_test_id == "test_trassa_messages02")\
 				or (self.curr_test_id == "test_trassa_messages03")\
 				or (self.curr_test_id == "test_trassa_messages04") \
-				or (self.curr_test_id == "test_trassa_messages06"):
+				or (self.curr_test_id == "test_trassa_messages06") \
+				or (self.curr_test_id == "test_trassa_messages07"):
 					'''
 					We want to filter PAIDD messages for comparison from the stream
 					'''
@@ -123,6 +124,7 @@ class TrassaTests(unittest.TestCase):
 					
 					m_paidd = pttrn.match('$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,071705.00*56')
 					m_paisd = pttrn.match('$PAISD,8989999,001100,Vsl_cl_sgn,Vsl_name*5B')
+					m_peist = pttrn.match('$PEIST,141714.00,A*30')
 					
 					server.res_filter = ptrn_for_res
 					self.trassa_setup.sr.start_udp_server(server_id)
@@ -202,6 +204,10 @@ class TrassaTests(unittest.TestCase):
 	
 	def test_trassa_messages06 (self):
 		res_aitxt = self.trassa_setup.test_suite_compared_data
+		return
+	
+	def test_trassa_messages07 (self):
+		res_peist = self.trassa_setup.test_suite_compared_data
 		return
 	
 	

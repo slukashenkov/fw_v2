@@ -724,7 +724,7 @@ def test_this_peist ():
 	of 
 	the arriving messages
 	'''
-	t_case_name = ["test_trassa_messages05"]
+	t_case_name = ["test_trassa_messages07"]
 	udp_server_id = s_trassa.udp_srv_name_01
 	ptrn_for_res = s_trassa.get_msg_ptrn(t_case_name[0])
 	
@@ -752,5 +752,5 @@ if __name__ == "__main__":
 	# test_this_paidd()
 	# test_this_paisd()
 	# test_this_astd()
-	test_this_aialr()
-	#test_this_peist()
+	# test_this_aialr()
+	  test_this_peist()
