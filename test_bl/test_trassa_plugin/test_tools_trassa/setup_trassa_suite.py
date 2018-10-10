@@ -71,6 +71,7 @@ class SetupTrassaSuite:
 		1-for AIS msgs
 		2-for NMEA msgs
 		'''
+		
 		self.udp_snd_name_01 = self.sr.set_udp_sender(ip_to = ip_sender_01,
 													  port_to = port_sender_01
 													  )
@@ -180,13 +181,19 @@ class SetupTrassaSuite:
 				TODO: think about preloading data into enveloping object
 				'''
 				msg_type = self._get_msg_type(test_id = test_case_id)
+				test_case_type = self.get_test_type(test_case_id)
+				
 				if 'ais_type05' in msg_type:
 					ais_type05Arr = self._get_test_messages(test_case_id)
 					messages_to_send = ais_type05Arr[0]
+					#data_sent_arr = self._get_test_data(test_case_id)
+					#data_sent = data_sent_arr[0]
 				else:
 					messages_to_send = self._get_test_messages(test_case_id)
+				
 				data_sent = self._get_test_data(test_case_id)
-				test_case_type = self.get_test_type(test_case_id)
+				
+				
 				
 				if test_case_type == self.positive_test_kword:
 					'''
@@ -209,8 +216,11 @@ class SetupTrassaSuite:
 					'''
 					if udp_server_id != None:
 						server_id = udp_server_id
-						self.sr.test_messages_received(messages_list = messages_to_send,
-													   server_id = server_id)
+						try:
+							self.sr.test_messages_received(messages_list = messages_to_send,
+													       server_id = server_id)
+						except:
+							raise Exception("Counter is excedded NO messages have been received")
 					else:
 						server_id = self.udp_srv_name
 						self.sr.test_messages_received(messages_list = messages_to_send,
@@ -424,8 +434,12 @@ class SetupTrassaSuite:
 		return test_type
 	
 	
-	def stop_udp_sender (self):
-		self.sr.stop_sender(self.udp_snd_name)
+	def stop_udp_sender (self,
+						 udp_snd_name = None):
+		if udp_snd_name == None:
+			self.sr.stop_sender(self.udp_snd_name)
+		else:
+			self.sr.stop_sender(udp_snd_name)
 		return
 	
 	
@@ -510,12 +524,10 @@ def test_this_paidd ():
 	udp_server_id = None
 	parser = None
 	'''AIS Type 01 data'''
-	# t_case_name = ["test_trassa_messages01"]
+	#t_case_name = ["test_trassa_messages01"]
 	'''AIS Type 18 data'''
-	t_case_name = ["test_trassa_messages07"]
+	t_case_name = ["test_trassa_messages02"]
 	
-	
-
 	# s_trassa.stop_udp_server(server_id)
 	'''
 	case when we want to filter some
@@ -535,6 +547,7 @@ def test_this_paidd ():
 	s_trassa.send_receive_tdata(test_case_ids = t_case_name,
 								udp_sender_id = sender_id,
 								udp_server_id = server_id)
+	
 	result = s_trassa.compare_sent_received_tdata(test_case_ids = t_case_name)
 	s_trassa.stop_udp_server(udp_srv_name = server_id)
 	# s_trassa.stop_udp_sender()
@@ -561,11 +574,11 @@ def test_this_paisd ():
 	'''
 	AIS Type 5
 	'''
-	# t_case_name = ["test_trassa_messages02"]
+	#t_case_name = ["test_trassa_messages02"]
 	'''
 	AIS Type 24ab
 	'''
-	t_case_name = ["test_trassa_messages08"]
+	t_case_name = ["test_trassa_messages03"]
 	sender_id = s_trassa.udp_snd_name_01
 	server_id = s_trassa.udp_srv_name_01
 	# s_trassa.stop_udp_server(server_id)
@@ -612,7 +625,7 @@ def test_this_astd ():
 	udp_sender_id = None
 	udp_server_id = None
 	parser = None
-	t_case_name = ["test_trassa_messages03"]
+	t_case_name = ["test_trassa_messages05"]
 	sender_id = s_trassa.udp_snd_name_02
 	server_id = s_trassa.udp_srv_name_02
 	
@@ -657,10 +670,13 @@ def test_this_aialr ():
 	case when we want to filter some
 	of 
 	the arriving messages'''
-	t_case_name = ["test_trassa_messages04"]
+	t_case_name = ["test_trassa_messages06"]
 	udp_server_id = s_trassa.udp_srv_name_01
 	ptrn_for_res = s_trassa.get_msg_ptrn(t_case_name[0])
 	
+	
+	pttrn_to_search = ptrn_for_res[0]
+	match = pttrn_to_search.match('$AITXT,1,1,21,External DGNSS in use*67')
 	pttrn_to_search = ptrn_for_res[1]
 	match = pttrn_to_search.match('$AIALR,133930.40,01,V,V,Tx malfunction*35')
 	
@@ -733,8 +749,8 @@ def test_this_peist ():
 
 
 if __name__ == "__main__":
-	test_this_paidd()
+	# test_this_paidd()
 	# test_this_paisd()
 	# test_this_astd()
-	#test_this_aialr()
+	test_this_aialr()
 	#test_this_peist()

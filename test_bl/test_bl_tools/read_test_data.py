@@ -215,9 +215,10 @@ class ReadData:
 				if key not in self.test_data_k_ignore:
 					data_tuple = test_data_arr[key]
 					test_data.append(data_tuple[1])
-				return test_data
+				else:
+					continue
 			
-			return
+			return test_data
 		else:
 			raise Exception("No such test case ID")
 	

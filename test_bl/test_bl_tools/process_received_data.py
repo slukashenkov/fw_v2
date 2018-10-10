@@ -5,8 +5,8 @@ import logging
 class ProcessReceivedData:
 	
 	
-	def __init__ (self ,
-				  data_from = None ,
+	def __init__ (self,
+				  data_from = None,
 				  conf = None
 				  ):
 		"""
@@ -47,8 +47,8 @@ class ProcessReceivedData:
 			return
 	
 	
-	def parse_received_data (self ,
-							 parser ,
+	def parse_received_data (self,
+							 parser,
 							 received_data):
 		self.data_parsed.clear()
 		parser.data_from = received_data
@@ -62,8 +62,8 @@ class ProcessReceivedData:
 			raise Exception("Something wrong with the received data array")
 	
 	
-	def parse_received_packet (self ,
-							   parser ,
+	def parse_received_packet (self,
+							   parser,
 							   packet):
 		self.data_parsed.clear()
 		parser.packet_to_parse = [packet]
@@ -76,22 +76,22 @@ class ProcessReceivedData:
 			raise Exception("Something wrong with the array of received data ")
 	
 	
-	def parse_sut_log (self ,
-					   parser ,
-					   path_to_sut_log ,
+	def parse_sut_log (self,
+					   parser,
+					   path_to_sut_log,
 					   data_sent
 					   ):
 		self.data_parsed.clear()
 		for msg_data in data_sent:
-			data_parsed = parser.parse_log_auto(msg_data_sent = msg_data ,
+			data_parsed = parser.parse_log_auto(msg_data_sent = msg_data,
 												path_to_log = path_to_sut_log)
 			self.data_parsed.append(data_parsed)
 		return self.data_parsed
 	
 	
-	def compare_sent_received (self ,
-							   parser ,
-							   data_sent ,
+	def compare_sent_received (self,
+							   parser,
+							   data_sent,
 							   data_received):
 		"""
 		:param parser:          package specific parser
@@ -107,14 +107,14 @@ class ProcessReceivedData:
 		if len(data_sent) == len(data_received):
 			num_of_elem = len(data_sent)
 			proc_elem = 0
-
+			
 			result = copy.deepcopy(
-				[parser.compare_fields(msg_data_sent , msg_data_received) for msg_data_sent , msg_data_received in
-				 zip(data_sent , data_received)])
+				[parser.compare_fields(msg_data_sent, msg_data_received) for msg_data_sent, msg_data_received in
+				 zip(data_sent, data_received)])
 		
 		else:
-			result = parser.compare_fields(msg_data_sent = data_sent ,
-										   msg_data_received = data_received ,
+			result = parser.compare_fields(msg_data_sent = data_sent,
+										   msg_data_received = data_received,
 										   res_only = True)
 		return result
 	
@@ -125,10 +125,10 @@ class ProcessReceivedData:
 	'''
 	
 	
-	def compare (self ,
-				 parser ,
-				 test_conditions_key ,
-				 data_sent ,
+	def compare (self,
+				 parser,
+				 test_conditions_key,
+				 data_sent,
 				 data_received
 				 ):
 		pass_keys = []

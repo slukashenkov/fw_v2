@@ -416,6 +416,8 @@ class SendReceive:
 						'UDP SERVER has not RECEIVED ALL THE SENT MESSAGES. ONLY: ' + str(received_counter))
 					self.logger.debug(
 						'=======================================================================================')
+					raise Exception("No messages received")
+					
 					break
 				
 				if received_counter == msgs_sent_counter:

@@ -333,6 +333,20 @@ class TrassaTestParser():
 																  conditions = comp_cond)
 			return comparison_results
 		
+		if msg_type == trassa_msg_types.PAIDD:
+			if "pass" in msg_data_sent["test_conditions"].keys():
+				'''
+				Initialise what we will search on
+				'''
+				self.trassa_data_parsed_map = msg_data_received
+				self.data_to = msg_data_sent["fields"]
+				keys = msg_data_sent["test_conditions"]["pass"]
+				for key in keys:
+					comparison_results[key] = self.__do_comparison_paidd(key)
+				return comparison_results
+			if "fail" in msg_data_sent["test_conditions"].keys:
+				return
+		
 		if msg_type == trassa_msg_types.PAISD:
 			if "pass" in msg_data_sent["test_conditions"].keys():
 				'''
@@ -363,19 +377,7 @@ class TrassaTestParser():
 				return
 			return
 		
-		if msg_type == trassa_msg_types.PAIDD:
-			if "pass" in msg_data_sent["test_conditions"].keys():
-				'''
-				Initialise what we will search on
-				'''
-				self.trassa_data_parsed_map = msg_data_received
-				self.data_to = msg_data_sent["fields"]
-				keys = msg_data_sent["test_conditions"]["pass"]
-				for key in keys:
-					comparison_results[key] = self.__do_comparison_paidd(key)
-				return comparison_results
-			if "fail" in msg_data_sent["test_conditions"].keys:
-				return
+
 		
 		if msg_type == trassa_msg_types.ASTD:
 			if "pass" in msg_data_sent["test_conditions"].keys():

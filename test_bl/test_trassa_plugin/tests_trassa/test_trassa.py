@@ -41,11 +41,24 @@ class TrassaTests(unittest.TestCase):
 		data extraction and comparison
 		'''
 		self.trassa_setup = setup_trassa_suite.SetupTrassaSuite()
+		
+		'''Get names of
+		UDP senders and servers since in
+		these tests they should be started and an spopped on test case basis
+		and also
+		because there are more than 1 so defaults fail
+		TODO: Default Server`s shutdown for each in the list
+		'''
+		self.sender_id_01 = self.trassa_setup.udp_snd_name_01
+		self.server_id_01 = self.trassa_setup.udp_srv_name_01
+		
+		self.sender_id_02 = self.trassa_setup.udp_snd_name_02
+		self.server_id_02 = self.trassa_setup.udp_srv_name_02
+		
 		'''SET TEST NAMES QUEUE'''
 		self.test_case_ids = deque(self.trassa_setup.get_test_cases_ids())
 		self.exclude_tests = self.trassa_setup.get_excluded_tests()
-		'''
-		SETUP TEST ENV
+		'''SETUP TEST ENV
 		'''
 		# self.trassa_setup.start_logserver()
 		# self.trassa_setup.setup_vir_env()
@@ -54,10 +67,14 @@ class TrassaTests(unittest.TestCase):
 	
 	@classmethod
 	def tearDownClass (self):
-		self.trassa_setup.stop_udp_server()
-		self.trassa_setup.stop_udp_sender()
-		self.trassa_setup.stop_test_env()
-		self.trassa_setup.stop_logserver()
+		self.trassa_setup.stop_udp_server(udp_srv_name = self.server_id_01)
+		self.trassa_setup.stop_udp_server(udp_srv_name = self.server_id_02)
+		
+		self.trassa_setup.stop_udp_sender(udp_snd_name = self.sender_id_01)
+		self.trassa_setup.stop_udp_sender(udp_snd_name = self.sender_id_02)
+		
+		#self.trassa_setup.stop_test_env()
+		#self.trassa_setup.stop_logserver()
 		
 		self.__tools__.build_test_banner(mod_name = 'TRASSA',
 										 suit_name = 'SUITE' + __name__,
@@ -75,33 +92,64 @@ class TrassaTests(unittest.TestCase):
 		"""
 		if self.test_case_ids:
 			self.curr_test_id = self.test_case_ids.popleft()
-			'''
-			if self.curr_test_id == self.exclude_tests[self.curr_test_id]:
-				self.skipTest("ID is in the list")
-			'''
-			t_case_name = [self.curr_test_id]
-			'''
-			Unlike Sonata Trassa needs a separate setup for each message type.
-			It is done to account for data filtering
-			as well as for choice of UDP sender and Server
-			since 2 data "channels" are configured on KD under test
-			'''
-			if self.curr_test_id == "test_trassa_messages01":
+			if self.curr_test_id in self.exclude_tests:
+				self.skipTest("ID: " + str(self.curr_test_id) + " is in the list")
+			else:
 				'''
-				We want to filter PAIDD messages for comparison from the stream
+				if self.curr_test_id == self.exclude_tests[self.curr_test_id]:
+					self.skipTest("ID is in the list")
 				'''
-				sender_id = s_trassa.udp_snd_name_01
-				udp_server_id = s_trassa.udp_srv_name_01
-				ptrn_for_res = s_trassa.get_msg_ptrn(t_case_name[0])
-				server = s_trassa.sr.udp_servers[udp_server_id]
-				pttrn = ptrn_for_res[0]
-				m = pttrn.match('$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,071705.00*56')
-				
-				server.res_filter = ptrn_for_res
-				s_trassa.sr.start_udp_server(udp_server_id)
-				
-			self.trassa_setup.send_receive_tdata(test_case_ids = t_case_name)
-			self.trassa_setup.compare_sent_received_tdata(test_case_ids = t_case_name)
+				t_case_name = [self.curr_test_id]
+				'''
+				Unlike Sonata Trassa needs a separate setup for each message type.
+				It is done to account for data filtering
+				as well as for choice of UDP sender and Server
+				since 2 data "channels" are configured on KD under test
+				'''
+				if (self.curr_test_id == "test_trassa_messages01")\
+				or (self.curr_test_id == "test_trassa_messages02")\
+				or (self.curr_test_id == "test_trassa_messages03")\
+				or (self.curr_test_id == "test_trassa_messages04") \
+				or (self.curr_test_id == "test_trassa_messages06"):
+					'''
+					We want to filter PAIDD messages for comparison from the stream
+					'''
+					sender_id = self.trassa_setup.udp_snd_name_01
+					server_id = self.trassa_setup.udp_srv_name_01
+					ptrn_for_res = self.trassa_setup.get_msg_ptrn(t_case_name[0])
+					server = self.trassa_setup.sr.udp_servers[server_id]
+					pttrn = ptrn_for_res[0]
+					
+					
+					m_paidd = pttrn.match('$PAIDD,1193046,3725.468,N,12209.80,W,101.9,34.5,41.0,071705.00*56')
+					m_paisd = pttrn.match('$PAISD,8989999,001100,Vsl_cl_sgn,Vsl_name*5B')
+					
+					server.res_filter = ptrn_for_res
+					self.trassa_setup.sr.start_udp_server(server_id)
+
+					self.trassa_setup.send_receive_tdata(test_case_ids = t_case_name,
+													 udp_sender_id = sender_id,
+													 udp_server_id = server_id
+													 )
+					self.trassa_setup.compare_sent_received_tdata(test_case_ids = t_case_name)
+				if self.curr_test_id == "test_trassa_messages05":
+					
+					'''We want to filter PCMST messages
+					for comparison from the stream on different from the previous server
+					'''
+					
+					sender_id = self.trassa_setup.udp_snd_name_02
+					server_id = self.trassa_setup.udp_srv_name_02
+			
+					self.trassa_setup.sr.start_udp_server(server_id)
+					
+					self.trassa_setup.send_receive_tdata(test_case_ids = t_case_name,
+														 udp_sender_id = sender_id,
+														 udp_server_id = server_id
+														 )
+					self.trassa_setup.compare_sent_received_tdata(test_case_ids = t_case_name)
+					
+
 	
 	
 	def tearDown (self):
@@ -110,7 +158,7 @@ class TrassaTests(unittest.TestCase):
 		self.curr_logger.info('Test' + __name__ + 'tearDown routine.')
 	
 	
-	def test_trassa_ais_type01_18 (self):
+	def test_trassa_messages01 (self):
 		"""
 		:return:
 		"""
@@ -118,30 +166,58 @@ class TrassaTests(unittest.TestCase):
 		TEST that all fields passed to BL
 		FROM SONATA are properly repacked
 		'''
-		res_ais01_18 = self.trassa_setup.get_test_result(test_id = self.curr_test_id)
+		res_ais01 = self.trassa_setup.test_suite_compared_data
 		
-		for res in res_ais01_18:
-			self.assertTrue(res[0][0])
+		#for res in res_ais01_18:
+		#	self.assertTrue(res[0][0])
+		return
 	
+	def test_trassa_messages02 (self):
+		"""
+		:return:
+		"""
+		'''
+		TEST that all fields passed to BL
+		FROM SONATA are properly repacked
+		'''
+		res_ais01_18 = self.trassa_setup.test_suite_compared_data
+		return
+	
+	
+	# for res in res_ais01_18:
+	#	self.assertTrue(res[0][0])
 	
 	# @unittest.skip("test_sonata_messages01 is not needed now")
-	def test_trassa_ais_type05_24ab (self):
-		pass
+	def test_trassa_messages03 (self):
+		res_ais05 = self.trassa_setup.test_suite_compared_data
+		return
+	
+	def test_trassa_messages04 (self):
+		res_ais24ab = self.trassa_setup.test_suite_compared_data
+		return
+	
+	def test_trassa_messages05 (self):
+		res_astd = self.trassa_setup.test_suite_compared_data
+		return
+	
+	def test_trassa_messages06 (self):
+		res_aitxt = self.trassa_setup.test_suite_compared_data
+		return
 	
 	
 	@unittest.skip("to_do")
 	def test_trassa_astd (self):
-		pass
+		return
 	
 	
 	@unittest.skip("to_do")
 	def test_trassa_peist (self):
-		pass
+		return
 	
 	
 	@unittest.skip("to_do")
 	def test_trassa_aitxt_alr (self):
-		pass
+		return
 
 
 if __name__ == '__main__':
