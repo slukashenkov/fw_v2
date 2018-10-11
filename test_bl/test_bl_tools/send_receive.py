@@ -8,8 +8,8 @@ from copy import deepcopy
 from time import sleep
 
 from test_bl.test_bl_tools import logging_tools
-from test_bl.test_bl_tools.udp_sender import UdpSender , UdpSenderProcess
-from test_bl.test_bl_tools.udp_server import UdpServer , UdpPayloadHandler
+from test_bl.test_bl_tools.udp_sender import UdpSender, UdpSenderProcess
+from test_bl.test_bl_tools.udp_server import UdpServer, UdpPayloadHandler
 
 
 class SendReceive:
@@ -25,8 +25,8 @@ class SendReceive:
 	"""
 	
 	
-	def __init__ (self ,
-				  q_based = None ,
+	def __init__ (self,
+				  q_based = None,
 				  conf = None):
 		"""
 		:param logging_tools: logging to centalise coniguration (can change)
@@ -99,8 +99,8 @@ class SendReceive:
 	'''
 	
 	
-	def set_udp_sender (self ,
-						ip_to = "10.11.10.12" ,
+	def set_udp_sender (self,
+						ip_to = "10.11.10.12",
 						port_to = "55555"
 						):
 		"""
@@ -112,10 +112,10 @@ class SendReceive:
 			event_msg_send = multiprocessing.Event()
 			msgs_queue = multiprocessing.Queue()
 			msg_sent_status_queue = multiprocessing.Queue()
-			self.udp_sender = UdpSenderProcess(ip_to = ip_to ,
-											   port_to = port_to ,
-											   event_msg_send = event_msg_send ,
-											   msgs_queue = msgs_queue ,
+			self.udp_sender = UdpSenderProcess(ip_to = ip_to,
+											   port_to = port_to,
+											   event_msg_send = event_msg_send,
+											   msgs_queue = msgs_queue,
 											   msg_sent_status_queue = msg_sent_status_queue
 											   )
 			# multiprocessing.log_to_stderr(logging.DEBUG)
@@ -129,7 +129,7 @@ class SendReceive:
 		else:
 			self.msg_iterator = None
 			
-			if hasattr(self.msgs_to_send , '__iter__'):
+			if hasattr(self.msgs_to_send, '__iter__'):
 				self.msg_iterator = iter(self.msgs_to_send)
 			else:
 				self.logger.debug("No test messages to iterate over")
@@ -138,26 +138,26 @@ class SendReceive:
 				self.udp_sender.close_socket()
 			
 			if self.q_support == 1:
-				self.udp_sender = UdpSender(msg_iterator = self.msg_iterator ,
-											logging_tools = self.lt ,
-											ip_to = self.ip_to ,
-											port_to = self.port_to ,
-											msg_queue = self.msg_to_send_q ,
-											msg_sent_evnt = self.msg_sent_evnt ,
+				self.udp_sender = UdpSender(msg_iterator = self.msg_iterator,
+											logging_tools = self.lt,
+											ip_to = self.ip_to,
+											port_to = self.port_to,
+											msg_queue = self.msg_to_send_q,
+											msg_sent_evnt = self.msg_sent_evnt,
 											msg_src_slctr = self.q_support
 											)
 			else:
-				self.udp_sender = UdpSender(msg_iterator = self.msg_iterator ,
-											delay = self.conf.delay_btwn_msgs ,
-											logging_tools = self.conf.logging_tools ,
-											ip_to = self.conf.ip_to ,
+				self.udp_sender = UdpSender(msg_iterator = self.msg_iterator,
+											delay = self.conf.delay_btwn_msgs,
+											logging_tools = self.conf.logging_tools,
+											ip_to = self.conf.ip_to,
 											port_to = self.conf.port_to
 											)
 			return self.udp_sender.name
 	
 	
-	def udp_send_to (self ,
-					 messages_list = None ,
+	def udp_send_to (self,
+					 messages_list = None,
 					 sender_id = None):
 		if self.q_based == True:
 			
@@ -178,7 +178,7 @@ class SendReceive:
 			if num_msgs > 0:
 				for msg in messages_list:
 					self.msgs_to_send.put(msg)
-					# self.logger.debug("put message: " + str(msg) + "to queue \n")
+				# self.logger.debug("put message: " + str(msg) + "to queue \n")
 				self.event_msg_send.set()
 				
 				while True:
@@ -206,11 +206,11 @@ class SendReceive:
 			self.logger.info('Stop sending messages to KD')
 			self.logger.info('=======================================================================================')
 			self.test_num_messages()
-			sleep(random.randrange(1 , 3))
+			sleep(random.randrange(1, 3))
 	
 	
-	def udp_send_to_one (self ,
-						 messages_list = None ,
+	def udp_send_to_one (self,
+						 messages_list = None,
 						 sender_id = None):
 		result = None
 		if self.q_based == True:
@@ -246,7 +246,7 @@ class SendReceive:
 			elif len(messages_list) > 0:
 				for msg in messages_list:
 					self.msgs_to_send.put(msg)
-					# self.logger.debug("put message: " + str(msg) + "to queue \n")
+				# self.logger.debug("put message: " + str(msg) + "to queue \n")
 				return
 			else:
 				raise Exception("Either queue is empty or data list")
@@ -264,21 +264,33 @@ class SendReceive:
 			self.logger.info('Stop sending messages to KD')
 			self.logger.info('=======================================================================================')
 			self.test_num_messages()
-			sleep(random.randrange(1 , 3))
+			sleep(random.randrange(1, 3))
 			return True
 	
 	
-	def stop_sender (self ,
+	def stop_sender (self,
 					 sender_id = None):
-		curr_sender = self.udp_senders[sender_id]
-		curr_sender.terminate()
-		
-		while True:
-			status = curr_sender.is_alive()
-			if status == False:
-				del self.udp_senders[sender_id]
-				break
-		return
+		if sender_id != None:
+			curr_sender = self.udp_senders[sender_id]
+			curr_sender.terminate()
+			
+			while True:
+				status = curr_sender.is_alive()
+				if status == False:
+					del self.udp_senders[sender_id]
+					break
+			return
+		else:
+			for sender_id in self.udp_senders:
+				curr_sender = self.udp_senders[sender_id]
+				curr_sender.terminate()
+				
+				while True:
+					status = curr_sender.is_alive()
+					if status == False:
+						del self.udp_senders[sender_id]
+						break
+				return
 	
 	
 	'''
@@ -287,21 +299,21 @@ class SendReceive:
 	'''
 	
 	
-	def set_udp_server (self ,
-						ip_address = None ,
+	def set_udp_server (self,
+						ip_address = None,
 						port = None
 						):
 		
-		server_address = (ip_address , port)
+		server_address = (ip_address, port)
 		data_in_queue = queue.Queue(maxsize = 0)
 		status_queue = queue.Queue(maxsize = 0)
 		self.event_msg_received = threading.Event()
 		
 		self.logger.debug("Setting up UDP server")
-		udp_server = UdpServer(server_address = server_address ,
-							   handler_class = UdpPayloadHandler ,
-							   data_in_queue = data_in_queue ,
-							   status_queue = status_queue ,
+		udp_server = UdpServer(server_address = server_address,
+							   handler_class = UdpPayloadHandler,
+							   data_in_queue = data_in_queue,
+							   status_queue = status_queue,
 							   msg_res_event = self.event_msg_received
 							   )
 		
@@ -313,7 +325,7 @@ class SendReceive:
 		return curr_udp_server_name
 	
 	
-	def start_udp_server (self ,
+	def start_udp_server (self,
 						  srv_id):
 		curr_udp_srv = self.udp_servers.get(srv_id)
 		ip = curr_udp_srv.ip_address
@@ -327,18 +339,19 @@ class SendReceive:
 		t.start()
 	
 	
-	def stop_udp_server (self ,
+	def stop_udp_server (self,
 						 server_id = None
 						 ):
 		if server_id == None:
-			server_id = self.udp_server_name_def
+			for server_id in self.udp_servers:
+				udp_server = self.udp_servers.get(server_id)
+				self.logger.info('Attempt to Stop UDP Server to listen traffic from KD')
+				udp_server.stop_server()
 		else:
-			server_id = server_id
-		
-		if server_id in self.udp_servers.keys():
-			udp_server = self.udp_servers.get(server_id)
-			self.logger.info('Stop UDP Server to listen traffic from KD')
-			udp_server.stop_server()
+			if server_id in self.udp_servers.keys():
+				udp_server = self.udp_servers.get(server_id)
+				self.logger.info('Attempt to Stop UDP Server to listen traffic from KD')
+				udp_server.stop_server()
 	
 	
 	def check_all_messages_received (self,
@@ -365,14 +378,14 @@ class SendReceive:
 			# while self.event_msg_received.isSet():
 			while 1:
 				
-				#Check right away whether we waited long enough
-			
+				# Check right away whether we waited long enough
+				
 				# Check whether we have received as many packets as sent
 				if not curr_status_q.empty():
 					received_message = curr_status_q.get()
 					if received_message == "received":
 						received_counter = received_counter + 1
-			
+				
 				if received_counter == msgs_sent_counter:
 					received_counter_q = curr_receive_q.qsize()
 					if received_counter_q == received_counter:
@@ -386,7 +399,7 @@ class SendReceive:
 						self.logger.info(
 							'=======================================================================================')
 						break
-						
+				
 				if num_of_attemps == 0:
 					self.logger.debug(
 						'=======================================================================================')
@@ -437,9 +450,9 @@ class SendReceive:
 					break
 	
 	
-	def test_messages_received_filter (self ,
-									   messages_list = None ,
-									   server_id = None ,
+	def test_messages_received_filter (self,
+									   messages_list = None,
+									   server_id = None,
 									   flt_regex = None
 									   ):
 		'''----------------------------------------------------------------------------------------------------------'''
@@ -501,13 +514,13 @@ class SendReceive:
 							break
 	
 	
-	def test_receive_only (self ,
+	def test_receive_only (self,
 						   *var_args):
 		sleep(65)
 		return
 	
 	
-	def test_num_messages (self ,
+	def test_num_messages (self,
 						   messages_list = None):
 		'''----------------------------------------------------------------------------------------------------------'''
 		'''SETUP ALL TO CHECK COMPLETENESS OF SENDING/AND RECEIVING'''
@@ -572,7 +585,7 @@ class SendReceive:
 				self.conf.data_received_lock.acquire()
 				received_counter = len(msgs_received_data)
 				self.conf.data_received_lock.release()
-				sleep(random.randrange(3 , 6))
+				sleep(random.randrange(3, 6))
 				num_of_attemps = num_of_attemps - 1
 				
 				if num_of_attemps == 0:
@@ -594,7 +607,7 @@ class SendReceive:
 					break
 	
 	
-	def get_received_queue (self ,
+	def get_received_queue (self,
 							server_id = None
 							):
 		"""
@@ -625,17 +638,17 @@ def test_this ():
 		default_path = "C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\bl_git_branching\\test_bl\\test_bl_configs\\logging_conf.json"
 	)
 	logger = lt.get_logger(__name__)
-	sr = SendReceive(logging_tools = lt ,
+	sr = SendReceive(logging_tools = lt,
 					 q_based = True
 					 )
 	
-	udp_snd_01_name = sr.set_udp_sender(ip_to = "10.11.10.12" ,
+	udp_snd_01_name = sr.set_udp_sender(ip_to = "10.11.10.12",
 										port_to = "55556")
-	udp_srv_name = sr.set_udp_server(ip_address = "10.11.10.12" ,
+	udp_srv_name = sr.set_udp_server(ip_address = "10.11.10.12",
 									 port = 55556)
 	
-	messages = ["msg01 \n" , "msg02 \n" , "msg03 \n" , "msg04 \n" , "msg05 \n" , "msg06 \n" , "msg07  \n" , "msg08 \n"]
-	sr.udp_send_to(messages_list = messages ,
+	messages = ["msg01 \n", "msg02 \n", "msg03 \n", "msg04 \n", "msg05 \n", "msg06 \n", "msg07  \n", "msg08 \n"]
+	sr.udp_send_to(messages_list = messages,
 				   sender_id = udp_snd_01_name)
 	sr.check_all_messages_received(messages_list = messages,
 								   server_id = udp_srv_name)
@@ -649,7 +662,7 @@ def test_this ():
 	result.clear()
 	
 	messages_file = get_test_messages()
-	sr.udp_send_to(messages_list = messages_file ,
+	sr.udp_send_to(messages_list = messages_file,
 				   sender_id = udp_snd_01_name)
 	sr.check_all_messages_received(messages_list = messages_file,
 								   server_id = udp_srv_name)
@@ -659,9 +672,9 @@ def test_this ():
 	result.clear()
 	
 	''''''
-	messages = ["msg01 \n" , "msg02 \n" , "msg03 \n" , "msg04 \n" , "msg05 \n" , "msg06 \n"]
+	messages = ["msg01 \n", "msg02 \n", "msg03 \n", "msg04 \n", "msg05 \n", "msg06 \n"]
 	'''Put messages in ONLY'''
-	sr.udp_send_to_one(messages_list = messages ,
+	sr.udp_send_to_one(messages_list = messages,
 					   sender_id = udp_snd_01_name)
 	'''Send one ONLY'''
 	sr.udp_send_to_one(sender_id = udp_snd_01_name)
@@ -681,7 +694,7 @@ def test_this ():
 	sr.check_all_messages_received(messages_list = ["msg04 \n"],
 								   server_id = udp_srv_name)
 	
-	sr.udp_send_to(messages_list = messages ,
+	sr.udp_send_to(messages_list = messages,
 				   sender_id = udp_snd_01_name)
 	sr.check_all_messages_received(messages_list = messages,
 								   server_id = udp_srv_name)
@@ -697,31 +710,31 @@ def test_this_sender ():
 	"""
 	lt = logging_tools.LoggingTools(
 		default_path = "C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\FW_28_08_2018\\test_bl\\test_bl_configs\\logging_conf.json"
-		)
+	)
 	logger = lt.get_logger(__name__)
-	sr = SendReceive(logging_tools = lt ,
+	sr = SendReceive(logging_tools = lt,
 					 q_based = True
 					 )
 	
-	messages = ["msg01 \n" , "msg02 \n" , "msg03 \n" , "msg04 \n" , "msg05 \n" , "msg06 \n"]
-	udp_snd_01_name = sr.set_udp_sender(ip_to = "10.11.10.12" ,
+	messages = ["msg01 \n", "msg02 \n", "msg03 \n", "msg04 \n", "msg05 \n", "msg06 \n"]
+	udp_snd_01_name = sr.set_udp_sender(ip_to = "10.11.10.12",
 										port_to = "55555"
 										)
-	sr.udp_send_to(messages_list = messages ,
+	sr.udp_send_to(messages_list = messages,
 				   sender_id = udp_snd_01_name)
 	
-	udp_snd_02_name = sr.set_udp_sender(ip_to = "10.11.10.12" ,
+	udp_snd_02_name = sr.set_udp_sender(ip_to = "10.11.10.12",
 										port_to = "55556"
 										)
-	sr.udp_send_to(messages_list = messages ,
+	sr.udp_send_to(messages_list = messages,
 				   sender_id = udp_snd_02_name)
 	
 	sr.stop_sender(udp_snd_01_name)
 	
-	udp_snd_03_name = sr.set_udp_sender(ip_to = "10.11.10.12" ,
+	udp_snd_03_name = sr.set_udp_sender(ip_to = "10.11.10.12",
 										port_to = "55557"
 										)
-	sr.udp_send_to(messages_list = messages ,
+	sr.udp_send_to(messages_list = messages,
 				   sender_id = udp_snd_03_name)
 	
 	return
@@ -735,12 +748,12 @@ def test_this_server ():
 	"""
 	lt = logging_tools.LoggingTools(
 		default_path = "C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\FW_28_08_2018\\test_bl\\test_bl_configs\\logging_conf.json"
-		)
+	)
 	logger = lt.get_logger(__name__)
-	sr = SendReceive(logging_tools = lt ,
+	sr = SendReceive(logging_tools = lt,
 					 q_based = True
 					 )
-	sr.set_udp_server(ip_address = "10.11.10.12" ,
+	sr.set_udp_server(ip_address = "10.11.10.12",
 					  port = 55556)
 	sr.stop_udp_server()
 	return
@@ -758,7 +771,7 @@ def config_loggers ():
 	module_abs_path = os.path.abspath(os.path.dirname(__file__))
 	'''config logging'''
 	path_to_logging_conf = "..\\test_bl_configs\\logging_conf.json"
-	path_to_logging_conf = os.path.join(module_abs_path , path_to_logging_conf)
+	path_to_logging_conf = os.path.join(module_abs_path, path_to_logging_conf)
 	'''setup all loggers for all modules at once'''
 	logging_tools.LoggingTools(path_to_json = path_to_logging_conf)
 
@@ -787,8 +800,8 @@ def get_test_messages (test_case_id):
 	# path_to_data = "D:\\data\\python\\projects\\bl_frame_work\\bl_frame_work\\test_bl\\test_sonata_plugin\\resources_sonata\sonata_test_data.json"
 	# path_to_data = "C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\bl_frame_work\\test_bl\\test_sonata_plugin\\resources_sonata\\sonata_test_data.json"
 	
-	path_to_data = os.path.join(module_abs_path , path_to_data)
-	rd = read_test_data.ReadData(path_to_data ,
+	path_to_data = os.path.join(module_abs_path, path_to_data)
+	rd = read_test_data.ReadData(path_to_data,
 								 test_data_type = read_test_data.test_data_type.json)
 	sonata_msg_struct = sonata_msg.SonataMsg()
 	tests_data = rd.get_testsuite_data(msg_struct = sonata_msg_struct)
@@ -797,7 +810,7 @@ def get_test_messages (test_case_id):
 	
 	test_messages_list = rd.get_testcase_messages(test_case_id = test_case_id)
 	test_data_list = rd.get_testcase_data(test_case_id = test_case_id)
-	result = (test_messages_list , test_data_list)
+	result = (test_messages_list, test_data_list)
 	return result
 
 
@@ -816,20 +829,20 @@ def test_this_read_data ():
 		default_path = "C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\bl_git_branching\\test_bl\\test_bl_configs\\logging_conf.json"
 	)
 	logger = lt.get_logger(__name__)
-	sr = SendReceive(logging_tools = lt ,
+	sr = SendReceive(logging_tools = lt,
 					 q_based = True
 					 )
 	
-	udp_snd_01_name = sr.set_udp_sender(ip_to = "10.11.10.11" ,
+	udp_snd_01_name = sr.set_udp_sender(ip_to = "10.11.10.11",
 										port_to = "55555")
-	udp_srv_name = sr.set_udp_server(ip_address = "10.11.10.12" ,
+	udp_srv_name = sr.set_udp_server(ip_address = "10.11.10.12",
 									 port = 55556)
 	
 	received_q = sr.get_received_queue(udp_srv_name)
-	test_ids = ["test_sonata_messages05" , "test_sonata_messages06" , "test_sonata_messages07"]
+	test_ids = ["test_sonata_messages05", "test_sonata_messages06", "test_sonata_messages07"]
 	for index in test_ids:
 		messages_file = get_test_messages(test_case_id = index)
-		sr.udp_send_to(messages_list = messages_file ,
+		sr.udp_send_to(messages_list = messages_file,
 					   sender_id = udp_snd_01_name)
 		sr.check_all_messages_received(messages_list = messages_file,
 									   server_id = udp_srv_name)
@@ -861,13 +874,13 @@ def test_this_read_and_parse ():
 	config_loggers()
 	logger = logging.getLogger(__name__)
 	sr = SendReceive(q_based = True)
-	udp_snd_01_name = sr.set_udp_sender(ip_to = "10.11.10.11" ,
+	udp_snd_01_name = sr.set_udp_sender(ip_to = "10.11.10.11",
 										port_to = "55555")
-	udp_srv_name = sr.set_udp_server(ip_address = "10.11.10.12" ,
+	udp_srv_name = sr.set_udp_server(ip_address = "10.11.10.12",
 									 port = 55556)
 	received_q = sr.get_received_queue(udp_srv_name)
 	# test_ids = ["test_sonata_messages05", "test_sonata_messages06", "test_sonata_messages07"]
-	test_ids = ["test_sonata_messages05" , "test_sonata_messages06" , "test_sonata_messages07"]
+	test_ids = ["test_sonata_messages05", "test_sonata_messages06", "test_sonata_messages07"]
 	test_suite_parsed_data = {}
 	test_suite_sent_data = {}
 	s_parser = sonata_test_parser.SonataTestParser()
@@ -878,25 +891,25 @@ def test_this_read_and_parse ():
 		messages_to_send = test_data_messages[0]
 		data_sent = test_data_messages[1]
 		
-		sr.udp_send_to(messages_list = messages_to_send ,
+		sr.udp_send_to(messages_list = messages_to_send,
 					   sender_id = udp_snd_01_name)
 		sr.check_all_messages_received(messages_list = messages_to_send,
 									   server_id = udp_srv_name)
 		result = sr.get_received_queue(server_id = udp_srv_name)
 		logging.debug("DATA RECEIVED: ==>" + str(result) + "\n")
-		parsed_data = proc_data.parse_received_data(parser = s_parser ,
+		parsed_data = proc_data.parse_received_data(parser = s_parser,
 													received_data = result)
 		test_suite_parsed_data[index] = copy.deepcopy(parsed_data)
 		test_suite_sent_data[index] = copy.deepcopy(data_sent)
 	
 	'''Data comparison step'''
-	test_ids = ["test_sonata_messages05" , "test_sonata_messages06" , "test_sonata_messages07"]
+	test_ids = ["test_sonata_messages05", "test_sonata_messages06", "test_sonata_messages07"]
 	result = {}
 	for index in test_ids:
 		data_sent = test_suite_sent_data[index]
 		data_received = test_suite_parsed_data[index]
-		result[index] = proc_data.compare_sent_received(parser = s_parser ,
-														data_sent = data_sent ,
+		result[index] = proc_data.compare_sent_received(parser = s_parser,
+														data_sent = data_sent,
 														data_received = data_received)
 	
 	'''
@@ -917,7 +930,7 @@ def test_this_read_and_parse_and_json_gen ():
 	test function for the current class
 	:return:
 	"""
-	import copy , os
+	import copy, os
 	from test_bl.test_bl_tools import process_received_data
 	from test_bl.test_sonata_plugin.test_tools_sonata import sonata_test_parser
 	
@@ -942,9 +955,9 @@ def test_this_read_and_parse_and_json_gen ():
 	sr = SendReceive(q_based = True)
 	sr.logger = logger
 	'''setup senders receivers'''
-	udp_snd_01_name = sr.set_udp_sender(ip_to = "10.11.10.11" ,
+	udp_snd_01_name = sr.set_udp_sender(ip_to = "10.11.10.11",
 										port_to = "55555")
-	udp_srv_name = sr.set_udp_server(ip_address = "10.11.10.12" ,
+	udp_srv_name = sr.set_udp_server(ip_address = "10.11.10.12",
 									 port = 55556)
 	
 	'''stuctures to hold sent and received data
@@ -974,14 +987,14 @@ def test_this_read_and_parse_and_json_gen ():
 		messages_to_send = test_data_messages[0]
 		data_sent = test_data_messages[1]
 		
-		sr.udp_send_to(messages_list = messages_to_send ,
+		sr.udp_send_to(messages_list = messages_to_send,
 					   sender_id = udp_snd_01_name)
 		sr.check_all_messages_received(messages_list = messages_to_send,
 									   server_id = udp_srv_name)
 		'''get the queue to read from'''
 		received_q = sr.get_received_queue(udp_srv_name)
 		logging.debug("DATA RECEIVED: ==>" + str(received_q) + "\n")
-		parsed_data = proc_data.parse_received_data(parser = s_parser ,
+		parsed_data = proc_data.parse_received_data(parser = s_parser,
 													received_data = received_q)
 		test_suite_parsed_data[index] = copy.deepcopy(parsed_data)
 		test_suite_sent_data[index] = copy.deepcopy(data_sent)
@@ -997,8 +1010,8 @@ def test_this_read_and_parse_and_json_gen ():
 	for index in test_ids:
 		data_sent = test_suite_sent_data[index]
 		data_received = test_suite_parsed_data[index]
-		result[index] = proc_data.compare_sent_received(parser = s_parser ,
-														data_sent = data_sent ,
+		result[index] = proc_data.compare_sent_received(parser = s_parser,
+														data_sent = data_sent,
 														data_received = data_received)
 	
 	for result in result[test_ids[0]]:
@@ -1024,4 +1037,4 @@ if __name__ == "__main__":
 	# test_this_read_data()
 	# test_this_read_and_parse()
 	test_this_read_and_parse_and_json_gen()
-	# test_this()
+# test_this()

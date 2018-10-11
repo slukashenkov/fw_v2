@@ -440,18 +440,18 @@ class SetupTrassaSuite:
 	def stop_udp_sender (self,
 						 udp_snd_name = None):
 		if udp_snd_name == None:
-			self.sr.stop_sender(self.udp_snd_name)
+			self.sr.stop_sender()
 		else:
-			self.sr.stop_sender(udp_snd_name)
+			self.sr.stop_sender(sender_id = udp_snd_name)
 		return
 	
 	
 	def stop_udp_server (self,
 						 udp_srv_name = None):
 		if udp_srv_name == None:
-			self.sr.stop_udp_server(self.udp_srv_name)
+			self.sr.stop_udp_server()
 		else:
-			self.sr.stop_udp_server(udp_srv_name)
+			self.sr.stop_udp_server(server_id = udp_srv_name)
 		return
 	
 	
@@ -716,11 +716,10 @@ def test_this_peist ():
 	TODO:
 	finish with setup
 	'''
-	# s_trassa.setup_external_scripts()
-	# s_sonata.start_logserver()
-	# s_sonata.setup_vir_env()
-	# t_case_name=["test_trassa_messages01","test_trassa_messages02"]
-	# test_case_ids,
+	s_trassa.setup_external_scripts()
+	#s_trassa.start_logserver()
+	#s_trassa.setup_vir_env()
+
 	udp_sender_id = None
 	udp_server_id = None
 	parser = None
@@ -750,13 +749,12 @@ def test_this_peist ():
 	
 	result = s_trassa.compare_sent_received_tdata(test_case_ids = t_case_name)
 	print(str(result))
-	s_trassa.stop_udp_server(udp_srv_name = server_id)
+	s_trassa.stop_udp_server()
 	
-	# s_trassa.stop_udp_sender()
-	# s_trassa.stop_test_env()
-	# s_trassa.stop_logserver()
+	s_trassa.stop_udp_sender()
+	#s_trassa.stop_test_env()
+	s_trassa.stop_logserver()
 	return
-
 
 if __name__ == "__main__":
 	# test_this_paidd()

@@ -60,21 +60,23 @@ class TrassaTests(unittest.TestCase):
 		self.exclude_tests = self.trassa_setup.get_excluded_tests()
 		'''SETUP TEST ENV
 		'''
-		# self.trassa_setup.start_logserver()
-		# self.trassa_setup.setup_vir_env()
+		self.trassa_setup.start_logserver()
+		self.trassa_setup.setup_vir_env()
 		return
 	
 	
 	@classmethod
 	def tearDownClass (self):
-		self.trassa_setup.stop_udp_server(udp_srv_name = self.server_id_01)
-		self.trassa_setup.stop_udp_server(udp_srv_name = self.server_id_02)
+		self.trassa_setup.stop_udp_server()
+		#self.trassa_setup.stop_udp_server(udp_srv_name = self.server_id_01)
+		#self.trassa_setup.stop_udp_server(udp_srv_name = self.server_id_02)
 		
-		self.trassa_setup.stop_udp_sender(udp_snd_name = self.sender_id_01)
-		self.trassa_setup.stop_udp_sender(udp_snd_name = self.sender_id_02)
+		self.trassa_setup.stop_udp_sender()
+		#self.trassa_setup.stop_udp_sender(udp_snd_name = self.sender_id_01)
+		#self.trassa_setup.stop_udp_sender(udp_snd_name = self.sender_id_02)
 		
-		#self.trassa_setup.stop_test_env()
-		#self.trassa_setup.stop_logserver()
+		self.trassa_setup.stop_test_env()
+		self.trassa_setup.stop_logserver()
 		
 		self.__tools__.build_test_banner(mod_name = 'TRASSA',
 										 suit_name = 'SUITE' + __name__,
@@ -110,8 +112,8 @@ class TrassaTests(unittest.TestCase):
 				or (self.curr_test_id == "test_trassa_messages02")\
 				or (self.curr_test_id == "test_trassa_messages03")\
 				or (self.curr_test_id == "test_trassa_messages04") \
-				or (self.curr_test_id == "test_trassa_messages06") \
-				or (self.curr_test_id == "test_trassa_messages07"):
+				or (self.curr_test_id == "test_trassa_messages05") \
+				or (self.curr_test_id == "test_trassa_messages08"):
 					'''
 					We want to filter PAIDD messages for comparison from the stream
 					'''
@@ -134,7 +136,7 @@ class TrassaTests(unittest.TestCase):
 													 udp_server_id = server_id
 													 )
 					self.trassa_setup.compare_sent_received_tdata(test_case_ids = t_case_name)
-				if self.curr_test_id == "test_trassa_messages05":
+				if self.curr_test_id == "test_trassa_messages06":
 					
 					'''We want to filter PCMST messages
 					for comparison from the stream on different from the previous server
@@ -150,8 +152,6 @@ class TrassaTests(unittest.TestCase):
 														 udp_server_id = server_id
 														 )
 					self.trassa_setup.compare_sent_received_tdata(test_case_ids = t_case_name)
-					
-
 	
 	
 	def tearDown (self):

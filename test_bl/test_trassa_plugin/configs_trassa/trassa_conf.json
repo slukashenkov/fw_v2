@@ -10,18 +10,18 @@
                             },
 
     "sut_control_commands_start": {
-                      "test_exec":"./testScr_param.bash TESTING_LAST_COMMAND_SUCCESS_ON_SETUP",
+                      "test_exec":"./testScr_param.bash TEST_start",
                       "com00":"cd /usr/bin/dolphin",
-                      "com01":"/bin/tar -xzvf /usr/bin/dolphin/bl_tests_trassa.tar.gz",
-                      "com02":"cd /usr/bin/dolphin/bl_tests/",
+                      "com01":"/bin/tar -xzf /usr/bin/dolphin/trassa_confs.tar.gz",
+                      "com02":"cd /usr/bin/dolphin/trassa_confs",
                       "com03":"./StartTrassaOnly.bash",
                       "com04":"cd /usr/bin/dolphin",
                       "com05":"ps afx | egrep \".*./[W]atchDogServer --start .*\""
                       },
 
     "sut_control_commands_stop": {
-                      "test_exec": "./testScr_param.bash TESTING_LAST_COMMAND_SUCCESS_ON_TEARINGDOWN",
-                      "com00": "cd /usr/bin/dolphin/bl_tests",
+                      "test_exec": "./testScr_param.bash TEST_stop",
+                      "com00": "cd /usr/bin/dolphin/trassa_confs",
                       "com01": " ./StopTrassaOnly.bash"
                       },
 
