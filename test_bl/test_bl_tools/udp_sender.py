@@ -130,8 +130,7 @@ class UdpSenderProcess(multiprocessing.Process):
 			next_task = self.msgs_queue.get()
 			
 			if next_task != None:
-				print("is about to send msg: " + next_task + str(self.ip_to) + ":" + str(self.port_to) + "\n")
-			# self.logger.debug("is about to send msg: " + next_task + "\n")
+				print("is about to send msg to: " + str(self.ip_to) + ":" + str(self.port_to) + " msg_content: " + next_task)
 			else:
 				print("POISON PILL!!!!\n")
 			# self.logger.debug("POISON PILL!!!!\n")
@@ -141,7 +140,7 @@ class UdpSenderProcess(multiprocessing.Process):
 				# self.logger.debug("Killed by POISON PILL")
 				exit(0)
 			else:
-				print("sending msg: " + next_task + " to:" + str(self.ip_to) + ":" + str(self.port_to) + "\n")
+				print("sending msg to: " + str(self.ip_to) + ":" + " msg_content: " + next_task)
 				# self.logger.debug("sending msg: " + next_task + "\n")
 				encoded = str.encode(next_task)
 				self.sock.sendto(encoded , (self.ip_to ,

@@ -288,8 +288,8 @@ class SendReceive:
 	
 	
 	def set_udp_server (self ,
-						ip_address = "127.0.0.1" ,
-						port = 55556
+						ip_address = None ,
+						port = None
 						):
 		
 		server_address = (ip_address , port)
@@ -341,10 +341,10 @@ class SendReceive:
 			udp_server.stop_server()
 	
 	
-	def test_messages_received (self ,
-								messages_list = None ,
-								server_id = None
-								):
+	def check_all_messages_received (self,
+									 messages_list = None,
+									 server_id = None
+									 ):
 		'''----------------------------------------------------------------------------------------------------------'''
 		'''SETUP ALL TO CHECK COMPLETENESS OF SENDING/AND RECEIVING'''
 		if messages_list != None:
@@ -364,11 +364,29 @@ class SendReceive:
 			# while msgs_sent_counter != received_counter:
 			# while self.event_msg_received.isSet():
 			while 1:
+				
+				#Check right away whether we waited long enough
+			
 				# Check whether we have received as many packets as sent
 				if not curr_status_q.empty():
 					received_message = curr_status_q.get()
 					if received_message == "received":
 						received_counter = received_counter + 1
+			
+				if received_counter == msgs_sent_counter:
+					received_counter_q = curr_receive_q.qsize()
+					if received_counter_q == received_counter:
+						self.received_data_cntr = received_counter
+						self.logger.info(
+							'=======================================================================================')
+						self.logger.info(
+							'UDP SERVER RECEIVED ALL THE SENT MESSAGES. TOTAL: ' + str(
+								received_counter) + " <-- received_counter_mgs" + " " + str(
+								received_counter_q) + " <-- received_counter_q")
+						self.logger.info(
+							'=======================================================================================')
+						break
+						
 				if num_of_attemps == 0:
 					self.logger.debug(
 						'=======================================================================================')
@@ -376,21 +394,10 @@ class SendReceive:
 						'UDP SERVER EXCEEDED NUM OF ATTEMPTS TO RECONCILE ITS COUNTERS')
 					self.logger.debug(
 						'=======================================================================================')
+					raise Exception("No messages received")
 					break
-				if received_counter == msgs_sent_counter:
-					received_counter_q = curr_receive_q.qsize()
-					if received_counter_q == received_counter:
-						self.received_data_cntr = received_counter
-						self.logger.debug(
-							'=======================================================================================')
-						self.logger.debug(
-							'UDP SERVER RECEIVED ALL THE SENT MESSAGES. TOTAL: ' + str(
-								received_counter) + " <-- received_counter_mgs" + " " + str(
-								received_counter_q) + " <-- received_counter_q")
-						self.logger.debug(
-							'=======================================================================================')
-						break
 				num_of_attemps = num_of_attemps - 1
+				sleep(2)
 		else:
 			while msgs_sent_counter != received_counter:
 				# Check whether we have received as many packets as sent
@@ -630,8 +637,8 @@ def test_this ():
 	messages = ["msg01 \n" , "msg02 \n" , "msg03 \n" , "msg04 \n" , "msg05 \n" , "msg06 \n" , "msg07  \n" , "msg08 \n"]
 	sr.udp_send_to(messages_list = messages ,
 				   sender_id = udp_snd_01_name)
-	sr.test_messages_received(messages_list = messages ,
-							  server_id = udp_srv_name)
+	sr.check_all_messages_received(messages_list = messages,
+								   server_id = udp_srv_name)
 	
 	received_q = sr.get_received_queue(udp_srv_name)
 	logger.debug("--->>>num of messages in received Q == " + str(received_q.qsize()))
@@ -644,8 +651,8 @@ def test_this ():
 	messages_file = get_test_messages()
 	sr.udp_send_to(messages_list = messages_file ,
 				   sender_id = udp_snd_01_name)
-	sr.test_messages_received(messages_list = messages_file ,
-							  server_id = udp_srv_name)
+	sr.check_all_messages_received(messages_list = messages_file,
+								   server_id = udp_srv_name)
 	while not received_q.empty():
 		result.append(received_q.get())
 	logging.debug("==>>>" + str(result))
@@ -659,25 +666,25 @@ def test_this ():
 	'''Send one ONLY'''
 	sr.udp_send_to_one(sender_id = udp_snd_01_name)
 	
-	sr.test_messages_received(messages_list = ["msg01 \n"] ,
-							  server_id = udp_srv_name)
+	sr.check_all_messages_received(messages_list = ["msg01 \n"],
+								   server_id = udp_srv_name)
 	
 	sr.udp_send_to_one(sender_id = udp_snd_01_name)
-	sr.test_messages_received(messages_list = ["msg02 \n"] ,
-							  server_id = udp_srv_name)
+	sr.check_all_messages_received(messages_list = ["msg02 \n"],
+								   server_id = udp_srv_name)
 	
 	sr.udp_send_to_one(sender_id = udp_snd_01_name)
-	sr.test_messages_received(messages_list = ["msg03 \n"] ,
-							  server_id = udp_srv_name)
+	sr.check_all_messages_received(messages_list = ["msg03 \n"],
+								   server_id = udp_srv_name)
 	
 	sr.udp_send_to_one(sender_id = udp_snd_01_name)
-	sr.test_messages_received(messages_list = ["msg04 \n"] ,
-							  server_id = udp_srv_name)
+	sr.check_all_messages_received(messages_list = ["msg04 \n"],
+								   server_id = udp_srv_name)
 	
 	sr.udp_send_to(messages_list = messages ,
 				   sender_id = udp_snd_01_name)
-	sr.test_messages_received(messages_list = messages ,
-							  server_id = udp_srv_name)
+	sr.check_all_messages_received(messages_list = messages,
+								   server_id = udp_srv_name)
 	
 	return
 
@@ -824,8 +831,8 @@ def test_this_read_data ():
 		messages_file = get_test_messages(test_case_id = index)
 		sr.udp_send_to(messages_list = messages_file ,
 					   sender_id = udp_snd_01_name)
-		sr.test_messages_received(messages_list = messages_file ,
-								  server_id = udp_srv_name)
+		sr.check_all_messages_received(messages_list = messages_file,
+									   server_id = udp_srv_name)
 		result = sr.get_received_queue(server_id = udp_srv_name)
 		logging.debug("DATA RECEIVED: ==>" + str(result) + "\n")
 	
@@ -873,8 +880,8 @@ def test_this_read_and_parse ():
 		
 		sr.udp_send_to(messages_list = messages_to_send ,
 					   sender_id = udp_snd_01_name)
-		sr.test_messages_received(messages_list = messages_to_send ,
-								  server_id = udp_srv_name)
+		sr.check_all_messages_received(messages_list = messages_to_send,
+									   server_id = udp_srv_name)
 		result = sr.get_received_queue(server_id = udp_srv_name)
 		logging.debug("DATA RECEIVED: ==>" + str(result) + "\n")
 		parsed_data = proc_data.parse_received_data(parser = s_parser ,
@@ -969,8 +976,8 @@ def test_this_read_and_parse_and_json_gen ():
 		
 		sr.udp_send_to(messages_list = messages_to_send ,
 					   sender_id = udp_snd_01_name)
-		sr.test_messages_received(messages_list = messages_to_send ,
-								  server_id = udp_srv_name)
+		sr.check_all_messages_received(messages_list = messages_to_send,
+									   server_id = udp_srv_name)
 		'''get the queue to read from'''
 		received_q = sr.get_received_queue(udp_srv_name)
 		logging.debug("DATA RECEIVED: ==>" + str(received_q) + "\n")

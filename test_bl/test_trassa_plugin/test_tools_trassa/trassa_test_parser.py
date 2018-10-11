@@ -334,6 +334,7 @@ class TrassaTestParser():
 			return comparison_results
 		
 		if msg_type == trassa_msg_types.PAIDD:
+			self.logger.debug("What is msg_data" + str(msg_data_sent))
 			if "pass" in msg_data_sent["test_conditions"].keys():
 				'''
 				Initialise what we will search on

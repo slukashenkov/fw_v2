@@ -134,8 +134,8 @@ def test_this ():
 	udp_srv_name = sr.set_udp_server(ip_address = "10.11.10.12",
 									 port = 47300)
 	messages_to_send = ['w']
-	sr.test_messages_received(messages_list = messages_to_send,
-							  server_id = udp_srv_name)
+	sr.check_all_messages_received(messages_list = messages_to_send,
+								   server_id = udp_srv_name)
 	'''get the queue to read from'''
 	received_q = sr.get_received_queue(udp_srv_name)
 	print(received_q)

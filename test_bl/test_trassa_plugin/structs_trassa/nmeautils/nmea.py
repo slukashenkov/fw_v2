@@ -167,8 +167,7 @@ class NMEASentenceType(type):
 				  name,
 				  bases,
 				  dct):
-		print("NMEASentenceType Init \n" + "cls" + str(type(cls)) + "\nname: " + name + "\nbases:" + str(
-			bases) + "\ndct" + str(dct))
+		#print("NMEASentenceType Init \n" + "cls" + str(type(cls)) + "\nname: " + name + "\nbases:" + str(bases) + "\ndct" + str(dct))
 		type.__init__(cls,
 					  name,
 					  bases,

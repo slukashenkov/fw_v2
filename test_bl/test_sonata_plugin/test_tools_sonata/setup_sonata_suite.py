@@ -168,12 +168,12 @@ class SetupSonataSuite:
                         '''
                         if udp_server_id !=None:
                             server_id=udp_server_id
-                            self.sr.test_messages_received(messages_list    = messages_to_send,
-                                                            server_id       = udp_server_id)
+                            self.sr.check_all_messages_received(messages_list    = messages_to_send,
+																server_id       = udp_server_id)
                         else:
                             server_id=self.udp_srv_name
-                            self.sr.test_messages_received(messages_list    = messages_to_send,
-                                                           server_id        = server_id)
+                            self.sr.check_all_messages_received(messages_list    = messages_to_send,
+																server_id        = server_id)
 
                         '''get the queue to read from'''
                         '''TODO check sonata is works when we pass buffer further '''

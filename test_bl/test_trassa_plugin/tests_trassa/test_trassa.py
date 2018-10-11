@@ -195,18 +195,22 @@ class TrassaTests(unittest.TestCase):
 		return
 	
 	def test_trassa_messages04 (self):
-		res_ais24ab = self.trassa_setup.test_suite_compared_data
+		res_ais24a = self.trassa_setup.test_suite_compared_data
 		return
 	
 	def test_trassa_messages05 (self):
-		res_astd = self.trassa_setup.test_suite_compared_data
+		res_ais24b = self.trassa_setup.test_suite_compared_data
 		return
 	
 	def test_trassa_messages06 (self):
-		res_aitxt = self.trassa_setup.test_suite_compared_data
+		res_astd = self.trassa_setup.test_suite_compared_data
 		return
 	
 	def test_trassa_messages07 (self):
+		res_aitxt = self.trassa_setup.test_suite_compared_data
+		return
+	
+	def test_trassa_messages08 (self):
 		res_peist = self.trassa_setup.test_suite_compared_data
 		return
 	

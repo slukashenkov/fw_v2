@@ -47,8 +47,7 @@
       }
     }
   },
-  "test_trassa_messages02": {
-    "skip": true,
+  "test_trassa_messages02": {"skip": true,
     "t01_ais_type18": {
       "msg_type": "ais_type18",
       "test_conditions": {
@@ -110,7 +109,7 @@
       }
     }
   },
-  "test_trassa_messages03": {"skip": true,
+  "test_trassa_messages03": {"skip": false,
     "t02_ais_type05": {
                       "msg_type": "ais_type05",
                       "test_conditions": {
@@ -157,6 +156,7 @@
                         "ETAday": 28,
                         "ETAhour": 9,
                         "ETAminute": 54,
+
                         "draught": 21.1,
                         "destination": "NOWHERE@@@@@@@@@@@@@",
                         "dte": 0,
@@ -180,7 +180,9 @@
         "RepeatIndicator": 1,
         "MMSI": 5678844
       }
-    },
+    }
+  },
+  "test_trassa_messages05": {"skip": true,
     "t08_ais_type24b": {
       "msg_type": "ais_type24b",
       "test_conditions": {
@@ -222,7 +224,7 @@
       }
     }
   },
-  "test_trassa_messages05": {"skip": true,
+  "test_trassa_messages06": {"skip": true,
     "t03_nmea_PCMST_w_eq": {
       "msg_type": "pcmst",
       "test_conditions": {
@@ -260,7 +262,7 @@
       }
     }
   },
-  "test_trassa_messages06": {
+  "test_trassa_messages07": {
     "skip": true,
     "t04_nmea_AITXT": {
       "msg_type": "aitxt",
@@ -301,8 +303,7 @@
       }
     }
   },
-  "test_trassa_messages07": {
-    "skip": false,
+  "test_trassa_messages08": {"skip": true,
     "t04_peist_type": {
       "msg_type": "peist",
       "test_conditions": {
@@ -322,8 +323,7 @@
       }
     }
   },
-  "test_trassa_messages08": {
-    "skip": true,
+  "test_trassa_messages09": {"skip": true,
     "t03_ais_type01": {
       "msg_type": "ais_type01",
       "test_conditions": {
@@ -632,8 +632,7 @@
       }
     }
   },
-  "test_trassa_messages09": {
-    "skip": true,
+  "test_trassa_messages10": {"skip": true,
     "t01_ais_type18": {
       "msg_type": "ais_type18",
       "test_conditions": {
@@ -695,8 +694,7 @@
       }
     }
   },
-  "test_trassa_messages10": {
-    "skip": true,
+  "test_trassa_messages11": {"skip": true,
     "t08_ais_type24a": {
       "msg_type": "ais_type24a",
       "test_conditions": {
