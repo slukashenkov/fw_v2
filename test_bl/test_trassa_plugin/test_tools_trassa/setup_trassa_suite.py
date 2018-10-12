@@ -527,9 +527,9 @@ def test_this_paidd ():
 	udp_server_id = None
 	parser = None
 	'''AIS Type 01 data'''
-	# t_case_name = ["test_trassa_messages01"]
+	t_case_name = ["test_trassa_messages01"]
 	'''AIS Type 18 data'''
-	t_case_name = ["test_trassa_messages02"]
+	#t_case_name = ["test_trassa_messages02"]
 	
 	# s_trassa.stop_udp_server(server_id)
 	'''
@@ -757,8 +757,8 @@ def test_this_peist ():
 	return
 
 if __name__ == "__main__":
-	# test_this_paidd()
+	test_this_paidd()
 	# test_this_paisd()
 	# test_this_astd()
 	# test_this_aialr()
-	test_this_peist()
+	# test_this_peist()

@@ -546,6 +546,21 @@ class TrassaTestParser():
 		if "longitude" == key and ((key in self.data_to) and (key in self.trassa_data_parsed_map)):
 			field_sent = self.data_to[key]
 			field_received = float(self.trassa_data_parsed_map[key])
+			
+			'''Do some recalculations as done by KD'''
+			field_sent_abs = abs(field_sent)
+			field_sent_deg = int(field_sent_abs)
+			field_sent_min = field_sent_abs - field_sent_deg
+			
+			calc_min = field_sent_min * 60
+			calc_min_int = int(calc_min)
+			
+			calc_sec = calc_min - calc_min_int
+			calc_sec_full = int(calc_sec * 60)
+			calc_sec_round =  round(calc_sec, 1)
+			
+			res_str = str(field_sent_deg) + str(calc_min_int) + "." + str(calc_sec_round)
+			
 			try:
 				assert field_sent == field_received, "Fields ARE NOT equal"
 				result = True
