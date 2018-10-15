@@ -431,6 +431,60 @@ class TrassaTestParser():
 			return trassa_msg_types.PAIDD
 		if msg_type == 'pcmst':
 			return trassa_msg_types.ASTD
+		
+	def get_long_deg_min_str(self,
+							 long_dec):
+		'''Do some recalculations as done by KD'''
+		field_sent_abs = abs(long_dec)
+		field_sent_deg = int(field_sent_abs)
+		field_sent_min = field_sent_abs - field_sent_deg
+		
+		calc_min = field_sent_min * 60
+		calc_min_int = int(calc_min)
+		
+		
+		calc_sec = calc_min - calc_min_int
+		calc_sec_full = int(calc_sec * 60)
+		calc_sec_round = str(round(calc_sec, 2)).split('.')[1]
+		
+		if calc_min_int in range(1,10):
+			calc_min_int = '0' + str(calc_min_int)
+		
+		if int(calc_sec_round) in range(1, 10):
+			calc_sec_round = str(calc_sec_round) + '0'
+		
+		long_lat_str = str(field_sent_deg) + str(calc_min_int) + "." + str(calc_sec_round)
+		
+		return str(long_lat_str)
+	
+	
+	def get_lat_deg_min_str (self,
+							 lat_dec):
+		'''Do some recalculations as done by KD'''
+		field_sent_abs = abs(lat_dec)
+		field_sent_deg = int(field_sent_abs)
+		field_sent_min = field_sent_abs - field_sent_deg
+		
+		calc_min = field_sent_min * 60
+		calc_min_int = int(calc_min)
+		
+
+		
+		calc_sec = calc_min - calc_min_int
+		calc_sec_full = int(calc_sec * 60)
+		calc_sec_round = str(round(calc_sec, 3)).split('.')[1]
+		
+		if calc_min_int in range(1,10):
+			calc_min_int = '0' + str(calc_min_int)
+		
+		if int(calc_sec_round) in range(1,10):
+			calc_sec_round = str(calc_sec_round) + '0'
+		
+		long_lat_str = str(field_sent_deg) + str(calc_min_int) + "." + str(calc_sec_round)
+		
+		return str(long_lat_str)
+		
+		
 	
 	
 	def __do_log_parsing (self,
@@ -545,46 +599,47 @@ class TrassaTestParser():
 		
 		if "longitude" == key and ((key in self.data_to) and (key in self.trassa_data_parsed_map)):
 			field_sent = self.data_to[key]
-			field_received = float(self.trassa_data_parsed_map[key])
+			field_received = self.trassa_data_parsed_map[key]
 			
-			'''Do some recalculations as done by KD'''
-			field_sent_abs = abs(field_sent)
-			field_sent_deg = int(field_sent_abs)
-			field_sent_min = field_sent_abs - field_sent_deg
-			
-			calc_min = field_sent_min * 60
-			calc_min_int = int(calc_min)
-			
-			calc_sec = calc_min - calc_min_int
-			calc_sec_full = int(calc_sec * 60)
-			calc_sec_round =  round(calc_sec, 1)
-			
-			res_str = str(field_sent_deg) + str(calc_min_int) + "." + str(calc_sec_round)
+			'''Calculations converting dec representation in test data to the one
+			of received nmea should be made prior to comparison
+			'''
+			long_str = self.get_long_deg_min_str(long_dec = field_sent)
+		
 			
 			try:
-				assert field_sent == field_received, "Fields ARE NOT equal"
+				assert long_str == field_received, "Fields ARE NOT equal"
 				result = True
-				self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
-					field_received) + " in field named: " + key + " was successful")
-				return (result, field_sent, field_received)
+				self.logger.debug("Comparison of " + str(field_sent) + " and "
+								 + str(field_received) + " in field named: "
+								 + key + " was successful")
+				return (result, long_str, field_received)
+			
 			except:
-				self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
-					field_received) + " in field named: " + key + " FAILED MISERABLY")
-				return (result, field_sent, field_received)
+				self.logger.debug("Comparison of " + str(field_sent) + " and "
+								  + str(field_received) + " in field named: "
+								  + key + " FAILED MISERABLY")
+				return (result, long_str, field_received)
 		
 		if "latitude" == key and ((key in self.data_to) and (key in self.trassa_data_parsed_map)):
 			field_sent = self.data_to[key]
-			field_received = float(self.trassa_data_parsed_map[key])
+			field_received = self.trassa_data_parsed_map[key]
+			
+			'''Calculations converting dec representation in test data to the one
+			of received nmea should be made prior to comparison
+			'''
+			lat_str = self.get_lat_deg_min_str(lat_dec = field_sent)
+			
 			try:
-				assert field_sent == field_received, "Fields ARE NOT equal"
+				assert lat_str == field_received, "Fields ARE NOT equal"
 				result = True
 				self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
 					field_received) + " in field named: " + key + " was successful")
-				return (result, field_sent, field_received)
+				return (result, lat_str, field_received)
 			except:
 				self.logger.debug("Comparison of " + str(field_sent) + " and " + str(
 					field_received) + " in field named: " + key + " FAILED MISERABLY")
-				return (result, field_sent, field_received)
+				return (result, lat_str, field_received)
 		
 		if "SOG" == key and ((key in self.data_to) and (key in self.trassa_data_parsed_map)):
 			field_sent = self.data_to[key]

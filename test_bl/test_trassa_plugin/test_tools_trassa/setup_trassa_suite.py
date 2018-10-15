@@ -757,8 +757,8 @@ def test_this_peist ():
 	return
 
 if __name__ == "__main__":
-	test_this_paidd()
+	# test_this_paidd()
 	# test_this_paisd()
 	# test_this_astd()
-	# test_this_aialr()
+	 test_this_aialr()
 	# test_this_peist()

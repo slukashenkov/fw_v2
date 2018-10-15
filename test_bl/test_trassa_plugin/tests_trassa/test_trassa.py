@@ -60,8 +60,8 @@ class TrassaTests(unittest.TestCase):
 		self.exclude_tests = self.trassa_setup.get_excluded_tests()
 		'''SETUP TEST ENV
 		'''
-		self.trassa_setup.start_logserver()
-		self.trassa_setup.setup_vir_env()
+		#self.trassa_setup.start_logserver()
+		#self.trassa_setup.setup_vir_env()
 		return
 	
 	
@@ -75,8 +75,8 @@ class TrassaTests(unittest.TestCase):
 		#self.trassa_setup.stop_udp_sender(udp_snd_name = self.sender_id_01)
 		#self.trassa_setup.stop_udp_sender(udp_snd_name = self.sender_id_02)
 		
-		self.trassa_setup.stop_test_env()
-		self.trassa_setup.stop_logserver()
+		#self.trassa_setup.stop_test_env()
+		#self.trassa_setup.stop_logserver()
 		
 		self.__tools__.build_test_banner(mod_name = 'TRASSA',
 										 suit_name = 'SUITE' + __name__,
@@ -113,6 +113,7 @@ class TrassaTests(unittest.TestCase):
 				or (self.curr_test_id == "test_trassa_messages03")\
 				or (self.curr_test_id == "test_trassa_messages04") \
 				or (self.curr_test_id == "test_trassa_messages05") \
+				or (self.curr_test_id == "test_trassa_messages07") \
 				or (self.curr_test_id == "test_trassa_messages08"):
 					'''
 					We want to filter PAIDD messages for comparison from the stream
@@ -170,8 +171,26 @@ class TrassaTests(unittest.TestCase):
 		'''
 		res_ais01 = self.trassa_setup.test_suite_compared_data
 		
-		#for res in res_ais01_18:
-		#	self.assertTrue(res[0][0])
+		'''Get comparable fields'''
+		
+		MMSI = res_ais01[self.curr_test_id][0]['MMSI']
+		self.assertTrue(MMSI[0])
+		
+		SOG  = res_ais01[self.curr_test_id][0]['SOG']
+		self.assertTrue(SOG[0])
+		
+		longitude = res_ais01[self.curr_test_id][0]['longitude']
+		self.assertTrue(longitude[0])
+		
+		latitude = res_ais01[self.curr_test_id][0]['latitude']
+		self.assertTrue(latitude[0])
+		
+		COG = res_ais01[self.curr_test_id][0]['COG']
+		self.assertTrue(COG[0])
+		
+		TrueHeading = res_ais01[self.curr_test_id][0]['TrueHeading']
+		self.assertTrue(TrueHeading[0])
+		
 		return
 	
 	def test_trassa_messages02 (self):
@@ -183,6 +202,27 @@ class TrassaTests(unittest.TestCase):
 		FROM SONATA are properly repacked
 		'''
 		res_ais01_18 = self.trassa_setup.test_suite_compared_data
+		
+		'''Get comparable fields'''
+		
+		MMSI = res_ais01_18[self.curr_test_id][0]['MMSI']
+		self.assertTrue(MMSI[0])
+		
+		SOG = res_ais01_18[self.curr_test_id][0]['SOG']
+		self.assertTrue(SOG[0])
+		
+		longitude = res_ais01_18[self.curr_test_id][0]['longitude']
+		self.assertTrue(longitude[0])
+		
+		latitude = res_ais01_18[self.curr_test_id][0]['latitude']
+		self.assertTrue(latitude[0])
+		
+		COG = res_ais01_18[self.curr_test_id][0]['COG']
+		self.assertTrue(COG[0])
+		
+		TrueHeading = res_ais01_18[self.curr_test_id][0]['TrueHeading']
+		self.assertTrue(TrueHeading[0])
+	
 		return
 	
 	
@@ -192,26 +232,84 @@ class TrassaTests(unittest.TestCase):
 	# @unittest.skip("test_sonata_messages01 is not needed now")
 	def test_trassa_messages03 (self):
 		res_ais05 = self.trassa_setup.test_suite_compared_data
+		
+		'''Get comparable fields'''
+		
+		MMSI = res_ais05[self.curr_test_id][0]['MMSI']
+		self.assertTrue(MMSI[0])
+		
+		IMOnumber = res_ais05[self.curr_test_id][0]['IMOnumber']
+		self.assertTrue(IMOnumber[0])
+		
+		callsign = res_ais05[self.curr_test_id][0]['callsign']
+		self.assertTrue(callsign[0])
+		
+		name = res_ais05[self.curr_test_id][0]['name']
+		self.assertTrue(name[0])
+		
+		
 		return
 	
 	def test_trassa_messages04 (self):
 		res_ais24a = self.trassa_setup.test_suite_compared_data
+		
+		'''Get comparable fields'''
+		
+		MMSI = res_ais24a[self.curr_test_id][0]['MMSI']
+		self.assertTrue(MMSI[0])
+		
 		return
 	
 	def test_trassa_messages05 (self):
 		res_ais24b = self.trassa_setup.test_suite_compared_data
+		
+		'''Get comparable fields'''
+		
+		MMSI = res_ais24b[self.curr_test_id][0]['MMSI']
+		self.assertTrue(MMSI[0])
+		
+		callsign = res_ais24b[self.curr_test_id][0]['callsign']
+		self.assertTrue(callsign[0])
+		
+		name = res_ais24b[self.curr_test_id][0]['name']
+		self.assertTrue(MMSI[0])
+		
 		return
 	
 	def test_trassa_messages06 (self):
 		res_astd = self.trassa_setup.test_suite_compared_data
+		
+		'''Get comparable fields'''
+		
+		v_f_msg = res_astd[self.curr_test_id][0]
+		self.assertTrue(v_f_msg[0])
+		
+		a_g_msg = res_astd[self.curr_test_id][1]
+		self.assertTrue(a_g_msg[0])
+		
 		return
 	
 	def test_trassa_messages07 (self):
 		res_aitxt = self.trassa_setup.test_suite_compared_data
+		
+		'''Get comparable fields'''
+		
+		v_f_msg = res_aitxt[self.curr_test_id]
+		self.assertTrue(v_f_msg[0])
+		
+		a_g_msg = res_aitxt[self.curr_test_id][1]
+		self.assertTrue(a_g_msg[0])
+		
 		return
 	
 	def test_trassa_messages08 (self):
 		res_peist = self.trassa_setup.test_suite_compared_data
+		
+		'''Get comparable fields'''
+		
+		peist = res_peist[self.curr_test_id]['peist']
+		self.assertTrue(peist[0])
+		
 		return
 	
 	
