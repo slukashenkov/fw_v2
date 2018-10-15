@@ -12,11 +12,11 @@ LOG_FILE = "UDP_SENDER_PROC.log"
 class UdpSender:
 	
 	
-	def __init__ (self ,
-				  msg_iterator = None ,
-				  logging_tools = None ,
-				  ip_to = "127.0.0.1" ,
-				  port_to = "55555" ,
+	def __init__ (self,
+				  msg_iterator = None,
+				  logging_tools = None,
+				  ip_to = "127.0.0.1",
+				  port_to = "55555",
 				  evnt_msg_sent = None
 				  ):
 		"""
@@ -27,7 +27,7 @@ class UdpSender:
 		:param evnt_msg_sent:
 		"""
 		
-		self.sock = socket.socket(socket.AF_INET , socket.SOCK_DGRAM)
+		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		self.msg_iterator = msg_iterator
 		self.ip_to = ip_to
 		self.port_to = port_to
@@ -45,8 +45,8 @@ class UdpSender:
 	
 	def send_udp (self):
 		for msg in self.msg_iterator:
-			self.sock.sendto(str.encode(msg) ,
-							 (self.ip_to ,
+			self.sock.sendto(str.encode(msg),
+							 (self.ip_to,
 							  self.port_to)
 							 )
 			if self.msg_sent_evnt != None:
@@ -64,11 +64,11 @@ class UdpSender:
 class UdpSenderProcess(multiprocessing.Process):
 	
 	
-	def __init__ (self ,
-				  ip_to = "10.11.10.12" ,
-				  port_to = "55555" ,
-				  event_msg_send = None ,
-				  msgs_queue = None ,
+	def __init__ (self,
+				  ip_to = "10.11.10.12",
+				  port_to = "55555",
+				  event_msg_send = None,
+				  msgs_queue = None,
 				  msg_sent_status_queue = None
 				  ):
 		
@@ -96,7 +96,7 @@ class UdpSenderProcess(multiprocessing.Process):
 		
 		
 		def get_file_handler (self):
-			file_handler = TimedRotatingFileHandler(LOG_FILE , when = 'midnight')
+			file_handler = TimedRotatingFileHandler(LOG_FILE, when = 'midnight')
 			file_handler.setFormatter(FORMATTER)
 			return file_handler
 		
@@ -113,7 +113,7 @@ class UdpSenderProcess(multiprocessing.Process):
 		
 		'''setup'''
 		multiprocessing.Process.__init__(self)
-		self.sock = socket.socket(socket.AF_INET , socket.SOCK_DGRAM)
+		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		self.ip_to = ip_to
 		self.port_to = int(port_to)
 		# self.logger = get_logger(logger_name=__name__)
@@ -130,7 +130,8 @@ class UdpSenderProcess(multiprocessing.Process):
 			next_task = self.msgs_queue.get()
 			
 			if next_task != None:
-				print("is about to send msg to: " + str(self.ip_to) + ":" + str(self.port_to) + " msg_content: " + next_task)
+				print("is about to send msg to: " + str(self.ip_to) + ":" + str(
+					self.port_to) + " msg_content: " + next_task)
 			else:
 				print("POISON PILL!!!!\n")
 			# self.logger.debug("POISON PILL!!!!\n")
@@ -143,8 +144,8 @@ class UdpSenderProcess(multiprocessing.Process):
 				print("sending msg to: " + str(self.ip_to) + ":" + " msg_content: " + next_task)
 				# self.logger.debug("sending msg: " + next_task + "\n")
 				encoded = str.encode(next_task)
-				self.sock.sendto(encoded , (self.ip_to ,
-											self.port_to))
+				self.sock.sendto(encoded, (self.ip_to,
+										   self.port_to))
 				'''
 				self.sock.sendto(str.encode(str(next_task)),
 								 (self.ip_to,

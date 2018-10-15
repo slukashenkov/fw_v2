@@ -50,14 +50,14 @@ class UdpSender:
 	'''
 	
 	
-	def __init__ (self ,
-				  msg_iterator ,
-				  delay = 1 ,
-				  logging_tools = None ,
-				  ip_to = "127.0.0.1" ,
+	def __init__ (self,
+				  msg_iterator,
+				  delay = 1,
+				  logging_tools = None,
+				  ip_to = "127.0.0.1",
 				  port_to = "55555"
 				  ):
-		self.sock = socket.socket(socket.AF_INET , socket.SOCK_DGRAM)
+		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		self.msg_iterator = msg_iterator
 		self.delay = delay
 		self.ip_to = ip_to
@@ -71,8 +71,8 @@ class UdpSender:
 	def send_udp (self):
 		
 		for msg in self.msg_iterator:
-			self.sock.sendto(str.encode(msg) ,
-							 (self.ip_to ,
+			self.sock.sendto(str.encode(msg),
+							 (self.ip_to,
 							  self.port_to)
 							 )
 			self.curr_logger.debug("Sent to: " + self.ip_to + ":" + str(self.port_to) + " message: " + msg)
@@ -88,15 +88,15 @@ class UdpSender:
 class UdpSenderProcess(multiprocessing.Process):
 	
 	
-	def __init__ (self ,
-				  ip_to = "10.11.10.12" ,
-				  port_to = "55555" ,
-				  sync_event = None ,
-				  msgs_queue = None ,
-				  result_queue = None ,
+	def __init__ (self,
+				  ip_to = "10.11.10.12",
+				  port_to = "55555",
+				  sync_event = None,
+				  msgs_queue = None,
+				  result_queue = None,
 				  logger_in = None):
 		multiprocessing.Process.__init__(self)
-		self.sock = socket.socket(socket.AF_INET , socket.SOCK_DGRAM)
+		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		self.ip_to = ip_to
 		self.port_to = int(port_to)
 		self.sync_event = sync_event
@@ -120,8 +120,8 @@ class UdpSenderProcess(multiprocessing.Process):
 				break
 			# print '%s: %s' % (proc_name, next_task)
 			
-			self.sock.sendto(str.encode(str(next_task)) ,
-							 (self.ip_to ,
+			self.sock.sendto(str.encode(str(next_task)),
+							 (self.ip_to,
 							  self.port_to)
 							 )
 			# answer = next_task()

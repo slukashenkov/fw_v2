@@ -2,7 +2,7 @@ import time
 import unittest
 from collections import deque
 
-from test_bl.test_bl_tools import var_utils , external_scripts
+from test_bl.test_bl_tools import var_utils, external_scripts
 from test_bl.test_sonata_plugin.configs_sonata import sonata_suite_config
 from test_bl.test_sonata_plugin.test_tools_sonata import sonata_nmea_msgs_content_process
 
@@ -37,10 +37,10 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 		self.test_case = deque(self.conf.sonata_tests_names)
 		
 		self.curr_logger = self.conf.logging_tools.get_logger(__name__)
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = 'SUITE' + __name__ ,
-										 ending = 'SETS UP SENDER AND RECIEVER FOR TEST CLASS' ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = 'SUITE' + __name__,
+										 ending = 'SETS UP SENDER AND RECIEVER FOR TEST CLASS',
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		
 		'''SETUP EVERYTHING that pertains to sending receiving (UDP Server/sender data and so on)'''
@@ -48,10 +48,10 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 		curr_udp_srv = self.sr.udp_server_listen_on()
 		
 		'''SETUP VIRTUAL TEST ENVIRONMENT ON THIS HOST (VBOX AND IMAGES ASSUMED)'''
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = 'SUITE' + __name__ ,
-										 ending = 'SETS UP VIRTUAL ENV FOR TEST CLASS' ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = 'SUITE' + __name__,
+										 ending = 'SETS UP VIRTUAL ENV FOR TEST CLASS',
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		
 		self.ext_scripts = external_scripts.ExtScripts(self.conf)
@@ -68,10 +68,10 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 		self.sr.udp_server_stop_listen_on()
 		self.ext_scripts.tear_down_test_env()
 		
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = 'SUITE' + __name__ ,
-										 ending = 'TEARS DOWN TEST CLASS' ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = 'SUITE' + __name__,
+										 ending = 'TEARS DOWN TEST CLASS',
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		return
 	
@@ -85,10 +85,10 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 		self.conf.set_current_test(self.test_case.popleft())
 		self.conf.reset_test_messages_received()
 		
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = 'SUITE' + __name__ ,
-										 ending = 'SETS UP SENDER FOR TEST CLASS ' + self.conf.curr_test ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = 'SUITE' + __name__,
+										 ending = 'SETS UP SENDER FOR TEST CLASS ' + self.conf.curr_test,
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		self.sr.load_test_messages()
 		self.sr.set_udp_sender()
@@ -111,35 +111,35 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 		MESSAGES HAVE BEING FORMED DURING CONFIGURATION STAGE
 		LISTENER HAS BEEN SETUP THEN AS WELL
 		'''
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = 'SUITE' + __name__ ,
-										 ending = 'EXECUTES TEST BODY ' + self.conf.curr_test ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = 'SUITE' + __name__,
+										 ending = 'EXECUTES TEST BODY ' + self.conf.curr_test,
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		'''
 		Actual messages that have been sent
 		'''
 		res01 = self.conf.msgs_to_send[0]
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = __name__ + ' running test ' + self.conf.curr_test ,
-										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res01 ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = __name__ + ' running test ' + self.conf.curr_test,
+										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res01,
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		
 		'''
 		DATA used in messages
 		'''
 		res02 = self.conf.data_received[0]
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = __name__ + ' running test ' + self.conf.curr_test ,
-										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res02 ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = __name__ + ' running test ' + self.conf.curr_test,
+										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res02,
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		res03 = self.conf.data_sent
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = __name__ + ' running test ' + self.conf.curr_test ,
-										 ending = 'RECEIVED THIS NMEA MESSAGE: ' + str(res03) ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = __name__ + ' running test ' + self.conf.curr_test,
+										 ending = 'RECEIVED THIS NMEA MESSAGE: ' + str(res03),
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		
 		'''
@@ -150,7 +150,7 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 				2) Possesses knowledge of data been sent initially
 				3) Makes comparisons         
 		'''
-		snmea = sonata_nmea_msgs_content_process.SonataNmeaMsgsContentProcessing(self.conf.data_received ,
+		snmea = sonata_nmea_msgs_content_process.SonataNmeaMsgsContentProcessing(self.conf.data_received,
 																				 self.conf.data_sent)
 		
 		'''
@@ -194,7 +194,7 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 		self.curr_logger.info("Field --->>> " + str(
 			snmea.key_received) + " <<<--- was received in Nmea message from Sonata: --->>> " + str(result02))
 		
-		self.assertEqual(result01 ,
+		self.assertEqual(result01,
 						 result02)
 	
 	
@@ -226,34 +226,34 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 		self.sr.set_udp_sender()
 		self.sr.udp_send_to()
 		'''
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = 'SUITE' + __name__ ,
-										 ending = 'EXECUTES TEST BODY ' + self.conf.curr_test ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = 'SUITE' + __name__,
+										 ending = 'EXECUTES TEST BODY ' + self.conf.curr_test,
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		''' Actual messages being sent
 		'''
 		res01 = self.conf.msgs_to_send[0]
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = __name__ + ' running test ' + self.conf.curr_test ,
-										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res01 ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = __name__ + ' running test ' + self.conf.curr_test,
+										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res01,
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		
 		'''
 		#DATA used in messages
 		'''
 		res02 = self.conf.data_received[0]
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = __name__ + ' running test ' + self.conf.curr_test ,
-										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res02 ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = __name__ + ' running test ' + self.conf.curr_test,
+										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res02,
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		res03 = self.conf.data_sent
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = __name__ + ' running test ' + self.conf.curr_test ,
-										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + str(res03) ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = __name__ + ' running test ' + self.conf.curr_test,
+										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + str(res03),
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		
 		''' CONTENT PROCESSING IS A STARTING POINT for
@@ -263,7 +263,7 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 				2) Possesses knowledge of data been sent initially
 				3) Makes comparisons
 		'''
-		snmea = sonata_nmea_msgs_content_process.SonataNmeaMsgsContentProcessing(self.conf.data_received ,
+		snmea = sonata_nmea_msgs_content_process.SonataNmeaMsgsContentProcessing(self.conf.data_received,
 																				 self.conf.data_sent)
 		
 		''' PARSE one of the received
@@ -307,7 +307,7 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 		self.curr_logger.debug(
 			"Field " + str(snmea.key_received) + "received in Nmea message from Sonata: --->>>" + str(result02))
 		
-		self.assertNotEqual(result01 ,
+		self.assertNotEqual(result01,
 							result02)
 	
 	
@@ -338,34 +338,34 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 		self.sr.set_udp_sender()
 		self.sr.udp_send_to()
 		'''
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = 'SUITE' + __name__ ,
-										 ending = 'EXECUTES TEST BODY ' + self.conf.curr_test ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = 'SUITE' + __name__,
+										 ending = 'EXECUTES TEST BODY ' + self.conf.curr_test,
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		''' Actual messages being sent
 		'''
 		res01 = self.conf.msgs_to_send[0]
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = __name__ + ' running test ' + self.conf.curr_test ,
-										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res01 ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = __name__ + ' running test ' + self.conf.curr_test,
+										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res01,
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		
 		'''
 		#DATA used in messages
 		'''
 		res02 = self.conf.data_received[0]
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = __name__ + ' running test ' + self.conf.curr_test ,
-										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res02 ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = __name__ + ' running test ' + self.conf.curr_test,
+										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res02,
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		res03 = self.conf.data_sent
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = __name__ + ' running test ' + self.conf.curr_test ,
-										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + str(res03) ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = __name__ + ' running test ' + self.conf.curr_test,
+										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + str(res03),
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		
 		''' CONTENT PROCESSING IS A STARTING POINT for
@@ -375,7 +375,7 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 				2) Possesses knowledge of data been sent initially
 				3) Makes comparisons
 		'''
-		snmea = sonata_nmea_msgs_content_process.SonataNmeaMsgsContentProcessing(self.conf.data_received ,
+		snmea = sonata_nmea_msgs_content_process.SonataNmeaMsgsContentProcessing(self.conf.data_received,
 																				 self.conf.data_sent)
 		
 		''' PARSE one of the received
@@ -419,7 +419,7 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 		self.curr_logger.debug(
 			"Field " + str(snmea.key_received) + "received in Nmea message from Sonata: --->>>" + str(result02))
 		
-		self.assertNotEqual(result01 ,
+		self.assertNotEqual(result01,
 							result02)
 	
 	
@@ -450,34 +450,34 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 		self.sr.set_udp_sender()
 		self.sr.udp_send_to()
 		'''
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = 'SUITE' + __name__ ,
-										 ending = 'EXECUTES TEST BODY ' + self.conf.curr_test ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = 'SUITE' + __name__,
+										 ending = 'EXECUTES TEST BODY ' + self.conf.curr_test,
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		''' Actual messages being sent
 		'''
 		res01 = self.conf.msgs_to_send[0]
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = __name__ + ' running test ' + self.conf.curr_test ,
-										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res01 ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = __name__ + ' running test ' + self.conf.curr_test,
+										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res01,
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		
 		'''
 		#DATA used in messages
 		'''
 		res02 = self.conf.data_received[0]
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = __name__ + ' running test ' + self.conf.curr_test ,
-										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res02 ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = __name__ + ' running test ' + self.conf.curr_test,
+										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res02,
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		res03 = self.conf.data_sent
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = __name__ + ' running test ' + self.conf.curr_test ,
-										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + str(res03) ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = __name__ + ' running test ' + self.conf.curr_test,
+										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + str(res03),
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		
 		''' CONTENT PROCESSING IS A STARTING POINT for
@@ -487,7 +487,7 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 				2) Possesses knowledge of data been sent initially
 				3) Makes comparisons
 		'''
-		snmea = sonata_nmea_msgs_content_process.SonataNmeaMsgsContentProcessing(self.conf.data_received ,
+		snmea = sonata_nmea_msgs_content_process.SonataNmeaMsgsContentProcessing(self.conf.data_received,
 																				 self.conf.data_sent)
 		
 		''' PARSE one of the received
@@ -531,7 +531,7 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 		self.curr_logger.debug(
 			"Field " + str(snmea.key_received) + "received in Nmea message from Sonata: --->>>" + str(result02))
 		
-		self.assertNotEqual(result01 ,
+		self.assertNotEqual(result01,
 							result02)
 	
 	
@@ -562,34 +562,34 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 		self.sr.set_udp_sender()
 		self.sr.udp_send_to()
 		'''
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = 'SUITE' + __name__ ,
-										 ending = 'EXECUTES TEST BODY ' + self.conf.curr_test ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = 'SUITE' + __name__,
+										 ending = 'EXECUTES TEST BODY ' + self.conf.curr_test,
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		''' Actual messages being sent
 		'''
 		res01 = self.conf.msgs_to_send[0]
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = __name__ + ' running test ' + self.conf.curr_test ,
-										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res01 ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = __name__ + ' running test ' + self.conf.curr_test,
+										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res01,
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		
 		'''
 		#DATA used in messages
 		'''
 		res02 = self.conf.data_received[0]
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = __name__ + ' running test ' + self.conf.curr_test ,
-										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res02 ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = __name__ + ' running test ' + self.conf.curr_test,
+										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + res02,
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		res03 = self.conf.data_sent
-		self.__tools__.build_test_banner(mod_name = 'SONATA' ,
-										 suit_name = __name__ + ' running test ' + self.conf.curr_test ,
-										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + str(res03) ,
-										 logging_level = 'DEBUG' ,
+		self.__tools__.build_test_banner(mod_name = 'SONATA',
+										 suit_name = __name__ + ' running test ' + self.conf.curr_test,
+										 ending = 'SENT THIS SONAMTEA MESSAGE: ' + str(res03),
+										 logging_level = 'DEBUG',
 										 logger = self.curr_logger)
 		
 		''' CONTENT PROCESSING IS A STARTING POINT for
@@ -599,7 +599,7 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 				2) Possesses knowledge of data been sent initially
 				3) Makes comparisons
 		'''
-		snmea = sonata_nmea_msgs_content_process.SonataNmeaMsgsContentProcessing(self.conf.data_received ,
+		snmea = sonata_nmea_msgs_content_process.SonataNmeaMsgsContentProcessing(self.conf.data_received,
 																				 self.conf.data_sent)
 		
 		''' PARSE one of the received
@@ -643,7 +643,7 @@ class SonataToNMEAConversionTests02(unittest.TestCase):
 		self.curr_logger.debug(
 			"Field " + str(snmea.key_received) + "received in Nmea message from Sonata: --->>>" + str(result02))
 		
-		self.assertNotEqual(result01 ,
+		self.assertNotEqual(result01,
 							result02)
 
 

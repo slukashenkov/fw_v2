@@ -81,8 +81,9 @@ class UdpPayloadHandler(socketserver.BaseRequestHandler):
 						server_name = '\n<------------------ Handle FILTERED udp payload ----------------------> \nUDP SERVER PayLoad HANDLER',
 						server_ip = self.server_in.ip_address,
 						server_port = self.server_in.port,
-						ending = '\nSTARTS TO HANDLE: \n' + str(data) + '\nand append it to storage struct: \n' + str(self.data_in_store) \
-						+ "\n<------------------ DONE Handling FILTERED udp payload ----------------->",
+						ending = '\nSTARTS TO HANDLE: \n' + str(data) + '\nand append it to storage struct: \n' + str(
+							self.data_in_store) \
+								 + "\n<------------------ DONE Handling FILTERED udp payload ----------------->",
 						logging_level = 'INFO',
 						logger = self.logger
 					)

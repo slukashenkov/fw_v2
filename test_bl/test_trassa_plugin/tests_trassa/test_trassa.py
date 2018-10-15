@@ -44,10 +44,7 @@ class TrassaTests(unittest.TestCase):
 		
 		'''Get names of
 		UDP senders and servers since in
-		these tests they should be started and an spopped on test case basis
-		and also
-		because there are more than 1 so defaults fail
-		TODO: Default Server`s shutdown for each in the list
+		these tests they should be started and an stopped on test case basis
 		'''
 		self.sender_id_01 = self.trassa_setup.udp_snd_name_01
 		self.server_id_01 = self.trassa_setup.udp_srv_name_01
@@ -311,21 +308,7 @@ class TrassaTests(unittest.TestCase):
 		self.assertTrue(peist[0])
 		
 		return
-	
-	
-	@unittest.skip("to_do")
-	def test_trassa_astd (self):
-		return
-	
-	
-	@unittest.skip("to_do")
-	def test_trassa_peist (self):
-		return
-	
-	
-	@unittest.skip("to_do")
-	def test_trassa_aitxt_alr (self):
-		return
+
 
 
 if __name__ == '__main__':

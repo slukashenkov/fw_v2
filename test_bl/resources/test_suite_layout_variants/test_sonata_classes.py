@@ -39,9 +39,9 @@ class SonataToNMEAConversionTestCase01(unittest.TestCase):
 		# sr.curr_logger('Debug module send_receive_sonata ')
 		self.curr_logger = self.conf.logging_tools.get_logger(__name__)
 		self.tools = var_utils.Varutils()
-		self.tools.build_test_banner(__name__ ,
-									 self.conf.messages_type ,
-									 'starts' ,
+		self.tools.build_test_banner(__name__,
+									 self.conf.messages_type,
+									 'starts',
 									 self.curr_logger
 									 )
 	
@@ -50,9 +50,9 @@ class SonataToNMEAConversionTestCase01(unittest.TestCase):
 	def tearDownClass (self):
 		self.sr.close_UDP_socket()
 		self.sr.udp_server_stop_listen_on()
-		self.tools.build_test_banner(__name__ ,
-									 self.conf.messages_type ,
-									 'stops' ,
+		self.tools.build_test_banner(__name__,
+									 self.conf.messages_type,
+									 'stops',
 									 self.curr_logger
 									 )
 	
@@ -102,7 +102,7 @@ class SonataToNMEAConversionTestCase01(unittest.TestCase):
 				2) Possesses knowledge of data been sent initially
 				3) Makes comparisons         
 		'''
-		snmea = sonata_nmea_msgs_content_process.SonataNmeaMsgsContentProcessing(self.conf.data_received ,
+		snmea = sonata_nmea_msgs_content_process.SonataNmeaMsgsContentProcessing(self.conf.data_received,
 																				 self.conf.data_sent)
 		
 		'''
@@ -146,7 +146,7 @@ class SonataToNMEAConversionTestCase01(unittest.TestCase):
 			"Field --->>>" + str(snmea.key_received) + " <<<---received in Nmea message from Sonata: --->>>" + str(
 				result02))
 		
-		self.assertNotEqual(result01 ,
+		self.assertNotEqual(result01,
 							result02)
 	
 	
@@ -203,7 +203,7 @@ class SonataToNMEAConversionTestCase01(unittest.TestCase):
 					#3) Makes comparisons
 			'''
 			
-			snmea = sonata_nmea_msgs_content_process.SonataNmeaMsgsContentProcessing(self.conf.data_received ,
+			snmea = sonata_nmea_msgs_content_process.SonataNmeaMsgsContentProcessing(self.conf.data_received,
 																					 self.conf.data_sent)
 			
 			'''
@@ -249,11 +249,11 @@ class SonataToNMEAConversionTestCase01(unittest.TestCase):
 			self.curr_logger.debug(
 				"Field " + str(snmea.key_received) + "received in Nmea message from Sonata: --->>>" + str(result02))
 			
-			self.assertEqual(result01 ,
+			self.assertEqual(result01,
 							 result02)
 
 
 if __name__ == '__main__':
 	# '''
 	unittest.main()
-	# '''
+# '''

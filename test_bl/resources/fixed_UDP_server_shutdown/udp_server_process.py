@@ -9,26 +9,26 @@ from test_bl.test_bl_tools import var_utils
 class UdpPayloadHandler(socketserver.BaseRequestHandler):
 	
 	
-	def __init__ (self ,
-				  request ,
-				  client_address ,
+	def __init__ (self,
+				  request,
+				  client_address,
 				  server_in):
 		self.logger = server_in.logger
 		self.server_in = server_in
 		
 		self.banner = server_in.udp_server_banner
-		self.banner(server_name = 'UDP SERVER PayLoad HANDLER' ,
-					server_ip = self.server_in.ip_address ,
-					server_port = self.server_in.port ,
-					ending = 'SETS ITSELF UP in __init__' ,
-					logging_level = self.server_in.local_log_level ,
+		self.banner(server_name = 'UDP SERVER PayLoad HANDLER',
+					server_ip = self.server_in.ip_address,
+					server_port = self.server_in.port,
+					ending = 'SETS ITSELF UP in __init__',
+					logging_level = self.server_in.local_log_level,
 					logger = self.logger
 					)
 		self.data_in_store = server_in.data_in
 		
-		socketserver.BaseRequestHandler.__init__(self ,
-												 request ,
-												 client_address ,
+		socketserver.BaseRequestHandler.__init__(self,
+												 request,
+												 client_address,
 												 server_in)
 		return
 	
@@ -60,12 +60,12 @@ class UdpPayloadHandler(socketserver.BaseRequestHandler):
 		# self.logger.debug('<------------------ Handle udp payload ----------------->')
 		# messages = self.server.data_in
 		self.banner(
-			server_name = '<------------------ Handle udp payload -----------------> \n' + 'UDP SERVER PayLoad HANDLER' ,
-			server_ip = self.server_in.ip_address ,
-			server_port = self.server_in.port ,
+			server_name = '<------------------ Handle udp payload -----------------> \n' + 'UDP SERVER PayLoad HANDLER',
+			server_ip = self.server_in.ip_address,
+			server_port = self.server_in.port,
 			ending = 'works with: ' + str(self.request) + 'before it is appended to the storage struct: ' + str(
-				self.data_in_store) + 'as' + str(self.request[0]) ,
-			logging_level = self.server_in.local_log_level ,
+				self.data_in_store) + 'as' + str(self.request[0]),
+			logging_level = self.server_in.local_log_level,
 			logger = self.logger
 		)
 		
@@ -73,13 +73,13 @@ class UdpPayloadHandler(socketserver.BaseRequestHandler):
 		self.data_in_store.append(data)
 		# self.server.conf.data_received_lock.release()
 		self.banner(
-			server_name = '<------------------ Handle udp payload -----------------> ' + 'UDP SERVER PayLoad HANDLER' ,
-			server_ip = self.server_in.ip_address ,
-			server_port = self.server_in.port ,
-			ending = ' starts to handle: ' + data + ' and append it to storage struct: ' + str(self.data_in_store) ,
-			logging_level = self.server_in.local_log_level ,
+			server_name = '<------------------ Handle udp payload -----------------> ' + 'UDP SERVER PayLoad HANDLER',
+			server_ip = self.server_in.ip_address,
+			server_port = self.server_in.port,
+			ending = ' starts to handle: ' + data + ' and append it to storage struct: ' + str(self.data_in_store),
+			logging_level = self.server_in.local_log_level,
 			logger = self.logger
-			)
+		)
 		
 		return
 	
@@ -94,11 +94,11 @@ class UdpServer(socketserver.UDPServer):
 	
 	
 	# def __init__(self, server_address, handler_class=UdpPayloadHandler, data_in=received_data):
-	def __init__ (self ,
-				  server_address ,
-				  handler_class ,
-				  data_in ,
-				  curr_log_tools = logging_tools.LoggingTools ,
+	def __init__ (self,
+				  server_address,
+				  handler_class,
+				  data_in,
+				  curr_log_tools = logging_tools.LoggingTools,
 				  conf = None
 				  ):
 		
@@ -111,17 +111,17 @@ class UdpServer(socketserver.UDPServer):
 		self.port = server_address[1]
 		
 		self.allow_reuse_address = True
-		socketserver.UDPServer.__init__(self ,
-										server_address ,
+		socketserver.UDPServer.__init__(self,
+										server_address,
 										handler_class)
 		
 		self.data_in = data_in
 		self.stop_serve_forever = True
-		self.udp_server_banner(server_name = 'python_UDP_SERVER' ,
-							   server_ip = server_address[0] ,
-							   server_port = server_address[1] ,
-							   ending = 'starts in a PROCESS' ,
-							   logging_level = 'INFO' ,
+		self.udp_server_banner(server_name = 'python_UDP_SERVER',
+							   server_ip = server_address[0],
+							   server_port = server_address[1],
+							   ending = 'starts in a PROCESS',
+							   logging_level = 'INFO',
 							   logger = self.logger
 							   )
 		proc_name = multiprocessing.current_process().name
@@ -132,11 +132,11 @@ class UdpServer(socketserver.UDPServer):
 	
 	
 	def server_activate (self):
-		self.udp_server_banner(server_name = 'python_UDP_SERVER' ,
-							   server_ip = self.ip_address ,
-							   server_port = self.port ,
-							   ending = 'activates in A PROCESS' ,
-							   logging_level = 'DEBUG' ,
+		self.udp_server_banner(server_name = 'python_UDP_SERVER',
+							   server_ip = self.ip_address,
+							   server_port = self.port,
+							   ending = 'activates in A PROCESS',
+							   logging_level = 'DEBUG',
 							   logger = self.logger
 							   )
 		self.stop_serve_forever = True
@@ -151,19 +151,19 @@ class UdpServer(socketserver.UDPServer):
 		
 		while self.stop_serve_forever:
 			self.handle_request()
-			self.udp_server_banner(server_name = 'python_UDP_SERVER' ,
-								   server_ip = self.ip_address ,
-								   server_port = self.port ,
-								   ending = 'is serving forever' ,
-								   logging_level = 'INFO' ,
+			self.udp_server_banner(server_name = 'python_UDP_SERVER',
+								   server_ip = self.ip_address,
+								   server_port = self.port,
+								   ending = 'is serving forever',
+								   logging_level = 'INFO',
 								   logger = self.logger
 								   )
 		
-		self.udp_server_banner(server_name = 'python_UDP_SERVER' ,
-							   server_ip = self.ip_address ,
-							   server_port = self.port ,
-							   ending = 'STOPS to SERVE FOREVER' ,
-							   logging_level = 'INFO' ,
+		self.udp_server_banner(server_name = 'python_UDP_SERVER',
+							   server_ip = self.ip_address,
+							   server_port = self.port,
+							   ending = 'STOPS to SERVE FOREVER',
+							   logging_level = 'INFO',
 							   logger = self.logger
 							   )
 		self.server_close()
@@ -171,71 +171,71 @@ class UdpServer(socketserver.UDPServer):
 	
 	
 	def handle_request (self):
-		self.udp_server_banner(server_name = 'python_UDP_SERVER' ,
-							   server_ip = self.ip_address ,
-							   server_port = self.port ,
-							   ending = 'calls handle_request' ,
-							   logging_level = 'DEBUG' ,
+		self.udp_server_banner(server_name = 'python_UDP_SERVER',
+							   server_ip = self.ip_address,
+							   server_port = self.port,
+							   ending = 'calls handle_request',
+							   logging_level = 'DEBUG',
 							   logger = self.logger
 							   )
 		
 		return socketserver.UDPServer.handle_request(self)
 	
 	
-	def verify_request (self , request , client_address):
-		self.udp_server_banner(server_name = 'python_UDP_SERVER' ,
-							   server_ip = self.ip_address ,
-							   server_port = self.port ,
-							   ending = 'calls verify_request ' + str(request) + ' from: ' + str(client_address) ,
-							   logging_level = 'INFO' ,
+	def verify_request (self, request, client_address):
+		self.udp_server_banner(server_name = 'python_UDP_SERVER',
+							   server_ip = self.ip_address,
+							   server_port = self.port,
+							   ending = 'calls verify_request ' + str(request) + ' from: ' + str(client_address),
+							   logging_level = 'INFO',
 							   logger = self.logger
 							   )
 		
-		self.logger.debug('UDP Server calls verify_request(%s, %s)' , request , client_address)
-		return socketserver.UDPServer.verify_request(self , request , client_address)
+		self.logger.debug('UDP Server calls verify_request(%s, %s)', request, client_address)
+		return socketserver.UDPServer.verify_request(self, request, client_address)
 	
 	
-	def process_request (self , request , client_address):
-		self.udp_server_banner(server_name = 'python_UDP_SERVER' ,
-							   server_ip = self.ip_address ,
-							   server_port = self.port ,
-							   ending = 'calls verify_request ' + str(request) + ' from: ' + str(client_address) ,
-							   logging_level = 'INFO' ,
+	def process_request (self, request, client_address):
+		self.udp_server_banner(server_name = 'python_UDP_SERVER',
+							   server_ip = self.ip_address,
+							   server_port = self.port,
+							   ending = 'calls verify_request ' + str(request) + ' from: ' + str(client_address),
+							   logging_level = 'INFO',
 							   logger = self.logger
 							   )
 		
-		self.logger.debug('UDP Server calls process_request(%s, %s)' , request , client_address)
-		return socketserver.UDPServer.process_request(self ,
-													  request ,
+		self.logger.debug('UDP Server calls process_request(%s, %s)', request, client_address)
+		return socketserver.UDPServer.process_request(self,
+													  request,
 													  client_address)
 	
 	
 	def server_close (self):
-		self.udp_server_banner(server_name = 'python_UDP_SERVER' ,
-							   server_ip = self.ip_address ,
-							   server_port = self.port ,
-							   ending = 'calls server_close' ,
-							   logging_level = self.local_log_level ,
+		self.udp_server_banner(server_name = 'python_UDP_SERVER',
+							   server_ip = self.ip_address,
+							   server_port = self.port,
+							   ending = 'calls server_close',
+							   logging_level = self.local_log_level,
 							   logger = self.logger
 							   )
 		return socketserver.UDPServer.server_close(self)
 	
 	
-	def finish_request (self , request , client_address):
-		self.udp_server_banner(server_name = 'python_UDP_SERVER' ,
-							   server_ip = self.ip_address ,
-							   server_port = self.port ,
-							   ending = 'calls finish_request ' + str(request) + ' from: ' + str(client_address) ,
-							   logging_level = 'INFO' ,
+	def finish_request (self, request, client_address):
+		self.udp_server_banner(server_name = 'python_UDP_SERVER',
+							   server_ip = self.ip_address,
+							   server_port = self.port,
+							   ending = 'calls finish_request ' + str(request) + ' from: ' + str(client_address),
+							   logging_level = 'INFO',
 							   logger = self.logger
 							   )
-		self.logger.debug('finish_request(%s, %s)' , request , client_address)
-		return socketserver.UDPServer.finish_request(self , request , client_address)
+		self.logger.debug('finish_request(%s, %s)', request, client_address)
+		return socketserver.UDPServer.finish_request(self, request, client_address)
 	
 	
-	def close_request (self , request_address):
-		self.logger.debug('close_request(%s)' , request_address)
-		return socketserver.UDPServer.close_request(self , request_address)
+	def close_request (self, request_address):
+		self.logger.debug('close_request(%s)', request_address)
+		return socketserver.UDPServer.close_request(self, request_address)
 	
 	
 	'''--------------------------------------------------------------------------------------------------------------'''
@@ -244,11 +244,11 @@ class UdpServer(socketserver.UDPServer):
 class UdpListenerProcess(multiprocessing.Process):
 	
 	
-	def __init__ (self ,
-				  ip_on = "10.11.10.12" ,
-				  port_on = 55555 ,
-				  sync_event = None ,
-				  result_queue = None ,
+	def __init__ (self,
+				  ip_on = "10.11.10.12",
+				  port_on = 55555,
+				  sync_event = None,
+				  result_queue = None,
 				  logger_in = None
 				  ):
 		multiprocessing.Process.__init__(self)
@@ -256,7 +256,7 @@ class UdpListenerProcess(multiprocessing.Process):
 		self.sync_event = sync_event
 		self.port = port_on
 		self.ip = ip_on
-		self.address = (self.ip , self.port)
+		self.address = (self.ip, self.port)
 	
 	
 	def run (self):
@@ -265,12 +265,12 @@ class UdpListenerProcess(multiprocessing.Process):
 	
 	
 	def startServer (self):
-		udpSocket = socket.socket(socket.AF_INET , socket.SOCK_DGRAM)
+		udpSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		# address = ('', self.port)
 		udpSocket.bind(self.address)
 		while 1:
 			# data, client = udpSocket.recvfrom(1024)
-			data , client = udpSocket.recvfrom(1024)
+			data, client = udpSocket.recvfrom(1024)
 			print(str(data) + '<<<<==Received')
 			self.result_queue.put(data)
 			# udpSocket.sendto(bytes(4), client)
@@ -282,9 +282,9 @@ class UdpListenerProcess(multiprocessing.Process):
 class PayloadProcessor(multiprocessing.Process):
 	
 	
-	def __init__ (self ,
-				  sync_event = None ,
-				  result_queue = None ,
+	def __init__ (self,
+				  sync_event = None,
+				  result_queue = None,
 				  logger_in = None
 				  ):
 		multiprocessing.Process.__init__(self)
@@ -319,15 +319,15 @@ def test_this ():
 	sync_sent = multiprocessing.Event()
 	sync_res = multiprocessing.Event()
 	
-	p_udp_listen = UdpListenerProcess(result_queue = q_res_messages ,
+	p_udp_listen = UdpListenerProcess(result_queue = q_res_messages,
 									  sync_event = sync_res)
 	
-	p_udp_send = udp_sender.UdpSenderProcess(sync_event = sync_sent ,
-											 msgs_queue = q_messages ,
+	p_udp_send = udp_sender.UdpSenderProcess(sync_event = sync_sent,
+											 msgs_queue = q_messages,
 											 result_queue = q_sent_res
 											 )
 	
-	date_handler = PayloadProcessor(result_queue = q_res_messages ,
+	date_handler = PayloadProcessor(result_queue = q_res_messages,
 									sync_event = sync_res
 									)
 	# date_handler.start()

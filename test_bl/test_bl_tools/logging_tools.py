@@ -7,7 +7,7 @@ import os
 class LoggingTools():
 	
 	
-	def __init__ (self ,
+	def __init__ (self,
 				  path_to_json = None):
 		"""
 		Logger is not set yet
@@ -16,13 +16,13 @@ class LoggingTools():
 		self.__setup_logging(default_path = self.default_path)
 	
 	
-	def __setup_logging (self ,
+	def __setup_logging (self,
 						 default_path = None
 						 ):
 		
 		if default_path != None:
 			if os.path.exists(default_path):
-				with open(default_path , 'rt') as f:
+				with open(default_path, 'rt') as f:
 					config = json.load(f)
 					logging.config.dictConfig(config)
 			else:
@@ -33,7 +33,7 @@ class LoggingTools():
 			raise Exception("No JSON config for logging")
 	
 	
-	def get_logger (self ,
+	def get_logger (self,
 					mod_name = None):
 		curr_mod_logger = logging.getLogger(mod_name)
 		return curr_mod_logger
@@ -46,7 +46,7 @@ def test_this ():
 	'''Get log config wherever we are'''
 	module_abs_path = os.path.abspath(os.path.dirname(__file__))
 	path_to_conf = "..\\test_bl_configs\\logging_conf.json"
-	path_to_data = os.path.join(module_abs_path , path_to_conf)
+	path_to_data = os.path.join(module_abs_path, path_to_conf)
 	lt = LoggingTools(path_to_json = path_to_data)
 	# lt.setup_logging()
 	logger = lt.get_logger(__name__)

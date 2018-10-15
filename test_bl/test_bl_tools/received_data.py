@@ -12,7 +12,7 @@ class RecievedData:
 		self.__sent_map = {}
 	
 	
-	def set_received_l (self , value):
+	def set_received_l (self, value):
 		self.__received_list.append(value)
 	
 	
@@ -20,11 +20,11 @@ class RecievedData:
 		return self.__received_list
 	
 	
-	def get_received_l_indx (self , indx):
+	def get_received_l_indx (self, indx):
 		return self.__received_list.pop(indx)
 	
 	
-	def set_received_m (self , key , value):
+	def set_received_m (self, key, value):
 		self.__received_map[key] = value
 	
 	
@@ -32,7 +32,7 @@ class RecievedData:
 		return self.__received_map
 	
 	
-	def get_received_m_key (self , key):
+	def get_received_m_key (self, key):
 		return self.__received_map.get[key]
 	
 	
@@ -58,7 +58,7 @@ class RecievedData:
 	'''
 	
 	
-	def set_sent_l (self , value):
+	def set_sent_l (self, value):
 		self.__sent_list.append(value)
 	
 	
@@ -66,11 +66,11 @@ class RecievedData:
 		return self.__sent_list
 	
 	
-	def get_sent_l_indx (self , indx):
+	def get_sent_l_indx (self, indx):
 		return self.__sent_list.pop(indx)
 	
 	
-	def set_sent_m (self , key , value):
+	def set_sent_m (self, key, value):
 		self.__sent_map[key] = value
 	
 	
@@ -78,7 +78,7 @@ class RecievedData:
 		return self.__sent_map
 	
 	
-	def get_sent_m_key (self , key):
+	def get_sent_m_key (self, key):
 		return self.__sent_map.get[key]
 	
 	

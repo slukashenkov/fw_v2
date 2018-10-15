@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from binascii import b2a_hex , a2b_qp
+from binascii import b2a_hex, a2b_qp
 from functools import partial
 
 import tkinter as tk
 from bitstring import BitArray
 
 # debug
-debug = dict(zip(('mtype' , 'sid' , 'lat' , 'lon' , 'vel' , 'course' , 'valid' , 'signal') ,
-				 ('3' , '4048' , '895959.9' , '1795959.9' , '799' , '359' , '4' , '15')))
+debug = dict(zip(('mtype', 'sid', 'lat', 'lon', 'vel', 'course', 'valid', 'signal'),
+				 ('3', '4048', '895959.9', '1795959.9', '799', '359', '4', '15')))
 
-order = ('mtype' , 'sid' , 'lat' , 'lon' , 'vel' , 'course' , 'valid' , 'signal')
+order = ('mtype', 'sid', 'lat', 'lon', 'vel', 'course', 'valid', 'signal')
 
 
 # end debug
@@ -28,17 +28,17 @@ def addChecksum (msg):
 class LabelEntry:
 	
 	
-	def __init__ (self , master , **kwargs):
+	def __init__ (self, master, **kwargs):
 		self._name = None
 		print(kwargs)
 		self.textvar = tk.StringVar()
 		
-		self.frame = tk.LabelFrame(master , kwargs)
-		self.entry = tk.Entry(self.frame , textvariable = self.textvar , bd = 3)
+		self.frame = tk.LabelFrame(master, kwargs)
+		self.entry = tk.Entry(self.frame, textvariable = self.textvar, bd = 3)
 		self.entry.pack()
 	
 	
-	def pack (self , **kwargs):
+	def pack (self, **kwargs):
 		self.frame.pack(kwargs)
 	
 	
@@ -57,14 +57,14 @@ class VelEntry(LabelEntry):
 	
 	
 	def bitstring (self):
-		return '{:03b}{:07b}'.format(*divmod(int(self.textvar.get()) , 100))
+		return '{:03b}{:07b}'.format(*divmod(int(self.textvar.get()), 100))
 
 
 class CourseEntry(LabelEntry):
 	
 	
 	def bitstring (self):
-		return '{:02b}{:07b}'.format(*divmod(int(self.textvar.get()) , 100))
+		return '{:02b}{:07b}'.format(*divmod(int(self.textvar.get()), 100))
 
 
 class MessageTypeEntry(LabelEntry):
@@ -96,8 +96,8 @@ class NavdataEntry:
 class LatitudeEntry:
 	
 	
-	def __init__ (self , master , **kwargs):
-		print('LatitudeEntry:' , kwargs)
+	def __init__ (self, master, **kwargs):
+		print('LatitudeEntry:', kwargs)
 		
 		self.dd = tk.IntVar()
 		self.mm = tk.IntVar()
@@ -109,13 +109,13 @@ class LatitudeEntry:
 		self.ss_s.set(59.9)
 		self.ns.set(True)
 		
-		self.frame = tk.LabelFrame(master , kwargs)
-		self.dd_entry = tk.Entry(self.frame , textvariable = self.dd , width = 3 , bd = 2)
-		self.mm_entry = tk.Entry(self.frame , textvariable = self.mm , width = 3 , bd = 2)
-		self.ss_s_entry = tk.Entry(self.frame , textvariable = self.ss_s , width = 4 , bd = 2)
+		self.frame = tk.LabelFrame(master, kwargs)
+		self.dd_entry = tk.Entry(self.frame, textvariable = self.dd, width = 3, bd = 2)
+		self.mm_entry = tk.Entry(self.frame, textvariable = self.mm, width = 3, bd = 2)
+		self.ss_s_entry = tk.Entry(self.frame, textvariable = self.ss_s, width = 4, bd = 2)
 		
-		self.ns_n = tk.Radiobutton(self.frame , text = 'N' , variable = self.ns , value = True)
-		self.ns_s = tk.Radiobutton(self.frame , text = 'S' , variable = self.ns , value = False)
+		self.ns_n = tk.Radiobutton(self.frame, text = 'N', variable = self.ns, value = True)
+		self.ns_s = tk.Radiobutton(self.frame, text = 'S', variable = self.ns, value = False)
 		
 		self.dd_entry.pack(side = 'left')
 		self.mm_entry.pack(side = 'left')
@@ -125,7 +125,7 @@ class LatitudeEntry:
 		self.ns_n.pack(side = 'right')
 	
 	
-	def pack (self , **kwargs):
+	def pack (self, **kwargs):
 		self.frame.pack(kwargs)
 	
 	
@@ -137,9 +137,9 @@ class LatitudeEntry:
 	
 	def bitstring (self):
 		bitstring = '{:07b}{:07b}{:07b}{:04b}'.format(
-			self.dd.get() ,
-			self.mm.get() ,
-			*map(int , str(self.ss_s.get()).split('.'))
+			self.dd.get(),
+			self.mm.get(),
+			*map(int, str(self.ss_s.get()).split('.'))
 		)
 		print(bitstring)
 		return bitstring
@@ -148,8 +148,8 @@ class LatitudeEntry:
 class LongetudeEntry:
 	
 	
-	def __init__ (self , master , **kwargs):
-		print('LongetudeEntry:' , kwargs)
+	def __init__ (self, master, **kwargs):
+		print('LongetudeEntry:', kwargs)
 		
 		self.dd = tk.IntVar()
 		self.mm = tk.IntVar()
@@ -161,13 +161,13 @@ class LongetudeEntry:
 		self.ss_s.set(59.9)
 		self.ns.set(True)
 		
-		self.frame = tk.LabelFrame(master , kwargs)
-		self.dd_entry = tk.Entry(self.frame , textvariable = self.dd , width = 3 , bd = 2)
-		self.mm_entry = tk.Entry(self.frame , textvariable = self.mm , width = 3 , bd = 2)
-		self.ss_s_entry = tk.Entry(self.frame , textvariable = self.ss_s , width = 4 , bd = 2)
+		self.frame = tk.LabelFrame(master, kwargs)
+		self.dd_entry = tk.Entry(self.frame, textvariable = self.dd, width = 3, bd = 2)
+		self.mm_entry = tk.Entry(self.frame, textvariable = self.mm, width = 3, bd = 2)
+		self.ss_s_entry = tk.Entry(self.frame, textvariable = self.ss_s, width = 4, bd = 2)
 		
-		self.ns_n = tk.Radiobutton(self.frame , text = 'W' , variable = self.ns , value = True)
-		self.ns_s = tk.Radiobutton(self.frame , text = 'E' , variable = self.ns , value = False)
+		self.ns_n = tk.Radiobutton(self.frame, text = 'W', variable = self.ns, value = True)
+		self.ns_s = tk.Radiobutton(self.frame, text = 'E', variable = self.ns, value = False)
 		
 		self.dd_entry.pack(side = 'left')
 		self.mm_entry.pack(side = 'left')
@@ -177,7 +177,7 @@ class LongetudeEntry:
 		self.ns_n.pack(side = 'right')
 	
 	
-	def pack (self , **kwargs):
+	def pack (self, **kwargs):
 		self.frame.pack(kwargs)
 	
 	
@@ -189,9 +189,9 @@ class LongetudeEntry:
 	
 	def bitstring (self):
 		bitstring = '{:08b}{:07b}{:07b}{:04b}'.format(
-			self.dd.get() ,
-			self.mm.get() ,
-			*map(int , str(self.ss_s.get()).split('.'))
+			self.dd.get(),
+			self.mm.get(),
+			*map(int, str(self.ss_s.get()).split('.'))
 		)
 		print(bitstring)
 		return bitstring
@@ -200,19 +200,19 @@ class LongetudeEntry:
 class ValidEntry:
 	
 	
-	def __init__ (self , master , **kwargs):
+	def __init__ (self, master, **kwargs):
 		self.av = tk.BooleanVar()
 		self.av.set(True)
 		
-		self.frame = tk.LabelFrame(master , kwargs)
-		self.av_a = tk.Radiobutton(self.frame , text = 'A' , variable = self.av , value = True)
-		self.av_v = tk.Radiobutton(self.frame , text = 'V' , variable = self.av , value = False)
+		self.frame = tk.LabelFrame(master, kwargs)
+		self.av_a = tk.Radiobutton(self.frame, text = 'A', variable = self.av, value = True)
+		self.av_v = tk.Radiobutton(self.frame, text = 'V', variable = self.av, value = False)
 		
 		self.av_v.pack(side = 'right')
 		self.av_a.pack(side = 'right')
 	
 	
-	def pack (self , **kwargs):
+	def pack (self, **kwargs):
 		self.frame.pack(kwargs)
 	
 	
@@ -223,35 +223,35 @@ class ValidEntry:
 class DataEntries:
 	
 	
-	def __init__ (self , master):
-		self.frame = tk.Frame(master , highlightbackground = "red" , highlightcolor = "red" , highlightthickness = 2 ,
+	def __init__ (self, master):
+		self.frame = tk.Frame(master, highlightbackground = "red", highlightcolor = "red", highlightthickness = 2,
 							  bd = 2)
 		
-		self.entryes = {'mtype': MessageTypeEntry(self.frame , text = 'MessageType(2bit)' , width = 19) ,
-						'sid': SonataIdEntry(self.frame , text = 'ID(12bit)') ,
-						'lat': LatitudeEntry(self.frame , text = 'Lat(25bit) ddmmss.s') ,
-						'lon': LongetudeEntry(self.frame , text = 'Lon(26bit) dddmmss.s') ,
-						'vel': VelEntry(self.frame , text = 'Vel(10bit)') ,
-						'course': CourseEntry(self.frame , text = 'Course(9bit)') ,
-						'valid': ValidEntry(self.frame , text = '(A)ctual / In(V)alid') ,
-						'signal': SignalEntry(self.frame , text = 'Signal level 0..15')
+		self.entryes = {'mtype': MessageTypeEntry(self.frame, text = 'MessageType(2bit)', width = 19),
+						'sid': SonataIdEntry(self.frame, text = 'ID(12bit)'),
+						'lat': LatitudeEntry(self.frame, text = 'Lat(25bit) ddmmss.s'),
+						'lon': LongetudeEntry(self.frame, text = 'Lon(26bit) dddmmss.s'),
+						'vel': VelEntry(self.frame, text = 'Vel(10bit)'),
+						'course': CourseEntry(self.frame, text = 'Course(9bit)'),
+						'valid': ValidEntry(self.frame, text = '(A)ctual / In(V)alid'),
+						'signal': SignalEntry(self.frame, text = 'Signal level 0..15')
 						}
 		
 		# debug:==================
-		for k in filter(lambda k: k not in ('lat' , 'lon' , 'valid') , self.entryes.keys()):
-			self.entryes[k].textvar.set(debug.get(k , 'Empty'))
+		for k in filter(lambda k: k not in ('lat', 'lon', 'valid'), self.entryes.keys()):
+			self.entryes[k].textvar.set(debug.get(k, 'Empty'))
 		# end debug ===============
 		
 		for key in order:
-			self.entryes[key].pack(side = 'top' , fill = 'both' , expand = True)
+			self.entryes[key].pack(side = 'top', fill = 'both', expand = True)
 	
 	
-	def pack (self , **kwargs):
+	def pack (self, **kwargs):
 		self.frame.pack(kwargs)
 	
 	
-	def get_value (self , key , default = None):
-		return self.entryes.get(key , default)
+	def get_value (self, key, default = None):
+		return self.entryes.get(key, default)
 	
 	
 	def get (self):
@@ -290,60 +290,60 @@ class DataEntries:
 class Presets:
 	
 	
-	def __init__ (self , master , ebox , lentry):
-		self.frame = tk.LabelFrame(master ,
-								   text = "Presets" ,
-								   highlightbackground = "violet" , highlightthickness = 2 , bd = 3 , )
-		self.preset = tk.Button(self.frame , command = partial(ebox.insert_from , lentry) ,
-								text = "Not Empemented yet." , width = 18 , height = 2 , bg = 'gray' ,
-								fg = 'black' , bd = 3)
+	def __init__ (self, master, ebox, lentry):
+		self.frame = tk.LabelFrame(master,
+								   text = "Presets",
+								   highlightbackground = "violet", highlightthickness = 2, bd = 3, )
+		self.preset = tk.Button(self.frame, command = partial(ebox.insert_from, lentry),
+								text = "Not Empemented yet.", width = 18, height = 2, bg = 'gray',
+								fg = 'black', bd = 3)
 		
 		self.preset.pack()
 	
 	
-	def pack (self , **kwargs):
+	def pack (self, **kwargs):
 		self.frame.pack(kwargs)
 
 
 class LogBox:
 	
 	
-	def __init__ (self , master):
-		self.frame = tk.LabelFrame(master , text = 'Log:' , highlightbackground = "blue" , highlightcolor = "blue" ,
-								   highlightthickness = 2 , bd = 2)
-		self.logbox = tk.Text(self.frame , font = 'Arial 14' , wrap = 'word' , bd = 3 , height = 30)
+	def __init__ (self, master):
+		self.frame = tk.LabelFrame(master, text = 'Log:', highlightbackground = "blue", highlightcolor = "blue",
+								   highlightthickness = 2, bd = 2)
+		self.logbox = tk.Text(self.frame, font = 'Arial 14', wrap = 'word', bd = 3, height = 30)
 		
 		self.logbox.pack(side = 'top')
 		
-		self.logbox.insert('1.0' , 'Not emplemented yet\n')
+		self.logbox.insert('1.0', 'Not emplemented yet\n')
 	
 	
-	def pack (self , **kwargs):
+	def pack (self, **kwargs):
 		self.frame.pack(kwargs)
 
 
 class EditBox:
 	
 	
-	def __init__ (self , master):
-		self.frame = tk.LabelFrame(master , text = 'Editable BaseStation package:' , highlightbackground = "yellow" ,
+	def __init__ (self, master):
+		self.frame = tk.LabelFrame(master, text = 'Editable BaseStation package:', highlightbackground = "yellow",
 								   highlightthickness = 2)
-		self.editbox = tk.Text(self.frame , font = 'Arial 14' , wrap = 'word' , bd = 3 , height = 2)
+		self.editbox = tk.Text(self.frame, font = 'Arial 14', wrap = 'word', bd = 3, height = 2)
 		
 		self.editbox.pack(side = 'top')
 	
 	
-	def pack (self , **kwargs):
+	def pack (self, **kwargs):
 		self.frame.pack(kwargs)
 	
 	
-	def insert (self , chars = '' , *args):
+	def insert (self, chars = '', *args):
 		print(chars.encode())
-		self.editbox.delete('1.0' , 'end')
-		self.editbox.insert('1.0' , repr(chars) , args)
+		self.editbox.delete('1.0', 'end')
+		self.editbox.insert('1.0', repr(chars), args)
 	
 	
-	def insert_from (self , source = None , *args):
+	def insert_from (self, source = None, *args):
 		# chars = source.get()
 		chars = source.message()
 		self.insert(chars)
@@ -352,25 +352,25 @@ class EditBox:
 class MainWindow:
 	
 	
-	def __init__ (self , master):
-		self.lframe = tk.Frame(master , highlightbackground = 'green' , highlightthickness = 2 , bd = 2)
-		self.rframe = tk.Frame(master , highlightbackground = 'orange' , highlightthickness = 2 , bd = 2)
+	def __init__ (self, master):
+		self.lframe = tk.Frame(master, highlightbackground = 'green', highlightthickness = 2, bd = 2)
+		self.rframe = tk.Frame(master, highlightbackground = 'orange', highlightthickness = 2, bd = 2)
 		
 		self.edit_box = EditBox(self.rframe)
 		
 		self.data_entries = DataEntries(self.lframe)
 		self.data_entries.pack(side = 'top')
 		
-		self.presets = Presets(self.lframe , self.edit_box , self.data_entries)
-		self.presets.pack(side = 'top' , fill = 'both')
-		self.lframe.pack(side = 'left' , fill = 'y')
+		self.presets = Presets(self.lframe, self.edit_box, self.data_entries)
+		self.presets.pack(side = 'top', fill = 'both')
+		self.lframe.pack(side = 'left', fill = 'y')
 		
 		# self.edit_box = EditBox(self.rframe)
-		self.edit_box.pack(side = 'top' , expand = False)
+		self.edit_box.pack(side = 'top', expand = False)
 		self.log_box = LogBox(self.rframe)
-		self.log_box.pack(side = 'top' , expand = False)
+		self.log_box.pack(side = 'top', expand = False)
 		
-		self.rframe.pack(side = 'left' , fill = 'none')
+		self.rframe.pack(side = 'left', fill = 'none')
 	
 	
 	def foo ():

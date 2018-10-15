@@ -3,7 +3,7 @@ import os
 import platform
 import re
 
-from test_bl.test_bl_tools import logging_tools , var_utils
+from test_bl.test_bl_tools import logging_tools, var_utils
 
 
 class ConfigTestEnv:
@@ -20,10 +20,10 @@ class ConfigTestEnv:
 		self.path_to_proj = ""
 		
 		if self.syst == 'Windows':
-			self.test_bl_config_json = self.vm_logsrv_cnf_location = os.path.join(self.module_abs_path ,
+			self.test_bl_config_json = self.vm_logsrv_cnf_location = os.path.join(self.module_abs_path,
 																				  "..\\test_bl_configs\\test_bl_conf.json")
 		elif self.syst == 'Linux':
-			self.test_bl_config_json = self.vm_logsrv_cnf_location = os.path.join(self.module_abs_path ,
+			self.test_bl_config_json = self.vm_logsrv_cnf_location = os.path.join(self.module_abs_path,
 																				  "../test_bl_configs/test_bl_conf.json")
 		'''get some tools ready'''
 		self.__utils__ = var_utils.Varutils()
@@ -38,10 +38,10 @@ class ConfigTestEnv:
 		
 		'''MAP OF CONFIG PARAMS FROM INI'''
 		if self.syst == 'Windows':
-			self.test_bl_config_ini = self.vm_logsrv_cnf_location = os.path.join(self.module_abs_path ,
+			self.test_bl_config_ini = self.vm_logsrv_cnf_location = os.path.join(self.module_abs_path,
 																				 "..\\test_bl_configs\\test_bl_conf.ini")
 		elif self.syst == 'Linux':
-			self.test_bl_config_ini = self.vm_logsrv_cnf_location = os.path.join(self.module_abs_path ,
+			self.test_bl_config_ini = self.vm_logsrv_cnf_location = os.path.join(self.module_abs_path,
 																				 "../test_bl_configs/test_bl_conf.ini")
 		self.test_bl_conf = configparser.ConfigParser()
 		self.test_bl_conf.read(self.test_bl_config_ini)
@@ -111,7 +111,7 @@ class ConfigTestEnv:
 		self.port_on = int(self.test_bl_conf['CONNECTION_PREFS']['BL_PORT_ON'])
 		self.buff_size = self.test_bl_conf['CONNECTION_PREFS']['BL_BUFFSZ_ON']
 		'''Combine prefs'''
-		self.listen_on = (self.ip_on , self.port_on)
+		self.listen_on = (self.ip_on, self.port_on)
 	
 	
 	'''
@@ -133,7 +133,7 @@ class ConfigTestEnv:
 		module_abs_path = os.path.abspath(os.path.dirname(__file__))
 		'''config logging'''
 		path_to_logging_conf = path_to_json
-		path_to_logging_conf = os.path.join(module_abs_path , path_to_logging_conf)
+		path_to_logging_conf = os.path.join(module_abs_path, path_to_logging_conf)
 		'''setup all loggers for all modules at once'''
 		logging_tools.LoggingTools(path_to_json = path_to_logging_conf)
 	
@@ -142,7 +142,7 @@ class ConfigTestEnv:
 	'''GETTERS for CONFIG VALUES'''
 	
 	
-	def get_test_bl_configuration (self ,
+	def get_test_bl_configuration (self,
 								   key = "test_bl_configuration"):
 		
 		if self.test_bl_config:
@@ -152,7 +152,7 @@ class ConfigTestEnv:
 			raise Exception("No TEST_BL config map")
 	
 	
-	def get_local_vbox_dir (self ,
+	def get_local_vbox_dir (self,
 							key = None):
 		if self.test_bl_config:
 			conf_map = self.get_test_bl_configuration()
@@ -169,7 +169,7 @@ class ConfigTestEnv:
 				return vbox_dir
 	
 	
-	def get_local_vbox_mng (self ,
+	def get_local_vbox_mng (self,
 							key = None):
 		if self.test_bl_config:
 			conf_map = self.get_test_bl_configuration()
@@ -186,8 +186,8 @@ class ConfigTestEnv:
 				return vbox_dir
 	
 	
-	def get_clean_vm_img (self ,
-						  key = None ,
+	def get_clean_vm_img (self,
+						  key = None,
 						  type = "alt"):
 		if self.test_bl_config:
 			conf_map = self.get_test_bl_configuration()
@@ -205,8 +205,8 @@ class ConfigTestEnv:
 			return
 	
 	
-	def get_clean_snap (self ,
-						key = None ,
+	def get_clean_snap (self,
+						key = None,
 						type = "alt"):
 		if self.test_bl_config:
 			conf_map = self.get_test_bl_configuration()
@@ -221,7 +221,7 @@ class ConfigTestEnv:
 					return clean_snap
 	
 	
-	def get_sut_ssh_prefs (self ,
+	def get_sut_ssh_prefs (self,
 						   key = None):
 		conf_map = self.get_test_bl_configuration()
 		if key == None:
@@ -267,7 +267,7 @@ class ConfigTestEnv:
 		return ssh_host
 	
 	
-	def get_sut_config_files_path (self ,
+	def get_sut_config_files_path (self,
 								   key = None):
 		if self.test_bl_config:
 			conf_map = self.get_test_bl_configuration()
@@ -279,13 +279,13 @@ class ConfigTestEnv:
 					self.path_to_proj = compiled_pattern.findall(self.module_abs_path)
 					
 					sut_config_files_path = sut_config_files_paths["windows"]["sut_config_files"]
-					sut_config_files_path = os.path.join(str(self.path_to_proj[0]) , sut_config_files_path)
+					sut_config_files_path = os.path.join(str(self.path_to_proj[0]), sut_config_files_path)
 					return sut_config_files_path
 				elif self.syst == 'Linux':
 					self.path_to_proj = compiled_pattern.findall(self.module_abs_path)
 					
 					sut_config_files_path = sut_config_files_paths["linux"]["sut_config_files"]
-					sut_config_files_path = os.path.join(str(self.path_to_proj[0]) , sut_config_files_path)
+					sut_config_files_path = os.path.join(str(self.path_to_proj[0]), sut_config_files_path)
 					return sut_config_files_path
 			else:
 				sut_config_files_paths = conf_map[key]
@@ -293,17 +293,17 @@ class ConfigTestEnv:
 					self.path_to_proj = compiled_pattern.findall(self.module_abs_path)
 					
 					sut_config_files_path = sut_config_files_paths["windows"]["sut_config_files"]
-					sut_config_files_path = os.path.join(str(self.path_to_proj[0]) , sut_config_files_path)
+					sut_config_files_path = os.path.join(str(self.path_to_proj[0]), sut_config_files_path)
 					return sut_config_files_path
 				elif self.syst == 'Linux':
 					self.path_to_proj = compiled_pattern.findall(self.module_abs_path)
 					
 					sut_config_files_path = sut_config_files_paths["linux"]["sut_config_files"]
-					sut_config_files_path = os.path.join(str(self.path_to_proj[0]) , sut_config_files_path)
+					sut_config_files_path = os.path.join(str(self.path_to_proj[0]), sut_config_files_path)
 					return sut_config_files_path
 	
 	
-	def get_sut_logging_config (self ,
+	def get_sut_logging_config (self,
 								key = None):
 		if self.test_bl_config:
 			conf_map = self.get_test_bl_configuration()
@@ -331,11 +331,11 @@ class ConfigTestEnv:
 			logging_conf_conf_file = conf_map["tests_logging_conf"]
 			if self.syst == 'Windows':
 				logging_conf_part_w = logging_conf_conf_file["windows"]["loggers_conf"]
-				tests_logging_config_w = os.path.join(self.path_to_proj , logging_conf_part_w)
+				tests_logging_config_w = os.path.join(self.path_to_proj, logging_conf_part_w)
 				return tests_logging_config_w
 			elif self.syst == 'Linux':
 				logging_conf_part_l = logging_conf_conf_file["linux"]["loggers_conf"]
-				tests_logging_config_l = os.path.join(self.path_to_proj , logging_conf_part_l)
+				tests_logging_config_l = os.path.join(self.path_to_proj, logging_conf_part_l)
 				return tests_logging_config_l
 	
 	
@@ -357,7 +357,7 @@ class ConfigTestEnv:
 		return log_srv_dir
 	
 	
-	def get_send_receive_prefs (self ,
+	def get_send_receive_prefs (self,
 								key = None):
 		conf_map = self.get_test_bl_configuration()
 		send_receive_prefs = conf_map["send_receive_prefs"]
@@ -413,7 +413,7 @@ class ConfigTestEnv:
 		return str(self.path_to_proj[0])
 	
 	
-	def set_suite_conf (self ,
+	def set_suite_conf (self,
 						test_suite_conf_map):
 		self.test_bl_config["test_suite_conf"] = test_suite_conf_map
 		return

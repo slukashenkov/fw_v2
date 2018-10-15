@@ -13,8 +13,8 @@ class test_data_type(Enum):
 class ReadData:
 	
 	
-	def __init__ (self ,
-				  data_location ,
+	def __init__ (self,
+				  data_location,
 				  test_data_type = None
 				  ):
 		self.logger = logging.getLogger(__name__)
@@ -31,16 +31,16 @@ class ReadData:
 		self.test_type_k_word = "test_type"
 		self.test_skip_k_word = "skip"
 		self.msg_ptrn_k_word = "res_ptrn"
-		self.test_data_k_ignore = [self.test_type_k_word , self.test_skip_k_word]
+		self.test_data_k_ignore = [self.test_type_k_word, self.test_skip_k_word]
 		return
 	
 	
-	def read_file_to_map (self ,
+	def read_file_to_map (self,
 						  data_location = None):
 		map = {}
 		with open(self.data_location) as f:
 			for line in f:
-				(key , val) = line.split()
+				(key, val) = line.split()
 				map[key] = val
 		self.final_map = map
 		return
@@ -50,15 +50,15 @@ class ReadData:
 		list = []
 		with open("file.txt") as f:
 			for line in f:
-				(key , val) = line.split()
+				(key, val) = line.split()
 				list.append(val)
 		self.final_list = list
 		return
 	
 	
-	def read_json_to_map (self ,
+	def read_json_to_map (self,
 						  data_location = None):
-		with open(self.data_location , "r") as read_file:
+		with open(self.data_location, "r") as read_file:
 			map = json.load(read_file)
 			self.final_map = map
 		return
@@ -71,12 +71,12 @@ class ReadData:
 	def get_test_names (self):
 		self.read_json_to_map()
 		test_names = []
-		for key , value in self.final_map.items():
+		for key, value in self.final_map.items():
 			test_names.append(key)
 		return test_names
 	
 	
-	def get_testsuite_data (self ,
+	def get_testsuite_data (self,
 							msg_struct):
 		"""
 		:param msg_struct:  class that knows how to make actual message from data
@@ -152,8 +152,8 @@ class ReadData:
 			return
 		
 		
-		def subdict (self ,
-					 keywords ,
+		def subdict (self,
+					 keywords,
 					 fragile = False):
 			d = {}
 			for k in keywords:
@@ -173,7 +173,7 @@ class ReadData:
 			return
 	
 	
-	def get_testcase_messages (self ,
+	def get_testcase_messages (self,
 							   test_case_id):
 		"""
 		:param test_case_id: id of the test case
@@ -191,7 +191,7 @@ class ReadData:
 			raise Exception("No such test case ID")
 	
 	
-	def get_message_type (self ,
+	def get_message_type (self,
 						  test_case_id):
 		
 		if test_case_id in self.test_suite_map.keys():
@@ -204,7 +204,7 @@ class ReadData:
 		return msg_type
 	
 	
-	def get_testcase_data (self ,
+	def get_testcase_data (self,
 						   test_case_id):
 		if test_case_id in self.test_suite_map.keys():
 			
@@ -223,7 +223,7 @@ class ReadData:
 			raise Exception("No such test case ID")
 	
 	
-	def get_test_type (self ,
+	def get_test_type (self,
 					   test_case_id
 					   ):
 		if test_case_id in self.test_suite_map.keys():
@@ -234,7 +234,7 @@ class ReadData:
 			raise Exception("No such test case ID")
 	
 	
-	def get_msg_ptrn (self ,
+	def get_msg_ptrn (self,
 					  test_case_id
 					  ):
 		if test_case_id in self.test_suite_map.keys():
@@ -254,14 +254,14 @@ class ReadData:
 			raise Exception("No such test case ID")
 	
 	
-	def get_sut_data (self ,
+	def get_sut_data (self,
 					  sut_q):
 		while not sut_q.empty():
 			self.test_suite_sut_data.append(sut_q.get())
 		return self.test_suite_sut_data
 	
 	
-	def load_received_messages (self ,
+	def load_received_messages (self,
 								server_id = None):
 		if server_id in self.udp_servers.keys():
 			curr_receive_q = self.udp_servers[server_id].data_in_queue
@@ -287,21 +287,21 @@ def test_this ():
 	'''And where we are'''
 	module_abs_path = os.path.abspath(os.path.dirname(__file__))
 	path_to_data = "..\\test_sonata_plugin\\resources_sonata\\sonata_test_data.json"
-	def_mgs_location = os.path.join(module_abs_path , path_to_data)
+	def_mgs_location = os.path.join(module_abs_path, path_to_data)
 	path_to_log_conf = "..\\test_bl_configs\\logging_conf.json"
 	
 	lt = logging_tools.LoggingTools(path_to_json = path_to_log_conf
 									)
 	logger = lt.get_logger(__name__)
 	
-	rd = ReadData(def_mgs_location ,
+	rd = ReadData(def_mgs_location,
 				  test_data_type = test_data_type.json)
 	
 	sonata_msg_struct = sonata_msg.SonataMsg(logging_tools = lt)
 	rd.read_json_to_map()
 	testsuite_data = rd.get_testsuite_data(msg_struct = sonata_msg_struct)
-	test_ids = ["test_sonata_messages01" , "test_sonata_messages05" , "test_sonata_messages02" ,
-				"test_sonata_messages07" , "test_sonata_messages05"]
+	test_ids = ["test_sonata_messages01", "test_sonata_messages05", "test_sonata_messages02",
+				"test_sonata_messages07", "test_sonata_messages05"]
 	for id in test_ids:
 		test_messages = rd.get_testcase_messages(id)
 		test_data = rd.get_testcase_data(id)

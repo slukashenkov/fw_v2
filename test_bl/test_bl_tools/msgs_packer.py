@@ -4,7 +4,7 @@ from test_bl.test_sonata_plugin.configs_sonata import sonata_send_recieve_proper
 class MessagesPacker:
 	
 	
-	def __init__ (self ,
+	def __init__ (self,
 				  conf = sonata_send_recieve_properties.SonataSendReceiveProperties):
 		
 		return
@@ -38,7 +38,7 @@ class MessagesPacker:
 			'''
 			try:
 				# with open(filename, 'r') as fin:
-				with open(self.message_dir , 'r') as fin:
+				with open(self.message_dir, 'r') as fin:
 					
 					for line in fin:
 						start = line.find('$')
@@ -47,9 +47,9 @@ class MessagesPacker:
 						# msg = filter_message(msg, msg_filter)
 						if not msg:
 							continue
-						udp_msgs.append(''.join([msg , '\n\n']))
+						udp_msgs.append(''.join([msg, '\n\n']))
 			
-			except (OSError , IOError) as e:
+			except (OSError, IOError) as e:
 				print(str(e))
 			self.msgs_to_send = udp_msgs
 			return
@@ -66,11 +66,11 @@ class MessagesPacker:
 			if self.messages_type == "SONATA":
 				s_msg = sonata_msg.SonataMsg(self)
 				msg = s_msg.get_msg()
-				s_msg_range = [1 , 2 , 3]
+				s_msg_range = [1, 2, 3]
 				for i in s_msg_range:
 					try:
-						udp_msgs.append(''.join([msg , '\n\n']))
-					except (OSError , IOError) as e:
+						udp_msgs.append(''.join([msg, '\n\n']))
+					except (OSError, IOError) as e:
 						print(str(e))
 			self.msgs_to_send = udp_msgs
 			return

@@ -14,11 +14,11 @@ class Varutils():
 	'''
 	
 	
-	def read_json_to_map (self ,
+	def read_json_to_map (self,
 						  data_location = None):
 		check_data_location = Path(data_location)
 		if check_data_location.is_file():
-			with open(data_location , "r") as read_file:
+			with open(data_location, "r") as read_file:
 				map = json.load(read_file)
 			return map
 		else:
@@ -29,23 +29,23 @@ class Varutils():
 	'''ZIPPING 2 maps together'''
 	
 	
-	def zip_to_map (self ,
-					to_zip01 = None ,
-					to_zip02 = None ,
+	def zip_to_map (self,
+					to_zip01 = None,
+					to_zip02 = None,
 					):
 		
-		vals_combined = zip(to_zip01 , to_zip02)
+		vals_combined = zip(to_zip01, to_zip02)
 		
 		final_var = {}
 		'''Final ARRAY of commands for execution over SSH'''
-		for key , val in vals_combined:
+		for key, val in vals_combined:
 			final_var[key] = val
 		return final_var
 	
 	
-	def conf_key_to_arr (self ,
-						 conf_parser = None ,
-						 section_key = None ,
+	def conf_key_to_arr (self,
+						 conf_parser = None,
+						 section_key = None,
 						 switch = None):  # possible values: keys, values
 		
 		final_arr = []
@@ -60,11 +60,11 @@ class Varutils():
 	'''LOGGERS BANNERS'''
 	
 	
-	def build_test_banner (self ,
-						   mod_name = None ,
-						   suit_name = None ,
-						   ending = None ,
-						   logging_level = 'INFO' ,
+	def build_test_banner (self,
+						   mod_name = None,
+						   suit_name = None,
+						   ending = None,
+						   logging_level = 'INFO',
 						   logger = None):
 		
 		if logging_level == 'DEBUG':
@@ -78,12 +78,12 @@ class Varutils():
 		return
 	
 	
-	def build_srv_banner (self ,
-						  server_name = None ,
-						  server_ip = None ,
-						  server_port = None ,
-						  ending = None ,
-						  logging_level = 'INFO' ,
+	def build_srv_banner (self,
+						  server_name = None,
+						  server_ip = None,
+						  server_port = None,
+						  ending = None,
+						  logging_level = 'INFO',
 						  logger = None):
 		
 		if logging_level == 'DEBUG':
@@ -97,23 +97,23 @@ class Varutils():
 		return
 	
 	
-	def sender_receiver_messages (self ,
-								  server_name = None ,
-								  server_ip = None ,
-								  server_port = None ,
-								  ending = None ,
-								  logging_level = 'INFO' ,
+	def sender_receiver_messages (self,
+								  server_name = None,
+								  server_ip = None,
+								  server_port = None,
+								  ending = None,
+								  logging_level = 'INFO',
 								  logger = None
 								  ):
 		
 		return
 	
 	
-	def build_VM_ssh_test_banner (self ,
-								  server_ip = None ,
-								  server_port = None ,
-								  ending = None ,
-								  logging_level = 'INFO' ,
+	def build_VM_ssh_test_banner (self,
+								  server_ip = None,
+								  server_port = None,
+								  ending = None,
+								  logging_level = 'INFO',
 								  logger = None):
 		
 		if logging_level == 'DEBUG':
@@ -127,13 +127,13 @@ class Varutils():
 		return
 	
 	
-	def remote_commands_exec_banner (self ,
-									 command = None ,
-									 exec_res01 = None ,
-									 exec_res02 = None ,
-									 exec_res03 = None ,
-									 ending = None ,
-									 logging_level = 'INFO' ,
+	def remote_commands_exec_banner (self,
+									 command = None,
+									 exec_res01 = None,
+									 exec_res02 = None,
+									 exec_res03 = None,
+									 ending = None,
+									 logging_level = 'INFO',
 									 logger = None
 									 ):
 		

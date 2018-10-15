@@ -6,8 +6,8 @@ import sys
 class ScanLogs():
 	
 	
-	def __init__ (self ,
-				  logs_location ,
+	def __init__ (self,
+				  logs_location,
 				  search_pttrn
 				  ):
 		self.logger = logging.getLogger(__name__)
@@ -15,7 +15,7 @@ class ScanLogs():
 		self.logs_location = logs_location
 	
 	
-	def scan_logs (self ,
+	def scan_logs (self,
 				   pattern_in = None
 				   ):
 		"""
@@ -38,7 +38,7 @@ class ScanLogs():
 		comp_result = {}
 		full_text = ""
 		for line in log_for_parsing:
-			res = self.parse_line(line_in = line ,
+			res = self.parse_line(line_in = line,
 								  pattern_in = pattern)
 			if res != None:
 				line_matched = res.string
@@ -53,35 +53,35 @@ class ScanLogs():
 		for comparison it would be good to see
 		full string from the log
 		'''
-		matches_02 = self.parse_all(lines_in = full_text ,
+		matches_02 = self.parse_all(lines_in = full_text,
 									pattern_in = pattern)
 		log_for_parsing.close()
 		return comp_result
 	
 	
-	def parse_line (self ,
-					line_in = None ,
+	def parse_line (self,
+					line_in = None,
 					pattern_in = None):
 		srch = re.compile(pattern_in)
 		res = srch.search(line_in)
 		return res
 	
 	
-	def parse_all (self ,
-				   lines_in = None ,
+	def parse_all (self,
+				   lines_in = None,
 				   pattern_in = None):
 		srch = re.compile(pattern_in)
 		res = srch.findall(lines_in)
 		return res
 	
 	
-	def log_reader (self ,
+	def log_reader (self,
 					logfile = None
 					):
 		if logfile == None:
 			raise Exception("NO PATH to the File To parse")
 		try:
-			log = open(logfile , 'r')
+			log = open(logfile, 'r')
 		except IOError:
 			print("You must specify a valid file to parse")
 			print(__doc__)

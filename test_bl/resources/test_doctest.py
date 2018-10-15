@@ -47,7 +47,7 @@ class SampleClass:
 	"""
 	
 	
-	def __init__ (self , val):
+	def __init__ (self, val):
 		"""
 		>>> print(SampleClass(12).get())
 		12
@@ -82,7 +82,7 @@ class SampleClass:
 	a_staticmethod = staticmethod(a_staticmethod)
 	
 	
-	def a_classmethod (cls , v):
+	def a_classmethod (cls, v):
 		"""
 		>>> print(SampleClass.a_classmethod(10))
 		12
@@ -94,7 +94,7 @@ class SampleClass:
 	
 	a_classmethod = classmethod(a_classmethod)
 	
-	a_property = property(get , doc = """
+	a_property = property(get, doc = """
         >>> print(SampleClass(22).a_property)
         22
         """)
@@ -109,7 +109,7 @@ class SampleClass:
 		"""
 		
 		
-		def __init__ (self , val = 0):
+		def __init__ (self, val = 0):
 			"""
 			>>> print(SampleClass.NestedClass().get())
 			0
@@ -134,7 +134,7 @@ class SampleNewStyleClass(object):
 	"""
 	
 	
-	def __init__ (self , val):
+	def __init__ (self, val):
 		"""
 		>>> print(SampleNewStyleClass(12).get())
 		12
@@ -171,7 +171,7 @@ class _FakeInput:
 	"""
 	
 	
-	def __init__ (self , lines):
+	def __init__ (self, lines):
 		self.lines = lines
 	
 	
@@ -1901,7 +1901,7 @@ Run the debugger on the docstring, and then restore sys.stdin.
 """
 
 
-if not hasattr(sys , 'gettrace') or not sys.gettrace():
+if not hasattr(sys, 'gettrace') or not sys.gettrace():
 	def test_pdb_set_trace ():
 		"""Using pdb.set_trace from a doctest.
 
@@ -2422,13 +2422,13 @@ def test_trailing_space_in_test ():
 class Wrapper:
 	
 	
-	def __init__ (self , func):
+	def __init__ (self, func):
 		self.func = func
-		functools.update_wrapper(self , func)
+		functools.update_wrapper(self, func)
 	
 	
-	def __call__ (self , *args , **kwargs):
-		self.func(*args , **kwargs)
+	def __call__ (self, *args, **kwargs):
+		self.func(*args, **kwargs)
 
 
 @Wrapper
@@ -3006,22 +3006,22 @@ Invalid doctest option:
 
 def test_main ():
 	# Check the doctest cases in doctest itself:
-	ret = support.run_doctest(doctest , verbosity = True)
+	ret = support.run_doctest(doctest, verbosity = True)
 	
 	# Check the doctest cases defined here:
 	from test import test_doctest
 	
-	support.run_doctest(test_doctest , verbosity = True)
+	support.run_doctest(test_doctest, verbosity = True)
 
 
 def test_coverage (coverdir):
 	trace = support.import_module('trace')
-	tracer = trace.Trace(ignoredirs = [sys.base_prefix , sys.base_exec_prefix , ] ,
-						 trace = 0 , count = 1)
+	tracer = trace.Trace(ignoredirs = [sys.base_prefix, sys.base_exec_prefix, ],
+						 trace = 0, count = 1)
 	tracer.run('test_main()')
 	r = tracer.results()
 	print('Writing coverage results...')
-	r.write_results(show_missing = True , summary = True ,
+	r.write_results(show_missing = True, summary = True,
 					coverdir = coverdir)
 
 

@@ -13,25 +13,25 @@ import sys
 import time
 from builtins import Exception
 from pathlib import Path
-from subprocess import Popen , check_output
+from subprocess import Popen, check_output
 
 # imports for scp which used Paramico as transport
 import paramiko
 from fabric2 import Connection
 from scp import SCPClient
 
-logging.basicConfig(level = logging.DEBUG ,
-					format = '%(asctime)-25s %(levelname)-6s %(name)-10s %(module)10s %(threadName)-10s %(funcName)-10s  %(message)s' ,
+logging.basicConfig(level = logging.DEBUG,
+					format = '%(asctime)-25s %(levelname)-6s %(name)-10s %(module)10s %(threadName)-10s %(funcName)-10s  %(message)s',
 					)
 
 
 class GetBuildTests():
 	
 	
-	def __init__ (self ,
-				  build_id = None ,
-				  sect_name_blds = 'builds_ids' ,
-				  sect_name_tdir = 'tests_dir' ,
+	def __init__ (self,
+				  build_id = None,
+				  sect_name_blds = 'builds_ids',
+				  sect_name_tdir = 'tests_dir',
 				  path_to_conf = None
 				  ):
 		
@@ -166,15 +166,15 @@ class GetBuildTests():
 		'''PASS PARAMS TO UTILITY SCRIPTS'''
 		self.scripts = ExtScripts(self)
 		
-		self.ssh_commands_to_exec_keys = self.scripts.conf_key_to_arr(conf_parser = self.bootstrap_cnf ,
-																	  section_key = 'SUT_BUILD_INSTALL_COMMANDS' ,
+		self.ssh_commands_to_exec_keys = self.scripts.conf_key_to_arr(conf_parser = self.bootstrap_cnf,
+																	  section_key = 'SUT_BUILD_INSTALL_COMMANDS',
 																	  switch = 'keys')
-		self.ssh_commands_to_exec_values = self.scripts.conf_key_to_arr(conf_parser = self.bootstrap_cnf ,
-																		section_key = 'SUT_BUILD_INSTALL_COMMANDS' ,
+		self.ssh_commands_to_exec_values = self.scripts.conf_key_to_arr(conf_parser = self.bootstrap_cnf,
+																		section_key = 'SUT_BUILD_INSTALL_COMMANDS',
 																		switch = 'values')
 		
 		'''Final MAP of commands for execution over SSH on tests start'''
-		self.ssh_commands_to_exec = self.scripts.zip_to_map(to_zip01 = self.ssh_commands_to_exec_keys ,
+		self.ssh_commands_to_exec = self.scripts.zip_to_map(to_zip01 = self.ssh_commands_to_exec_keys,
 															to_zip02 = self.ssh_commands_to_exec_values)
 		
 		if self.syst == 'Windows':
@@ -202,21 +202,21 @@ class GetBuildTests():
 	def stop_logserver (self):
 		name = "javaw"
 		if self.syst == 'Windows':
-			log_srv_pid = check_output(["ps" , "-laW"] ,
+			log_srv_pid = check_output(["ps", "-laW"],
 									   universal_newlines = True)
 		elif self.syst == 'Linux':
-			log_srv_pid = check_output(["ps" , "-afx"] ,
+			log_srv_pid = check_output(["ps", "-afx"],
 									   universal_newlines = True)
 		# os.kill(get_pid(whatever_you_search), signal.SIGTERM)  # or signal.SIGKILL
 		# os.kill(check_output(["pidof", name]),
 		#       signal.SIGTERM)  # or signal.SIGKILL
 		proc_names_data = log_srv_pid.split('\n')
 		pid = []
-		pid = self.getPidByName(proc_name = name ,
+		pid = self.getPidByName(proc_name = name,
 								proc_data_in = proc_names_data)
 		
 		for i in pid:
-			os.kill(i ,
+			os.kill(i,
 					signal.SIGTERM)  # or signal.SIGKILL
 		return
 	
@@ -226,19 +226,19 @@ class GetBuildTests():
 	'''=============================================================================================================='''
 	
 	
-	def getPidByName (self ,
-					  proc_name = None ,
+	def getPidByName (self,
+					  proc_name = None,
 					  proc_data_in = None):
 		
 		if proc_data_in != None:
 			process = proc_data_in
 		else:
-			process = check_output(["ps" , "-fea"]).split('\n')
+			process = check_output(["ps", "-fea"]).split('\n')
 		pid = []
-		for x in range(0 , len(process)):
-			args_prep = re.sub("\s+" , "," , process[x].strip())
+		for x in range(0, len(process)):
+			args_prep = re.sub("\s+", ",", process[x].strip())
 			args = args_prep.split(',')
-			for j in range(0 , len(args)):
+			for j in range(0, len(args)):
 				part = args[j]
 				if (proc_name in part):
 					pid.append(int(args[0]))
@@ -251,23 +251,23 @@ class GetBuildTests():
 				continue
 			
 			try:
-				with open('/proc/{}/cmdline'.format(dirname) , mode = 'rb') as fd:
+				with open('/proc/{}/cmdline'.format(dirname), mode = 'rb') as fd:
 					content = fd.read().decode().split('\x00')
 			except Exception:
 				continue
 			
 			for i in sys.argv[1:]:
 				if i in content[0]:
-					print('{0:<12} : {1}'.format(dirname , ' '.join(content)))
+					print('{0:<12} : {1}'.format(dirname, ' '.join(content)))
 		return
 	
 	
 	def get_build_tests (self):
 		""""""
 		'''GET FILE NAME OF THE TESTS CORRESPONDING TO THE CURRENT BUILD'''
-		curr_tests_file = self.scripts.test_build_to_test(map_to_test = self.builds_map_to_search ,
-														  key_to_test = self.build_id ,
-														  sub_key_name_builds = self.sect_name_blds ,
+		curr_tests_file = self.scripts.test_build_to_test(map_to_test = self.builds_map_to_search,
+														  key_to_test = self.build_id,
+														  sub_key_name_builds = self.sect_name_blds,
 														  sub_key_name_tdir = self.sect_name_tdir) + self.ssh_scp_tests_name_ptrn
 		
 		'''SET EVERYTHING FOR SCP TESTS TO CONTROL HOST'''
@@ -360,10 +360,10 @@ class GetBuildTests():
 class ExtScripts:
 	
 	
-	def __init__ (self ,
-				  config_file = None ,
-				  commands_file = None ,
-				  script_location = None ,
+	def __init__ (self,
+				  config_file = None,
+				  commands_file = None,
+				  script_location = None,
 				  script_type = "win"
 				  ):
 		
@@ -510,11 +510,11 @@ class ExtScripts:
 	def run_script (self):
 		self.logger.debug("<== RUNNING EXTERNAL SCRIPT ==>")
 		self.logger.debug(self.script_exec)
-		p = Popen(self.script_exec ,
-				  shell = False ,
+		p = Popen(self.script_exec,
+				  shell = False,
 				  cwd = self.script_dir
 				  )
-		stdout , stderr = p.communicate()
+		stdout, stderr = p.communicate()
 		p.terminate()
 		p.kill()
 		self.logger.debug("<== STOP RUNNING EXTERNAL SCRIPT -|DONE|- ==>")
@@ -560,18 +560,18 @@ class ExtScripts:
 		self.logger.debug(self.vm_start_cmnd)
 		
 		if self.conf.syst == 'Windows':
-			p = Popen(self.vm_start_cmnd ,
-					  shell = False ,
+			p = Popen(self.vm_start_cmnd,
+					  shell = False,
 					  cwd = self.script_location
 					  )
-			stdout , stderr = p.communicate()
+			stdout, stderr = p.communicate()
 		elif self.conf.syst == 'Linux':
 			# p = Popen(self.vm_shutdown_cmnd,
-			p = Popen(shlex.split(self.vm_start_cmnd) ,
-					  shell = False ,
+			p = Popen(shlex.split(self.vm_start_cmnd),
+					  shell = False,
 					  cwd = self.script_location
 					  )
-			stdout , stderr = p.communicate()
+			stdout, stderr = p.communicate()
 		
 		'''It takes some time for Virtual box
 		to start. 
@@ -617,23 +617,23 @@ class ExtScripts:
 		self.logger.debug(self.vm_shutdown_cmnd)
 		
 		if self.conf.syst == 'Windows':
-			p = Popen(self.vm_shutdown_cmnd ,
+			p = Popen(self.vm_shutdown_cmnd,
 					  # p = Popen(shlex.split(self.vm_shutdown_cmnd),
-					  shell = False ,
+					  shell = False,
 					  cwd = self.script_location
 					  )
-			stdout , stderr = p.communicate()
+			stdout, stderr = p.communicate()
 			p.terminate()
 			p.kill()
 			self.logger.debug("<==SHUTTING DOWN NEEDED image -|DONE|- ==>")
 			return
 		elif self.conf.syst == 'Linux':
 			# p = Popen(self.vm_shutdown_cmnd,
-			p = Popen(shlex.split(self.vm_shutdown_cmnd) ,
-					  shell = False ,
+			p = Popen(shlex.split(self.vm_shutdown_cmnd),
+					  shell = False,
 					  cwd = self.script_location
 					  )
-			stdout , stderr = p.communicate()
+			stdout, stderr = p.communicate()
 			p.terminate()
 			p.kill()
 			self.logger.debug("<==SHUTTING DOWN NEEDED image -|DONE|- ==>")
@@ -643,11 +643,11 @@ class ExtScripts:
 	def vm_restore_snap (self):
 		self.logger.debug("<== RESTORING NEEDED SNAP ==>")
 		self.logger.debug(self.vm_resnap_cmnd)
-		p = Popen(self.vm_resnap_cmnd ,
-				  shell = False ,
+		p = Popen(self.vm_resnap_cmnd,
+				  shell = False,
 				  cwd = self.script_location
 				  )
-		stdout , stderr = p.communicate()
+		stdout, stderr = p.communicate()
 		p.terminate()
 		p.kill()
 		self.logger.debug("<== RESTORING NEEDED SNAP -|DONE|- ==>")
@@ -661,11 +661,11 @@ class ExtScripts:
 	
 	def start_log_server (self):
 		self.logger.debug("<== STARTING Log Server FOR BL to WRITE OUT its STATUS ==>")
-		self._p = Popen(self.vm_log_srv_exec ,
-						shell = False ,
+		self._p = Popen(self.vm_log_srv_exec,
+						shell = False,
 						cwd = self.vm_log_srv_exec_dir
 						)
-		stdout , stderr = self._p.communicate()
+		stdout, stderr = self._p.communicate()
 		log_srv_pid = self._p.pid
 		self._p.terminate()
 		self._p.kill()
@@ -678,10 +678,10 @@ class ExtScripts:
 	'''------------------------------------------------------------------------------------------------------------------'''
 	
 	
-	def test_build_to_test (self ,
-							map_to_test = None ,
-							key_to_test = None ,
-							sub_key_name_builds = None ,
+	def test_build_to_test (self,
+							map_to_test = None,
+							key_to_test = None,
+							sub_key_name_builds = None,
 							sub_key_name_tdir = None):
 		found = False
 		if map_to_test != None:
@@ -693,7 +693,7 @@ class ExtScripts:
 					res02 = res[sub_key_name_tdir]
 					found = True
 					return res02
-				# break
+			# break
 		if found != True:
 			raise Exception("BUILD ID IS NOT IN CONF FILE")
 		return
@@ -716,16 +716,16 @@ class ExtScripts:
 	'''Splitting on delimeter and getting element by index'''
 	
 	
-	def str_split_get_pop_elem (self ,
-								str_in = None ,
-								delim_in = None ,
+	def str_split_get_pop_elem (self,
+								str_in = None,
+								delim_in = None,
 								which_elem = None):
 		
 		if (str_in or delim_in) == None:
 			raise Exception("Missing some params")
 		
 		if (not (str(which_elem) == "FIRST")) and (not (str(which_elem) == "LAST")) and (
-		not isinstance(which_elem , int)):
+				not isinstance(which_elem, int)):
 			raise Exception("INDEX PASSED is NOT a VALID 'FIRST or 'LAST' string OR  NOT a NUMBER" + which_elem)
 		
 		else:
@@ -740,24 +740,24 @@ class ExtScripts:
 				# if isinstance(which_elem, int):
 				res = res_arr.pop(which_elem)
 				return res
-			# else:
-			#   raise Exception("INDEX PASSED is NOT a NUMBER")
+		# else:
+		#   raise Exception("INDEX PASSED is NOT a NUMBER")
 		return
 	
 	
 	'''ZIPPING 2 maps together'''
 	
 	
-	def zip_to_map (self ,
-					to_zip01 = None ,
-					to_zip02 = None ,
+	def zip_to_map (self,
+					to_zip01 = None,
+					to_zip02 = None,
 					):
 		
-		vals_combined = zip(to_zip01 , to_zip02)
+		vals_combined = zip(to_zip01, to_zip02)
 		
 		final_var = {}
 		'''Final ARRAY of commands for execution over SSH'''
-		for key , val in vals_combined:
+		for key, val in vals_combined:
 			final_var[key] = val
 		return final_var
 	
@@ -766,9 +766,9 @@ class ExtScripts:
 	'''
 	
 	
-	def conf_key_to_arr (self ,
-						 conf_parser = None ,
-						 section_key = None ,
+	def conf_key_to_arr (self,
+						 conf_parser = None,
+						 section_key = None,
 						 switch = None):  # possible values: keys, values
 		
 		final_arr = []
@@ -793,11 +793,11 @@ class ExtScripts:
 		"""
 		''' Run the cmd file to set env variables'''
 		if self.script_type == "win":
-			p = Popen(self.commands_file ,
-					  shell = False ,
+			p = Popen(self.commands_file,
+					  shell = False,
 					  cwd = self.script_location
 					  )
-			stdout , stderr = p.communicate()
+			stdout, stderr = p.communicate()
 			p.terminate()
 			p.kill()
 			
@@ -822,7 +822,7 @@ class ExtScripts:
 			scp = SCPClient(self.ssh_client.get_transport())
 			'''SET PREFS AND COPY ALL CONFIGS AND SCRIPTS to DUT'''
 			# self.set_scp_details()
-			scp.put(self.ssh_scp_content_location , remote_path = self.ssh_target_dir)
+			scp.put(self.ssh_scp_content_location, remote_path = self.ssh_target_dir)
 			return
 		else:
 			raise ValueError("Configuration file is not PRESENT in the class")
@@ -837,14 +837,14 @@ class ExtScripts:
 			self.create_Paramiko_SSHClient()
 			scp = SCPClient(self.ssh_client.get_transport())
 			self.logger.info("<== SCP CLASS STARTED GETTING files ==> ")
-			scp.get(remote_path = self.ssh_scp_content_location ,
+			scp.get(remote_path = self.ssh_scp_content_location,
 					local_path = self.ssh_target_dir)
 			scp.close()
 			self.logger.info("<== SCP CLASS HAS GOT ==> ")
 			
 			'''Check if it is actually here'''
-			f_name = self.str_split_get_pop_elem(str_in = self.ssh_scp_content_location ,
-												 delim_in = '/' ,
+			f_name = self.str_split_get_pop_elem(str_in = self.ssh_scp_content_location,
+												 delim_in = '/',
 												 which_elem = 'LAST'
 												 )
 			if self.conf.syst == 'Windows':
@@ -925,9 +925,9 @@ class ExtScripts:
 		
 		self.logger.debug(" <== CONNECTION PARAMS: " + self.ssh_target_ip + ": " + self.ssh_target_port + " ==>")
 		
-		self.ssh_client.connect(hostname = self.ssh_target_ip ,
-								port = self.ssh_target_port ,
-								username = self.ssh_target_user ,
+		self.ssh_client.connect(hostname = self.ssh_target_ip,
+								port = self.ssh_target_port,
+								username = self.ssh_target_user,
 								password = self.ssh_target_pswd
 								)
 		return
@@ -937,8 +937,8 @@ class ExtScripts:
 		"""
 		SET CONNECTION PREFS
 		"""
-		self.fabric_connection = Connection(host = self.ssh_target_ip ,
-											port = self.ssh_target_port ,
+		self.fabric_connection = Connection(host = self.ssh_target_ip,
+											port = self.ssh_target_port,
 											user = self.ssh_target_user)
 		self.fabric_connection.connect_kwargs.password = self.ssh_target_pswd
 		return
@@ -992,7 +992,7 @@ class ExtScripts:
 			raise Exception("TESTING SCRIPT IS NOT PRESENT")
 			return
 		
-		for key , command in self.ssh_commands_to_exec.items():
+		for key, command in self.ssh_commands_to_exec.items():
 			
 			if key == self.ssh_ded_test_key:
 				# ded_test_command = self.ssh_commands_to_exec.pop(self.ssh_ded_test_key)
@@ -1119,8 +1119,8 @@ class ExtScripts:
 class ReadData:
 	
 	
-	def __init__ (self ,
-				  data_location_map = "C:\\data_from\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\bl_frame_work\\test_bl\\test_sonata_plugin\\resources_sonata\\sonata_fields" ,
+	def __init__ (self,
+				  data_location_map = "C:\\data_from\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\bl_frame_work\\test_bl\\test_sonata_plugin\\resources_sonata\\sonata_fields",
 				  data_location_list = "C:\\data_from\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\bl_frame_work\\test_bl\\test_sonata_plugin\\resources_sonata\\sonata_fields"
 				  ):
 		self.data_location_map = data_location_map
@@ -1134,7 +1134,7 @@ class ReadData:
 		map = {}
 		with open(self.data_location_map) as f:
 			for line in f:
-				(key , val) = line.split()
+				(key, val) = line.split()
 				map[key] = val
 		self.final_map = map
 		return
@@ -1144,14 +1144,14 @@ class ReadData:
 		list = []
 		with open("file.txt") as f:
 			for line in f:
-				(key , val) = line.split()
+				(key, val) = line.split()
 				list.append(val)
 		self.final_list = list
 		return
 	
 	
 	def read_json_to_map (self):
-		with open(self.data_location_map , "r") as read_file:
+		with open(self.data_location_map, "r") as read_file:
 			map = json.load(read_file)
 			self.final_map = map
 		return
@@ -1161,8 +1161,8 @@ class ReadData:
 		return
 
 
-def test_this (build_id = None ,
-			   sect_name_blds = 'builds_ids' ,
+def test_this (build_id = None,
+			   sect_name_blds = 'builds_ids',
 			   sect_name_tdir = 'tests_dir'
 			   ):
 	# imports for scp which used Paramico as transport
@@ -1170,8 +1170,8 @@ def test_this (build_id = None ,
 	curr_build_id = build_id
 	curr_sect_name_blds = sect_name_blds
 	curr_sect_name_tdir = sect_name_tdir
-	boot_str = GetBuildTests(curr_build_id ,
-							 curr_sect_name_blds ,
+	boot_str = GetBuildTests(curr_build_id,
+							 curr_sect_name_blds,
 							 curr_sect_name_tdir)
 	
 	print("--->>>>here should be log servers start<<<---")
@@ -1199,6 +1199,6 @@ if __name__ == "__main__":
 	build_id = 3
 	sect_name_blds = 'builds_ids'
 	sect_name_tdir = 'tests_dir'
-	test_this(build_id ,
-			  sect_name_blds ,
+	test_this(build_id,
+			  sect_name_blds,
 			  sect_name_tdir)

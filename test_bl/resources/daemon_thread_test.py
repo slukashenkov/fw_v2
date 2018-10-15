@@ -2,15 +2,15 @@ import logging
 import threading
 import time
 
-logging.basicConfig(level = logging.DEBUG ,
-					format = '(%(threadName)-10s) %(message)s' ,
+logging.basicConfig(level = logging.DEBUG,
+					format = '(%(threadName)-10s) %(message)s',
 					)
 
 
 class TestThread(threading.Thread):
 	
 	
-	def __init__ (self , daemon):
+	def __init__ (self, daemon):
 		threading.Thread.__init__(self)
 		self.daemon = daemon
 		self.name = "DAEMON_THREAD"
@@ -39,7 +39,7 @@ if __name__ == "__main__":
 	thread.start()
 	
 	for t in threading.enumerate():
-		logging.info('joining %s' , t.getName())
+		logging.info('joining %s', t.getName())
 	time.sleep(20)
 	
 	print("__main__ stop")

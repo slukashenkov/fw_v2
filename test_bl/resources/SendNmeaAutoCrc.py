@@ -15,12 +15,12 @@ from ctypes import c_ushort
 
 def create_parser ():
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-a' , '--address' , default = '10.10.77.157')
-	parser.add_argument('-p' , '--port' , default = '53111')
-	parser.add_argument('-f' , '--file' , default = 'nmea_msgs.txt')
-	parser.add_argument('-l' , '--loop' , default = "0" ,
+	parser.add_argument('-a', '--address', default = '10.10.77.157')
+	parser.add_argument('-p', '--port', default = '53111')
+	parser.add_argument('-f', '--file', default = 'nmea_msgs.txt')
+	parser.add_argument('-l', '--loop', default = "0",
 						help = '\"once\" if no loop, time in seconds after sending all lines otherwise')
-	parser.add_argument('-d' , '--delay' , default = "1" ,
+	parser.add_argument('-d', '--delay', default = "1",
 						help = '\"kbd\" if wait for <Enter>, time in seconds after sending one line otherwise')
 	
 	return parser
@@ -36,29 +36,29 @@ def crc_nmea (nmea_str):
 	return '{0:02x}'.format(c_ushort(crc).value)
 
 
-def main (udp_ip , udp_port , file_name , loop_time , sleep_time):
-	print("udp_ip =" , udp_ip)
-	print("udp_port =" , udp_port)
-	print("delay between messages (-1 for keyboard) =" , sleep_time)
-	print("delay after loop (-1 if once) =" , loop_time)
+def main (udp_ip, udp_port, file_name, loop_time, sleep_time):
+	print("udp_ip =", udp_ip)
+	print("udp_port =", udp_port)
+	print("delay between messages (-1 for keyboard) =", sleep_time)
+	print("delay after loop (-1 if once) =", loop_time)
 	print("---------------------------------------------------------")
 	
 	udp_msgs = []
 	
-	with open(file_name , 'r') as fin:
+	with open(file_name, 'r') as fin:
 		for line in fin:
 			msg = line[:line.find('#')].strip()
 			
 			if not msg:
 				continue
 			
-			udp_msgs.append("".join([msg , '*' , crc_nmea(msg) , '\r\n']))
+			udp_msgs.append("".join([msg, '*', crc_nmea(msg), '\r\n']))
 	
-	sock = socket.socket(socket.AF_INET , socket.SOCK_DGRAM)
+	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	while 1:
 		for udp_msg in udp_msgs:
 			print(udp_msg)
-			sock.sendto(str.encode(udp_msg) , (udp_ip , udp_port))
+			sock.sendto(str.encode(udp_msg), (udp_ip, udp_port))
 			
 			if sleep_time >= 0:
 				sleep(sleep_time)
@@ -89,4 +89,4 @@ if __name__ == "__main__":
 	else:
 		loop_time = int(namespace.loop)
 	
-	main(namespace.address , int(namespace.port) , namespace.file , loop_time , sleep_time)
+	main(namespace.address, int(namespace.port), namespace.file, loop_time, sleep_time)

@@ -46,21 +46,21 @@ except ImportError:
 	
 	def b85decode (b):
 		_b85dec = [None] * 256
-		for i , c in enumerate(iterbytes(_b85alphabet)):
+		for i, c in enumerate(iterbytes(_b85alphabet)):
 			_b85dec[c] = i
 		
 		padding = (-len(b)) % 5
 		b = b + b'~' * padding
 		out = []
 		packI = struct.Struct('!I').pack
-		for i in range(0 , len(b) , 5):
+		for i in range(0, len(b), 5):
 			chunk = b[i:i + 5]
 			acc = 0
 			try:
 				for c in iterbytes(chunk):
 					acc = acc * 85 + _b85dec[c]
 			except TypeError:
-				for j , c in enumerate(iterbytes(chunk)):
+				for j, c in enumerate(iterbytes(chunk)):
 					if _b85dec[c] is None:
 						raise ValueError(
 							'bad base85 character at position %d' % (i + j)
@@ -88,14 +88,14 @@ def bootstrap (tmpdir = None):
 	class CertInstallCommand(InstallCommand):
 		
 		
-		def parse_args (self , args):
+		def parse_args (self, args):
 			# If cert isn't specified in config or environment, we provide our
 			# own certificate through defaults.
 			# This allows user to specify custom cert anywhere one likes:
 			# config, environment variable or argv.
 			if not self.parser.get_default_values().cert:
 				self.parser.defaults["cert"] = cert_path  # calculated below
-			return super(CertInstallCommand , self).parse_args(args)
+			return super(CertInstallCommand, self).parse_args(args)
 	
 	
 	pip._internal.commands_dict["install"] = CertInstallCommand
@@ -160,7 +160,7 @@ def bootstrap (tmpdir = None):
 		args += ["wheel"]
 	
 	# Add our default arguments
-	args = ["install" , "--upgrade" , "--force-reinstall"] + args
+	args = ["install", "--upgrade", "--force-reinstall"] + args
 	
 	delete_tmpdir = False
 	try:
@@ -172,9 +172,9 @@ def bootstrap (tmpdir = None):
 		
 		# We need to extract the SSL certificates from requests so that they
 		# can be passed to --cert
-		cert_path = os.path.join(tmpdir , "cacert.pem")
-		with open(cert_path , "wb") as cert:
-			cert.write(pkgutil.get_data("pip._vendor.certifi" , "cacert.pem"))
+		cert_path = os.path.join(tmpdir, "cacert.pem")
+		with open(cert_path, "wb") as cert:
+			cert.write(pkgutil.get_data("pip._vendor.certifi", "cacert.pem"))
 		
 		# Execute the included pip and use it to install the latest pip and
 		# setuptools from PyPI
@@ -182,7 +182,7 @@ def bootstrap (tmpdir = None):
 	finally:
 		# Remove our temporary directory
 		if delete_tmpdir and tmpdir:
-			shutil.rmtree(tmpdir , ignore_errors = True)
+			shutil.rmtree(tmpdir, ignore_errors = True)
 
 
 def main ():
@@ -192,19 +192,19 @@ def main ():
 		tmpdir = tempfile.mkdtemp()
 		
 		# Unpack the zipfile into the temporary directory
-		pip_zip = os.path.join(tmpdir , "pip.zip")
-		with open(pip_zip , "wb") as fp:
-			fp.write(b85decode(DATA.replace(b"\n" , b"")))
+		pip_zip = os.path.join(tmpdir, "pip.zip")
+		with open(pip_zip, "wb") as fp:
+			fp.write(b85decode(DATA.replace(b"\n", b"")))
 		
 		# Add the zipfile to sys.path so that we can import it
-		sys.path.insert(0 , pip_zip)
+		sys.path.insert(0, pip_zip)
 		
 		# Run the bootstrap
 		bootstrap(tmpdir = tmpdir)
 	finally:
 		# Clean up our temporary working directory
 		if tmpdir:
-			shutil.rmtree(tmpdir , ignore_errors = True)
+			shutil.rmtree(tmpdir, ignore_errors = True)
 
 
 DATA = b"""
