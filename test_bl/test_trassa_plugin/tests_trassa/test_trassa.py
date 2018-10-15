@@ -60,8 +60,8 @@ class TrassaTests(unittest.TestCase):
 		self.exclude_tests = self.trassa_setup.get_excluded_tests()
 		'''SETUP TEST ENV
 		'''
-		#self.trassa_setup.start_logserver()
-		#self.trassa_setup.setup_vir_env()
+		self.trassa_setup.start_logserver()
+		self.trassa_setup.setup_vir_env()
 		return
 	
 	
@@ -75,8 +75,8 @@ class TrassaTests(unittest.TestCase):
 		#self.trassa_setup.stop_udp_sender(udp_snd_name = self.sender_id_01)
 		#self.trassa_setup.stop_udp_sender(udp_snd_name = self.sender_id_02)
 		
-		#self.trassa_setup.stop_test_env()
-		#self.trassa_setup.stop_logserver()
+		self.trassa_setup.stop_test_env()
+		self.trassa_setup.stop_logserver()
 		
 		self.__tools__.build_test_banner(mod_name = 'TRASSA',
 										 suit_name = 'SUITE' + __name__,
@@ -156,7 +156,7 @@ class TrassaTests(unittest.TestCase):
 	
 	
 	def tearDown (self):
-		# self.ext_scripts.stop_logserver()
+		#self.ext_scripts.stop_logserver()
 		time.sleep(4)
 		self.curr_logger.info('Test' + __name__ + 'tearDown routine.')
 	
@@ -297,8 +297,8 @@ class TrassaTests(unittest.TestCase):
 		v_f_msg = res_aitxt[self.curr_test_id]
 		self.assertTrue(v_f_msg[0])
 		
-		a_g_msg = res_aitxt[self.curr_test_id][1]
-		self.assertTrue(a_g_msg[0])
+		a_g_msg = res_aitxt[self.curr_test_id]
+		self.assertTrue(a_g_msg[1])
 		
 		return
 	

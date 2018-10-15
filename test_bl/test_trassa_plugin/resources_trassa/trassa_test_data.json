@@ -1,5 +1,5 @@
 {
-  "test_trassa_messages01": {"skip": true,
+  "test_trassa_messages01": {"skip": false,
     "t01_ais_type01": {
       "msg_type": "ais_type01",
       "test_conditions": {
@@ -47,7 +47,7 @@
       }
     }
   },
-  "test_trassa_messages02": {"skip": true,
+  "test_trassa_messages02": {"skip": false,
     "t01_ais_type18": {
       "msg_type": "ais_type18",
       "test_conditions": {
@@ -109,7 +109,7 @@
       }
     }
   },
-  "test_trassa_messages03": {"skip": true,
+  "test_trassa_messages03": {"skip": false,
     "t02_ais_type05": {
                       "msg_type": "ais_type05",
                       "test_conditions": {
@@ -164,7 +164,7 @@
                       }
                     }
   },
-  "test_trassa_messages04": {"skip": true,
+  "test_trassa_messages04": {"skip": false,
     "t08_ais_type24a": {
       "msg_type": "ais_type24a",
       "test_conditions": {
@@ -182,7 +182,7 @@
       }
     }
   },
-  "test_trassa_messages05": {"skip": true,
+  "test_trassa_messages05": {"skip": false,
     "t08_ais_type24b": {
       "msg_type": "ais_type24b",
       "test_conditions": {
@@ -224,7 +224,7 @@
       }
     }
   },
-  "test_trassa_messages06": {"skip": true,
+  "test_trassa_messages06": {"skip": false,
     "t03_nmea_PCMST_w_eq": {
       "msg_type": "pcmst",
       "test_conditions": {
@@ -302,7 +302,7 @@
       }
     }
   },
-  "test_trassa_messages08": {"skip": true,
+  "test_trassa_messages08": {"skip": false,
     "t04_peist_type": {
       "msg_type": "peist",
       "test_conditions": {
@@ -322,7 +322,7 @@
       }
     }
   },
-  "test_trassa_messages09": {"skip": true,
+  "test_trassa_messages09": {"skip": false,
     "t03_ais_type01": {
       "msg_type": "ais_type01",
       "test_conditions": {

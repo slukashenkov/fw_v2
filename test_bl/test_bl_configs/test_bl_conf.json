@@ -12,7 +12,7 @@
     },
     "clean_vm_img": {
       "alt": {
-        "clean_alt_img": "KD_10.11.10.11_B647",
+        "clean_alt_img": "KD_10.11.10.11",
         "clean_alt_snap": "KD_init"
       },
       "astra": {
