@@ -39,99 +39,100 @@ import uscg
 # import ais.nmea
 
 class Normalize(Queue.Queue):
-	'''
-	Provide a channel that normalizes messages.  Try to model it like a Queue.
-	'''
-	
-	
-	def __init__ (self, maxsize = 0, ttl = 30, verbose = False):
-		'''
-		param ttl: number of seconds that a message fragment can live
-		'''
-		Queue.Queue.__init__(self, maxsize)
-		self.mostRecentTime = 0  # Seconds from UTC epoch
-		self.ttl = ttl
-		self.stations = {}  # Buffer by station
-		self.v = verbose
-	
-	
-	def cull (self):
-		'''
-		Drop messages older than the ttl
-		'''
-		pass
-	
-	
-	def put (self, uscgNmeaStr, block = True, timeout = None):
-		
-		cgMsg = uscg.UscgNmea(uscgNmeaStr)
-		if self.mostRecentTime < cgMsg.cg_sec:
-			self.mostRecentTime = cgMsg.cg_sec
-		
-		# single line message needs no help
-		if 1 == cgMsg.totalSentences:
-			Queue.Queue.put(self, uscgNmeaStr, block, timeout)
-			return
-		
-		if cgMsg.sentenceNum != cgMsg.totalSentences:
-			station = cgMsg.station
-			if station not in self.stations:
-				self.stations[station] = [cgMsg, ]
-			else:
-				# print 'self.stations[station]',station,type(self.stations[station])
-				self.stations[station].append(cgMsg)
-			self.cull()  # Clean house so the buffers do not get too large
-			return
-		
-		# We have a final sentence, so construct the whole deal
-		
-		# Only can happen the first time we see a station and have not seen the first sentence
-		if cgMsg.station not in self.stations:
-			sys.stderr.write('dropping dangling fragment\n')
-			return
-		
-		cgMsgFinal = cgMsg
-		stationList = self.stations[cgMsgFinal.station]
-		
-		parts = []
-		payloads = []
-		
-		del cgMsg
-		
-		for msg in stationList:
-			if (msg.aisChannel == cgMsgFinal.aisChannel
-					and msg.sequentialMsgId == cgMsgFinal.sequentialMsgId
-			):
-				if msg.sentenceNum == 1:
-					cgMsgFinal.cg_sec = msg.cg_sec  # Save the first timestamp
-				parts.append(msg)
-				payloads.append(msg.contents)  # .getBitVector)
-				assert (msg.fillbits == 0)
-		
-		# print 'num parts',len(parts)
-		
-		# print 'before',len(stationList)
-		for cgMsg in parts:
-			stationList.remove(cgMsg)
-		# print 'after',len(stationList)
-		
-		if len(parts) != cgMsgFinal.totalSentences - 1:
-			if self.v: sys.stderr.write('partial message.  Discarding\n')
-			return
-		
-		payloads.append(cgMsgFinal.contents)
-		# print 'payloads:', payloads
-		
-		# The fill bits will not change
-		# bv = payloads[0]
-		payload = ''.join(payloads)
-		# print payload
-		# parts.append(cgMsgFinal.getBitVector)
-		
-		cgMsgFinal.totalSentences = 1
-		cgMsgFinal.sentenceNum = 1
-		cgMsgFinal.contents = payload
-		cgMsgFinal.checksumStr = ais.nmea.checksumStr(payload)
-		newNmeaStr = cgMsgFinal.buildNmea()
-		# print 'queuing',newNmeaStr
-		Queue.Queue.put(self, newNmeaStr, block, timeout)
+    '''
+    Provide a channel that normalizes messages.  Try to model it like a Queue.
+    '''
+    
+    
+    def __init__ (self, maxsize = 0, ttl = 30, verbose = False):
+        '''
+        param ttl: number of seconds that a message fragment can live
+        '''
+        Queue.Queue.__init__(self, maxsize)
+        self.mostRecentTime = 0  # Seconds from UTC epoch
+        self.ttl = ttl
+        self.stations = {}  # Buffer by station
+        self.v = verbose
+    
+    
+    def cull (self):
+        '''
+        Drop messages older than the ttl
+        '''
+        pass
+    
+    
+    def put (self, uscgNmeaStr, block = True, timeout = None):
+        
+        cgMsg = uscg.UscgNmea(uscgNmeaStr)
+        if self.mostRecentTime < cgMsg.cg_sec:
+            self.mostRecentTime = cgMsg.cg_sec
+        
+        # single line message needs no help
+        if 1 == cgMsg.totalSentences:
+            Queue.Queue.put(self, uscgNmeaStr, block, timeout)
+            return
+        
+        if cgMsg.sentenceNum != cgMsg.totalSentences:
+            station = cgMsg.station
+            if station not in self.stations:
+                self.stations[station] = [cgMsg, ]
+            else:
+                # print 'self.stations[station]',station,type(self.stations[station])
+                self.stations[station].append(cgMsg)
+            self.cull()  # Clean house so the buffers do not get too large
+            return
+        
+        # We have a final sentence, so construct the whole deal
+        
+        # Only can happen the first time we see a station and have not seen the first sentence
+        if cgMsg.station not in self.stations:
+            sys.stderr.write('dropping dangling fragment\n')
+            return
+        
+        cgMsgFinal = cgMsg
+        stationList = self.stations[cgMsgFinal.station]
+        
+        parts = []
+        payloads = []
+        
+        del cgMsg
+        
+        for msg in stationList:
+            if (msg.aisChannel == cgMsgFinal.aisChannel
+                    and msg.sequentialMsgId == cgMsgFinal.sequentialMsgId
+            ):
+                if msg.sentenceNum == 1:
+                    cgMsgFinal.cg_sec = msg.cg_sec  # Save the first timestamp
+                parts.append(msg)
+                payloads.append(msg.contents)  # .getBitVector)
+                assert (msg.fillbits == 0)
+        
+        # print 'num parts',len(parts)
+        
+        # print 'before',len(stationList)
+        for cgMsg in parts:
+            stationList.remove(cgMsg)
+        # print 'after',len(stationList)
+        
+        if len(parts) != cgMsgFinal.totalSentences - 1:
+            if self.v:
+                sys.stderr.write('partial message.  Discarding\n')
+            return
+        
+        payloads.append(cgMsgFinal.contents)
+        # print 'payloads:', payloads
+        
+        # The fill bits will not change
+        # bv = payloads[0]
+        payload = ''.join(payloads)
+        # print payload
+        # parts.append(cgMsgFinal.getBitVector)
+        
+        cgMsgFinal.totalSentences = 1
+        cgMsgFinal.sentenceNum = 1
+        cgMsgFinal.contents = payload
+        cgMsgFinal.checksumStr = ais.nmea.checksumStr(payload)
+        newNmeaStr = cgMsgFinal.buildNmea()
+        # print 'queuing',newNmeaStr
+        Queue.Queue.put(self, newNmeaStr, block, timeout)

@@ -26,9 +26,9 @@
                       },
 
       "send_receive_prefs": {
-              "udp_ip_to": "10.11.10.11",
+              "udp_ip_to": "10.10.201.80",
                "udp_port_to": "55555",
-               "udp_ip_from": "10.11.10.12",
+               "udp_ip_from": "10.10.74.5",
                "udp_port_from": 55556,
                "udp_buffsize_from": "4096"
      }

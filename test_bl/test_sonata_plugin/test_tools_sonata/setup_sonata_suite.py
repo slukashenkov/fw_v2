@@ -358,8 +358,15 @@ class SetupSonataSuite:
         self.ext_scripts.sut_stop_commands = self.s_prefs.get_sonata_stop_commands()
         return
 
-    def setup_vir_env(self):
-        self.ext_scripts.set_test_env()
+    def setup_vir_env(self,
+                      no_VM = None):
+        if no_VM == None:
+            self.ext_scripts.set_test_env()
+        elif no_VM == True:
+            self.ext_scripts.set_test_env(no_VM = True)
+        else:
+            raise Exception("no_VM flag is not Boolean")
+            
         return
 
     def _inspect_atr(self,

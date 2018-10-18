@@ -45,7 +45,10 @@ class SonataTests(unittest.TestCase):
             SETUP TEST ENV
             '''
             self.sonata_setup.start_logserver()
-            self.sonata_setup.setup_vir_env()
+            '''Virtbox can be used'''
+            #self.sonata_setup.setup_vir_env()
+            '''Virtbox is not used use physical box'''
+            self.sonata_setup.setup_vir_env(no_VM = True)
             return
 
         @classmethod
