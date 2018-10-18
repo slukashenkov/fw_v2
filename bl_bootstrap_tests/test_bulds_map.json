@@ -1,6 +1,6 @@
 {
   "tests01":{
-    "builds_ids": [1,2],
+    "builds_ids": [445,647],
     "tests_dir": "/KD_distr/t01/"
   },
    "tests02":{"builds_ids": [3],

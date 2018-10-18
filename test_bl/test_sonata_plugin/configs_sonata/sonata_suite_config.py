@@ -42,15 +42,13 @@ class SonataSuiteConfig:
 
                 self.vm_logsrv_cnf_location = os.path.join(self.proj_abs_path,
                                                            "..\\..\\test_bl_configs\\LocalVM_RemBL_LogSRVconf.ini")
-
-                #self.vm_logsrv_cnf_location = 'C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\bl_frame_work\\test_bl\\test_bl_configs\\LocalVM_RemBL_LogSRVconf.ini'
-                'C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\bl_git_branching\\test_bl\\test_sonata_plugin\\configs_sonata\\..\\..\\test_bl_configs\\LocalVM_RemBL_LogSRVconf.ini'
+            
                 self.vm_logsrv_cnf.read(self.vm_logsrv_cnf_location)
+                
             elif self.syst == 'Linux':
                 self.vm_logsrv_cnf_location = os.path.join(self.proj_abs_path,
                                                            "../../test_bl_configs/LocalVM_RemBL_LogSRVconf.ini")
-
-                #self.vm_logsrv_cnf_location = '/home/slon/BL_tests_project/bl_frame_work/test_bl/test_bl_configs/LocalVM_RemBL_LogSRVconf.ini'
+          
                 self.vm_logsrv_cnf.read(self.vm_logsrv_cnf_location)
 
             '''SET SONATA`S GENERAL CONFIG'''

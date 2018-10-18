@@ -43,14 +43,26 @@ class GetBuildTests():
         self.sect_name_tdir = sect_name_tdir
         '''-----------------------------------------------------------------------------------------------------------'''
         '''GET PARAMS'''
+        '''Lets find ot the system we run on'''
         self.syst = platform.system()
+        
+        '''And where we are'''
+        self.proj_abs_path = os.path.abspath(os.path.dirname(__file__))
+        
+        '''Still using config parser for INI'''
         self.bootstrap_cnf = configparser.ConfigParser()
+        
         if path_to_conf == None:
             
             if self.syst == 'Linux':
-                self.bootstrap_cnf_location = '/home/slon/BL_tests_project/bl_frame_work/bl_bootstrap_tests/bootstrap_conf.ini'
+    
+                self.bootstrap_cnf_location = os.path.join(self.proj_abs_path,
+                                                           "bootstrap_conf.ini")
+                #self.bootstrap_cnf_location = '/home/slon/BL_tests_project/bl_frame_work/bl_bootstrap_tests/bootstrap_conf.ini'
             elif self.syst == 'Windows':
-                self.bootstrap_cnf_location = 'C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\bl_frame_work\\bl_bootstrap_tests\\bootstrap_conf.ini'
+                self.bootstrap_cnf_location = os.path.join(self.proj_abs_path,
+                                                           "bootstrap_conf.ini")
+                #self.bootstrap_cnf_location = 'C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\gitlabAutotestingMussonBL2\\bl_bootstrap_tests\\bootstrap_conf.ini'
         
         else:
             self.bootstrap_cnf_location = path_to_conf
@@ -95,18 +107,24 @@ class GetBuildTests():
         self.ssh_scp_content_location_sut = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_SUT']
         self.ssh_scp_build_name_ptrn = self.bootstrap_cnf['SCP_PREFS']['SCP_BUILD_NAME_PATTERN']
         self.ssh_scp_tests_name_ptrn = self.bootstrap_cnf['SCP_PREFS']['SCP_TESTS_NAME_PATTERN']
+        self.ssh_scp_confs_name_ptrn = self.bootstrap_cnf['SCP_PREFS']['SCP_CONFIG_FILES_PATTERN']
+        self.ssh_scp_confs_ver = self.bootstrap_cnf['SCP_PREFS']['SCP_CONFIG_FILES_VER']
+        
         
         '''System specific stuff'''
         if self.syst == 'Windows':
             self.ssh_scp_content_location_cntrl_build = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_CONTROL_HOST_BLD']
-            self.ssh_scp_content_location_cntrl_tests = self.bootstrap_cnf['SCP_PREFS'][
-                'SCP_LOCATION_CONTROL_HOST_TESTS']
+            self.ssh_scp_content_location_cntrl_build = self.ssh_scp_content_location_cntrl_build + '\\' + self.ssh_scp_build_name_ptrn + str(self.build_id) + ".tar.gz"
+            self.ssh_scp_content_location_cntrl_tests = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_CONTROL_HOST_TESTS']
+
+           
+            self.ssh_scp_content_location_cntrl_confs = self.ssh_scp_content_location_cntrl_tests + '\\' + self.ssh_scp_confs_name_ptrn + self.ssh_scp_confs_ver +  ".tar.gz"
+          
         
         elif self.syst == 'Linux':
-            self.ssh_scp_content_location_cntrl_build = self.bootstrap_cnf['SCP_PREFS'][
-                'SCP_LOCATION_CONTROL_HOST_BLD_LUNUX']
-            self.ssh_scp_content_location_cntrl_tests = self.bootstrap_cnf['SCP_PREFS'][
-                'SCP_LOCATION_CONTROL_HOST_TESTS_LINUX']
+            self.ssh_scp_content_location_cntrl_build = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_CONTROL_HOST_BLD_LUNUX']
+            self.ssh_scp_content_location_cntrl_build = self.ssh_scp_content_location_cntrl_build + '/' + self.ssh_scp_build_name_ptrn + str(self.build_id) + ".tar.gz"
+            self.ssh_scp_content_location_cntrl_tests = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_CONTROL_HOST_TESTS_LINUX']
         
         '''-----------------------------------------------------------------------------------------------------------'''
         '''
@@ -317,28 +335,47 @@ class GetBuildTests():
         self.scripts.ssh_target_user = self.ssh_sut_user
         self.scripts.ssh_target_pswd = self.ssh_sut_pswd
         
+        '''deprecated there is a dedicated
+        box for KD testing now'''
         '''Lets START VIRTUAL BOX FIRST'''
-        self.logger.info("<------- LETS START VBox FIRST ------> ")
-        self.scripts.vm_shutdown()
-        self.scripts.vm_start()
-        self.logger.info("<------- WOW VBox HAS STARTED ------> ")
+        #self.logger.info("<------- LETS START VBox FIRST ------> ")
+        #self.scripts.vm_shutdown()
+        #self.scripts.vm_start()
+        #self.logger.info("<------- WOW VBox HAS STARTED ------> ")
         
         '''Second'''
         if self.syst == 'Windows':
-            self.scripts.ssh_scp_content_location = self.ssh_scp_content_location_cntrl_build + '\\' + self.ssh_scp_build_name_ptrn
+            self.scripts.ssh_scp_content_location = self.ssh_scp_content_location_cntrl_build
+            #C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\workspace\\BL2_alt7_baselibraries_D_autotests\\BL2_alt7_baselibraries_D_build#445.tar.gz
+            #C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\workspace\\BL2_alt7_baselibraries_D_autotests\\BL2_alt7_baselibraries_D_build#445.tar.gz
         if self.syst == 'Linux':
-            self.scripts.ssh_scp_content_location = self.ssh_scp_content_location_cntrl_build + '/' + self.ssh_scp_build_name_ptrn
-        
+            self.scripts.ssh_scp_content_location = self.ssh_scp_content_location_cntrl_build
+            
+            
         self.scripts.ssh_target_dir = self.ssh_scp_content_location_sut
         '''get the stuff'''
         '''TODO: cleanup dir first'''
         self.scripts.scp_put_files()
         
+        '''
+        Copy module configs
+        '''
+        self.scripts.ssh_scp_content_location = self.ssh_scp_content_location_cntrl_confs
+        self.scripts.ssh_target_dir = self.ssh_install_dir_bin_sut
+        self.scripts.scp_put_files()
+        
+        
+        '''Deprecated
+        it was assumed initially that tests have to be copied
+        from some place  and then copied to ctrl station
+        however now the need is not
+        '''
         '''And also some tests'''
+        '''
         self.scripts.ssh_scp_content_location = self.ssh_commands_test_path
         self.scripts.ssh_target_dir = self.ssh_startup_dir_sut
         self.scripts.scp_put_files()
-        
+        '''
         return
     
     
@@ -1175,10 +1212,10 @@ def test_this (build_id = None,
                              curr_sect_name_tdir)
     
     print("--->>>>here should be log servers start<<<---")
-    boot_str.start_logserver()
+    # boot_str.start_logserver()
     # boot_str.stop_logserver()
     
-    boot_str.get_build_tests()
+    #boot_str.get_build_tests()
     boot_str.put_build_to_sut()
     boot_str.install_new_build()
     boot_str.run_tests()
@@ -1196,7 +1233,7 @@ if __name__ == "__main__":
     GET BUILD ID
     '''
     # build_id = sys.argv[1]
-    build_id = 3
+    build_id = 445
     sect_name_blds = 'builds_ids'
     sect_name_tdir = 'tests_dir'
     test_this(build_id,
