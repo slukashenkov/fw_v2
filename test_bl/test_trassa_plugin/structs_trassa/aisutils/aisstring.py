@@ -39,24 +39,24 @@ from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisbinary
 # from verbosity import BOMBASTIC,VERBOSE,TRACE,TERSE,ALWAYS
 
 characterLUT = ['@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
-				'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
-				'Z', '[', '\\', ']', '^', '-', ' ',
-				'!', '"', '#', '$', '%', '&', '`', '(', ')', '*', '+', ',', '-', '.', '/',
-				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-				':', ';', '<', '=', '>', '?'
-				]
+                'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
+                'Z', '[', '\\', ']', '^', '-', ' ',
+                '!', '"', '#', '$', '%', '&', '`', '(', ')', '*', '+', ',', '-', '.', '/',
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                ':', ';', '<', '=', '>', '?'
+                ]
 
 characterDict = {
-	'@': 0, 'A': 1, 'B': 2, 'C': 3, 'D': 4, 'E': 5, 'F': 6,
-	'G': 7, 'H': 8, 'I': 9, 'J': 10, 'K': 11, 'L': 12, 'M': 13,
-	'N': 14, 'O': 15, 'P': 16, 'Q': 17, 'R': 18, 'S': 19, 'T': 20,
-	'U': 21, 'V': 22, 'W': 23, 'X': 24, 'Y': 25, 'Z': 26, '[': 27,
-	'\\': 28, ']': 29, '^': 30, '-': 31, ' ': 32, '!': 33, '"': 34,
-	'#': 35, '$': 36, '%': 37, '&': 38, '`': 39, '(': 40, ')': 41,
-	'*': 42, '+': 43, ',': 44, '-': 45, '.': 46, '/': 47, '0': 48,
-	'1': 49, '2': 50, '3': 51, '4': 52, '5': 53, '6': 54, '7': 55,
-	'8': 56, '9': 57, ':': 58, ';': 59, '<': 60, '=': 61, '>': 62,
-	'?': 63
+    '@': 0, 'A': 1, 'B': 2, 'C': 3, 'D': 4, 'E': 5, 'F': 6,
+    'G': 7, 'H': 8, 'I': 9, 'J': 10, 'K': 11, 'L': 12, 'M': 13,
+    'N': 14, 'O': 15, 'P': 16, 'Q': 17, 'R': 18, 'S': 19, 'T': 20,
+    'U': 21, 'V': 22, 'W': 23, 'X': 24, 'Y': 25, 'Z': 26, '[': 27,
+    '\\': 28, ']': 29, '^': 30, '-': 31, ' ': 32, '!': 33, '"': 34,
+    '#': 35, '$': 36, '%': 37, '&': 38, '`': 39, '(': 40, ')': 41,
+    '*': 42, '+': 43, ',': 44, '-': 45, '.': 46, '/': 47, '0': 48,
+    '1': 49, '2': 50, '3': 51, '4': 52, '5': 53, '6': 54, '7': 55,
+    '8': 56, '9': 57, ':': 58, ';': 59, '<': 60, '=': 61, '>': 62,
+    '?': 63
 }
 '''Fast lookup for the AIS int code for a character '''
 # The above illustrates the inline ways of documenting module variables
@@ -130,214 +130,215 @@ characterBits['?'] = aisbinary.setBitVectorSize(BitVector(intVal = 63), 6)
 
 
 def buildDict ():
-	'''
-	Helper to build the build the carachterBits and Dict tables
+    '''
+    Helper to build the build the carachterBits and Dict tables
 
-	@rtype: test to stdout
-	'''
-	count = 0
-	print('characterDict={')
-	for i in range(len(characterLUT)):
-		count += 1
-		c = characterLUT[i]
-		if c == '\\':
-			c = '\\\\'
-			print("'" + c + "': " + str(i) + ",", )
-		
-		if count % 6 == 0:
-			print
-			print('}')
-			print('characterBits={}')
-	
-	for i in range(len(characterLUT)):
-		c = characterLUT[i]
-		if c == '\\':
-			c = '\\\\'
-			print("characterBits['" + c + "']" + '=aisbinary.setBitVectorSize(BitVector(intVal=' + str(i) + '),6)')
+    @rtype: test to stdout
+    '''
+    count = 0
+    print('characterDict={')
+    for i in range(len(characterLUT)):
+        count += 1
+        c = characterLUT[i]
+        if c == '\\':
+            c = '\\\\'
+            print("'" + c + "': " + str(i) + ",", )
+        
+        if count % 6 == 0:
+            print
+            print('}')
+            print('characterBits={}')
+    
+    for i in range(len(characterLUT)):
+        c = characterLUT[i]
+        if c == '\\':
+            c = '\\\\'
+            print("characterBits['" + c + "']" + '=aisbinary.setBitVectorSize(BitVector(intVal=' + str(i) + '),6)')
 
 
 def decode (bits, dropAfterFirstAt = False):
-	'''
-	Decode bits as a string.  Does not remove the end space or @@@@.  Must be an multiple of 6 bits.
+    '''
+    Decode bits as a string.  Does not remove the end space or @@@@.  Must be an multiple of 6 bits.
 
-	@param bits: n*6 bits that represent a string.
-	@type bits: BitVector
-	@return: string with pad spaces or @@@@
-	@rtype: str
-	'''
-	# assert(len(bits) % 6 == 0)
-	numchar = len(bits) / 6
-	s = []
-	'''
-	for i in range(numchar): # FIX: off by one?
-		start = 6 * i
-		end = start+6 #6 * (i+1)
-		charbits=bits[start:end]
-		val = int(charbits)
-		if dropAfterFirstAt and val==0:
-			break # 0 is the @ character which is used to pad strings.
-		s.append(characterLUT[val])
+    @param bits: n*6 bits that represent a string.
+    @type bits: BitVector
+    @return: string with pad spaces or @@@@
+    @rtype: str
+    '''
+    # assert(len(bits) % 6 == 0)
+    numchar = len(bits) / 6
+    s = []
+    '''
+    for i in range(numchar): # FIX: off by one?
+        start = 6 * i
+        end = start+6 #6 * (i+1)
+        charbits=bits[start:end]
+        val = int(charbits)
+        if dropAfterFirstAt and val==0:
+            break # 0 is the @ character which is used to pad strings.
+        s.append(characterLUT[val])
 
-	return ''.join(s)
-	'''
+    return ''.join(s)
+    '''
 
 
 def encode (string,
-			bitSize = None):
-	'''
-	@param string: python ascii string to encode.
-	@type string: str
-	@param bitSize: how many bits should this take.  must be a multiple of 6
-	@type bitSize: int
-	@return: enocded bits for the string
-	@rtype: BitVector
-	@bug: force to upper case
-	@bug: building this in reverse may be faster
-	@bug: check that bitSize is a multple of 6
-	@bug: pad with "@" to reach requested bitSize
-	'''
-	
-	"""Convert a string to a BitVector.
+            bitSize = None):
+    '''
+    @param string: python ascii string to encode.
+    @type string: str
+    @param bitSize: how many bits should this take.  must be a multiple of 6
+    @type bitSize: int
+    @return: enocded bits for the string
+    @rtype: BitVector
+    @bug: force to upper case
+    @bug: building this in reverse may be faster
+    @bug: check that bitSize is a multple of 6
+    @bug: pad with "@" to reach requested bitSize
+    '''
+    
+    """Convert a string to a BitVector.
 
-	TODO(schwehr): Pad with "@" to reach requested bitSize.
+    TODO(schwehr): Pad with "@" to reach requested bitSize.
 
-	Args:
-	  string: str to encode.
-	  bit_size: integer: multiple of 6 size of the resulting bits.
+    Args:
+      string: str to encode.
+      bit_size: integer: multiple of 6 size of the resulting bits.
 
-	Returns:
-	  String representing the bits encoded as an AIS VDM armored characters.
-	"""
-	'''
-	if bit_size:
-	  assert bit_size % 6 == 0
-	bv = BitVector(size=0)
-	for i in range(len(string)):
-	  bv += character_bits[string[i]]
-	if bit_size:
-	  if bit_size < len(bv):
-		logging.error('ERROR:  Too many bits in string: "%s %s %s"',
-					  string, bit_size, len(bv))
-		assert False
-	  extra = bit_size - len(bv)
-	  bv += BitVector(size=extra)
+    Returns:
+      String representing the bits encoded as an AIS VDM armored characters.
+    """
+    '''
+    if bit_size:
+      assert bit_size % 6 == 0
+    bv = BitVector(size=0)
+    for i in range(len(string)):
+      bv += character_bits[string[i]]
+    if bit_size:
+      if bit_size < len(bv):
+        logging.error('ERROR:  Too many bits in string: "%s %s %s"',
+                      string, bit_size, len(bv))
+        assert False
+      extra = bit_size - len(bv)
+      bv += BitVector(size=extra)
 
-	return bv
-	'''
-	if bitSize:
-		assert (bitSize % 6 == 0)
-		bv = BitVector(size = 0)
-		print(bv)
-	for i in range(len(string)):
-		bv = bv + characterBits[string[i]]
-	
-	if bitSize:
-		if bitSize < len(bv):
-			print('ERROR:  string longer than specified bit count: "' + string + '"', bitSize, len(bv))
-			assert False
-		extra = bitSize - len(bv)
-		bv = bv + BitVector(size = extra)
-	return bv
+    return bv
+    '''
+    if bitSize:
+        assert (bitSize % 6 == 0)
+        bv = BitVector(size = 0)
+        print(bv)
+    for i in range(len(string)):
+        bv = bv + characterBits[string[i]]
+    
+    if bitSize:
+        if bitSize < len(bv):
+            print('ERROR:  string longer than specified bit count: "' + string + '"', bitSize, len(bv))
+            assert False
+        extra = bitSize - len(bv)
+        bv = bv + BitVector(size = extra)
+    return bv
 
 
 def unpad (string, removeBlanks = True):
-	"""
-	Remove AIS string padding
+    """
+    Remove AIS string padding
 
-	>>> unpad('@')
-	''
-	>>> unpad('A@')
-	'A'
-	>>> unpad('ABCDEF1234@@@@@')
-	'ABCDEF1234'
+    >>> unpad('@')
+    ''
+    >>> unpad('A@')
+    'A'
+    >>> unpad('ABCDEF1234@@@@@')
+    'ABCDEF1234'
 
-	FIX: is this the correct response?
+    FIX: is this the correct response?
 
-	>>> unpad('A@B')
-	'A@B'
+    >>> unpad('A@B')
+    'A@B'
 
-	This is non standard behavior, but some AIS systems space pad the right
+    This is non standard behavior, but some AIS systems space pad the right
 
-	>>> unpad(' ')
-	''
-	>>> unpad('MY SHIP NAME    ')
-	'MY SHIP NAME'
+    >>> unpad(' ')
+    ''
+    >>> unpad('MY SHIP NAME    ')
+    'MY SHIP NAME'
 
-	The standard implies this behavior with is less fun
+    The standard implies this behavior with is less fun
 
-	>>> unpad('MY SHIP NAME    ',removeBlanks=False)
-	'MY SHIP NAME    '
+    >>> unpad('MY SHIP NAME    ',removeBlanks=False)
+    'MY SHIP NAME    '
 
-	@bug: use a faster algorithm for truncating the string
-	@param string: string to cleanup
-	@type string: str
-	@param removeBlanks: set to true to strip spaces on the right
-	@type removeBlanks: bool
-	@return: cleaned up string
-	@rtype: str
-	"""
-	while len(string) > 0 and string[-1] == '@':
-		string = string[:-1]
-		if removeBlanks:
-			while len(string) > 0 and string[-1] == ' ':
-				string = string[:-1]
-	return string
+    @bug: use a faster algorithm for truncating the string
+    @param string: string to cleanup
+    @type string: str
+    @param removeBlanks: set to true to strip spaces on the right
+    @type removeBlanks: bool
+    @return: cleaned up string
+    @rtype: str
+    """
+    while len(string) > 0 and string[-1] == '@':
+        string = string[:-1]
+        if removeBlanks:
+            while len(string) > 0 and string[-1] == ' ':
+                string = string[:-1]
+    return string
 
 
 def pad (string, length):
-	'''
-	pad a string out to the proper length with the @ character as required by the ais spec
+    '''
+    pad a string out to the proper length with the @ character as required by the ais spec
 
-	>>> pad('',0)
-	''
-	>>> pad('',1)
-	'@'
-	>>> pad('A',1)
-	'A'
-	>>> pad('A',2)
-	'A@'
-	>>> pad('MY SHIP NAME',20)
-	'MY SHIP NAME@@@@@@@@'
+    >>> pad('',0)
+    ''
+    >>> pad('',1)
+    '@'
+    >>> pad('A',1)
+    'A'
+    >>> pad('A',2)
+    'A@'
+    >>> pad('MY SHIP NAME',20)
+    'MY SHIP NAME@@@@@@@@'
 
-	@param string: string to pad out
-	@type string: str
-	@param length: number of characters that the string must be
-	@type length: int
-	@return: str of len length
-	@rtype: str
+    @param string: string to pad out
+    @type string: str
+    @param length: number of characters that the string must be
+    @type length: int
+    @return: str of len length
+    @rtype: str
 
-	@bug: Use a list and join to make the string building faster
-	'''
-	while len(string) < length: string += '@'
-	return string
+    @bug: Use a list and join to make the string building faster
+    '''
+    while len(string) < length:
+        string += '@'
+    return string
 
 
 if __name__ == '__main__':
-	'''
-	from optparse import OptionParser
-	myparser = OptionParser(usage="%prog [options]",version="%prog "+__version__)
-	myparser.add_option('--test','--doc-test',dest='doctest',default=False,action='store_true',
-						help='run the documentation tests')
+    '''
+    from optparse import OptionParser
+    myparser = OptionParser(usage="%prog [options]",version="%prog "+__version__)
+    myparser.add_option('--test','--doc-test',dest='doctest',default=False,action='store_true',
+                        help='run the documentation tests')
 #    verbosity.addVerbosityOptions(myparser)
-	(options,args) = myparser.parse_args()
+    (options,args) = myparser.parse_args()
 
-	success=True
+    success=True
 
-	
-	if options.doctest:
-		import os
-		sys.argv= [sys.argv[0]]
-	#	if options.verbosity>=VERBOSE: sys.argv.append('-v')
-		
-		import doctest
-			numfail,numtests=doctest.testmod()
-	
-			if numfail==0:
-				print('ok')
-			else:
-				 print('FAILED')
-				 success=False
+    
+    if options.doctest:
+        import os
+        sys.argv= [sys.argv[0]]
+    #	if options.verbosity>=VERBOSE: sys.argv.append('-v')
+        
+        import doctest
+            numfail,numtests=doctest.testmod()
+    
+            if numfail==0:
+                print('ok')
+            else:
+                 print('FAILED')
+                 success=False
 
-	if not success:
-	sys.exit('Something Failed')
-	'''
+    if not success:
+    sys.exit('Something Failed')
+    '''
