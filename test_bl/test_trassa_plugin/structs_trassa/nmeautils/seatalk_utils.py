@@ -17,11 +17,10 @@ class SeaTalk(object):
         '84': 'Compass heading  Autopilot course and Rudder position',
         '9C': 'Compass heading and Rudder position'
     }
-
+    
+    
     # pylint: disable=no-member
     @property
-    def command_name(self):
+    def command_name (self):
         '''Get seatalk command's meaning'''
         return self.byte_to_command.get(self.cmd, 'Unknown Command')
-
-

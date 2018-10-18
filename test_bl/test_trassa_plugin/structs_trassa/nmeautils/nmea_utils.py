@@ -1,23 +1,24 @@
-#pylint: disable=invalid-name
+# pylint: disable=invalid-name
 import datetime
 
-def timestamp(s):
+
+def timestamp (s):
     '''
     Converts a timestamp given in "hhmmss[.ss]" ASCII format to a
     datetime.time object
     '''
     ms_s = s[6:]
     ms = ms_s and int(float(ms_s) * 1000000) or 0
-
+    
     t = datetime.time(
-        hour=int(s[0:2]),
-        minute=int(s[2:4]),
-        second=int(s[4:6]),
-        microsecond=ms)
+        hour = int(s[0:2]),
+        minute = int(s[2:4]),
+        second = int(s[4:6]),
+        microsecond = ms)
     return t
 
 
-def datestamp(s):
+def datestamp (s):
     '''
     Converts a datestamp given in "DDMMYY" ASCII format to a
     datetime.datetime object
@@ -26,7 +27,9 @@ def datestamp(s):
 
 
 import re
-def dm_to_sd(dm):
+
+
+def dm_to_sd (dm):
     '''
     Converts a geographic coordiante given in "degres/minutes" dddmm.mmmm
     format (ie, "12319.943281" = 123 degrees, 19.953281 minutes) to a signed
@@ -43,9 +46,11 @@ class LatLonFix(object):
     '''Mixin to add `lattitude` and `longitude` properties as signed decimals
     to NMEA sentences which have coordiantes given as degrees/minutes (lat, lon)
     and cardinal directions (lat_dir, lon_dir)'''
-    #pylint: disable=no-member
+    
+    
+    # pylint: disable=no-member
     @property
-    def latitude(self):
+    def latitude (self):
         '''Lattitude in signed degrees (python float)'''
         sd = dm_to_sd(self.lat)
         if self.lat_dir == 'N':
@@ -54,9 +59,10 @@ class LatLonFix(object):
             return -sd
         else:
             return 0.
-
+    
+    
     @property
-    def longitude(self):
+    def longitude (self):
         '''Longitude in signed degrees (python float)'''
         sd = dm_to_sd(self.lon)
         if self.lon_dir == 'E':
@@ -65,85 +71,107 @@ class LatLonFix(object):
             return -sd
         else:
             return 0.
-
+    
+    
     @staticmethod
-    def _minutes(x):
+    def _minutes (x):
         return abs(x * 60.) % 60.
-
+    
+    
     @staticmethod
-    def _seconds(x):
+    def _seconds (x):
         return abs(x * 3600.) % 60.
-
+    
+    
     @property
-    def latitude_minutes(self):
+    def latitude_minutes (self):
         return self._minutes(self.latitude)
-
+    
+    
     @property
-    def longitude_minutes(self):
+    def longitude_minutes (self):
         return self._minutes(self.longitude)
-
+    
+    
     @property
-    def latitude_seconds(self):
+    def latitude_seconds (self):
         return self._seconds(self.latitude)
-
+    
+    
     @property
-    def longitude_seconds(self):
+    def longitude_seconds (self):
         return self._seconds(self.longitude)
 
 
 class DatetimeFix(object):
-    #pylint: disable=no-member
+    
+    
+    # pylint: disable=no-member
     @property
-    def datetime(self):
+    def datetime (self):
         return datetime.datetime.combine(self.datestamp, self.timestamp)
 
 
 class ValidStatusFix(object):
-    #pylint: disable=no-member
+    
+    
+    # pylint: disable=no-member
     @property
-    def is_valid(self):
+    def is_valid (self):
         return self.status == 'A'
 
 
 class ValidGSAFix(object):
-    #pylint: disable=no-member
+    
+    
+    # pylint: disable=no-member
     @property
-    def is_valid(self):
+    def is_valid (self):
         return int(self.mode_fix_type) in [2, 3]
 
 
 class ValidGGAFix(object):
-    #pylint: disable=no-member
+    
+    
+    # pylint: disable=no-member
     @property
-    def is_valid(self):
-        return self.gps_qual in range(1,6)
+    def is_valid (self):
+        return self.gps_qual in range(1, 6)
 
 
 class ValidVBWFix(object):
-    #pylint: disable=no-member
+    
+    
+    # pylint: disable=no-member
     @property
-    def is_valid(self):
+    def is_valid (self):
         return self.data_validity_water_spd == self.data_validity_grnd_spd == 'A'
 
 
 class TZInfo(datetime.tzinfo):
-    def __init__(self, hh, mm):
+    
+    
+    def __init__ (self, hh, mm):
         self.hh = hh
         self.mm = mm
         super(TZInfo, self).__init__()
-
-    def tzname(self, dt):
+    
+    
+    def tzname (self, dt):
         return ''
-
-    def dst(self, dt):
+    
+    
+    def dst (self, dt):
         return datetime.timedelta(0)
+    
+    
+    def utcoffset (self, dt):
+        return datetime.timedelta(hours = self.hh, minutes = self.mm)
 
-    def utcoffset(self, dt):
-        return datetime.timedelta(hours=self.hh, minutes=self.mm)
+
+def test_this ():
+    return
 
 
-def test_this():
-  return
-if __name__=="__main__":
+if __name__ == "__main__":
     test_this()
-

@@ -3,7 +3,6 @@ Support for proprietary messages from Ashtech receivers.
 '''
 # pylint: disable=wildcard-import,unused-wildcard-import
 from decimal import Decimal
-import re
 
 from ... import nmea
 from ...nmea_utils import *
@@ -14,7 +13,9 @@ class ASH(nmea.ProprietarySentence):
     Generic Ashtech Response Message
     '''
     sentence_types = {}
-    def __new__(_cls, manufacturer, data):
+    
+    
+    def __new__ (_cls, manufacturer, data):
         '''
         Return the correct sentence type based on the first field
         '''
@@ -32,14 +33,18 @@ class ASHRATT(ASH):
     '''
     RT300 proprietary attitude sentence
     '''
+    
+    
     @staticmethod
-    def match(data):
+    def match (data):
         return re.match(r'^\d{6}\.\d{3}$', data[1])
-
-    def __init__(self, *args, **kwargs):
+    
+    
+    def __init__ (self, *args, **kwargs):
         self.subtype = 'ATT'
         super(ASHRATT, self).__init__(*args, **kwargs)
-
+    
+    
     fields = (
         ('R', '_r'),
         ('Timestamp', 'timestamp', timestamp),

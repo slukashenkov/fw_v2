@@ -5,20 +5,22 @@ from ... import nmea
 
 class AID(nmea.ProprietarySentence):
     sentence_types = {}
-
-    def __new__(_cls,
-                manufacturer,
-                datatype,
-                data):
-        name = manufacturer + datatype
-        cls = _cls.sentence_types.get(name, _cls)
-        return super(AID, cls).__new__(cls)
-
-    def __init__(self,
+    
+    
+    def __new__ (_cls,
                  manufacturer,
                  datatype,
                  data):
-        self.sentence_type = manufacturer + datatype
+        name = datatype
+        cls = _cls.sentence_types.get(name, _cls)
+        return super(AID, cls).__new__(cls)
+    
+    
+    def __init__ (self,
+                  manufacturer,
+                  datatype,
+                  data):
+        self.sentence_type = datatype
         super(AID, self).__init__(manufacturer,
                                   datatype,
                                   data)
@@ -51,15 +53,16 @@ class AIDD(AID):
 
             timestamp -> Calculated
     """
+    
     fields = (
         ("MMSI", "mmsi"),
-        ("Longitude", "lon"),
-        ("Hemisphere_sign_n_s", "hem_n_s"),
         ("Latitude", "lat"),
+        ("Hemisphere_sign_n_s", "hem_n_s"),
+        ("Longitude", "lon"),
         ("Hemisphere_sign_e_w", "hem_e_w"),
         ("Speed Over Ground(SOG)", "sog"),
-        ("True Heading(HDG)", "hdg"),
         ("Course Over Ground(COG)", "cog"),
+        ("True Heading(HDG)", "hdg"),
         ("Timestamp", "tmstmp"),
+    
     )
-

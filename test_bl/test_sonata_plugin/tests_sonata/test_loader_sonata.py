@@ -42,5 +42,4 @@ if __name__ == '__main__':
                 result = runner.run(suite)
                 counter = counter + 1
         '''
-
         result = runner.run(suite)

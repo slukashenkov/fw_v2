@@ -1,6 +1,4 @@
 import unittest
-from test_bl.test_sonata_plugin.test_tools_sonata import send_receive_sonata
-from test_bl.test_sonata_plugin.configs_sonata import sonata_send_recieve_properties
 
 
 class SonataToNMEAConversionTestCase(unittest.TestCase):
@@ -62,6 +60,7 @@ class SonataToNMEAConversionTestCase(unittest.TestCase):
     def test_sonata_messages01(self):
         return
     '''
+
 
 if __name__ == '__main__':
     '''

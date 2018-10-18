@@ -47,7 +47,7 @@
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "level": "DEBUG",
+            "level": "INFO",
             "formatter": "simple",
             "stream": "ext://sys.stdout"
         },
@@ -67,6 +67,11 @@
     },
 
     "loggers": {
+        "__main__": {
+            "level": "DEBUG",
+            "handlers": [ "console","common_log_file"],
+            "propagate": "False"
+            },
         "test_bl.test_bl_tools.scan_logs": {
             "level": "DEBUG",
             "handlers": ["console","common_log_file"],
@@ -107,40 +112,40 @@
             "handlers": ["console","common_log_file"],
             "propagate": "False"
             },
-        "test_bl.test_trassa_plugin.structs_trassa.aisutils.aisstring": {
-            "level": "DEBUG",
-            "handlers": ["console","common_log_file"],
-            "propagate": "False"
-            },
-        "test_bl.test_trassa_plugin.structs_trassa.aisutils.aisbinary": {
-            "level": "DEBUG",
-            "handlers": ["console","common_log_file"],
-            "propagate": "False"
-            },
 
         "test_bl.test_sonata_plugin.test_tools_sonata.setup_sonata_suite": {
             "level": "DEBUG",
             "handlers": ["console","common_log_file"],
             "propagate": "False"
             },
+
         "test_bl.test_sonata_plugin.structs_sonata.sonata_msg": {
             "level": "DEBUG",
             "handlers": ["console","common_log_file"],
             "propagate": "False"
             },
+
         "test_bl.test_sonata_plugin.tests_sonata.test_sonata_decouple": {
             "level": "DEBUG",
             "handlers": ["console","common_log_file"],
             "propagate": "False"
             },
-        "__main__": {
+
+        "test_bl.test_trassa_plugin.structs_trassa.aisutils.aisstring": {
             "level": "DEBUG",
-            "handlers": [ "console","common_log_file"],
+            "handlers": ["console","common_log_file"],
             "propagate": "False"
             },
-        "test_send_receive_05":{
+
+        "test_bl.test_trassa_plugin.structs_trassa.aisutils.aisbinary": {
             "level": "DEBUG",
-            "handlers": [ "common_log_file"],
+            "handlers": ["console","common_log_file"],
+            "propagate": "False"
+            },
+
+        "test_bl.test_trassa_plugin.test_tools_trassa.setup_trassa_suite":{
+            "level": "DEBUG",
+            "handlers": ["console", "common_log_file"],
             "propagate": "False"
             }
         },

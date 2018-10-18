@@ -1,0 +1,58 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+
+<objects>
+
+
+        <udp-connection name="ais-messages">
+            <source-address>10.8.1.10</source-address>
+            <source-port>47300</source-port>
+        </udp-connection>
+
+        <udp-connection name="tren-messages">
+            <source-address>10.8.1.10</source-address>
+            <source-port>47302</source-port>
+        </udp-connection>
+
+        <file-output name="trassa-out-probe">
+            <filename>D:\kronshtadt\ibs\baselibraries\debug\configs\_trassa-out-probe</filename>
+            <rotate>true</rotate>
+        </file-output>
+
+        <file-output name="ais-in-probe">
+            <filename>D:\kronshtadt\ibs\baselibraries\debug\configs\_ais-in-probe</filename>
+            <!--format>from-trassa</format>
+            <rotate>true</rotate-->
+        </file-output>
+
+        <ascii-extractor type="ais" name="ais-extractor"/>
+        <ascii-extractor type="nmea" name="ais-nmea-extractor"/>
+
+</objects>
+
+    <applications>
+        <application name="trassa-app">
+
+            <trassa-dispatcher name="trassa-tren">
+                <astd-param name="S.TRASSA.FE.KD1"/>
+                <astd-notifier name="trassa-astd-notifier"/>
+                <trassa-notifier name="trassa-notifier"/>
+                <subscriber name="trassa-tren-subscriber"/>
+                <ais-subscriber name="ais-subscriber"/>
+            </trassa-dispatcher>
+
+            <data-flow notifier="tren-messages" subscriber="trassa-tren-subscriber"/>
+            <data-flow notifier="ais-extractor" subscriber="ais-subscriber"/>
+            <data-flow notifier="trassa-notifier" subscriber="trassa-out-probe"/>
+
+            <!--data-flow notifier="ais-messages" subscriber="ais-in-probe"/-->
+            <data-flow notifier="ais-messages" subscriber="ais-extractor"/>
+            <data-flow notifier="ais-extractor" subscriber="ais-in-probe"/>
+
+        </application>
+    </applications>
+
+</configuration>

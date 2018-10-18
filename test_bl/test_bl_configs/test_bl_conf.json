@@ -21,10 +21,10 @@
       }
     },
     "sut_ssh_prefs": {
-      "sut_ssh_host": "10.11.10.11",
+      "sut_ssh_host": "10.10.201.80",
       "sut_ssh_port": "22",
-      "sut_ssh_user": "root",
-      "sut_ssh_passwd": "root",
+      "sut_ssh_user": "slon",
+      "sut_ssh_passwd": "1ro3itta23",
       "sut_ssh_target_dir": "/usr/bin/dolphin"
     },
 
@@ -38,15 +38,15 @@
                 "log_srv_dir":"C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\ext_tools\\apache-chainsaw-2.0.0-standalone\\apache-chainsaw-2.0.0\\bin",
                 "log_file_dir":"C:\\data\\kronshtadt\\QA\\BL\\BL_logs\\kd_LogFile.log"
                 },
-       "linux":{"log_srv_exec":"/home/slon/BL_tests_project/ext_tools/apache-chainsaw-2.0.0-standalone/apache-chainsaw-2.0.0/bin/chainsaw",
-                "log_srv_dir":"/home/slon/BL_tests_project/ext_tools/apache-chainsaw-2.0.0-standalone/apache-chainsaw-2.0.0/bin",
-                  "log_file_dir":"/home/slon/BL_tests_project/logs/kd_LogFile.log"
+       "linux":{"log_srv_exec":"/home/slon/tools/chainsaw/apache-chainsaw-2.0.0/bin/chainsaw",
+                "log_srv_dir":"/home/slon/tools/chainsaw/apache-chainsaw-2.0.0/bin/",
+                  "log_file_dir":"/home/slon/bl_logs/kd_LogFile.log"
                    }
      },
      "send_receive_prefs": {
-              "udp_ip_to": "10.11.10.11",
+              "udp_ip_to": "10.10.201.80",
                "udp_port_to": "55555",
-               "udp_ip_from": "10.11.10.12",
+               "udp_ip_from": "10.10.74.5",
                "udp_port_from": 55556,
                "udp_buffsize_from": "4096"
      },

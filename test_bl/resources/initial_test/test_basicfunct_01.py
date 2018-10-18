@@ -1,7 +1,8 @@
 import unittest
-from project import basicfunction
-#from  project import basicfunction
-#import sys
+
+
+# from  project import basicfunction
+# import sys
 
 class BasicFunctTestCase(unittest.TestCase):
     '''
@@ -18,5 +19,7 @@ class BasicFunctTestCase(unittest.TestCase):
         res02 = bf.BasicFunctions()
         return
     '''
+
+
 if __name__ == '__main__':
     unittest.main()

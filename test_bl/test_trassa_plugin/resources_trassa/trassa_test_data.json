@@ -1,0 +1,759 @@
+{
+  "test_trassa_messages01": {"skip": false,
+    "t01_ais_type01": {
+      "msg_type": "ais_type01",
+      "test_conditions": {
+        "pass": [
+          "MessageID",
+          "RepeatIndicator",
+          "MMSI",
+          "NavigationStatus",
+          "ROT",
+          "SOG",
+          "PositionAccuracy",
+          "longitude",
+          "latitude",
+          "COG",
+          "TrueHeading",
+          "TimeStamp",
+          "RegionalReserved",
+          "Spare",
+          "RAIM",
+          "state_syncstate",
+          "state_slottimeout",
+          "state_slotoffset"
+        ]
+      },
+      "res_ptrn": "^.*PAIDD.*$",
+      "fields": {
+        "MessageID": 1,
+        "RepeatIndicator": 1,
+        "MMSI": 1193046,
+        "NavigationStatus": 3,
+        "ROT": -2,
+        "SOG": 101.9,
+        "PositionAccuracy": 1,
+        "longitude": -122.99958333,
+        "latitude": 89.9997222,
+        "COG": 34.5,
+        "TrueHeading": 41,
+        "TimeStamp": 35,
+        "RegionalReserved": 0,
+        "Spare": 0,
+        "RAIM": false,
+        "state_syncstate": 2,
+        "state_slottimeout": 0,
+        "state_slotoffset": 1221
+      }
+    }
+  },
+  "test_trassa_messages02": {"skip": false,
+    "t01_ais_type18": {
+      "msg_type": "ais_type18",
+      "test_conditions": {
+        "msg_type": "ais_type18",
+        "pass": [
+          "MessageID",
+          "RepeatIndicator",
+          "MMSI",
+          "NavigationStatus",
+          "ROT",
+          "SOG",
+          "PositionAccuracy",
+          "longitude",
+          "latitude",
+          "COG",
+          "TrueHeading",
+          "TimeStamp",
+          "RegionalReserved",
+          "Spare",
+          "cs_unit",
+          "display_flag",
+          "dsc_flag",
+          "band_flag",
+          "msg22_flag",
+          "mode_flag",
+          "RAIM",
+          "CommStateSelector",
+          "state_syncstate",
+          "state_slottimeout",
+          "state_slotoffset"
+        ]
+      },
+      "res_ptrn": ".*PAIDD.*",
+      "fields": {
+        "MessageID": 1,
+        "RepeatIndicator": 1,
+        "MMSI": 1193047,
+        "NavigationStatus": 4,
+        "ROT": -2,
+        "SOG": 80.9,
+        "PositionAccuracy": 1,
+        "longitude": -122.16328055555556,
+        "latitude": 37.424458333333334,
+        "COG": 34.5,
+        "TrueHeading": 41,
+        "TimeStamp": 35,
+        "Spare": 0,
+        "cs_unit": false,
+        "display_flag": false,
+        "dsc_flag": false,
+        "band_flag": false,
+        "msg22_flag": false,
+        "mode_flag": false,
+        "RAIM": false,
+        "CommStateSelector": 0,
+        "state_syncstate": 2,
+        "state_slottimeout": 0,
+        "state_slotoffset": 1221
+      }
+    }
+  },
+  "test_trassa_messages03": {"skip": false,
+    "t02_ais_type05": {
+                      "msg_type": "ais_type05",
+                      "test_conditions": {
+                        "pass": [
+                          "MessageID",
+                          "RepeatIndicator",
+                          "MMSI",
+                          "AISversion",
+                          "IMOnumber",
+                          "callsign",
+                          "name",
+                          "shipandcargo",
+                          "dimA",
+                          "dimB",
+                          "dimC",
+                          "dimD",
+                          "fixtype",
+                          "ETAmonth",
+                          "ETAday",
+                          "ETAhour",
+                          "ETAminute",
+                          "draught",
+                          "destination",
+                          "dte",
+                          "Spare"
+                        ]
+                      },
+                      "res_ptrn": "^.*PAISD.*",
+                      "fields": {
+                        "MessageID": 5,
+                        "RepeatIndicator": 1,
+                        "MMSI": 1193046,
+                        "AISversion": 0,
+                        "IMOnumber": 3210,
+                        "callsign": "PIRATE1",
+                        "name": "SOMEVESSEL",
+                        "shipandcargo": 21,
+                        "dimA": 10,
+                        "dimB": 11,
+                        "dimC": 12,
+                        "dimD": 13,
+                        "fixtype": 1,
+                        "ETAmonth": 2,
+                        "ETAday": 28,
+                        "ETAhour": 9,
+                        "ETAminute": 54,
+
+                        "draught": 21.1,
+                        "destination": "NOWHERE@@@@@@@@@@@@@",
+                        "dte": 0,
+                        "Spare": 0
+                      }
+                    }
+  },
+  "test_trassa_messages04": {"skip": false,
+    "t08_ais_type24a": {
+      "msg_type": "ais_type24a",
+      "test_conditions": {
+        "pass": [
+          "MessageID",
+          "RepeatIndicator",
+          "MMSI"
+        ]
+      },
+      "res_ptrn": "^.*PAISD.*",
+      "fields": {
+        "MessageID": 24,
+        "RepeatIndicator": 1,
+        "MMSI": 5678844
+      }
+    }
+  },
+  "test_trassa_messages05": {"skip": false,
+    "t08_ais_type24b": {
+      "msg_type": "ais_type24b",
+      "test_conditions": {
+        "pass": [
+          "MessageID",
+          "RepeatIndicator",
+          "MMSI",
+          "shipandcargo",
+          "vendor_id",
+          "unit_model",
+          "serial_num",
+          "callsign",
+          "name",
+          "dimA",
+          "dimB",
+          "dimC",
+          "dimD",
+          "mother_ship_mmsi",
+          "Spare"
+        ]
+      },
+      "res_ptrn": "^.*PAISD.*",
+      "fields": {
+        "MessageID": 24,
+        "RepeatIndicator": 1,
+        "MMSI": 119304633,
+        "shipandcargo": 55,
+        "vendor_id": "VND",
+        "unit_model": 1,
+        "serial_num": 2,
+        "callsign": "STAR12",
+        "name": "SOMEVESSEL",
+        "dimA": 10,
+        "dimB": 11,
+        "dimC": 12,
+        "dimD": 13,
+        "mother_ship_mmsi": 0,
+        "Spare": 0
+      }
+    }
+  },
+  "test_trassa_messages06": {"skip": false,
+    "t03_nmea_PCMST_w_eq": {
+      "msg_type": "pcmst",
+      "test_conditions": {
+        "pass": [
+          {
+            "eq_state": "V"
+          },
+          {
+            "trassa_status": "F"
+          }
+        ]
+      },
+      "res_ptrn": "^.S.TRASSA.FE.KD.*",
+      "fields": {
+        "sntns_tmstmp": "133930.40",
+        "eq_state": "V"
+      }
+    },
+    "t03_nmea_PCMST_b_eq": {
+      "msg_type": "pcmst",
+      "test_conditions": {
+        "pass": [
+          {
+            "eq_state": "A"
+          },
+          {
+            "trassa_status": "F"
+          }
+        ]
+      },
+      "res_ptrn": "^.S.TRASSA.FE.KD.*",
+      "fields": {
+        "sntns_tmstmp": "133931.40",
+        "eq_state": "A"
+      }
+    }
+  },
+  "test_trassa_messages07": {"skip": false,
+    "t04_nmea_AITXT": {
+      "msg_type": "aitxt",
+      "test_conditions": {
+        "pass": [
+          "sntns_total",
+          "sntns_order_num",
+          "stat_code",
+          "stat_descr"
+        ]
+      },
+      "res_ptrn": ".*AITXT.*",
+      "fields": {
+        "sntns_total": "1",
+        "sntns_order_num": "1",
+        "stat_code": "21",
+        "stat_descr": "External DGNSS in use"
+      }
+    },
+    "t04_nmea_AIALR": {
+      "msg_type": "aialr",
+      "test_conditions": {
+        "pass": [
+          "fail_time",
+          "fail_code",
+          "fail_stat",
+          "tct_stat",
+          "fail_descr"
+        ]
+      },
+      "res_ptrn": ".*AIALR.*",
+      "fields": {
+        "fail_time": "133930.40",
+        "fail_code": "01",
+        "fail_stat": "V",
+        "tct_stat": "V",
+        "fail_descr": "Tx malfunction"
+      }
+    }
+  },
+  "test_trassa_messages08": {"skip": false,
+    "t04_peist_type": {
+      "msg_type": "peist",
+      "test_conditions": {
+        "no_msg_sent": [
+          {
+            "time_stamp": 1
+          },
+          {
+            "ims_status": "A"
+          }
+        ]
+      },
+      "res_ptrn": ".*PEIST,....1[1-4].*",
+      "fields": {
+        "time_stamp": "142418.00",
+        "ims_status": "A"
+      }
+    }
+  },
+  "test_trassa_messages09": {"skip": false,
+    "t03_ais_type01": {
+      "msg_type": "ais_type01",
+      "test_conditions": {
+        "pass": [
+          "MessageID",
+          "RepeatIndicator",
+          "MMSI",
+          "NavigationStatus",
+          "ROT",
+          "SOG",
+          "PositionAccuracy",
+          "longitude",
+          "latitude",
+          "COG",
+          "TrueHeading",
+          "TimeStamp",
+          "RegionalReserved",
+          "Spare",
+          "RAIM",
+          "state_syncstate",
+          "state_slottimeout",
+          "state_slotoffset"
+        ]
+      },
+      "fields": {
+        "MessageID": 1,
+        "RepeatIndicator": 1,
+        "MMSI": 1193046,
+        "NavigationStatus": 3,
+        "ROT": -2,
+        "SOG": 101.9,
+        "PositionAccuracy": 1,
+        "longitude": -122.16328055555556,
+        "latitude": 37.424458333333334,
+        "COG": 34.5,
+        "TrueHeading": 41,
+        "TimeStamp": 35,
+        "RegionalReserved": 0,
+        "Spare": 0,
+        "RAIM": false,
+        "state_syncstate": 2,
+        "state_slottimeout": 0,
+        "state_slotoffset": 1221
+      }
+    },
+    "t01_ais_type05": {
+      "msg_type": "ais_type05",
+      "test_conditions": {
+        "pass": [
+          "MessageID",
+          "RepeatIndicator",
+          "MMSI",
+          "AISversion",
+          "IMOnumber",
+          "callsign",
+          "name",
+          "shipandcargo",
+          "dimA",
+          "dimB",
+          "dimC",
+          "dimD",
+          "fixtype",
+          "ETAmonth",
+          "ETAday",
+          "ETAhour",
+          "ETAminute",
+          "draught",
+          "destination",
+          "dte",
+          "Spare"
+        ]
+      },
+      "fields": {
+        "MessageID": 5,
+        "RepeatIndicator": 1,
+        "MMSI": 1193046,
+        "AISversion": 0,
+        "IMOnumber": 3210,
+        "callsign": "PIRATE1",
+        "name": "SDRTYSDRTYSDRTYSDRTY",
+        "shipandcargo": 21,
+        "dimA": 10,
+        "dimB": 11,
+        "dimC": 12,
+        "dimD": 13,
+        "fixtype": 1,
+        "ETAmonth": 2,
+        "ETAday": 28,
+        "ETAhour": 9,
+        "ETAminute": 54,
+        "draught": 21.1,
+        "destination": "NOWHERE@@@@@@@@@@@@@",
+        "dte": 0,
+        "Spare": 0
+      }
+    },
+    "t01_ais_type18": {
+      "msg_type": "ais_type18",
+      "test_conditions": {
+        "msg_type": "ais_type18",
+        "pass": [
+          "MessageID",
+          "RepeatIndicator",
+          "MMSI",
+          "NavigationStatus",
+          "ROT",
+          "SOG",
+          "PositionAccuracy",
+          "longitude",
+          "latitude",
+          "COG",
+          "TrueHeading",
+          "TimeStamp",
+          "RegionalReserved",
+          "Spare",
+          "cs_unit",
+          "display_flag",
+          "dsc_flag",
+          "band_flag",
+          "msg22_flag",
+          "mode_flag",
+          "RAIM",
+          "CommStateSelector",
+          "state_syncstate",
+          "state_slottimeout",
+          "state_slotoffset"
+        ]
+      },
+      "fields": {
+        "MessageID": 1,
+        "RepeatIndicator": 1,
+        "MMSI": 1193046,
+        "NavigationStatus": 3,
+        "ROT": -2,
+        "SOG": 101.9,
+        "PositionAccuracy": 1,
+        "longitude": -122.16328055555556,
+        "latitude": 37.424458333333334,
+        "COG": 34.5,
+        "TrueHeading": 41,
+        "TimeStamp": 35,
+        "Spare": 0,
+        "cs_unit": false,
+        "display_flag": false,
+        "dsc_flag": false,
+        "band_flag": false,
+        "msg22_flag": false,
+        "mode_flag": false,
+        "RAIM": false,
+        "CommStateSelector": 0,
+        "state_syncstate": 2,
+        "state_slottimeout": 0,
+        "state_slotoffset": 1221
+      }
+    },
+    "t01_ais_type24a": {
+      "msg_type": "ais_type24a",
+      "test_conditions": {
+        "pass": [
+          "MessageID",
+          "RepeatIndicator",
+          "MMSI"
+        ]
+      },
+      "fields": {
+        "MessageID": 24,
+        "RepeatIndicator": 1,
+        "MMSI": 5678844
+      }
+    },
+    "t01_ais_type24b": {
+      "msg_type": "ais_type24b",
+      "test_conditions": {
+        "pass": [
+          "MessageID",
+          "RepeatIndicator",
+          "MMSI",
+          "shipandcargo",
+          "vendor_id",
+          "unit_model",
+          "serial_num",
+          "callsign",
+          "name",
+          "dimA",
+          "dimB",
+          "dimC",
+          "dimD",
+          "mother_ship_mmsi",
+          "Spare"
+        ]
+      },
+      "fields": {
+        "MessageID": 24,
+        "RepeatIndicator": 1,
+        "MMSI": 119304633,
+        "shipandcargo": 55,
+        "vendor_id": "VND",
+        "unit_model": 1,
+        "serial_num": 2,
+        "callsign": "FGRTUSP",
+        "name": "PTYDRPTYDRTFGRDTFGRD",
+        "dimA": 10,
+        "dimB": 11,
+        "dimC": 12,
+        "dimD": 13,
+        "mother_ship_mmsi": 0,
+        "Spare": 0
+      }
+    },
+    "t01_nmea_AITXT": {
+      "msg_type": "aitxt",
+      "test_conditions": {
+        "pass": [
+          "sntns_total",
+          "sntns_order_num",
+          "stat_code",
+          "stat_descr"
+        ]
+      },
+      "fields": {
+        "sntns_total": "1",
+        "sntns_order_num": "1",
+        "stat_code": "21",
+        "stat_descr": "External DGNSS in use"
+      }
+    },
+    "t01_nmea_AIALR": {
+      "msg_type": "aialr",
+      "test_conditions": {
+        "pass": [
+          "fail_time",
+          "fail_code",
+          "fail_stat",
+          "tct_stat",
+          "fail_descr"
+        ]
+      },
+      "fields": {
+        "fail_time": "133930.40",
+        "fail_code": "01",
+        "fail_stat": "V",
+        "tct_stat": "V",
+        "fail_descr": "Tx malfunction"
+      }
+    },
+    "t01_nmea_PCMST": {
+      "msg_type": "pcmst",
+      "test_conditions": {
+        "pass": []
+      },
+      "fields": {
+        "sntns_tmstmp": "133930.40",
+        "eq_state": "V"
+      }
+    },
+    "t01_ais_type05": {
+      "msg_type": "ais_type05",
+      "test_conditions": {
+        "pass": [
+          "MessageID",
+          "RepeatIndicator",
+          "MMSI",
+          "AISversion",
+          "IMOnumber",
+          "callsign",
+          "name",
+          "shipandcargo",
+          "dimA",
+          "dimB",
+          "dimC",
+          "dimD",
+          "fixtype",
+          "ETAmonth",
+          "ETAday",
+          "ETAhour",
+          "ETAminute",
+          "draught",
+          "destination",
+          "dte",
+          "Spare"
+        ]
+      },
+      "res_ptrn": "^.*PAISD.*",
+      "fields": {
+        "MessageID": 5,
+        "RepeatIndicator": 1,
+        "MMSI": 1193046,
+        "AISversion": 0,
+        "IMOnumber": 3210,
+        "callsign": "PIRATE1",
+        "name": "SDRTYSDRTYSDRTYSDRTY",
+        "shipandcargo": 21,
+        "dimA": 10,
+        "dimB": 11,
+        "dimC": 12,
+        "dimD": 13,
+        "fixtype": 1,
+        "ETAmonth": 2,
+        "ETAday": 28,
+        "ETAhour": 9,
+        "ETAminute": 54,
+        "draught": 21.1,
+        "destination": "NOWHERE@@@@@@@@@@@@@",
+        "dte": 0,
+        "Spare": 0
+      }
+    }
+  },
+  "test_trassa_messages10": {"skip": true,
+    "t01_ais_type18": {
+      "msg_type": "ais_type18",
+      "test_conditions": {
+        "msg_type": "ais_type18",
+        "pass": [
+          "MessageID",
+          "RepeatIndicator",
+          "MMSI",
+          "NavigationStatus",
+          "ROT",
+          "SOG",
+          "PositionAccuracy",
+          "longitude",
+          "latitude",
+          "COG",
+          "TrueHeading",
+          "TimeStamp",
+          "RegionalReserved",
+          "Spare",
+          "cs_unit",
+          "display_flag",
+          "dsc_flag",
+          "band_flag",
+          "msg22_flag",
+          "mode_flag",
+          "RAIM",
+          "CommStateSelector",
+          "state_syncstate",
+          "state_slottimeout",
+          "state_slotoffset"
+        ]
+      },
+      "res_ptrn": ".*PAIDD.*",
+      "fields": {
+        "MessageID": 1,
+        "RepeatIndicator": 1,
+        "MMSI": 1193047,
+        "NavigationStatus": 4,
+        "ROT": -2,
+        "SOG": 80.9,
+        "PositionAccuracy": 1,
+        "longitude": -122.16328055555556,
+        "latitude": 37.424458333333334,
+        "COG": 34.5,
+        "TrueHeading": 41,
+        "TimeStamp": 35,
+        "Spare": 0,
+        "cs_unit": false,
+        "display_flag": false,
+        "dsc_flag": false,
+        "band_flag": false,
+        "msg22_flag": false,
+        "mode_flag": false,
+        "RAIM": false,
+        "CommStateSelector": 0,
+        "state_syncstate": 2,
+        "state_slottimeout": 0,
+        "state_slotoffset": 1221
+      }
+    }
+  },
+  "test_trassa_messages11": {"skip": true,
+    "t08_ais_type24a": {
+      "msg_type": "ais_type24a",
+      "test_conditions": {
+        "pass": [
+          "MessageID",
+          "RepeatIndicator",
+          "MMSI"
+        ]
+      },
+      "res_ptrn": "^.*PAISD.*",
+      "fields": {
+        "MessageID": 24,
+        "RepeatIndicator": 1,
+        "MMSI": 5678844
+      }
+    },
+    "t08_ais_type24b": {
+      "msg_type": "ais_type24b",
+      "test_conditions": {
+        "pass": [
+          "MessageID",
+          "RepeatIndicator",
+          "MMSI",
+          "shipandcargo",
+          "vendor_id",
+          "unit_model",
+          "serial_num",
+          "callsign",
+          "name",
+          "dimA",
+          "dimB",
+          "dimC",
+          "dimD",
+          "mother_ship_mmsi",
+          "Spare"
+        ]
+      },
+      "res_ptrn": "^.*PAISD.*",
+      "fields": {
+        "MessageID": 24,
+        "RepeatIndicator": 1,
+        "MMSI": 119304633,
+        "shipandcargo": 55,
+        "vendor_id": "VND",
+        "unit_model": 1,
+        "serial_num": 2,
+        "callsign": "STAR12",
+        "name": "SOMEVESSEL",
+        "dimA": 10,
+        "dimB": 11,
+        "dimC": 12,
+        "dimD": 13,
+        "mother_ship_mmsi": 0,
+        "Spare": 0
+      }
+    }
+  }
+}
+
+
+
+
+

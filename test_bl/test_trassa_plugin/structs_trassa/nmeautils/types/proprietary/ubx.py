@@ -8,13 +8,15 @@ from ...nmea_utils import *
 # u-blox
 class UBX(nmea.ProprietarySentence):
     sentence_types = {}
-
-    def __new__(_cls, manufacturer, data):
+    
+    
+    def __new__ (_cls, manufacturer, data):
         name = manufacturer + data[1]
         cls = _cls.sentence_types.get(name, _cls)
         return super(UBX, cls).__new__(cls)
-
-    def __init__(self, manufacturer, data):
+    
+    
+    def __init__ (self, manufacturer, data):
         self.sentence_type = manufacturer + data[1]
         super(UBX, self).__init__(manufacturer, data[2:])
 
@@ -41,7 +43,7 @@ class UBX00(UBX, LatLonFix):
         ("Time Dilution of Precision", "tdop"),
         ("Number of Satellites Used", "num_svs"),
         ("Reserved", "reserved")
-
+    
     )
 
 
@@ -51,9 +53,10 @@ class UBX03(UBX):
     fields = (
         ("Number of GNSS Satellites Tracked", "num_sv", int),
     )
-
+    
+    
     @property
-    def satellite_list(self):
+    def satellite_list (self):
         return self.data[1:]
 
 

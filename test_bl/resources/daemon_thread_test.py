@@ -1,17 +1,23 @@
-import sys, threading, time, logging
-logging.basicConfig(level=logging.DEBUG,
-                    format='(%(threadName)-10s) %(message)s',
+import logging
+import threading
+import time
+
+logging.basicConfig(level = logging.DEBUG,
+                    format = '(%(threadName)-10s) %(message)s',
                     )
 
 
 class TestThread(threading.Thread):
-    def __init__(self, daemon):
+    
+    
+    def __init__ (self, daemon):
         threading.Thread.__init__(self)
         self.daemon = daemon
-        self.name="DAEMON_THREAD"
-
-    def run(self):
-        t= threading.currentThread()
+        self.name = "DAEMON_THREAD"
+    
+    
+    def run (self):
+        t = threading.currentThread()
         x = 0
         while 1:
             if self.daemon:
@@ -21,8 +27,9 @@ class TestThread(threading.Thread):
             x += 1
             time.sleep(1)
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
+    
     print("__main__ start")
     test = "daemonic"
     if test == "daemonic":
@@ -30,9 +37,9 @@ if __name__ == "__main__":
     else:
         thread = TestThread(False)
     thread.start()
-
+    
     for t in threading.enumerate():
         logging.info('joining %s', t.getName())
     time.sleep(20)
-
+    
     print("__main__ stop")

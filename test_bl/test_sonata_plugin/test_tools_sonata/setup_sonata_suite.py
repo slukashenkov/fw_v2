@@ -24,7 +24,7 @@ class SetupSonataSuite:
         '''
         self.curr_dir_name = os.path.dirname(__file__)
         self.module_abs_path = os.path.abspath(os.path.dirname(__file__))
-        self.path_to_proj=re.findall(r".*\\test_bl",self.module_abs_path)
+        #self.path_to_proj=re.findall(r".*\\test_bl",self.module_abs_path)
         '''-----------------------------------------------------------------------------------------------------------
         GET GENERAL PREFERENCES
         '''
@@ -63,6 +63,7 @@ class SetupSonataSuite:
         '''
         self.udp_srv_name = self.sr.set_udp_server(ip_address   =self.g_prefs.get_udp_ip_from(),
                                                     port        =self.g_prefs.get_udp_port_from())
+        self.sr.start_udp_server(self.udp_srv_name)
 
         '''-----------------------------------------------------------------------------------------------------------
         DATA PROCESSING
@@ -167,14 +168,15 @@ class SetupSonataSuite:
                         '''
                         if udp_server_id !=None:
                             server_id=udp_server_id
-                            self.sr.test_messages_received(messages_list    = messages_to_send,
-                                                            server_id       = udp_server_id)
+                            self.sr.check_all_messages_received(messages_list    = messages_to_send,
+																server_id       = udp_server_id)
                         else:
                             server_id=self.udp_srv_name
-                            self.sr.test_messages_received(messages_list    = messages_to_send,
-                                                           server_id        = server_id)
+                            self.sr.check_all_messages_received(messages_list    = messages_to_send,
+																server_id        = server_id)
 
                         '''get the queue to read from'''
+                        '''TODO check sonata is works when we pass buffer further '''
                         received_q = self.sr.get_received_queue(server_id)
                         logging.debug("DATA RECEIVED: ==>" + str(received_q) + "\n")
                         if parser ==None:
@@ -244,11 +246,11 @@ class SetupSonataSuite:
 
                 elif test_case_type == self.negative_test_kword:
                                 result = self.test_suite_parsed_data
-                                '''
+
                                 for comparison in result:
                                         self.logger.error(comparison + ":==> " + str(result[comparison]))
                                         self.logger.error('\n')
-                                '''
+
         self.test_suite_compared_data = deepcopy(result)
         return result
     '''---------------------------------------------------------------------------------------------------------------
@@ -356,8 +358,15 @@ class SetupSonataSuite:
         self.ext_scripts.sut_stop_commands = self.s_prefs.get_sonata_stop_commands()
         return
 
-    def setup_vir_env(self):
-        self.ext_scripts.set_test_env()
+    def setup_vir_env(self,
+                      no_VM = None):
+        if no_VM == None:
+            self.ext_scripts.set_test_env()
+        elif no_VM == True:
+            self.ext_scripts.set_test_env(no_VM = True)
+        else:
+            raise Exception("no_VM flag is not Boolean")
+            
         return
 
     def _inspect_atr(self,

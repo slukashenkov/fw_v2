@@ -234,7 +234,6 @@ class SendReceiveSonata():
                 self.msg_to_send_q.put(msg)
                 self.msgs_to_send_cntr = self.msgs_to_send_cntr + 1
 
-
         '''----------------------------------------------------------------------------------------------------------'''
         '''SEND TEST UDP MESSAGES 
         '''
@@ -251,7 +250,6 @@ class SendReceiveSonata():
         self.test_num_messages()
         sleep(random.randrange(1, 3))
 
-
     def udp_server_listen_on(self):
         self.logger.info('Starting up UDP Server to listen traffic from KD')
         self.t = threading.Thread(target=self.udp_server.serve_forever)
@@ -262,7 +260,6 @@ class SendReceiveSonata():
     def udp_server_stop_listen_on(self):
         self.logger.info('Stop UDP Server to listen traffic from KD')
         self.udp_server.stop_server()
-
 
     def close_UDP_socket(self):
         self.logger.info('Close socket on which test data_from is sent to KD')

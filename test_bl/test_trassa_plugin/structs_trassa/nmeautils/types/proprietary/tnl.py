@@ -3,16 +3,20 @@
 # pylint: disable=wildcard-import,unused-wildcard-import
 from ... import nmea
 from ...nmea_utils import *
+
 """ Support for proprietary messages from BD9xx recievers.
     Documentation: www.trimble.com/OEM_ReceiverHelp/v4.85/en/
 """
+
 
 class TNL(nmea.ProprietarySentence):
     sentence_types = {}
     """
         Generic Trimble Message
     """
-    def __new__(_cls, manufacturer, data):
+    
+    
+    def __new__ (_cls, manufacturer, data):
         '''
             Return the correct sentence type based on the first field
         '''
@@ -20,8 +24,9 @@ class TNL(nmea.ProprietarySentence):
         name = manufacturer + sentence_type
         cls = _cls.sentence_types.get(name, _cls)
         return super(TNL, cls).__new__(cls)
-
-    def __init__(self, manufacturer, data):
+    
+    
+    def __init__ (self, manufacturer, data):
         self.sentence_type = data[0] or data[1]
         super(TNL, self).__init__(manufacturer, data)
 

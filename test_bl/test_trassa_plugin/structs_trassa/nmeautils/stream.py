@@ -1,15 +1,19 @@
 from __future__ import unicode_literals
+
 from . import nmea
 
 __all__ = ['NMEAStreamReader']
 
 ERRORS = ('raise', 'yield', 'ignore')
 
+
 class NMEAStreamReader(object):
     '''
     Reads NMEA sentences from a stream.
     '''
-    def __init__(self, stream=None, errors='raise'):
+    
+    
+    def __init__ (self, stream = None, errors = 'raise'):
         '''
         Create NMEAStreamReader object.
 
@@ -24,16 +28,17 @@ class NMEAStreamReader(object):
             `'ignore'`          completely ignore and suppress the error, and
                                 continue reading at the next line
         '''
-
+        
         if errors not in ERRORS:
             raise ValueError('errors must be one of {!r} (was: {!r})'
-                    .format(ERRORS, errors))
-
+                             .format(ERRORS, errors))
+        
         self.errors = errors
         self.stream = stream
         self.buffer = ''
-
-    def next(self, data=None):
+    
+    
+    def next (self, data = None):
         '''
         consume `data` (if given, or calls `stream.read()` if `stream` was given
         in the constructor) and yield a list of `NMEASentence` objects parsed
@@ -44,10 +49,10 @@ class NMEAStreamReader(object):
                 data = self.stream.readline()
             else:
                 return
-
+        
         lines = (self.buffer + data).split('\n')
         self.buffer = lines.pop()
-
+        
         for line in lines:
             try:
                 msg = nmea.NMEASentence.parse(line)

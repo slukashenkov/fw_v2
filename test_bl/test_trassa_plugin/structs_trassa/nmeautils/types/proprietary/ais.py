@@ -5,24 +5,28 @@ from ... import nmea
 
 class AIS(nmea.ProprietarySentence):
     sentence_types = {}
-
-    def __new__(_cls,
-                manufacturer,
-                datatype,
-                data):
-
-        name = manufacturer + datatype
-        cls = _cls.sentence_types.get(name, _cls)
-        return super(AIS, cls).__new__(cls)
-
-    def __init__(self,
+    
+    
+    def __new__ (_cls,
                  manufacturer,
                  datatype,
                  data):
-        self.sentence_type = manufacturer +  datatype
+        name = datatype
+        cls = _cls.sentence_types.get(name,
+                                      _cls)
+        
+        return super(AIS, cls).__new__(cls)
+    
+    
+    def __init__ (self,
+                  manufacturer,
+                  datatype,
+                  data):
+        self.sentence_type = datatype
         super(AIS, self).__init__(manufacturer,
                                   datatype,
                                   data)
+
 
 class AISD(AIS):
     """PAISD - AIS data for FOR CUSTOM equipment

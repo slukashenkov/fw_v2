@@ -1,15 +1,17 @@
 from test_bl.test_sonata_plugin.configs_sonata import sonata_send_recieve_properties
 
 
-
 class MessagesPacker:
-    def __init__(self,
-                 conf=sonata_send_recieve_properties.SonataSendReceiveProperties):
-
+    
+    
+    def __init__ (self,
+                  conf = sonata_send_recieve_properties.SonataSendReceiveProperties):
+        
         return
-
-    def load_messages(self):
-
+    
+    
+    def load_messages (self):
+        
         """
         self.messages_type,
                                                self.messages_src,
@@ -25,11 +27,11 @@ class MessagesPacker:
         '''
         udp_msgs = []
         '''
-        Clean up ultimate receiver of 
+        Clean up ultimate receiver of
         TEST messages
         '''
         self.msgs_to_send = None
-
+        
         if self.messages_src == "TXT":
             '''
             Read stuff from the file
@@ -37,7 +39,7 @@ class MessagesPacker:
             try:
                 # with open(filename, 'r') as fin:
                 with open(self.message_dir, 'r') as fin:
-
+                    
                     for line in fin:
                         start = line.find('$')
                         msg = (line[start:] if start != -1 else line).strip()
@@ -46,19 +48,19 @@ class MessagesPacker:
                         if not msg:
                             continue
                         udp_msgs.append(''.join([msg, '\n\n']))
-
+            
             except (OSError, IOError) as e:
                 print(str(e))
             self.msgs_to_send = udp_msgs
             return
-
+        
         elif self.messages_src == "JSON":
             '''
             Read stuff from the JSON config.
-            TODO: the JSON reading part 
+            TODO: the JSON reading part
             For now 5.06.18
             just get a couple of Sonata messages
-            for 
+            for
             testing purposes
             '''
             if self.messages_type == "SONATA":
@@ -72,5 +74,3 @@ class MessagesPacker:
                         print(str(e))
             self.msgs_to_send = udp_msgs
             return
-
-

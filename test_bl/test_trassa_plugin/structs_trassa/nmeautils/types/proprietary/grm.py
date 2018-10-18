@@ -4,15 +4,18 @@ from decimal import Decimal
 
 from ... import nmea
 
+
 class GRM(nmea.ProprietarySentence):
     sentence_types = {}
-
-    def __new__(_cls, manufacturer, data):
+    
+    
+    def __new__ (_cls, manufacturer, data):
         name = manufacturer + data[0]
         cls = _cls.sentence_types.get(name, _cls)
         return super(GRM, cls).__new__(cls)
-
-    def __init__(self, manufacturer, data):
+    
+    
+    def __init__ (self, manufacturer, data):
         self.sentence_type = manufacturer + data[0]
         super(GRM, self).__init__(manufacturer, data)
 
@@ -49,6 +52,3 @@ class GRMZ(GRM):
         ("Altitude Units (Feet)", "altitude_unit"),
         ("Positional Fix Dimension (2=user, 3=GPS)", "pos_fix_dim")
     )
-
-
-

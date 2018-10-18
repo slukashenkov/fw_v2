@@ -4,7 +4,7 @@ __version__ = '$Revision: 2068 $'.split()[1]
 __date__ = '$Date: 2006-05-02 08:17:59 -0400 (Tue, 02 May 2006) $'.split()[1]
 __author__ = 'Kurt Schwehr'
 
-__doc__='''
+__doc__ = '''
 Handle encoding and decoding AIS strings.
 
 @bug: need some more interesting doctests!
@@ -18,8 +18,8 @@ Handle encoding and decoding AIS strings.
 @type characterBits: dict
 
 
-@author: '''+__author__+'''
-@version: ''' + __version__ +'''
+@author: ''' + __author__ + '''
+@version: ''' + __version__ + '''
 @copyright: 2006
 
 @var __date__: Date of last svn commit
@@ -27,28 +27,26 @@ Handle encoding and decoding AIS strings.
 @undocumented: buildDict
 '''
 
-
-
 # python standard library
-import sys
 
 # External libs
 from BitVector import BitVector
 
 # Local
 from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisbinary
-#import verbosity
-#from verbosity import BOMBASTIC,VERBOSE,TRACE,TERSE,ALWAYS
 
-characterLUT=[ '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
-	       'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
-	       'Z', '[', '\\', ']', '^', '-', ' ',
-	       '!', '"', '#', '$', '%', '&', '`', '(', ')', '*', '+', ',', '-', '.', '/',
-	       '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-	       ':', ';', '<', '=', '>', '?'
-]
+# import verbosity
+# from verbosity import BOMBASTIC,VERBOSE,TRACE,TERSE,ALWAYS
 
-characterDict={
+characterLUT = ['@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
+                'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y',
+                'Z', '[', '\\', ']', '^', '-', ' ',
+                '!', '"', '#', '$', '%', '&', '`', '(', ')', '*', '+', ',', '-', '.', '/',
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                ':', ';', '<', '=', '>', '?'
+                ]
+
+characterDict = {
     '@': 0, 'A': 1, 'B': 2, 'C': 3, 'D': 4, 'E': 5, 'F': 6,
     'G': 7, 'H': 8, 'I': 9, 'J': 10, 'K': 11, 'L': 12, 'M': 13,
     'N': 14, 'O': 15, 'P': 16, 'Q': 17, 'R': 18, 'S': 19, 'T': 20,
@@ -64,101 +62,101 @@ characterDict={
 # The above illustrates the inline ways of documenting module variables
 
 
-characterBits={}
-characterBits['@']=aisbinary.setBitVectorSize(BitVector(intVal=0),6)
-characterBits['A']=aisbinary.setBitVectorSize(BitVector(intVal=1),6)
-characterBits['B']=aisbinary.setBitVectorSize(BitVector(intVal=2),6)
-characterBits['C']=aisbinary.setBitVectorSize(BitVector(intVal=3),6)
-characterBits['D']=aisbinary.setBitVectorSize(BitVector(intVal=4),6)
-characterBits['E']=aisbinary.setBitVectorSize(BitVector(intVal=5),6)
-characterBits['F']=aisbinary.setBitVectorSize(BitVector(intVal=6),6)
-characterBits['G']=aisbinary.setBitVectorSize(BitVector(intVal=7),6)
-characterBits['H']=aisbinary.setBitVectorSize(BitVector(intVal=8),6)
-characterBits['I']=aisbinary.setBitVectorSize(BitVector(intVal=9),6)
-characterBits['J']=aisbinary.setBitVectorSize(BitVector(intVal=10),6)
-characterBits['K']=aisbinary.setBitVectorSize(BitVector(intVal=11),6)
-characterBits['L']=aisbinary.setBitVectorSize(BitVector(intVal=12),6)
-characterBits['M']=aisbinary.setBitVectorSize(BitVector(intVal=13),6)
-characterBits['N']=aisbinary.setBitVectorSize(BitVector(intVal=14),6)
-characterBits['O']=aisbinary.setBitVectorSize(BitVector(intVal=15),6)
-characterBits['P']=aisbinary.setBitVectorSize(BitVector(intVal=16),6)
-characterBits['Q']=aisbinary.setBitVectorSize(BitVector(intVal=17),6)
-characterBits['R']=aisbinary.setBitVectorSize(BitVector(intVal=18),6)
-characterBits['S']=aisbinary.setBitVectorSize(BitVector(intVal=19),6)
-characterBits['T']=aisbinary.setBitVectorSize(BitVector(intVal=20),6)
-characterBits['U']=aisbinary.setBitVectorSize(BitVector(intVal=21),6)
-characterBits['V']=aisbinary.setBitVectorSize(BitVector(intVal=22),6)
-characterBits['W']=aisbinary.setBitVectorSize(BitVector(intVal=23),6)
-characterBits['X']=aisbinary.setBitVectorSize(BitVector(intVal=24),6)
-characterBits['Y']=aisbinary.setBitVectorSize(BitVector(intVal=25),6)
-characterBits['Z']=aisbinary.setBitVectorSize(BitVector(intVal=26),6)
-characterBits['[']=aisbinary.setBitVectorSize(BitVector(intVal=27),6)
-characterBits['\\']=aisbinary.setBitVectorSize(BitVector(intVal=28),6)
-characterBits[']']=aisbinary.setBitVectorSize(BitVector(intVal=29),6)
-characterBits['^']=aisbinary.setBitVectorSize(BitVector(intVal=30),6)
-characterBits['-']=aisbinary.setBitVectorSize(BitVector(intVal=31),6)
-characterBits[' ']=aisbinary.setBitVectorSize(BitVector(intVal=32),6)
-characterBits['!']=aisbinary.setBitVectorSize(BitVector(intVal=33),6)
-characterBits['"']=aisbinary.setBitVectorSize(BitVector(intVal=34),6)
-characterBits['#']=aisbinary.setBitVectorSize(BitVector(intVal=35),6)
-characterBits['$']=aisbinary.setBitVectorSize(BitVector(intVal=36),6)
-characterBits['%']=aisbinary.setBitVectorSize(BitVector(intVal=37),6)
-characterBits['&']=aisbinary.setBitVectorSize(BitVector(intVal=38),6)
-characterBits['`']=aisbinary.setBitVectorSize(BitVector(intVal=39),6)
-characterBits['(']=aisbinary.setBitVectorSize(BitVector(intVal=40),6)
-characterBits[')']=aisbinary.setBitVectorSize(BitVector(intVal=41),6)
-characterBits['*']=aisbinary.setBitVectorSize(BitVector(intVal=42),6)
-characterBits['+']=aisbinary.setBitVectorSize(BitVector(intVal=43),6)
-characterBits[',']=aisbinary.setBitVectorSize(BitVector(intVal=44),6)
-characterBits['-']=aisbinary.setBitVectorSize(BitVector(intVal=45),6)
-characterBits['.']=aisbinary.setBitVectorSize(BitVector(intVal=46),6)
-characterBits['/']=aisbinary.setBitVectorSize(BitVector(intVal=47),6)
-characterBits['0']=aisbinary.setBitVectorSize(BitVector(intVal=48),6)
-characterBits['1']=aisbinary.setBitVectorSize(BitVector(intVal=49),6)
-characterBits['2']=aisbinary.setBitVectorSize(BitVector(intVal=50),6)
-characterBits['3']=aisbinary.setBitVectorSize(BitVector(intVal=51),6)
-characterBits['4']=aisbinary.setBitVectorSize(BitVector(intVal=52),6)
-characterBits['5']=aisbinary.setBitVectorSize(BitVector(intVal=53),6)
-characterBits['6']=aisbinary.setBitVectorSize(BitVector(intVal=54),6)
-characterBits['7']=aisbinary.setBitVectorSize(BitVector(intVal=55),6)
-characterBits['8']=aisbinary.setBitVectorSize(BitVector(intVal=56),6)
-characterBits['9']=aisbinary.setBitVectorSize(BitVector(intVal=57),6)
-characterBits[':']=aisbinary.setBitVectorSize(BitVector(intVal=58),6)
-characterBits[';']=aisbinary.setBitVectorSize(BitVector(intVal=59),6)
-characterBits['<']=aisbinary.setBitVectorSize(BitVector(intVal=60),6)
-characterBits['=']=aisbinary.setBitVectorSize(BitVector(intVal=61),6)
-characterBits['>']=aisbinary.setBitVectorSize(BitVector(intVal=62),6)
-characterBits['?']=aisbinary.setBitVectorSize(BitVector(intVal=63),6)
+characterBits = {}
+characterBits['@'] = aisbinary.setBitVectorSize(BitVector(intVal = 0), 6)
+characterBits['A'] = aisbinary.setBitVectorSize(BitVector(intVal = 1), 6)
+characterBits['B'] = aisbinary.setBitVectorSize(BitVector(intVal = 2), 6)
+characterBits['C'] = aisbinary.setBitVectorSize(BitVector(intVal = 3), 6)
+characterBits['D'] = aisbinary.setBitVectorSize(BitVector(intVal = 4), 6)
+characterBits['E'] = aisbinary.setBitVectorSize(BitVector(intVal = 5), 6)
+characterBits['F'] = aisbinary.setBitVectorSize(BitVector(intVal = 6), 6)
+characterBits['G'] = aisbinary.setBitVectorSize(BitVector(intVal = 7), 6)
+characterBits['H'] = aisbinary.setBitVectorSize(BitVector(intVal = 8), 6)
+characterBits['I'] = aisbinary.setBitVectorSize(BitVector(intVal = 9), 6)
+characterBits['J'] = aisbinary.setBitVectorSize(BitVector(intVal = 10), 6)
+characterBits['K'] = aisbinary.setBitVectorSize(BitVector(intVal = 11), 6)
+characterBits['L'] = aisbinary.setBitVectorSize(BitVector(intVal = 12), 6)
+characterBits['M'] = aisbinary.setBitVectorSize(BitVector(intVal = 13), 6)
+characterBits['N'] = aisbinary.setBitVectorSize(BitVector(intVal = 14), 6)
+characterBits['O'] = aisbinary.setBitVectorSize(BitVector(intVal = 15), 6)
+characterBits['P'] = aisbinary.setBitVectorSize(BitVector(intVal = 16), 6)
+characterBits['Q'] = aisbinary.setBitVectorSize(BitVector(intVal = 17), 6)
+characterBits['R'] = aisbinary.setBitVectorSize(BitVector(intVal = 18), 6)
+characterBits['S'] = aisbinary.setBitVectorSize(BitVector(intVal = 19), 6)
+characterBits['T'] = aisbinary.setBitVectorSize(BitVector(intVal = 20), 6)
+characterBits['U'] = aisbinary.setBitVectorSize(BitVector(intVal = 21), 6)
+characterBits['V'] = aisbinary.setBitVectorSize(BitVector(intVal = 22), 6)
+characterBits['W'] = aisbinary.setBitVectorSize(BitVector(intVal = 23), 6)
+characterBits['X'] = aisbinary.setBitVectorSize(BitVector(intVal = 24), 6)
+characterBits['Y'] = aisbinary.setBitVectorSize(BitVector(intVal = 25), 6)
+characterBits['Z'] = aisbinary.setBitVectorSize(BitVector(intVal = 26), 6)
+characterBits['['] = aisbinary.setBitVectorSize(BitVector(intVal = 27), 6)
+characterBits['\\'] = aisbinary.setBitVectorSize(BitVector(intVal = 28), 6)
+characterBits[']'] = aisbinary.setBitVectorSize(BitVector(intVal = 29), 6)
+characterBits['^'] = aisbinary.setBitVectorSize(BitVector(intVal = 30), 6)
+characterBits['-'] = aisbinary.setBitVectorSize(BitVector(intVal = 31), 6)
+characterBits[' '] = aisbinary.setBitVectorSize(BitVector(intVal = 32), 6)
+characterBits['!'] = aisbinary.setBitVectorSize(BitVector(intVal = 33), 6)
+characterBits['"'] = aisbinary.setBitVectorSize(BitVector(intVal = 34), 6)
+characterBits['#'] = aisbinary.setBitVectorSize(BitVector(intVal = 35), 6)
+characterBits['$'] = aisbinary.setBitVectorSize(BitVector(intVal = 36), 6)
+characterBits['%'] = aisbinary.setBitVectorSize(BitVector(intVal = 37), 6)
+characterBits['&'] = aisbinary.setBitVectorSize(BitVector(intVal = 38), 6)
+characterBits['`'] = aisbinary.setBitVectorSize(BitVector(intVal = 39), 6)
+characterBits['('] = aisbinary.setBitVectorSize(BitVector(intVal = 40), 6)
+characterBits[')'] = aisbinary.setBitVectorSize(BitVector(intVal = 41), 6)
+characterBits['*'] = aisbinary.setBitVectorSize(BitVector(intVal = 42), 6)
+characterBits['+'] = aisbinary.setBitVectorSize(BitVector(intVal = 43), 6)
+characterBits[','] = aisbinary.setBitVectorSize(BitVector(intVal = 44), 6)
+characterBits['-'] = aisbinary.setBitVectorSize(BitVector(intVal = 45), 6)
+characterBits['.'] = aisbinary.setBitVectorSize(BitVector(intVal = 46), 6)
+characterBits['/'] = aisbinary.setBitVectorSize(BitVector(intVal = 47), 6)
+characterBits['0'] = aisbinary.setBitVectorSize(BitVector(intVal = 48), 6)
+characterBits['1'] = aisbinary.setBitVectorSize(BitVector(intVal = 49), 6)
+characterBits['2'] = aisbinary.setBitVectorSize(BitVector(intVal = 50), 6)
+characterBits['3'] = aisbinary.setBitVectorSize(BitVector(intVal = 51), 6)
+characterBits['4'] = aisbinary.setBitVectorSize(BitVector(intVal = 52), 6)
+characterBits['5'] = aisbinary.setBitVectorSize(BitVector(intVal = 53), 6)
+characterBits['6'] = aisbinary.setBitVectorSize(BitVector(intVal = 54), 6)
+characterBits['7'] = aisbinary.setBitVectorSize(BitVector(intVal = 55), 6)
+characterBits['8'] = aisbinary.setBitVectorSize(BitVector(intVal = 56), 6)
+characterBits['9'] = aisbinary.setBitVectorSize(BitVector(intVal = 57), 6)
+characterBits[':'] = aisbinary.setBitVectorSize(BitVector(intVal = 58), 6)
+characterBits[';'] = aisbinary.setBitVectorSize(BitVector(intVal = 59), 6)
+characterBits['<'] = aisbinary.setBitVectorSize(BitVector(intVal = 60), 6)
+characterBits['='] = aisbinary.setBitVectorSize(BitVector(intVal = 61), 6)
+characterBits['>'] = aisbinary.setBitVectorSize(BitVector(intVal = 62), 6)
+characterBits['?'] = aisbinary.setBitVectorSize(BitVector(intVal = 63), 6)
 
 
-def buildDict():
+def buildDict ():
     '''
     Helper to build the build the carachterBits and Dict tables
 
     @rtype: test to stdout
     '''
-    count=0
-    print( 'characterDict={')
+    count = 0
+    print('characterDict={')
     for i in range(len(characterLUT)):
         count += 1
         c = characterLUT[i]
-        if c=='\\':
-            c='\\\\'
-            print("'"+c+"': "+str(i)+",",)
-
-        if count%6==0:
+        if c == '\\':
+            c = '\\\\'
+            print("'" + c + "': " + str(i) + ",", )
+        
+        if count % 6 == 0:
             print
             print('}')
             print('characterBits={}')
-
+    
     for i in range(len(characterLUT)):
         c = characterLUT[i]
-        if c=='\\':
-            c='\\\\'
-            print("characterBits['"+c+"']"+'=aisbinary.setBitVectorSize(BitVector(intVal='+str(i)+'),6)')
+        if c == '\\':
+            c = '\\\\'
+            print("characterBits['" + c + "']" + '=aisbinary.setBitVectorSize(BitVector(intVal=' + str(i) + '),6)')
 
 
-def decode(bits,dropAfterFirstAt=False):
+def decode (bits, dropAfterFirstAt = False):
     '''
     Decode bits as a string.  Does not remove the end space or @@@@.  Must be an multiple of 6 bits.
 
@@ -167,8 +165,8 @@ def decode(bits,dropAfterFirstAt=False):
     @return: string with pad spaces or @@@@
     @rtype: str
     '''
-    #assert(len(bits) % 6 == 0)
-    numchar=len(bits)/6
+    # assert(len(bits) % 6 == 0)
+    numchar = len(bits) / 6
     s = []
     '''
     for i in range(numchar): # FIX: off by one?
@@ -178,14 +176,14 @@ def decode(bits,dropAfterFirstAt=False):
         val = int(charbits)
         if dropAfterFirstAt and val==0:
             break # 0 is the @ character which is used to pad strings.
-	    s.append(characterLUT[val])
+        s.append(characterLUT[val])
 
     return ''.join(s)
     '''
 
 
-def encode(string,
-           bitSize=None):
+def encode (string,
+            bitSize = None):
     '''
     @param string: python ascii string to encode.
     @type string: str
@@ -198,7 +196,7 @@ def encode(string,
     @bug: check that bitSize is a multple of 6
     @bug: pad with "@" to reach requested bitSize
     '''
-
+    
     """Convert a string to a BitVector.
 
     TODO(schwehr): Pad with "@" to reach requested bitSize.
@@ -227,24 +225,22 @@ def encode(string,
     return bv
     '''
     if bitSize:
-        assert(bitSize%6==0)
-        bv = BitVector(size=0)
+        assert (bitSize % 6 == 0)
+        bv = BitVector(size = 0)
         print(bv)
     for i in range(len(string)):
-        bv = bv+characterBits[string[i]]
-
+        bv = bv + characterBits[string[i]]
+    
     if bitSize:
         if bitSize < len(bv):
-            print('ERROR:  string longer than specified bit count: "'+string+'"', bitSize, len(bv))
+            print('ERROR:  string longer than specified bit count: "' + string + '"', bitSize, len(bv))
             assert False
         extra = bitSize - len(bv)
-        bv = bv+BitVector(size=extra)
+        bv = bv + BitVector(size = extra)
     return bv
 
 
-
-
-def unpad(string,removeBlanks=True):
+def unpad (string, removeBlanks = True):
     """
     Remove AIS string padding
 
@@ -280,14 +276,15 @@ def unpad(string,removeBlanks=True):
     @return: cleaned up string
     @rtype: str
     """
-    while len(string)>0 and string[-1]=='@':
-        string=string[:-1]
+    while len(string) > 0 and string[-1] == '@':
+        string = string[:-1]
         if removeBlanks:
-            while len(string)>0 and string[-1]==' ':
-                string=string[:-1]
+            while len(string) > 0 and string[-1] == ' ':
+                string = string[:-1]
     return string
 
-def pad(string,length):
+
+def pad (string, length):
     '''
     pad a string out to the proper length with the @ character as required by the ais spec
 
@@ -311,12 +308,12 @@ def pad(string,length):
 
     @bug: Use a list and join to make the string building faster
     '''
-    while len(string)<length: string += '@'
+    while len(string) < length:
+        string += '@'
     return string
 
 
 if __name__ == '__main__':
-
     '''
     from optparse import OptionParser
     myparser = OptionParser(usage="%prog [options]",version="%prog "+__version__)
@@ -333,7 +330,7 @@ if __name__ == '__main__':
         sys.argv= [sys.argv[0]]
     #	if options.verbosity>=VERBOSE: sys.argv.append('-v')
         
-	    import doctest
+        import doctest
             numfail,numtests=doctest.testmod()
     
             if numfail==0:
@@ -343,5 +340,5 @@ if __name__ == '__main__':
                  success=False
 
     if not success:
-	sys.exit('Something Failed')
-	'''
+    sys.exit('Something Failed')
+    '''

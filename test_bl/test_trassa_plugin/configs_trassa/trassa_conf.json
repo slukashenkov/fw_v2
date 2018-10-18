@@ -1,0 +1,45 @@
+{
+  "trassa_tests_configuration": {
+                            "test_data_trassa": {"type":"json",
+                                                "windows": {
+                                                  "test_data_location": "test_trassa_plugin\\resources_trassa\\trassa_test_data.json"
+                                                },
+                                                "linux": {
+                                                  "test_data_location": "test_trassa_plugin/resources_trassa/trassa_test_data.json"
+                                                }
+                            },
+
+    "sut_control_commands_start": {
+                      "test_exec":"./testScr_param.bash TEST_start",
+                      "com00":"cd /usr/bin/dolphin",
+                      "com01":"/bin/tar -xzf /usr/bin/dolphin/trassa_confs.tar.gz",
+                      "com02":"cd /usr/bin/dolphin/trassa_confs",
+                      "com03":"./StartTrassaOnly.bash",
+                      "com04":"cd /usr/bin/dolphin",
+                      "com05":"ps afx | egrep \".*./[W]atchDogServer --start .*\""
+                      },
+
+    "sut_control_commands_stop": {
+                      "test_exec": "./testScr_param.bash TEST_stop",
+                      "com00": "cd /usr/bin/dolphin/trassa_confs",
+                      "com01": " ./StopTrassaOnly.bash"
+                      },
+
+      "send_receive_prefs": {
+               "udp_ip_to_01":    "10.11.10.11",
+               "udp_port_to_01":  "47300",
+               "udp_ip_from_01":  "10.11.10.12",
+               "udp_port_from_01": 47302 ,
+
+               "udp_ip_to_02":     "10.11.10.11",
+               "udp_port_to_02":   "47302",
+               "udp_ip_from_02":   "10.11.10.12",
+               "udp_port_from_02": 47300,
+
+               "udp_buffsize_from": "4096"
+     }
+    }
+
+}
+
+

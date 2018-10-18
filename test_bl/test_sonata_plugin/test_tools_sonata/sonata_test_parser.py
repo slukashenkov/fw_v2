@@ -55,11 +55,6 @@ class SonataTestParser:
         self.key_sent = None
         self.key_received = None
 
-        '''
-        SETUP FOR LOG FILE RAKING
-        '''
-        self.log_dir_name
-
         self.logger.debug("Sonata Parser is SET")
 
     def parse_from(self):
@@ -82,7 +77,12 @@ class SonataTestParser:
 
         data_to_parse = self.data_from[self.packet_indx]
 
-        print(data_to_parse)
+        #print("!!!!!!!@@@@@" + str(data_to_parse))
+        '''NB! VERY IMPORTANT ADDITION'''
+        '''BEFORE CONVERSION INTO DESIRED '''
+        data_to_parse = str(data_to_parse)
+        #print("!!!!!!!@@@@@" + data_to_parse)
+
         ind_values=data_to_parse.split(",")
 
         indx = 0
@@ -137,7 +137,6 @@ class SonataTestParser:
 
         self.sonata_nmea_parsed_map = data_from
         return self.sonata_nmea_parsed_map
-
 
     def compare_fields_old(self,
                         sonata_id   =   None,
@@ -262,10 +261,12 @@ class SonataTestParser:
         :return:
         """
         comparison_results = {}
+
         if msg_data_received == None and "fail" in msg_data_sent.keys():
             pattern_to_search = msg_data_sent["fail"]
             self.parse_log(pattern_to_search)
             return comparison_results
+
         elif msg_data_received != None and "pass" in msg_data_sent.keys():
             self.sonata_nmea_parsed_map = msg_data_received
             self.data_to = msg_data_sent
@@ -273,7 +274,6 @@ class SonataTestParser:
             for key in keys:
                 comparison_results[key] = self.__do_comparison(key)
             return comparison_results
-
 
     def __do_comparison(self,
                         key):

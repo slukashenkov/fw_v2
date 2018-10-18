@@ -41,19 +41,17 @@ Field	Len	Description	Member	T	Units
 
 """
 import sys
-from decimal import Decimal
 import unittest
+from decimal import Decimal
 
 from BitVector import BitVector
 
-from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisstring
-from test_bl.test_trassa_plugin.structs_trassa.aisutils  import aisbinary
-#from test_bl.test_trassa_plugin.structs_trassa.aisutils import  sqlhelp
-from test_bl.test_trassa_plugin.structs_trassa.aisutils import  uscg
+from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisbinary
+# from test_bl.test_trassa_plugin.structs_trassa.aisutils import  sqlhelp
+from test_bl.test_trassa_plugin.structs_trassa.aisutils import uscg
 
-TrueBV  = BitVector(bitstring="1")
-FalseBV = BitVector(bitstring="0")
-
+TrueBV = BitVector(bitstring = "1")
+FalseBV = BitVector(bitstring = "0")
 
 fieldList = (
     'MessageID',
@@ -80,7 +78,7 @@ fieldList = (
 )
 
 
-def encode(params, validate=False):
+def encode (params, validate = False):
     '''Create a positionb binary message payload to pack into an AIS Msg positionb.
 
     Fields in params:
@@ -111,70 +109,87 @@ def encode(params, validate=False):
     @return: encoded binary message (for binary messages, this needs to be wrapped in a msg 8
     @note: The returned bits may not be 6 bit aligned.  It is up to you to pad out the bits.
     '''
-
+    
     bvList = []
-    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=18),6))
-
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = 18), 6))
+    
     if 'RepeatIndicator' in params:
-        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['RepeatIndicator']),2))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = params['RepeatIndicator']), 2))
     else:
-        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0),2))
-    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['MMSI']),30))
-    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0),8))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = 0), 2))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = params['MMSI']), 30))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = 0), 8))
     if 'SOG' in params:
-        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=int((Decimal(params['SOG'])*Decimal('10')))),10))
+        bvList.append(
+            aisbinary.setBitVectorSize(BitVector(intVal = int((Decimal(params['SOG']) * Decimal('10')))), 10))
     else:
-        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=int(1023)),10))
-    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['PositionAccuracy']),1))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = int(1023)), 10))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = params['PositionAccuracy']), 1))
     if 'longitude' in params:
-        bvList.append(aisbinary.bvFromSignedInt(int(Decimal(params['longitude'])*Decimal('600000')),28))
+        bvList.append(aisbinary.bvFromSignedInt(int(Decimal(params['longitude']) * Decimal('600000')), 28))
     else:
-        bvList.append(aisbinary.bvFromSignedInt(108600000,28))
+        bvList.append(aisbinary.bvFromSignedInt(108600000, 28))
     if 'latitude' in params:
-        bvList.append(aisbinary.bvFromSignedInt(int(Decimal(params['latitude'])*Decimal('600000')),27))
+        bvList.append(aisbinary.bvFromSignedInt(int(Decimal(params['latitude']) * Decimal('600000')), 27))
     else:
-        bvList.append(aisbinary.bvFromSignedInt(54600000,27))
+        bvList.append(aisbinary.bvFromSignedInt(54600000, 27))
     if 'COG' in params:
-        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=int((Decimal(params['COG'])*Decimal('10')))),12))
+        bvList.append(
+            aisbinary.setBitVectorSize(BitVector(intVal = int((Decimal(params['COG']) * Decimal('10')))), 12))
     else:
-        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=int(3600)),12))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = int(3600)), 12))
     if 'TrueHeading' in params:
-        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['TrueHeading']),9))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = params['TrueHeading']), 9))
     else:
-        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=511),9))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = 511), 9))
     if 'TimeStamp' in params:
-        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['TimeStamp']),6))
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = params['TimeStamp']), 6))
     else:
-        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=60),6))
-    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=0),2))
-    if params["cs_unit"]: bvList.append(TrueBV)
-    else: bvList.append(FalseBV)
-    if params["display_flag"]: bvList.append(TrueBV)
-    else: bvList.append(FalseBV)
-    if params["dsc_flag"]: bvList.append(TrueBV)
-    else: bvList.append(FalseBV)
-    if params["band_flag"]: bvList.append(TrueBV)
-    else: bvList.append(FalseBV)
-    if params["msg22_flag"]: bvList.append(TrueBV)
-    else: bvList.append(FalseBV)
-    if params["mode_flag"]: bvList.append(TrueBV)
-    else: bvList.append(FalseBV)
-    if params["RAIM"]: bvList.append(TrueBV)
-    else: bvList.append(FalseBV)
-    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['CommStateSelector']),1))
-
-    #For better compatibility Comm selector vector should be formed
-    #according to the transmitter type SOTDMA/ITDMA
-    #both take 19 bits space but length is different
-    #bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['CommState']),19))
-
-    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['state_syncstate']),2))
-    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['state_slottimeout']),3))
-    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['state_slotoffset']),14))
-
+        bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = 60), 6))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = 0), 2))
+    if params["cs_unit"]:
+        bvList.append(TrueBV)
+    else:
+        bvList.append(FalseBV)
+    if params["display_flag"]:
+        bvList.append(TrueBV)
+    else:
+        bvList.append(FalseBV)
+    if params["dsc_flag"]:
+        bvList.append(TrueBV)
+    else:
+        bvList.append(FalseBV)
+    if params["band_flag"]:
+        bvList.append(TrueBV)
+    else:
+        bvList.append(FalseBV)
+    if params["msg22_flag"]:
+        bvList.append(TrueBV)
+    else:
+        bvList.append(FalseBV)
+    if params["mode_flag"]:
+        bvList.append(TrueBV)
+    else:
+        bvList.append(FalseBV)
+    if params["RAIM"]:
+        bvList.append(TrueBV)
+    else:
+        bvList.append(FalseBV)
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = params['CommStateSelector']), 1))
+    
+    # For better compatibility Comm selector vector should be formed
+    # according to the transmitter type SOTDMA/ITDMA
+    # both take 19 bits space but length is different
+    # bvList.append(aisbinary.setBitVectorSize(BitVector(intVal=params['CommState']),19))
+    
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = params['state_syncstate']), 2))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = params['state_slottimeout']), 3))
+    bvList.append(aisbinary.setBitVectorSize(BitVector(intVal = params['state_slotoffset']), 14))
+    
     return aisbinary.joinBV(bvList)
 
-def decode(bv, validate=False):
+
+def decode (bv, validate = False):
     '''Unpack a positionb message.
 
     Fields in params:
@@ -205,330 +220,353 @@ def decode(bv, validate=False):
     @rtype: dict
     @return: params
     '''
-
-    #Would be nice to check the bit count here..
-    #if validate:
+    
+    # Would be nice to check the bit count here..
+    # if validate:
     #    assert (len(bv)==FIX: SOME NUMBER)
     r = {}
-    r['MessageID']=18
-    r['RepeatIndicator']=int(bv[6:8])
-    r['UserID']=int(bv[8:38])
-    r['Reserved1']=0
-    r['SOG']=Decimal(int(bv[46:56]))/Decimal('10')
-    r['PositionAccuracy']=int(bv[56:57])
-    r['longitude']=Decimal(aisbinary.signedIntFromBV(bv[57:85]))/Decimal('600000')
-    r['latitude']=Decimal(aisbinary.signedIntFromBV(bv[85:112]))/Decimal('600000')
-    r['COG']=Decimal(int(bv[112:124]))/Decimal('10')
-    r['TrueHeading']=int(bv[124:133])
-    r['TimeStamp']=int(bv[133:139])
-    r['Spare']=0
-    r['cs_unit']=bool(int(bv[141:142]))
-    r['display_flag']=bool(int(bv[142:143]))
-    r['dsc_flag']=bool(int(bv[143:144]))
-    r['band_flag']=bool(int(bv[144:145]))
-    r['msg22_flag']=bool(int(bv[145:146]))
-    r['mode_flag']=bool(int(bv[146:147]))
-    r['RAIM']=bool(int(bv[147:148]))
-    r['CommStateSelector']=int(bv[148:149])
-    r['CommState']=int(bv[149:168])
+    r['MessageID'] = 18
+    r['RepeatIndicator'] = int(bv[6:8])
+    r['UserID'] = int(bv[8:38])
+    r['Reserved1'] = 0
+    r['SOG'] = Decimal(int(bv[46:56])) / Decimal('10')
+    r['PositionAccuracy'] = int(bv[56:57])
+    r['longitude'] = Decimal(aisbinary.signedIntFromBV(bv[57:85])) / Decimal('600000')
+    r['latitude'] = Decimal(aisbinary.signedIntFromBV(bv[85:112])) / Decimal('600000')
+    r['COG'] = Decimal(int(bv[112:124])) / Decimal('10')
+    r['TrueHeading'] = int(bv[124:133])
+    r['TimeStamp'] = int(bv[133:139])
+    r['Spare'] = 0
+    r['cs_unit'] = bool(int(bv[141:142]))
+    r['display_flag'] = bool(int(bv[142:143]))
+    r['dsc_flag'] = bool(int(bv[143:144]))
+    r['band_flag'] = bool(int(bv[144:145]))
+    r['msg22_flag'] = bool(int(bv[145:146]))
+    r['mode_flag'] = bool(int(bv[146:147]))
+    r['RAIM'] = bool(int(bv[147:148]))
+    r['CommStateSelector'] = int(bv[148:149])
+    r['CommState'] = int(bv[149:168])
     return r
 
-def decodeMessageID(bv, validate=False):
+
+def decodeMessageID (bv, validate = False):
     return 18
 
-def decodeRepeatIndicator(bv, validate=False):
+
+def decodeRepeatIndicator (bv, validate = False):
     return int(bv[6:8])
 
-def decodeUserID(bv, validate=False):
+
+def decodeUserID (bv, validate = False):
     return int(bv[8:38])
 
-def decodeReserved1(bv, validate=False):
+
+def decodeReserved1 (bv, validate = False):
     return 0
 
-def decodeSOG(bv, validate=False):
-    return Decimal(int(bv[46:56]))/Decimal('10')
 
-def decodePositionAccuracy(bv, validate=False):
+def decodeSOG (bv, validate = False):
+    return Decimal(int(bv[46:56])) / Decimal('10')
+
+
+def decodePositionAccuracy (bv, validate = False):
     return int(bv[56:57])
 
-def decodelongitude(bv, validate=False):
-    return Decimal(aisbinary.signedIntFromBV(bv[57:85]))/Decimal('600000')
 
-def decodelatitude(bv, validate=False):
-    return Decimal(aisbinary.signedIntFromBV(bv[85:112]))/Decimal('600000')
+def decodelongitude (bv, validate = False):
+    return Decimal(aisbinary.signedIntFromBV(bv[57:85])) / Decimal('600000')
 
-def decodeCOG(bv, validate=False):
-    return Decimal(int(bv[112:124]))/Decimal('10')
 
-def decodeTrueHeading(bv, validate=False):
+def decodelatitude (bv, validate = False):
+    return Decimal(aisbinary.signedIntFromBV(bv[85:112])) / Decimal('600000')
+
+
+def decodeCOG (bv, validate = False):
+    return Decimal(int(bv[112:124])) / Decimal('10')
+
+
+def decodeTrueHeading (bv, validate = False):
     return int(bv[124:133])
 
-def decodeTimeStamp(bv, validate=False):
+
+def decodeTimeStamp (bv, validate = False):
     return int(bv[133:139])
 
-def decodeSpare(bv, validate=False):
+
+def decodeSpare (bv, validate = False):
     return 0
 
-def decodecs_unit(bv, validate=False):
+
+def decodecs_unit (bv, validate = False):
     return bool(int(bv[141:142]))
 
-def decodedisplay_flag(bv, validate=False):
+
+def decodedisplay_flag (bv, validate = False):
     return bool(int(bv[142:143]))
 
-def decodedsc_flag(bv, validate=False):
+
+def decodedsc_flag (bv, validate = False):
     return bool(int(bv[143:144]))
 
-def decodeband_flag(bv, validate=False):
+
+def decodeband_flag (bv, validate = False):
     return bool(int(bv[144:145]))
 
-def decodemsg22_flag(bv, validate=False):
+
+def decodemsg22_flag (bv, validate = False):
     return bool(int(bv[145:146]))
 
-def decodemode_flag(bv, validate=False):
+
+def decodemode_flag (bv, validate = False):
     return bool(int(bv[146:147]))
 
-def decodeRAIM(bv, validate=False):
+
+def decodeRAIM (bv, validate = False):
     return bool(int(bv[147:148]))
 
-def decodeCommStateSelector(bv, validate=False):
+
+def decodeCommStateSelector (bv, validate = False):
     return int(bv[148:149])
 
-def decodeCommState(bv, validate=False):
+
+def decodeCommState (bv, validate = False):
     return int(bv[149:168])
 
 
-def printHtml(params, out=sys.stdout):
-        out.write("<h3>positionb</h3>\n")
-        out.write("<table border=\"1\">\n")
-        out.write("<tr bgcolor=\"orange\">\n")
-        out.write("<th align=\"left\">Field Name</th>\n")
-        out.write("<th align=\"left\">Type</th>\n")
-        out.write("<th align=\"left\">Value</th>\n")
-        out.write("<th align=\"left\">Value in Lookup Table</th>\n")
-        out.write("<th align=\"left\">Units</th>\n")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>MessageID</td>\n")
-        out.write("<td>uint</td>\n")
-        if 'MessageID' in params:
-            out.write("    <td>"+str(params['MessageID'])+"</td>\n")
-            out.write("    <td>"+str(params['MessageID'])+"</td>\n")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>RepeatIndicator</td>\n")
-        out.write("<td>uint</td>\n")
-        if 'RepeatIndicator' in params:
-            out.write("    <td>"+str(params['RepeatIndicator'])+"</td>\n")
-            if str(params['RepeatIndicator']) in RepeatIndicatorDecodeLut:
-                out.write("<td>"+RepeatIndicatorDecodeLut[str(params['RepeatIndicator'])]+"</td>")
-            else:
-                out.write("<td><i>Missing LUT entry</i></td>")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>UserID</td>\n")
-        out.write("<td>uint</td>\n")
-        if 'UserID' in params:
-            out.write("    <td>"+str(params['UserID'])+"</td>\n")
-            out.write("    <td>"+str(params['UserID'])+"</td>\n")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>Reserved1</td>\n")
-        out.write("<td>uint</td>\n")
-        if 'Reserved1' in params:
-            out.write("    <td>"+str(params['Reserved1'])+"</td>\n")
-            out.write("    <td>"+str(params['Reserved1'])+"</td>\n")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>SOG</td>\n")
-        out.write("<td>udecimal</td>\n")
-        if 'SOG' in params:
-            out.write("    <td>"+str(params['SOG'])+"</td>\n")
-            if str(params['SOG']) in SOGDecodeLut:
-                out.write("<td>"+SOGDecodeLut[str(params['SOG'])]+"</td>")
-            else:
-                out.write("<td><i>Missing LUT entry</i></td>")
-        out.write("<td>knots</td>\n")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>PositionAccuracy</td>\n")
-        out.write("<td>uint</td>\n")
-        if 'PositionAccuracy' in params:
-            out.write("    <td>"+str(params['PositionAccuracy'])+"</td>\n")
-            if str(params['PositionAccuracy']) in PositionAccuracyDecodeLut:
-                out.write("<td>"+PositionAccuracyDecodeLut[str(params['PositionAccuracy'])]+"</td>")
-            else:
-                out.write("<td><i>Missing LUT entry</i></td>")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>longitude</td>\n")
-        out.write("<td>decimal</td>\n")
-        if 'longitude' in params:
-            out.write("    <td>"+str(params['longitude'])+"</td>\n")
-            out.write("    <td>"+str(params['longitude'])+"</td>\n")
-        out.write("<td>degrees</td>\n")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>latitude</td>\n")
-        out.write("<td>decimal</td>\n")
-        if 'latitude' in params:
-            out.write("    <td>"+str(params['latitude'])+"</td>\n")
-            out.write("    <td>"+str(params['latitude'])+"</td>\n")
-        out.write("<td>degrees</td>\n")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>COG</td>\n")
-        out.write("<td>udecimal</td>\n")
-        if 'COG' in params:
-            out.write("    <td>"+str(params['COG'])+"</td>\n")
-            out.write("    <td>"+str(params['COG'])+"</td>\n")
-        out.write("<td>degrees</td>\n")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>TrueHeading</td>\n")
-        out.write("<td>uint</td>\n")
-        if 'TrueHeading' in params:
-            out.write("    <td>"+str(params['TrueHeading'])+"</td>\n")
-            out.write("    <td>"+str(params['TrueHeading'])+"</td>\n")
-        out.write("<td>degrees</td>\n")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>TimeStamp</td>\n")
-        out.write("<td>uint</td>\n")
-        if 'TimeStamp' in params:
-            out.write("    <td>"+str(params['TimeStamp'])+"</td>\n")
-            if str(params['TimeStamp']) in TimeStampDecodeLut:
-                out.write("<td>"+TimeStampDecodeLut[str(params['TimeStamp'])]+"</td>")
-            else:
-                out.write("<td><i>Missing LUT entry</i></td>")
-        out.write("<td>seconds</td>\n")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>Spare</td>\n")
-        out.write("<td>uint</td>\n")
-        if 'Spare' in params:
-            out.write("    <td>"+str(params['Spare'])+"</td>\n")
-            out.write("    <td>"+str(params['Spare'])+"</td>\n")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>cs_unit</td>\n")
-        out.write("<td>bool</td>\n")
-        if 'cs_unit' in params:
-            out.write("    <td>"+str(params['cs_unit'])+"</td>\n")
-            if str(params['cs_unit']) in cs_unitDecodeLut:
-                out.write("<td>"+cs_unitDecodeLut[str(params['cs_unit'])]+"</td>")
-            else:
-                out.write("<td><i>Missing LUT entry</i></td>")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>display_flag</td>\n")
-        out.write("<td>bool</td>\n")
-        if 'display_flag' in params:
-            out.write("    <td>"+str(params['display_flag'])+"</td>\n")
-            if str(params['display_flag']) in display_flagDecodeLut:
-                out.write("<td>"+display_flagDecodeLut[str(params['display_flag'])]+"</td>")
-            else:
-                out.write("<td><i>Missing LUT entry</i></td>")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>dsc_flag</td>\n")
-        out.write("<td>bool</td>\n")
-        if 'dsc_flag' in params:
-            out.write("    <td>"+str(params['dsc_flag'])+"</td>\n")
-            if str(params['dsc_flag']) in dsc_flagDecodeLut:
-                out.write("<td>"+dsc_flagDecodeLut[str(params['dsc_flag'])]+"</td>")
-            else:
-                out.write("<td><i>Missing LUT entry</i></td>")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>band_flag</td>\n")
-        out.write("<td>bool</td>\n")
-        if 'band_flag' in params:
-            out.write("    <td>"+str(params['band_flag'])+"</td>\n")
-            if str(params['band_flag']) in band_flagDecodeLut:
-                out.write("<td>"+band_flagDecodeLut[str(params['band_flag'])]+"</td>")
-            else:
-                out.write("<td><i>Missing LUT entry</i></td>")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>msg22_flag</td>\n")
-        out.write("<td>bool</td>\n")
-        if 'msg22_flag' in params:
-            out.write("    <td>"+str(params['msg22_flag'])+"</td>\n")
-            if str(params['msg22_flag']) in msg22_flagDecodeLut:
-                out.write("<td>"+msg22_flagDecodeLut[str(params['msg22_flag'])]+"</td>")
-            else:
-                out.write("<td><i>Missing LUT entry</i></td>")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>mode_flag</td>\n")
-        out.write("<td>bool</td>\n")
-        if 'mode_flag' in params:
-            out.write("    <td>"+str(params['mode_flag'])+"</td>\n")
-            if str(params['mode_flag']) in mode_flagDecodeLut:
-                out.write("<td>"+mode_flagDecodeLut[str(params['mode_flag'])]+"</td>")
-            else:
-                out.write("<td><i>Missing LUT entry</i></td>")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>RAIM</td>\n")
-        out.write("<td>bool</td>\n")
-        if 'RAIM' in params:
-            out.write("    <td>"+str(params['RAIM'])+"</td>\n")
-            if str(params['RAIM']) in RAIMDecodeLut:
-                out.write("<td>"+RAIMDecodeLut[str(params['RAIM'])]+"</td>")
-            else:
-                out.write("<td><i>Missing LUT entry</i></td>")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>CommStateSelector</td>\n")
-        out.write("<td>uint</td>\n")
-        if 'CommStateSelector' in params:
-            out.write("    <td>"+str(params['CommStateSelector'])+"</td>\n")
-            if str(params['CommStateSelector']) in CommStateSelectorDecodeLut:
-                out.write("<td>"+CommStateSelectorDecodeLut[str(params['CommStateSelector'])]+"</td>")
-            else:
-                out.write("<td><i>Missing LUT entry</i></td>")
-        out.write("</tr>\n")
-        out.write("\n")
-        out.write("<tr>\n")
-        out.write("<td>CommState</td>\n")
-        out.write("<td>uint</td>\n")
-        if 'CommState' in params:
-            out.write("    <td>"+str(params['CommState'])+"</td>\n")
-            out.write("    <td>"+str(params['CommState'])+"</td>\n")
-        out.write("</tr>\n")
-        out.write("</table>\n")
+def printHtml (params, out = sys.stdout):
+    out.write("<h3>positionb</h3>\n")
+    out.write("<table border=\"1\">\n")
+    out.write("<tr bgcolor=\"orange\">\n")
+    out.write("<th align=\"left\">Field Name</th>\n")
+    out.write("<th align=\"left\">Type</th>\n")
+    out.write("<th align=\"left\">Value</th>\n")
+    out.write("<th align=\"left\">Value in Lookup Table</th>\n")
+    out.write("<th align=\"left\">Units</th>\n")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>MessageID</td>\n")
+    out.write("<td>uint</td>\n")
+    if 'MessageID' in params:
+        out.write("    <td>" + str(params['MessageID']) + "</td>\n")
+        out.write("    <td>" + str(params['MessageID']) + "</td>\n")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>RepeatIndicator</td>\n")
+    out.write("<td>uint</td>\n")
+    if 'RepeatIndicator' in params:
+        out.write("    <td>" + str(params['RepeatIndicator']) + "</td>\n")
+        if str(params['RepeatIndicator']) in RepeatIndicatorDecodeLut:
+            out.write("<td>" + RepeatIndicatorDecodeLut[str(params['RepeatIndicator'])] + "</td>")
+        else:
+            out.write("<td><i>Missing LUT entry</i></td>")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>UserID</td>\n")
+    out.write("<td>uint</td>\n")
+    if 'UserID' in params:
+        out.write("    <td>" + str(params['UserID']) + "</td>\n")
+        out.write("    <td>" + str(params['UserID']) + "</td>\n")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>Reserved1</td>\n")
+    out.write("<td>uint</td>\n")
+    if 'Reserved1' in params:
+        out.write("    <td>" + str(params['Reserved1']) + "</td>\n")
+        out.write("    <td>" + str(params['Reserved1']) + "</td>\n")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>SOG</td>\n")
+    out.write("<td>udecimal</td>\n")
+    if 'SOG' in params:
+        out.write("    <td>" + str(params['SOG']) + "</td>\n")
+        if str(params['SOG']) in SOGDecodeLut:
+            out.write("<td>" + SOGDecodeLut[str(params['SOG'])] + "</td>")
+        else:
+            out.write("<td><i>Missing LUT entry</i></td>")
+    out.write("<td>knots</td>\n")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>PositionAccuracy</td>\n")
+    out.write("<td>uint</td>\n")
+    if 'PositionAccuracy' in params:
+        out.write("    <td>" + str(params['PositionAccuracy']) + "</td>\n")
+        if str(params['PositionAccuracy']) in PositionAccuracyDecodeLut:
+            out.write("<td>" + PositionAccuracyDecodeLut[str(params['PositionAccuracy'])] + "</td>")
+        else:
+            out.write("<td><i>Missing LUT entry</i></td>")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>longitude</td>\n")
+    out.write("<td>decimal</td>\n")
+    if 'longitude' in params:
+        out.write("    <td>" + str(params['longitude']) + "</td>\n")
+        out.write("    <td>" + str(params['longitude']) + "</td>\n")
+    out.write("<td>degrees</td>\n")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>latitude</td>\n")
+    out.write("<td>decimal</td>\n")
+    if 'latitude' in params:
+        out.write("    <td>" + str(params['latitude']) + "</td>\n")
+        out.write("    <td>" + str(params['latitude']) + "</td>\n")
+    out.write("<td>degrees</td>\n")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>COG</td>\n")
+    out.write("<td>udecimal</td>\n")
+    if 'COG' in params:
+        out.write("    <td>" + str(params['COG']) + "</td>\n")
+        out.write("    <td>" + str(params['COG']) + "</td>\n")
+    out.write("<td>degrees</td>\n")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>TrueHeading</td>\n")
+    out.write("<td>uint</td>\n")
+    if 'TrueHeading' in params:
+        out.write("    <td>" + str(params['TrueHeading']) + "</td>\n")
+        out.write("    <td>" + str(params['TrueHeading']) + "</td>\n")
+    out.write("<td>degrees</td>\n")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>TimeStamp</td>\n")
+    out.write("<td>uint</td>\n")
+    if 'TimeStamp' in params:
+        out.write("    <td>" + str(params['TimeStamp']) + "</td>\n")
+        if str(params['TimeStamp']) in TimeStampDecodeLut:
+            out.write("<td>" + TimeStampDecodeLut[str(params['TimeStamp'])] + "</td>")
+        else:
+            out.write("<td><i>Missing LUT entry</i></td>")
+    out.write("<td>seconds</td>\n")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>Spare</td>\n")
+    out.write("<td>uint</td>\n")
+    if 'Spare' in params:
+        out.write("    <td>" + str(params['Spare']) + "</td>\n")
+        out.write("    <td>" + str(params['Spare']) + "</td>\n")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>cs_unit</td>\n")
+    out.write("<td>bool</td>\n")
+    if 'cs_unit' in params:
+        out.write("    <td>" + str(params['cs_unit']) + "</td>\n")
+        if str(params['cs_unit']) in cs_unitDecodeLut:
+            out.write("<td>" + cs_unitDecodeLut[str(params['cs_unit'])] + "</td>")
+        else:
+            out.write("<td><i>Missing LUT entry</i></td>")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>display_flag</td>\n")
+    out.write("<td>bool</td>\n")
+    if 'display_flag' in params:
+        out.write("    <td>" + str(params['display_flag']) + "</td>\n")
+        if str(params['display_flag']) in display_flagDecodeLut:
+            out.write("<td>" + display_flagDecodeLut[str(params['display_flag'])] + "</td>")
+        else:
+            out.write("<td><i>Missing LUT entry</i></td>")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>dsc_flag</td>\n")
+    out.write("<td>bool</td>\n")
+    if 'dsc_flag' in params:
+        out.write("    <td>" + str(params['dsc_flag']) + "</td>\n")
+        if str(params['dsc_flag']) in dsc_flagDecodeLut:
+            out.write("<td>" + dsc_flagDecodeLut[str(params['dsc_flag'])] + "</td>")
+        else:
+            out.write("<td><i>Missing LUT entry</i></td>")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>band_flag</td>\n")
+    out.write("<td>bool</td>\n")
+    if 'band_flag' in params:
+        out.write("    <td>" + str(params['band_flag']) + "</td>\n")
+        if str(params['band_flag']) in band_flagDecodeLut:
+            out.write("<td>" + band_flagDecodeLut[str(params['band_flag'])] + "</td>")
+        else:
+            out.write("<td><i>Missing LUT entry</i></td>")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>msg22_flag</td>\n")
+    out.write("<td>bool</td>\n")
+    if 'msg22_flag' in params:
+        out.write("    <td>" + str(params['msg22_flag']) + "</td>\n")
+        if str(params['msg22_flag']) in msg22_flagDecodeLut:
+            out.write("<td>" + msg22_flagDecodeLut[str(params['msg22_flag'])] + "</td>")
+        else:
+            out.write("<td><i>Missing LUT entry</i></td>")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>mode_flag</td>\n")
+    out.write("<td>bool</td>\n")
+    if 'mode_flag' in params:
+        out.write("    <td>" + str(params['mode_flag']) + "</td>\n")
+        if str(params['mode_flag']) in mode_flagDecodeLut:
+            out.write("<td>" + mode_flagDecodeLut[str(params['mode_flag'])] + "</td>")
+        else:
+            out.write("<td><i>Missing LUT entry</i></td>")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>RAIM</td>\n")
+    out.write("<td>bool</td>\n")
+    if 'RAIM' in params:
+        out.write("    <td>" + str(params['RAIM']) + "</td>\n")
+        if str(params['RAIM']) in RAIMDecodeLut:
+            out.write("<td>" + RAIMDecodeLut[str(params['RAIM'])] + "</td>")
+        else:
+            out.write("<td><i>Missing LUT entry</i></td>")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>CommStateSelector</td>\n")
+    out.write("<td>uint</td>\n")
+    if 'CommStateSelector' in params:
+        out.write("    <td>" + str(params['CommStateSelector']) + "</td>\n")
+        if str(params['CommStateSelector']) in CommStateSelectorDecodeLut:
+            out.write("<td>" + CommStateSelectorDecodeLut[str(params['CommStateSelector'])] + "</td>")
+        else:
+            out.write("<td><i>Missing LUT entry</i></td>")
+    out.write("</tr>\n")
+    out.write("\n")
+    out.write("<tr>\n")
+    out.write("<td>CommState</td>\n")
+    out.write("<td>uint</td>\n")
+    if 'CommState' in params:
+        out.write("    <td>" + str(params['CommState']) + "</td>\n")
+        out.write("    <td>" + str(params['CommState']) + "</td>\n")
+    out.write("</tr>\n")
+    out.write("</table>\n")
 
 
-def printKml(params, out=sys.stdout):
+def printKml (params, out = sys.stdout):
     """KML (Keyhole Markup Language) for Google Earth, but without the header/footer"""
     out.write("    <Placemark>\n")
-    out.write("        <name>"+str(params['UserID'])+"</name>\n")
+    out.write("        <name>" + str(params['UserID']) + "</name>\n")
     out.write("        <description>\n")
     import io
+    
     buf = io.StringIO()
-    printHtml(params,buf)
+    printHtml(params, buf)
     import cgi
+    
     out.write(cgi.escape(buf.getvalue()))
     out.write("        </description>\n")
     out.write("        <styleUrl>#m_ylw-pushpin_copy0</styleUrl>\n")
@@ -543,132 +581,132 @@ def printKml(params, out=sys.stdout):
 
 
 RepeatIndicatorEncodeLut = {
-    'default':'0',
-    'do not repeat any more':'3',
-    } #RepeatIndicatorEncodeLut
+    'default': '0',
+    'do not repeat any more': '3',
+}  # RepeatIndicatorEncodeLut
 
 RepeatIndicatorDecodeLut = {
-    '0':'default',
-    '3':'do not repeat any more',
-    } # RepeatIndicatorEncodeLut
+    '0': 'default',
+    '3': 'do not repeat any more',
+}  # RepeatIndicatorEncodeLut
 
 SOGEncodeLut = {
-    '102.2 knots or higher':'102.2',
-    } #SOGEncodeLut
+    '102.2 knots or higher': '102.2',
+}  # SOGEncodeLut
 
 SOGDecodeLut = {
-    '102.2':'102.2 knots or higher',
-    } # SOGEncodeLut
+    '102.2': '102.2 knots or higher',
+}  # SOGEncodeLut
 
 PositionAccuracyEncodeLut = {
-    'low (greater than 10 m)':'0',
-    'high (less than 10 m)':'1',
-    } #PositionAccuracyEncodeLut
+    'low (greater than 10 m)': '0',
+    'high (less than 10 m)': '1',
+}  # PositionAccuracyEncodeLut
 
 PositionAccuracyDecodeLut = {
-    '0':'low (greater than 10 m)',
-    '1':'high (less than 10 m)',
-    } # PositionAccuracyEncodeLut
+    '0': 'low (greater than 10 m)',
+    '1': 'high (less than 10 m)',
+}  # PositionAccuracyEncodeLut
 
 TimeStampEncodeLut = {
-    'not available/default':'60',
-    'manual input':'61',
-    'dead reckoning':'62',
-    'inoperative':'63',
-    } #TimeStampEncodeLut
+    'not available/default': '60',
+    'manual input': '61',
+    'dead reckoning': '62',
+    'inoperative': '63',
+}  # TimeStampEncodeLut
 
 TimeStampDecodeLut = {
-    '60':'not available/default',
-    '61':'manual input',
-    '62':'dead reckoning',
-    '63':'inoperative',
-    } # TimeStampEncodeLut
+    '60': 'not available/default',
+    '61': 'manual input',
+    '62': 'dead reckoning',
+    '63': 'inoperative',
+}  # TimeStampEncodeLut
 
 cs_unitEncodeLut = {
-    'Class B SOTDMA unit':'False',
-    'Class B CS unit':'True',
-    } #cs_unitEncodeLut
+    'Class B SOTDMA unit': 'False',
+    'Class B CS unit': 'True',
+}  # cs_unitEncodeLut
 
 cs_unitDecodeLut = {
-    'False':'Class B SOTDMA unit',
-    'True':'Class B CS unit',
-    } # cs_unitEncodeLut
+    'False': 'Class B SOTDMA unit',
+    'True': 'Class B CS unit',
+}  # cs_unitEncodeLut
 
 display_flagEncodeLut = {
-    'No display':'False',
-    'Integrated Display':'True',
-    } #display_flagEncodeLut
+    'No display': 'False',
+    'Integrated Display': 'True',
+}  # display_flagEncodeLut
 
 display_flagDecodeLut = {
-    'False':'No display',
-    'True':'Integrated Display',
-    } # display_flagEncodeLut
+    'False': 'No display',
+    'True': 'Integrated Display',
+}  # display_flagEncodeLut
 
 dsc_flagEncodeLut = {
-    'No DSC function':'False',
-    'Has DSC':'True',
-    } #dsc_flagEncodeLut
+    'No DSC function': 'False',
+    'Has DSC': 'True',
+}  # dsc_flagEncodeLut
 
 dsc_flagDecodeLut = {
-    'False':'No DSC function',
-    'True':'Has DSC',
-    } # dsc_flagEncodeLut
+    'False': 'No DSC function',
+    'True': 'Has DSC',
+}  # dsc_flagEncodeLut
 
 band_flagEncodeLut = {
-    'Upper 525 kHz band':'False',
-    'Whole marine band':'True',
-    } #band_flagEncodeLut
+    'Upper 525 kHz band': 'False',
+    'Whole marine band': 'True',
+}  # band_flagEncodeLut
 
 band_flagDecodeLut = {
-    'False':'Upper 525 kHz band',
-    'True':'Whole marine band',
-    } # band_flagEncodeLut
+    'False': 'Upper 525 kHz band',
+    'True': 'Whole marine band',
+}  # band_flagEncodeLut
 
 msg22_flagEncodeLut = {
-    'No freq management':'False',
-    'Freq management with msg 22':'True',
-    } #msg22_flagEncodeLut
+    'No freq management': 'False',
+    'Freq management with msg 22': 'True',
+}  # msg22_flagEncodeLut
 
 msg22_flagDecodeLut = {
-    'False':'No freq management',
-    'True':'Freq management with msg 22',
-    } # msg22_flagEncodeLut
+    'False': 'No freq management',
+    'True': 'Freq management with msg 22',
+}  # msg22_flagEncodeLut
 
 mode_flagEncodeLut = {
-    'Autonomous and continuous mode':'False',
-    'Assigned mode':'True',
-    } #mode_flagEncodeLut
+    'Autonomous and continuous mode': 'False',
+    'Assigned mode': 'True',
+}  # mode_flagEncodeLut
 
 mode_flagDecodeLut = {
-    'False':'Autonomous and continuous mode',
-    'True':'Assigned mode',
-    } # mode_flagEncodeLut
+    'False': 'Autonomous and continuous mode',
+    'True': 'Assigned mode',
+}  # mode_flagEncodeLut
 
 RAIMEncodeLut = {
-    'not in use':'False',
-    'in use':'True',
-    } #RAIMEncodeLut
+    'not in use': 'False',
+    'in use': 'True',
+}  # RAIMEncodeLut
 
 RAIMDecodeLut = {
-    'False':'not in use',
-    'True':'in use',
-    } # RAIMEncodeLut
+    'False': 'not in use',
+    'True': 'in use',
+}  # RAIMEncodeLut
 
 CommStateSelectorEncodeLut = {
-    'SOTDMA':'0',
-    'ITDMA':'1',
-    } #CommStateSelectorEncodeLut
+    'SOTDMA': '0',
+    'ITDMA': '1',
+}  # CommStateSelectorEncodeLut
 
 CommStateSelectorDecodeLut = {
-    '0':'SOTDMA',
-    '1':'ITDMA',
-    } # CommStateSelectorEncodeLut
+    '0': 'SOTDMA',
+    '1': 'ITDMA',
+}  # CommStateSelectorEncodeLut
 
 
 ######################################################################
 # UNIT TESTING
 ######################################################################
-def testParams():
+def testParams ():
     '''Return a params file base on the testvalue tags.
     @rtype: dict
     @return: params based on testvalue tags
@@ -695,174 +733,203 @@ def testParams():
     params['RAIM'] = False
     params['CommStateSelector'] = 0
     params['CommState'] = 0
-
+    
     return params
+
 
 class Testpositionb(unittest.TestCase):
     '''Use testvalue tag text from each type to build test case the positionb message'''
-    def testEncodeDecode(self):
-
+    
+    
+    def testEncodeDecode (self):
         params = testParams()
-        bits   = encode(params)
-        r      = decode(bits)
-
+        bits = encode(params)
+        r = decode(bits)
+        
         # Check that each parameter came through ok.
-        self.failUnlessEqual(r['MessageID'],params['MessageID'])
-        self.failUnlessEqual(r['RepeatIndicator'],params['RepeatIndicator'])
-        self.failUnlessEqual(r['UserID'],params['UserID'])
-        self.failUnlessEqual(r['Reserved1'],params['Reserved1'])
-        self.failUnlessAlmostEqual(r['SOG'],params['SOG'],1)
-        self.failUnlessEqual(r['PositionAccuracy'],params['PositionAccuracy'])
-        self.failUnlessAlmostEqual(r['longitude'],params['longitude'],5)
-        self.failUnlessAlmostEqual(r['latitude'],params['latitude'],5)
-        self.failUnlessAlmostEqual(r['COG'],params['COG'],1)
-        self.failUnlessEqual(r['TrueHeading'],params['TrueHeading'])
-        self.failUnlessEqual(r['TimeStamp'],params['TimeStamp'])
-        self.failUnlessEqual(r['Spare'],params['Spare'])
-        self.failUnlessEqual(r['cs_unit'],params['cs_unit'])
-        self.failUnlessEqual(r['display_flag'],params['display_flag'])
-        self.failUnlessEqual(r['dsc_flag'],params['dsc_flag'])
-        self.failUnlessEqual(r['band_flag'],params['band_flag'])
-        self.failUnlessEqual(r['msg22_flag'],params['msg22_flag'])
-        self.failUnlessEqual(r['mode_flag'],params['mode_flag'])
-        self.failUnlessEqual(r['RAIM'],params['RAIM'])
-        self.failUnlessEqual(r['CommStateSelector'],params['CommStateSelector'])
-        self.failUnlessEqual(r['CommState'],params['CommState'])
+        self.failUnlessEqual(r['MessageID'], params['MessageID'])
+        self.failUnlessEqual(r['RepeatIndicator'], params['RepeatIndicator'])
+        self.failUnlessEqual(r['UserID'], params['UserID'])
+        self.failUnlessEqual(r['Reserved1'], params['Reserved1'])
+        self.failUnlessAlmostEqual(r['SOG'], params['SOG'], 1)
+        self.failUnlessEqual(r['PositionAccuracy'], params['PositionAccuracy'])
+        self.failUnlessAlmostEqual(r['longitude'], params['longitude'], 5)
+        self.failUnlessAlmostEqual(r['latitude'], params['latitude'], 5)
+        self.failUnlessAlmostEqual(r['COG'], params['COG'], 1)
+        self.failUnlessEqual(r['TrueHeading'], params['TrueHeading'])
+        self.failUnlessEqual(r['TimeStamp'], params['TimeStamp'])
+        self.failUnlessEqual(r['Spare'], params['Spare'])
+        self.failUnlessEqual(r['cs_unit'], params['cs_unit'])
+        self.failUnlessEqual(r['display_flag'], params['display_flag'])
+        self.failUnlessEqual(r['dsc_flag'], params['dsc_flag'])
+        self.failUnlessEqual(r['band_flag'], params['band_flag'])
+        self.failUnlessEqual(r['msg22_flag'], params['msg22_flag'])
+        self.failUnlessEqual(r['mode_flag'], params['mode_flag'])
+        self.failUnlessEqual(r['RAIM'], params['RAIM'])
+        self.failUnlessEqual(r['CommStateSelector'], params['CommStateSelector'])
+        self.failUnlessEqual(r['CommState'], params['CommState'])
 
-def addMsgOptions(parser):
-    parser.add_option('-d','--decode',dest='doDecode',default=False,action='store_true',
-                help='decode a "positionb" AIS message')
-    parser.add_option('-e','--encode',dest='doEncode',default=False,action='store_true',
-                help='encode a "positionb" AIS message')
-    parser.add_option('--RepeatIndicator-field', dest='RepeatIndicatorField',default=0,metavar='uint',type='int'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--UserID-field', dest='UserIDField',metavar='uint',type='int'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--SOG-field', dest='SOGField',default=Decimal('102.3'),metavar='udecimal',type='string'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--PositionAccuracy-field', dest='PositionAccuracyField',metavar='uint',type='int'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--longitude-field', dest='longitudeField',default=Decimal('181'),metavar='decimal',type='string'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--latitude-field', dest='latitudeField',default=Decimal('91'),metavar='decimal',type='string'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--COG-field', dest='COGField',default=Decimal('360'),metavar='udecimal',type='string'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--TrueHeading-field', dest='TrueHeadingField',default=511,metavar='uint',type='int'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--TimeStamp-field', dest='TimeStampField',default=60,metavar='uint',type='int'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--cs_unit-field', dest='cs_unitField',metavar='bool',type='int'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--display_flag-field', dest='display_flagField',metavar='bool',type='int'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--dsc_flag-field', dest='dsc_flagField',metavar='bool',type='int'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--band_flag-field', dest='band_flagField',metavar='bool',type='int'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--msg22_flag-field', dest='msg22_flagField',metavar='bool',type='int'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--mode_flag-field', dest='mode_flagField',metavar='bool',type='int'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--RAIM-field', dest='RAIMField',metavar='bool',type='int'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--CommStateSelector-field', dest='CommStateSelectorField',metavar='uint',type='int'
-        ,help='Field parameter value [default: %default]')
-    parser.add_option('--CommState-field', dest='CommStateField',metavar='uint',type='int'
-        ,help='Field parameter value [default: %default]')
 
-def test_auth():
+def addMsgOptions (parser):
+    parser.add_option('-d', '--decode', dest = 'doDecode', default = False, action = 'store_true',
+                      help = 'decode a "positionb" AIS message')
+    parser.add_option('-e', '--encode', dest = 'doEncode', default = False, action = 'store_true',
+                      help = 'encode a "positionb" AIS message')
+    parser.add_option('--RepeatIndicator-field', dest = 'RepeatIndicatorField', default = 0, metavar = 'uint',
+                      type = 'int'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--UserID-field', dest = 'UserIDField', metavar = 'uint', type = 'int'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--SOG-field', dest = 'SOGField', default = Decimal('102.3'), metavar = 'udecimal',
+                      type = 'string'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--PositionAccuracy-field', dest = 'PositionAccuracyField', metavar = 'uint', type = 'int'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--longitude-field', dest = 'longitudeField', default = Decimal('181'), metavar = 'decimal',
+                      type = 'string'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--latitude-field', dest = 'latitudeField', default = Decimal('91'), metavar = 'decimal',
+                      type = 'string'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--COG-field', dest = 'COGField', default = Decimal('360'), metavar = 'udecimal',
+                      type = 'string'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--TrueHeading-field', dest = 'TrueHeadingField', default = 511, metavar = 'uint',
+                      type = 'int'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--TimeStamp-field', dest = 'TimeStampField', default = 60, metavar = 'uint', type = 'int'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--cs_unit-field', dest = 'cs_unitField', metavar = 'bool', type = 'int'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--display_flag-field', dest = 'display_flagField', metavar = 'bool', type = 'int'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--dsc_flag-field', dest = 'dsc_flagField', metavar = 'bool', type = 'int'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--band_flag-field', dest = 'band_flagField', metavar = 'bool', type = 'int'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--msg22_flag-field', dest = 'msg22_flagField', metavar = 'bool', type = 'int'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--mode_flag-field', dest = 'mode_flagField', metavar = 'bool', type = 'int'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--RAIM-field', dest = 'RAIMField', metavar = 'bool', type = 'int'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--CommStateSelector-field', dest = 'CommStateSelectorField', metavar = 'uint', type = 'int'
+                      , help = 'Field parameter value [default: %default]')
+    parser.add_option('--CommState-field', dest = 'CommStateField', metavar = 'uint', type = 'int'
+                      , help = 'Field parameter value [default: %default]')
+
+
+def test_auth ():
     from optparse import OptionParser
-    parser = OptionParser(usage="%prog [options]")
-
-    parser.add_option('--unit-test',dest='unittest',default=False,action='store_true',
-        help='run the unit tests')
-    parser.add_option('-v','--verbose',dest='verbose',default=False,action='store_true',
-        help='Make the test output verbose')
-
+    
+    parser = OptionParser(usage = "%prog [options]")
+    
+    parser.add_option('--unit-test', dest = 'unittest', default = False, action = 'store_true',
+                      help = 'run the unit tests')
+    parser.add_option('-v', '--verbose', dest = 'verbose', default = False, action = 'store_true',
+                      help = 'Make the test output verbose')
+    
     # FIX: remove nmea from binary messages.  No way to build the whole packet?
     # FIX: or build the surrounding msg 8 for a broadcast?
-    typeChoices = ('binary','nmeapayload','nmea') # FIX: what about a USCG type message?
-    parser.add_option('-t', '--type', choices=typeChoices, type='choice',
-        dest='ioType', default='nmeapayload',
-        help='What kind of string to write for encoding ('+', '.join(typeChoices)+') [default: %default]')
-
-
-    outputChoices = ('std','html','csv','sql' , 'kml','kml-full')
-    parser.add_option('-T', '--output-type', choices=outputChoices,
-        type='choice', dest='outputType', default='std',
-        help='What kind of string to output ('+', '.join(outputChoices)+') '
-        '[default: %default]')
-
-    parser.add_option('-o','--output',dest='outputFileName',default=None,
-        help='Name of the python file to write [default: stdout]')
-
-    parser.add_option('-f', '--fields', dest='fieldList', default=None,
-        action='append', choices=fieldList,
-        help='Which fields to include in the output.  Currently only for csv '
-        'output [default: all]')
-
-    parser.add_option('-p', '--print-csv-field-list', dest='printCsvfieldList',
-        default=False,action='store_true',
-        help='Print the field name for csv')
-
-    parser.add_option('-c', '--sql-create', dest='sqlCreate', default=False,
-        action='store_true',
-        help='Print out an sql create command for the table.')
-
-    parser.add_option('--latex-table', dest='latexDefinitionTable',
-        default=False,action='store_true',
-        help='Print a LaTeX table of the type')
-
-    parser.add_option('--text-table', dest='textDefinitionTable', default=False,
-        action='store_true',
-        help='Print delimited table of the type (for Word table importing)')
-
-    parser.add_option('--delimt-text-table', dest='delimTextDefinitionTable',
-        default='    ',
-        help='Delimiter for text table [default: \'%default\'] '
-        '(for Word table importing)')
-
-    dbChoices = ('sqlite','postgres')
-    parser.add_option('-D', '--db-type', dest='dbType', default='postgres',
-        choices=dbChoices,type='choice',
-        help='What kind of database ('+', '.join(dbChoices)+') '
-        '[default: %default]')
-
+    typeChoices = ('binary', 'nmeapayload', 'nmea')  # FIX: what about a USCG type message?
+    parser.add_option('-t', '--type', choices = typeChoices, type = 'choice',
+                      dest = 'ioType', default = 'nmeapayload',
+                      help = 'What kind of string to write for encoding (' + ', '.join(
+                          typeChoices) + ') [default: %default]')
+    
+    outputChoices = ('std', 'html', 'csv', 'sql', 'kml', 'kml-full')
+    parser.add_option('-T', '--output-type', choices = outputChoices,
+                      type = 'choice', dest = 'outputType', default = 'std',
+                      help = 'What kind of string to output (' + ', '.join(outputChoices) + ') '
+                                                                                            '[default: %default]')
+    
+    parser.add_option('-o', '--output', dest = 'outputFileName', default = None,
+                      help = 'Name of the python file to write [default: stdout]')
+    
+    parser.add_option('-f', '--fields', dest = 'fieldList', default = None,
+                      action = 'append', choices = fieldList,
+                      help = 'Which fields to include in the output.  Currently only for csv '
+                             'output [default: all]')
+    
+    parser.add_option('-p', '--print-csv-field-list', dest = 'printCsvfieldList',
+                      default = False, action = 'store_true',
+                      help = 'Print the field name for csv')
+    
+    parser.add_option('-c', '--sql-create', dest = 'sqlCreate', default = False,
+                      action = 'store_true',
+                      help = 'Print out an sql create command for the table.')
+    
+    parser.add_option('--latex-table', dest = 'latexDefinitionTable',
+                      default = False, action = 'store_true',
+                      help = 'Print a LaTeX table of the type')
+    
+    parser.add_option('--text-table', dest = 'textDefinitionTable', default = False,
+                      action = 'store_true',
+                      help = 'Print delimited table of the type (for Word table importing)')
+    
+    parser.add_option('--delimt-text-table', dest = 'delimTextDefinitionTable',
+                      default = '    ',
+                      help = 'Delimiter for text table [default: \'%default\'] '
+                             '(for Word table importing)')
+    
+    dbChoices = ('sqlite', 'postgres')
+    parser.add_option('-D', '--db-type', dest = 'dbType', default = 'postgres',
+                      choices = dbChoices, type = 'choice',
+                      help = 'What kind of database (' + ', '.join(dbChoices) + ') '
+                                                                                '[default: %default]')
+    
     addMsgOptions(parser)
-
+    
     options, args = parser.parse_args()
-
+    
     if options.unittest:
-            sys.argv = [sys.argv[0]]
-            if options.verbose: sys.argv.append('-v')
-            unittest.main()
-
+        sys.argv = [sys.argv[0]]
+        if options.verbose:
+            sys.argv.append('-v')
+        unittest.main()
+    
     outfile = sys.stdout
-    if None!=options.outputFileName:
-            outfile = open(options.outputFileName,'w')
-
-
+    if None != options.outputFileName:
+        outfile = open(options.outputFileName, 'w')
+    
     if options.doEncode:
         # Make sure all non required options are specified.
-        if None==options.RepeatIndicatorField: parser.error("missing value for RepeatIndicatorField")
-        if None==options.UserIDField: parser.error("missing value for UserIDField")
-        if None==options.SOGField: parser.error("missing value for SOGField")
-        if None==options.PositionAccuracyField: parser.error("missing value for PositionAccuracyField")
-        if None==options.longitudeField: parser.error("missing value for longitudeField")
-        if None==options.latitudeField: parser.error("missing value for latitudeField")
-        if None==options.COGField: parser.error("missing value for COGField")
-        if None==options.TrueHeadingField: parser.error("missing value for TrueHeadingField")
-        if None==options.TimeStampField: parser.error("missing value for TimeStampField")
-        if None==options.cs_unitField: parser.error("missing value for cs_unitField")
-        if None==options.display_flagField: parser.error("missing value for display_flagField")
-        if None==options.dsc_flagField: parser.error("missing value for dsc_flagField")
-        if None==options.band_flagField: parser.error("missing value for band_flagField")
-        if None==options.msg22_flagField: parser.error("missing value for msg22_flagField")
-        if None==options.mode_flagField: parser.error("missing value for mode_flagField")
-        if None==options.RAIMField: parser.error("missing value for RAIMField")
-        if None==options.CommStateSelectorField: parser.error("missing value for CommStateSelectorField")
-        if None==options.CommStateField: parser.error("missing value for CommStateField")
+        if None == options.RepeatIndicatorField:
+            parser.error("missing value for RepeatIndicatorField")
+        if None == options.UserIDField:
+            parser.error("missing value for UserIDField")
+        if None == options.SOGField:
+            parser.error("missing value for SOGField")
+        if None == options.PositionAccuracyField:
+            parser.error("missing value for PositionAccuracyField")
+        if None == options.longitudeField:
+            parser.error("missing value for longitudeField")
+        if None == options.latitudeField:
+            parser.error("missing value for latitudeField")
+        if None == options.COGField:
+            parser.error("missing value for COGField")
+        if None == options.TrueHeadingField:
+            parser.error("missing value for TrueHeadingField")
+        if None == options.TimeStampField:
+            parser.error("missing value for TimeStampField")
+        if None == options.cs_unitField:
+            parser.error("missing value for cs_unitField")
+        if None == options.display_flagField:
+            parser.error("missing value for display_flagField")
+        if None == options.dsc_flagField:
+            parser.error("missing value for dsc_flagField")
+        if None == options.band_flagField:
+            parser.error("missing value for band_flagField")
+        if None == options.msg22_flagField:
+            parser.error("missing value for msg22_flagField")
+        if None == options.mode_flagField:
+            parser.error("missing value for mode_flagField")
+        if None == options.RAIMField:
+            parser.error("missing value for RAIMField")
+        if None == options.CommStateSelectorField:
+            parser.error("missing value for CommStateSelectorField")
+        if None == options.CommStateField:
+            parser.error("missing value for CommStateField")
     msgDict = {
         'MessageID': '18',
         'RepeatIndicator': options.RepeatIndicatorField,
@@ -886,75 +953,80 @@ def test_auth():
         'CommStateSelector': options.CommStateSelectorField,
         'CommState': options.CommStateField,
     }
-
+    
     bits = encode(msgDict)
     if 'binary' == options.ioType:
         print(str(bits))
-    elif 'nmeapayload'==options.ioType:
+    elif 'nmeapayload' == options.ioType:
         # FIX: figure out if this might be necessary at compile time
-        bitLen=len(bits)
+        bitLen = len(bits)
         if bitLen % 6 != 0:
-            bits = bits + BitVector(size=(6 - (bitLen%6)))  # Pad out to multiple of 6
+            bits = bits + BitVector(size = (6 - (bitLen % 6)))  # Pad out to multiple of 6
         print(aisbinary.bitvectoais6(bits)[0])
-
+    
     # FIX: Do not emit this option for the binary message payloads.  Does not make sense.
     elif 'nmea' == options.ioType:
         nmea = uscg.create_nmea(bits)
         print(nmea)
     else:
         sys.exit('ERROR: unknown ioType.  Help!')
-
-
+        
         if options.sqlCreate:
-                sqlCreateStr(outfile,options.fieldList,dbType=options.dbType)
-
+            sqlCreateStr(outfile, options.fieldList, dbType = options.dbType)
+        
         if options.latexDefinitionTable:
-                latexDefinitionTable(outfile)
-
+            latexDefinitionTable(outfile)
+        
         # For conversion to word tables
         if options.textDefinitionTable:
-                textDefinitionTable(outfile,options.delimTextDefinitionTable)
-
+            textDefinitionTable(outfile, options.delimTextDefinitionTable)
+        
         if options.printCsvfieldList:
-                # Make a csv separated list of fields that will be displayed for csv
-                if None == options.fieldList: options.fieldList = fieldList
-                import StringIO
-                buf = StringIO.StringIO()
-                for field in options.fieldList:
-                        buf.write(field+',')
-                result = buf.getvalue()
-                if result[-1] == ',': print(result[:-1])
-                else: print(result)
-
+            # Make a csv separated list of fields that will be displayed for csv
+            if None == options.fieldList:
+                options.fieldList = fieldList
+            import StringIO
+            
+            buf = StringIO.StringIO()
+            for field in options.fieldList:
+                buf.write(field + ',')
+            result = buf.getvalue()
+            if result[-1] == ',':
+                print(result[:-1])
+            else:
+                print(result)
+        
         if options.doDecode:
-                if len(args)==0: args = sys.stdin
-                for msg in args:
-                        bv = None
+            if len(args) == 0:
+                args = sys.stdin
+            for msg in args:
+                bv = None
+                
+                if msg[0] in ('$', '!') and msg[3:6] in ('VDM', 'VDO'):
+                    # Found nmea
+                    # FIX: do checksum
+                    bv = aisbinary.ais6tobitvec(msg.split(',')[5])
+                else:  # either binary or nmeapayload... expect mostly nmeapayloads
+                    # assumes that an all 0 and 1 string can not be a nmeapayload
+                    binaryMsg = True
+                    for c in msg:
+                        if c not in ('0', '1'):
+                            binaryMsg = False
+                            break
+                    if binaryMsg:
+                        bv = BitVector(bitstring = msg)
+                    else:  # nmeapayload
+                        bv = aisbinary.ais6tobitvec(msg)
+                
+                printFields(decode(bv)
+                            , out = outfile
+                            , format = options.outputType
+                            , fieldList = options.fieldList
+                            , dbType = options.dbType
+                            )
 
-                        if msg[0] in ('$','!') and msg[3:6] in ('VDM','VDO'):
-                                # Found nmea
-                                # FIX: do checksum
-                                bv = aisbinary.ais6tobitvec(msg.split(',')[5])
-                        else: # either binary or nmeapayload... expect mostly nmeapayloads
-                                # assumes that an all 0 and 1 string can not be a nmeapayload
-                                binaryMsg=True
-                                for c in msg:
-                                        if c not in ('0','1'):
-                                                binaryMsg=False
-                                                break
-                                if binaryMsg:
-                                        bv = BitVector(bitstring=msg)
-                                else: # nmeapayload
-                                        bv = aisbinary.ais6tobitvec(msg)
 
-                        printFields(decode(bv)
-                                    ,out=outfile
-                                    ,format=options.outputType
-                                    ,fieldList=options.fieldList
-                                    ,dbType=options.dbType
-                                    )
-
-def test_this():
+def test_this ():
     msg18 = {}
     msg18['MessageID'] = 18
     msg18['RepeatIndicator'] = 1
@@ -975,27 +1047,26 @@ def test_this():
     msg18['msg22_flag'] = False
     msg18['mode_flag'] = False
     msg18['RAIM'] = False
-    #CommStateSelector 0 = SOTDMA
+    # CommStateSelector 0 = SOTDMA
     ##CommStateSelector 1 = ITDMA
     msg18['CommStateSelector'] = 0
     # This state is ought to be filled
     # in full according tospecs
     #
-    #This field can be SOTDMA or ITDMA communication state
-    #20 bites long
-    #msg18['CommState'] = 0
-    #What follows is SOTDMA communication state
+    # This field can be SOTDMA or ITDMA communication state
+    # 20 bites long
+    # msg18['CommState'] = 0
+    # What follows is SOTDMA communication state
     msg18['state_syncstate'] = 2
     msg18['state_slottimeout'] = 0
     msg18['state_slotoffset'] = 1221
-
-
-
+    
     bits = encode(msg18)
     nmea = uscg.create_nmea(bits,
-                            message_type=18)
+                            message_type = 18)
     return
 
+
 ############################################################
-if __name__=='__main__':
-   test_this()
+if __name__ == '__main__':
+    test_this()

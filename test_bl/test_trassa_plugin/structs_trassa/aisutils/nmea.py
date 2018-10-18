@@ -4,7 +4,7 @@ __version__ = '$Revision: 13395 $'.split()[1]
 __date__ = '$Date: 2010-04-06 11:11:59 -0400 (Tue, 06 Apr 2010) $'.split()[1]
 __author__ = 'Kurt Schwehr'
 
-__doc__='''
+__doc__ = '''
 Handle creation and extraction of NMEA strings.  Maybe need a separate VDM class like ais-py?
 
 @since: 2006-Sep-26  FIX: replace with the file creation date
@@ -14,11 +14,11 @@ Handle creation and extraction of NMEA strings.  Maybe need a separate VDM class
 per line that is required in the NMEA specification.
 '''
 
-import time, sys, re
+import re
+import sys
 
 # Local Modules
 from test_bl.test_trassa_plugin.structs_trassa.aisutils import aisbinary
-
 
 EOL = "\x0D\x0A"
 '''
@@ -26,7 +26,7 @@ DOS style end-of-line (<cr><lf>) for talking to AIS base stations
 '''
 
 
-def checksumStr(data,verbose=False):
+def checksumStr (data, verbose = False):
     """
     Take a NMEA 0183 string and compute the checksum.
 
@@ -52,34 +52,41 @@ def checksumStr(data,verbose=False):
     @rtype: str
 
     """
-
+    
     # FIX: strip off new line at the end too
-    #if data[0]=='!' or data[0]=='?': data = data[1:]
-    #if data[-1]=='*': data = data[:-1]
-    #if data[-3]=='*': data = data[:-3]
-    end = data.find('*') # FIX: would rfind be faster?
-    start=0
-    if data[0] in ('$','!'): start=1
-    if -1 != end: data=data[start:end]
-    else: data=data[start:]
-    if verbose: print
-    'checking on:',start,end,data
+    # if data[0]=='!' or data[0]=='?': data = data[1:]
+    # if data[-1]=='*': data = data[:-1]
+    # if data[-3]=='*': data = data[:-3]
+    end = data.find('*')  # FIX: would rfind be faster?
+    start = 0
+    if data[0] in ('$', '!'):
+        start = 1
+    if -1 != end:
+        data = data[start:end]
+    else:
+        data = data[start:]
+    if verbose:
+        print
+    'checking on:', start, end, data
     # FIX: rename sum to not shadow builting function
-    sum=0
-    for c in data: sum = sum ^ ord(c)
+    sum = 0
+    for c in data:
+        sum = sum ^ ord(c)
     sumHex = "%x" % sum
-    if len(sumHex)==1: sumHex = '0'+sumHex
+    if len(sumHex) == 1:
+        sumHex = '0' + sumHex
     return sumHex.upper()
 
 
 ######################################################################
 # common variables
-#nmeaChecksumRegExStr = r"""\,[0-9]\*[0-9A-F][0-9A-F]"""
-#nmeaChecksumRegExStr = r"""\,[A-Za-z0-9]\*[0-9A-F][0-9A-F]"""
+# nmeaChecksumRegExStr = r"""\,[0-9]\*[0-9A-F][0-9A-F]"""
+# nmeaChecksumRegExStr = r"""\,[A-Za-z0-9]\*[0-9A-F][0-9A-F]"""
 nmeaChecksumRegExStr = r"""\*[0-9A-F][0-9A-F]"""
 nmeaChecksumRE = re.compile(nmeaChecksumRegExStr)
 
-def isChecksumValid(nmeaStr, allowTailData=True,verbose=False):
+
+def isChecksumValid (nmeaStr, allowTailData = True, verbose = False):
     """Return True if the string checks out with the checksum
 
 
@@ -100,34 +107,35 @@ def isChecksumValid(nmeaStr, allowTailData=True,verbose=False):
     @return: True if the checksum matches
     @rtype: bool
     """
-
+    
     if allowTailData:
         match = nmeaChecksumRE.search(nmeaStr)
         if not match:
             if verbose:
                 print('Match failed')
                 return False
-
+    
     nmeaStr = nmeaStr[:match.end()]
-	#if checksum.upper()==checksumStr(nmeaStr[match.end()
-    if nmeaStr[-3]!='*':
+    # if checksum.upper()==checksumStr(nmeaStr[match.end()
+    if nmeaStr[-3] != '*':
         print('FIX: warning... bad nmea string')
         return False
-        # Bad string without proper checksum
-
-    checksum=nmeaStr[-2:]
-    if checksum.upper()==checksumStr(nmeaStr).upper():
+    # Bad string without proper checksum
+    
+    checksum = nmeaStr[-2:]
+    if checksum.upper() == checksumStr(nmeaStr).upper():
         return True
     if verbose:
-        print('mismatch checksums:', checksum.upper(),checksumStr(nmeaStr).upper())
+        print('mismatch checksums:', checksum.upper(), checksumStr(nmeaStr).upper())
         return False
 
-def buildNmea(aisBits,
-              prefix='!',
-              serviceType='AI',
-              msgType='VDM',
-              channelSeq=None,
-              channel='A'):
+
+def buildNmea (aisBits,
+               prefix = '!',
+               serviceType = 'AI',
+               msgType = 'VDM',
+               channelSeq = None,
+               channel = 'A'):
     '''
     Create one long oversized nmea string for the bits
     @param aisBits: message payload
@@ -140,24 +148,26 @@ def buildNmea(aisBits,
     @todo: sync names of prefix and serviceType to NMEA spec.
     @see: reference the appropriate spec documents for all this stuff.
     '''
-
-    rList = [prefix,serviceType,msgType,',1,1,']
-    if None != channelSeq: rList.append(str(channelSeq))
+    
+    rList = [prefix, serviceType, msgType, ',1,1,']
+    if None != channelSeq:
+        rList.append(str(channelSeq))
     rList.append(',')
     rList.append(channel)
     rList.append(',')
-
-    payloadStr,pad = aisbinary.bitvectoais6(aisBits) #[0]
+    
+    payloadStr, pad = aisbinary.bitvectoais6(aisBits)  # [0]
     rList.append(payloadStr)
-    rList.append(','+str(pad))
+    rList.append(',' + str(pad))
     rStr = ''.join(rList)
-    rStr += '*'+checksumStr(rStr)
-
+    rStr += '*' + checksumStr(rStr)
+    
     return rStr
 
 
 ######################################################################
-def cabEncode(TransA=False, TransB=False, Restart=False, Reset=False, prefix='AI'):  # FIX: default to xx?
+def cabEncode (TransA = False, TransB = False, Restart = False, Reset = False,
+               prefix = 'AI'):  # FIX: default to xx?
     '''
     CAB - Control AIS Base Station.  Defaults to a safe state with
     everything shutdown.  62320-1/CDV, 80/427/CDV, Page 77, A.1.7
@@ -191,20 +201,28 @@ def cabEncode(TransA=False, TransB=False, Restart=False, Reset=False, prefix='AI
     @return: A CAB NMEA string
     @rtype: str
     '''
-    r = ['$'+prefix+'CAB']
-    if TransA: r.append('1')
-    else: r.append('0')
-    if TransB: r.append('1')
-    else: r.append('0')
-    if Restart: r.append('1')
-    else: r.append('')
-    if Reset: r.append('1')
-    else: r.append('')
+    r = ['$' + prefix + 'CAB']
+    if TransA:
+        r.append('1')
+    else:
+        r.append('0')
+    if TransB:
+        r.append('1')
+    else:
+        r.append('0')
+    if Restart:
+        r.append('1')
+    else:
+        r.append('')
+    if Reset:
+        r.append('1')
+    else:
+        r.append('')
     rStr = ','.join(r)
-    return rStr+'*'+checksumStr(rStr)
+    return rStr + '*' + checksumStr(rStr)
 
 
-def cabDecode(msg,validate=True):
+def cabDecode (msg, validate = True):
     '''
 
     >>> cabDecode('$AICAB,,,,*48')
@@ -225,30 +243,39 @@ def cabDecode(msg,validate=True):
     @todo: How do I make stable doctests with dictionary returns
     @todo FIX: throw an exception if not valid
     '''
-    if validate and not isChecksumValid(msg,verbose=True):
+    if validate and not isChecksumValid(msg, verbose = True):
         print('FIX: this should be an exception in cabDecode.  Bad checksum')
         return False
-    fields=msg.split(',')
-    if validate and len(fields) not in (5,6,7): # Allow for USCG station and timestamp
+    fields = msg.split(',')
+    if validate and len(fields) not in (5, 6, 7):  # Allow for USCG station and timestamp
         # check for USCG log tail
         print('FIX: this should be an exception in cabDecode.  wrong number of fields')
         return False
-
+    
     # FIX: for validate... make sure that the other case from 1 is an empty string
     r = {}
-    if '1'==fields[1]: r['TransA']=True
-    else: r['TransA']=False
-    if '1'==fields[2]: r['TransB']=True
-    else: r['TransB']=False
-    if '1'==fields[3]: r['Restart']=True
-    else: r['Restart']=False
-    if '1'==fields[4]: r['Reset']=True
-    else: r['Reset']=False
-    r['nmeaCmd']='CAB'
-    r['nmeaPrefix']=fields[0][1:3]
+    if '1' == fields[1]:
+        r['TransA'] = True
+    else:
+        r['TransA'] = False
+    if '1' == fields[2]:
+        r['TransB'] = True
+    else:
+        r['TransB'] = False
+    if '1' == fields[3]:
+        r['Restart'] = True
+    else:
+        r['Restart'] = False
+    if '1' == fields[4]:
+        r['Reset'] = True
+    else:
+        r['Reset'] = False
+    r['nmeaCmd'] = 'CAB'
+    r['nmeaPrefix'] = fields[0][1:3]
     return r
 
-def verQuery(prefix='xx',appendEOL=True):
+
+def verQuery (prefix = 'xx', appendEOL = True):
     '''
     Ask for the version string from a base station
 
@@ -259,14 +286,16 @@ def verQuery(prefix='xx',appendEOL=True):
     '$AIBSQ,VER*25'
 
     '''
-
-    rStr =  '$' + prefix+'BSQ,VER'
+    
+    rStr = '$' + prefix + 'BSQ,VER'
     rStr += '*' + checksumStr(rStr)
-
-    if appendEOL: rStr += EOL
+    
+    if appendEOL:
+        rStr += EOL
     return rStr
 
-def encodeQuery(query, prefix='xx',appendEOL=True):
+
+def encodeQuery (query, prefix = 'xx', appendEOL = True):
     '''
     Ask for the version string from a base station
 
@@ -298,65 +327,66 @@ def encodeQuery(query, prefix='xx',appendEOL=True):
     '$L3BSQ,CAB*53'
 
     '''
-
-#    >>> encodeQuery('SID',appendEOL=False)
-#    '$xxBSQ,SID*32'
-
-
-    rStr =  '$' + prefix+'BSQ,'+query
+    
+    #    >>> encodeQuery('SID',appendEOL=False)
+    #    '$xxBSQ,SID*32'
+    
+    rStr = '$' + prefix + 'BSQ,' + query
     rStr += '*' + checksumStr(rStr)
-
-    if appendEOL: rStr += EOL
+    
+    if appendEOL:
+        rStr += EOL
     return rStr
 
 
 # FIX: generic encode query function goes here
 
 
-txrxLUT={
+txrxLUT = {
     0: 'tx a and b, rx on a and b'
-    ,1: 'tx a, rx a and b'
-    ,2: 'tx b, rx a and b'
-    ,3: 'no tx, rx a and b'
-    ,4: 'no tx, rx a'
-    ,5: 'no tx, no rx'
+    , 1: 'tx a, rx a and b'
+    , 2: 'tx b, rx a and b'
+    , 3: 'no tx, rx a and b'
+    , 4: 'no tx, rx a'
+    , 5: 'no tx, no rx'
 }
 '''
 Transmit and Received modes.  See Page 88 61993-2 and XXXX???
 '''
 
 acaInfoSrcLUT = {
-    'A':'ITU-R M.1371 message 22: addressed message'
-    ,'B':'ITU-R M.1371 message 22: broadcast message'
-    ,'C':'IEC 61162-1 AIS Channel Assignment setence'
-    ,'D':'DSC Channel 70 telecommand'
-    ,'M':'Operator manual input'
-    ,'I':'Why is the L-3 unit returning I???  It is not defined on page 88 or 61993-2'
+    'A': 'ITU-R M.1371 message 22: addressed message'
+    , 'B': 'ITU-R M.1371 message 22: broadcast message'
+    , 'C': 'IEC 61162-1 AIS Channel Assignment setence'
+    , 'D': 'DSC Channel 70 telecommand'
+    , 'M': 'Operator manual input'
+    , 'I': 'Why is the L-3 unit returning I???  It is not defined on page 88 or 61993-2'
 }
 ''' Lookup table of codes to use in the Information Source of an ACA
 message.  See acaEncode() and acaDecode()
 '''
 
-powerLUT={
+powerLUT = {
     0: 'high',
     1: 'low'
-    }
+}
 
-powerEncode={
-    'high':0,
-    'low':1
-    }
+powerEncode = {
+    'high': 0,
+    'low': 1
+}
 
-def acaEncode(seqnum='',north='',east='',south='',west='',transitionSize=''
-              ,chanA='2087',chanAbandwidth='0' # default to normal channel and 0 is default bandwidth
-              ,chanB='2088',chanBbandwidth='0'
-              ,txrxMode='' # '3' # Default to no tx, but rx both
-              ,power='' # Default to low power
-              ,infosrc='' # Should be empty when sent to an AIS unit
-              ,timeinuse='' # Should be empty for sent to an AIS unit
-              ,prefix='xx',appendEOL=True
-              ,validate=True
-              ):
+
+def acaEncode (seqnum = '', north = '', east = '', south = '', west = '', transitionSize = ''
+               , chanA = '2087', chanAbandwidth = '0'  # default to normal channel and 0 is default bandwidth
+               , chanB = '2088', chanBbandwidth = '0'
+               , txrxMode = ''  # '3' # Default to no tx, but rx both
+               , power = ''  # Default to low power
+               , infosrc = ''  # Should be empty when sent to an AIS unit
+               , timeinuse = ''  # Should be empty for sent to an AIS unit
+               , prefix = 'xx', appendEOL = True
+               , validate = True
+               ):
     '''Encode an AIS Regional Channel Assignment Message.
 
 
@@ -410,40 +440,56 @@ def acaEncode(seqnum='',north='',east='',south='',west='',transitionSize=''
     @type validate: bool
     '''
     if validate:
-        if ''!=seqnum: assert int(seqnum) in range(10)
-        if ''!=north:  assert float(north) >= -90.  and float(north<=90.)
-        if ''!=south:  assert float(south) >= -90.  and float(south<=90.)
-        if ''!=east:   assert float(east)  >= -180. and float(east<=180.)
-        if ''!=west:   assert float(west)  >= -180. and float(west<=180.)
-
-        if transitionSize!='': assert int(transitionSize) in range(1,9)
-        if chanA         !='': assert int(chanA) > 2000 and int(chanA) <= 2290 # FIX: what is the real range or is this it?
-        if chanAbandwidth!='': assert int(chanAbandwidth) in (0,1)
-        if chanB         !='': assert int(chanB) > 2000 and int(chanB) <= 2290 # FIX: what is the real range or is this it?
-        if chanBbandwidth!='': assert int(chanBbandwidth) in (0,1)
-
-        if txrxMode!='': assert int(txrxMode) in range(6)
-        if power!='': assert int(power) in (0,1)
-        if infosrc!='': assert infosrc in ('A','B','C','D','M')  # Sorry L-3, but I does not appear to be valid
-        if timeinuse!='':
+        if '' != seqnum:
+            assert int(seqnum) in range(10)
+        if '' != north:
+            assert float(north) >= -90. and float(north <= 90.)
+        if '' != south:
+            assert float(south) >= -90. and float(south <= 90.)
+        if '' != east:
+            assert float(east) >= -180. and float(east <= 180.)
+        if '' != west:
+            assert float(west) >= -180. and float(west <= 180.)
+        
+        if transitionSize != '':
+            assert int(transitionSize) in range(1, 9)
+        if chanA != '':
+            assert int(chanA) > 2000 and int(chanA) <= 2290  # FIX: what is the real range or is this it?
+        if chanAbandwidth != '':
+            assert int(chanAbandwidth) in (0, 1)
+        if chanB != '':
+            assert int(chanB) > 2000 and int(chanB) <= 2290  # FIX: what is the real range or is this it?
+        if chanBbandwidth != '':
+            assert int(chanBbandwidth) in (0, 1)
+        
+        if txrxMode != '':
+            assert int(txrxMode) in range(6)
+        if power != '':
+            assert int(power) in (0, 1)
+        if infosrc != '':
+            assert infosrc in (
+                'A', 'B', 'C', 'D', 'M')  # Sorry L-3, but I does not appear to be valid
+        if timeinuse != '':
             v = float(timeinuse)
-            assert v>=0. and v<24.
-
-    r = ['$'+prefix+'ACA',str(seqnum)
-         ,str(north),str(east),str(south),str(west),str(transitionSize)
-         ,str(chanA),str(chanAbandwidth)
-         ,str(chanB),str(chanBbandwidth)
-         ,str(txrxMode),str(power),str(infosrc),str(timeinuse)]
-
+            assert v >= 0. and v < 24.
+    
+    r = ['$' + prefix + 'ACA', str(seqnum)
+        , str(north), str(east), str(south), str(west), str(transitionSize)
+        , str(chanA), str(chanAbandwidth)
+        , str(chanB), str(chanBbandwidth)
+        , str(txrxMode), str(power), str(infosrc), str(timeinuse)]
+    
     rStr = ','.join(r)
-    rStr += '*'+checksumStr(rStr)
-    if validate: assert(len(rStr)<=81)
-    if appendEOL: rStr+=EOL
-
+    rStr += '*' + checksumStr(rStr)
+    if validate:
+        assert (len(rStr) <= 81)
+    if appendEOL:
+        rStr += EOL
+    
     return rStr
 
 
-def acaDecode(msg,validate=True):
+def acaDecode (msg, validate = True):
     '''
     Decode AIS Regional Channel Assignment Message.
 
@@ -456,61 +502,69 @@ def acaDecode(msg,validate=True):
     @see: 61993-2 Page 87.
     @todo: get a complete example to decode as a doctest
     '''
-    if validate and not isChecksumValid(msg,verbose=True):
+    if validate and not isChecksumValid(msg, verbose = True):
         print('FIX: this should be an exception in acaDecode.  Bad checksum')
         return False
-    #assert msg[0]=='$'
+    # assert msg[0]=='$'
     fields = msg.split(',')
     r = {}
-    r['nmeaCmd']='ACA'
-    r['nmeaPrefix']=fields[0][1:3]
+    r['nmeaCmd'] = 'ACA'
+    r['nmeaPrefix'] = fields[0][1:3]
     r['seqnum'] = fields[1]
-    if len(fields[2])>0:
+    if len(fields[2]) > 0:
         lat = float(fields[2])  # FIX: what format is this??
-        assert len(fields[3])==1
-        if fields[3]=='S': lat= -1 * lat
-    else: lat = None # empty string
-    r['north']=lat
+        assert len(fields[3]) == 1
+        if fields[3] == 'S':
+            lat = -1 * lat
+    else:
+        lat = None  # empty string
+    r['north'] = lat
     del lat
-
-    if len(fields[4])>0:
+    
+    if len(fields[4]) > 0:
         lon = float(fields[4])  # FIX: what format is this??
-        assert len(fields[5])==1
-        if fields[5]=='W': lat= -1 * lat
-    else: lon = None # empty string
-    r['east']=lon
+        assert len(fields[5]) == 1
+        if fields[5] == 'W':
+            lat = -1 * lat
+    else:
+        lon = None  # empty string
+    r['east'] = lon
     del lon
-
-    if len(fields[6])>0:
+    
+    if len(fields[6]) > 0:
         lat = float(fields[6])  # FIX: what format is this??
-        assert len(fields[7])==1
-        if fields[7]=='S': lat= -1 * lat
-    else: lat = None # empty string
-    r['south']=lat
+        assert len(fields[7]) == 1
+        if fields[7] == 'S':
+            lat = -1 * lat
+    else:
+        lat = None  # empty string
+    r['south'] = lat
     del lat
-
-    if len(fields[8])>0:
+    
+    if len(fields[8]) > 0:
         lon = float(fields[8])  # FIX: what format is this??
-        assert len(fields[9])==1
-        if fields[9]=='W': lat= -1 * lat
-    else: lon = None # empty string
-    r['west']=lon
+        assert len(fields[9]) == 1
+        if fields[9] == 'W':
+            lat = -1 * lat
+    else:
+        lon = None  # empty string
+    r['west'] = lon
     del lon
-
+    
     r['transitionSize'] = fields[10]  # Transition zone size in nm
-    r['chanA']          = fields[11]  # Should probably be 2087
-    r['chanAbandwidth'] = fields[12] # 12.5 or 25 kHz
-    r['chanB']          = fields[13]  # Should probably be 2087
-    r['chanBbandwidth'] = fields[14] # 12.5 or 25 kHz
-    r['txrxMode']       = fields[15] # See lookup table txrxLUT
-    r['power']          = fields[16] # 0 low, 1 hight
-    r['infosrc']        = fields[17] # See acaInfoSrcLUT, can also be null
-    r['inuse']          = fields[18] # 0 is not in use, 1 in-use.  Can also be null
-    r['timeinuse']      = fields[19].split('*')[0] # hhmmss.ss
+    r['chanA'] = fields[11]  # Should probably be 2087
+    r['chanAbandwidth'] = fields[12]  # 12.5 or 25 kHz
+    r['chanB'] = fields[13]  # Should probably be 2087
+    r['chanBbandwidth'] = fields[14]  # 12.5 or 25 kHz
+    r['txrxMode'] = fields[15]  # See lookup table txrxLUT
+    r['power'] = fields[16]  # 0 low, 1 hight
+    r['infosrc'] = fields[17]  # See acaInfoSrcLUT, can also be null
+    r['inuse'] = fields[18]  # 0 is not in use, 1 in-use.  Can also be null
+    r['timeinuse'] = fields[19].split('*')[0]  # hhmmss.ss
     return r
 
 
-def cbmDecode(msg,validate=True):
+def cbmDecode (msg, validate = True):
     '''
     Decode Configure Base Station Message Broadcast Reporting Rates message.
 
@@ -520,42 +574,57 @@ def cbmDecode(msg,validate=True):
 
     @see: 62320-1/CDV 80/427/CDV page 78, A.1.8
     '''
-
-    if validate and not isChecksumValid(msg,verbose=True):
+    
+    if validate and not isChecksumValid(msg, verbose = True):
         print('FIX: this should be an exception in acaDecode.  Bad checksum')
         return False
-    #assert msg[0]=='$'
+    # assert msg[0]=='$'
     fields = msg.split(',')
     r = {}
-    r['nmeaCmd']=fields[0][3:] # CBM
-    r['nmeaPrefix']=fields[0][1:3]
+    r['nmeaCmd'] = fields[0][3:]  # CBM
+    r['nmeaPrefix'] = fields[0][1:3]
     r['msg4slot'] = fields[1]
     i = 2
-    r['msg17chanAstartslot'] = fields[i]; i+=1
-    r['msg17chanAslotinterval'] = fields[i]; i+=1
-    r['msg17chanAnumslots'] = fields[i]; i+=1
-    r['msg20chanAstartslot'] = fields[i]; i+=1
-    r['msg20chanAslotinterval'] = fields[i]; i+=1
-    r['msg22chanAstartslot'] = fields[i]; i+=1
-    r['msg22chanAslotinterval'] = fields[i]; i+=1
-
-    r['msg17chanAstartslot'] = fields[i]; i+=1
-    r['msg17chanAslotinterval'] = fields[i]; i+=1
-    r['msg17chanAnumslots'] = fields[i]; i+=1
-    r['msg20chanAstartslot'] = fields[i]; i+=1
-    r['msg20chanAslotinterval'] = fields[i]; i+=1
-    r['msg22chanAstartslot'] = fields[i]; i+=1
-    r['msg22chanAslotinterval'] = fields[i].split('*')[0]; i+=1  # 15
+    r['msg17chanAstartslot'] = fields[i];
+    i += 1
+    r['msg17chanAslotinterval'] = fields[i];
+    i += 1
+    r['msg17chanAnumslots'] = fields[i];
+    i += 1
+    r['msg20chanAstartslot'] = fields[i];
+    i += 1
+    r['msg20chanAslotinterval'] = fields[i];
+    i += 1
+    r['msg22chanAstartslot'] = fields[i];
+    i += 1
+    r['msg22chanAslotinterval'] = fields[i];
+    i += 1
+    
+    r['msg17chanAstartslot'] = fields[i];
+    i += 1
+    r['msg17chanAslotinterval'] = fields[i];
+    i += 1
+    r['msg17chanAnumslots'] = fields[i];
+    i += 1
+    r['msg20chanAstartslot'] = fields[i];
+    i += 1
+    r['msg20chanAslotinterval'] = fields[i];
+    i += 1
+    r['msg22chanAstartslot'] = fields[i];
+    i += 1
+    r['msg22chanAslotinterval'] = fields[i].split('*')[0];
+    i += 1  # 15
     return r
 
 
 ownershipLUT = {
-    'L':'local'
-    ,'R':'remote'
-    ,'C':'clear reservation'
+    'L': 'local'
+    , 'R': 'remote'
+    , 'C': 'clear reservation'
 }
 
-def dlmDecode(msg, validate=True):
+
+def dlmDecode (msg, validate = True):
     '''
     Decode Data Link Management slot allocation for Base Station nmea message
 
@@ -566,51 +635,74 @@ def dlmDecode(msg, validate=True):
     @see: 62320-1/CDV 80/427/CDV page 79, A.1.9
 
     '''
-
-    if validate and not isChecksumValid(msg,verbose=True):
+    
+    if validate and not isChecksumValid(msg, verbose = True):
         print('FIX: this should be an exception in acaDecode.  Bad checksum')
         return False
-    #assert msg[0]=='$'
+    # assert msg[0]=='$'
     fields = msg.split(',')
     r = {}
-    r['nmeaCmd']=fields[0][3:] # CBM
-    r['nmeaPrefix']=fields[0][1:3]
+    r['nmeaCmd'] = fields[0][3:]  # CBM
+    r['nmeaPrefix'] = fields[0][1:3]
     i = 1
-
-    r['seqNum'] = fields[i]; i+=1
-    r['aisChannel'] = fields[i]; i+=1
-
+    
+    r['seqNum'] = fields[i];
+    i += 1
+    r['aisChannel'] = fields[i];
+    i += 1
+    
     # reservations
-    r['ownership1'] = fields[i]; i+=1   # See ownership
-    r['startslot1'] = fields[i]; i+=1
-    r['numslots1']  = fields[i]; i+=1
-    r['timeout1']   = fields[i]; i+=1
-    r['incr1']      = fields[i]; i+=1
-
-    r['ownership2'] = fields[i]; i+=1
-    r['startslot2'] = fields[i]; i+=1
-    r['numslots2']  = fields[i]; i+=1
-    r['timeout2']   = fields[i]; i+=1
-    r['incr2']      = fields[i]; i+=1
-
-    r['ownership3'] = fields[i]; i+=1
-    r['startslot3'] = fields[i]; i+=1
-    r['numslots3']  = fields[i]; i+=1
-    r['timeout3']   = fields[i]; i+=1
-    r['incr3']      = fields[i]; i+=1
-
-    r['ownership4'] = fields[i]; i+=1
-    r['startslot4'] = fields[i]; i+=1
-    r['numslots4']  = fields[i]; i+=1
-    r['timeout4']   = fields[i]; i+=1
-    r['incr4']      = fields[i]; i+=1
-
+    r['ownership1'] = fields[i];
+    i += 1  # See ownership
+    r['startslot1'] = fields[i];
+    i += 1
+    r['numslots1'] = fields[i];
+    i += 1
+    r['timeout1'] = fields[i];
+    i += 1
+    r['incr1'] = fields[i];
+    i += 1
+    
+    r['ownership2'] = fields[i];
+    i += 1
+    r['startslot2'] = fields[i];
+    i += 1
+    r['numslots2'] = fields[i];
+    i += 1
+    r['timeout2'] = fields[i];
+    i += 1
+    r['incr2'] = fields[i];
+    i += 1
+    
+    r['ownership3'] = fields[i];
+    i += 1
+    r['startslot3'] = fields[i];
+    i += 1
+    r['numslots3'] = fields[i];
+    i += 1
+    r['timeout3'] = fields[i];
+    i += 1
+    r['incr3'] = fields[i];
+    i += 1
+    
+    r['ownership4'] = fields[i];
+    i += 1
+    r['startslot4'] = fields[i];
+    i += 1
+    r['numslots4'] = fields[i];
+    i += 1
+    r['timeout4'] = fields[i];
+    i += 1
+    r['incr4'] = fields[i];
+    i += 1
+    
     return r
 
-def bbmEncode(totSent, sentNum, seqId, aisChan, msgId, data, numFillBits
-              ,prefix='xx',appendEOL=True
-              ,validate=True
-              ):
+
+def bbmEncode (totSent, sentNum, seqId, aisChan, msgId, data, numFillBits
+               , prefix = 'xx', appendEOL = True
+               , validate = True
+               ):
     '''Encode a binary broadcast message.
 
     I have no idea what this message says...
@@ -659,26 +751,28 @@ def bbmEncode(totSent, sentNum, seqId, aisChan, msgId, data, numFillBits
     if validate:
         # obsesive error checking follows
         tot = int(totSent)
-        assert (0<tot and tot<=9)
+        assert (0 < tot and tot <= 9)
         num = int(sentNum)
-        assert (0<num and num<=9)
-        assert (num<=tot)
+        assert (0 < num and num <= 9)
+        assert (num <= tot)
         seq = int(seqId)
-        assert (0<=seq and seq <=9)
-        assert (int(aisChan) in range(0,5))
-        assert (int(msgId) in (8,14))
-        #if num==1: assert(len(data)<=58)
-        #else: assert(len(data)<=60)
+        assert (0 <= seq and seq <= 9)
+        assert (int(aisChan) in range(0, 5))
+        assert (int(msgId) in (8, 14))
+        # if num==1: assert(len(data)<=58)
+        # else: assert(len(data)<=60)
         # FIX: add validation of the characters in the data string
-        assert(int(numFillBits) in range(0,6))
-    r = ','.join(('!'+prefix+'BBM',str(totSent),str(sentNum),str(seqId),str(aisChan),str(msgId),data,str(numFillBits)))
-
-    r += '*'+checksumStr(r)
-    if validate: assert(len(r)) <= 81  # Max nmea string length
+        assert (int(numFillBits) in range(0, 6))
+    r = ','.join(('!' + prefix + 'BBM', str(totSent), str(sentNum), str(seqId), str(aisChan), str(msgId), data,
+                  str(numFillBits)))
+    
+    r += '*' + checksumStr(r)
+    if validate:
+        assert (len(r)) <= 81  # Max nmea string length
     return r
 
 
-def bbmDecode(msg,validate=True):
+def bbmDecode (msg, validate = True):
     '''
     Decode a binary broadcast message NMEA string
 
@@ -695,35 +789,43 @@ def bbmDecode(msg,validate=True):
     @rtype: dict
     @see: IEC-PAS 61162-100 80/330/PAS, Page 19
     '''
-    if validate and not isChecksumValid(msg,verbose=True):
+    if validate and not isChecksumValid(msg, verbose = True):
         print
         'FIX: this should be an exception in bbmDecode.  Bad checksum'
         return False
-    fields=msg.split(',')
-    if validate and len(fields) < 8: # Allow for USCG station and timestamp
+    fields = msg.split(',')
+    if validate and len(fields) < 8:  # Allow for USCG station and timestamp
         print
         'FIX: this should be an exception in bbmDecode.  wrong number of fields', len(fields)
         print
         '  ', msg
         return False
-
+    
     fields = msg.split(',')
     r = {}
-    r['nmeaCmd']=fields[0][3:] # CBM  # 0
-    r['nmeaPrefix']=fields[0][1:3]
+    r['nmeaCmd'] = fields[0][3:]  # CBM  # 0
+    r['nmeaPrefix'] = fields[0][1:3]
     i = 1
     # FIX: convert from strings or not??
-    r['totSent'] = fields[1]; i+= 1
-    r['sentNum'] = fields[2]; i+= 1
-    r['seqId'] = fields[3]; i+= 1
-    r['aisChan'] = fields[4]; i+= 1
-    r['msgId'] = fields[5]; i+= 1
-    r['data'] = fields[6]; i+= 1
-    r['numFillBits'] = fields[7].split('*')[0]; i+= 1
-
+    r['totSent'] = fields[1];
+    i += 1
+    r['sentNum'] = fields[2];
+    i += 1
+    r['seqId'] = fields[3];
+    i += 1
+    r['aisChan'] = fields[4];
+    i += 1
+    r['msgId'] = fields[5];
+    i += 1
+    r['data'] = fields[6];
+    i += 1
+    r['numFillBits'] = fields[7].split('*')[0];
+    i += 1
+    
     return r
 
-def bcfDecode(msg,validate=True):
+
+def bcfDecode (msg, validate = True):
     '''
     Decode a General Base Station Configuration NMEA string.
 
@@ -738,67 +840,86 @@ def bcfDecode(msg,validate=True):
     @return: lookup table of key/values
     @rtype: dict
     '''
-
-    if validate and not isChecksumValid(msg,verbose=True):
+    
+    if validate and not isChecksumValid(msg, verbose = True):
         print
         'FIX: this should be an exception in bcfDecode.  Bad checksum'
         return False
-    fields=msg.split(',')
-    if validate and len(fields) < 16: # Allow for USCG station and timestamp
+    fields = msg.split(',')
+    if validate and len(fields) < 16:  # Allow for USCG station and timestamp
         print
         'FIX: this should be an exception in bcfDecode.  wrong number of fields', len(fields)
         print
         '  ', msg
         return False
-
+    
     fields = msg.split(',')
     r = {}
-    r['nmeaCmd']=fields[0][3:] # Had better be BCF
-    r['nmeaPrefix']=fields[0][1:3]
+    r['nmeaCmd'] = fields[0][3:]  # Had better be BCF
+    r['nmeaPrefix'] = fields[0][1:3]
     i = 1
-    r['mmsi'] = fields[i]; i+= 1  # AKA UserID
-    r['posSrc'] = fields[i]; i+= 1
-
-    lat=fields[i]; i+= 1
-    latNS=fields[i]; i+= 1
-    if lat == '': r['lat'] = ''
+    r['mmsi'] = fields[i];
+    i += 1  # AKA UserID
+    r['posSrc'] = fields[i];
+    i += 1
+    
+    lat = fields[i];
+    i += 1
+    latNS = fields[i];
+    i += 1
+    if lat == '':
+        r['lat'] = ''
     else:
         lat = float(lat)
-        if 'S'==latNS: lat = -lat
-        r['lat']=lat
-
-    lon   = fields[i]; i+= 1
-    lonEW = fields[i]; i+= 1
-    if lon == '': r['lon'] = ''
+        if 'S' == latNS:
+            lat = -lat
+        r['lat'] = lat
+    
+    lon = fields[i];
+    i += 1
+    lonEW = fields[i];
+    i += 1
+    if lon == '':
+        r['lon'] = ''
     else:
         lon = float(lon)
-        if 'W'==lonEW: lon = -lon
+        if 'W' == lonEW:
+            lon = -lon
         r['lon'] = lon
-
-    r['posAccuracy'] = fields[i]; i+= 1
-    r['RxChanA'] = fields[i]; i+= 1
-    r['RxChanB'] = fields[i]; i+= 1
-    r['TxChanA'] = fields[i]; i+= 1
-    r['TxChanB'] = fields[i]; i+= 1
-    r['PowerA'] = fields[i]; i+= 1
-    r['PowerB'] = fields[i]; i+= 1
-    r['VDLretries'] = fields[i]; i+= 1
-    r['RepeatIndicator'] = fields[i]; i+= 1
+    
+    r['posAccuracy'] = fields[i];
+    i += 1
+    r['RxChanA'] = fields[i];
+    i += 1
+    r['RxChanB'] = fields[i];
+    i += 1
+    r['TxChanA'] = fields[i];
+    i += 1
+    r['TxChanB'] = fields[i];
+    i += 1
+    r['PowerA'] = fields[i];
+    i += 1
+    r['PowerB'] = fields[i];
+    i += 1
+    r['VDLretries'] = fields[i];
+    i += 1
+    r['RepeatIndicator'] = fields[i];
+    i += 1
     r['BaseStationTalkerID'] = fields[i].split('*')[0]
-
+    
     return r
 
 
 posSrcLUT = {
-    0:'surveyed'
-    ,1:'internal EPFD in use'
-    ,2:'external EPFD in use'
-    ,3:'internal EPFD in use with auto fallback to surveyed'
-    ,4:'internal EPFD in use with auto fallback to external EPFD'
-    ,5:'external EPFD in use with auto fallback to surveyed'
-    ,6:'external EPFD in use with auto fallback to internal EPFD'
-    ,7:'FIX: What exactly is 7 supposed to be... not in the source list in item 2.'
-    }
+    0: 'surveyed'
+    , 1: 'internal EPFD in use'
+    , 2: 'external EPFD in use'
+    , 3: 'internal EPFD in use with auto fallback to surveyed'
+    , 4: 'internal EPFD in use with auto fallback to external EPFD'
+    , 5: 'external EPFD in use with auto fallback to surveyed'
+    , 6: 'external EPFD in use with auto fallback to internal EPFD'
+    , 7: 'FIX: What exactly is 7 supposed to be... not in the source list in item 2.'
+}
 '''
 Position source used in a BCF message
 
@@ -806,21 +927,22 @@ Position source used in a BCF message
 @see: 62320-1  80/427/CDV Page 76 A.1.6
 '''
 
-def bcfEncode(mmsi='',posSrc=''
-              ,lat='',latNS=''
-              ,lon='',lonEW=''
-              ,posAccuracy=''
 
-              ,RxChanA='',RxChanB=''
-              ,TxChanA='',TxChanB=''
-              ,PowerA ='',PowerB =''
+def bcfEncode (mmsi = '', posSrc = ''
+               , lat = '', latNS = ''
+               , lon = '', lonEW = ''
+               , posAccuracy = ''
 
-              ,VDLretries=''
-              ,RepeatIndicator=''
-              ,BaseStationTalkerID=''
-              ,prefix='AI',appendEOL=True
-              ,validate=True
-              ):
+               , RxChanA = '', RxChanB = ''
+               , TxChanA = '', TxChanB = ''
+               , PowerA = '', PowerB = ''
+
+               , VDLretries = ''
+               , RepeatIndicator = ''
+               , BaseStationTalkerID = ''
+               , prefix = 'AI', appendEOL = True
+               , validate = True
+               ):
     '''
     Enocde a General Base Station Configuation Message.  Defaults to not changing anything
 
@@ -890,65 +1012,68 @@ def bcfEncode(mmsi='',posSrc=''
     @param validate: Set to true to validate the message
     @type  validate: bool
     '''
-
+    
     if validate:
-        #print 'FIX: write validation code'
+        # print 'FIX: write validation code'
         pass
-
-
-    r = ('!'+prefix+'BCF',str(mmsi),str(posSrc)
-         ,str(lat),str(latNS)
-         ,str(lon),str(lonEW)
-         ,str(posAccuracy)
-         ,str(RxChanA),str(RxChanB)
-         ,str(TxChanA),str(TxChanA)
-         ,str(PowerA),str(PowerB)
-         ,str(VDLretries),str(RepeatIndicator),str(prefix)
+    
+    r = ('!' + prefix + 'BCF', str(mmsi), str(posSrc)
+         , str(lat), str(latNS)
+         , str(lon), str(lonEW)
+         , str(posAccuracy)
+         , str(RxChanA), str(RxChanB)
+         , str(TxChanA), str(TxChanA)
+         , str(PowerA), str(PowerB)
+         , str(VDLretries), str(RepeatIndicator), str(prefix)
          )
-
+    
     rStr = ','.join(r)
-    rStr += '*'+checksumStr(rStr)
-    if validate: assert(len(rStr)<=81)
-    if appendEOL: rStr+=EOL
-
+    rStr += '*' + checksumStr(rStr)
+    if validate:
+        assert (len(rStr) <= 81)
+    if appendEOL:
+        rStr += EOL
+    
     return rStr
 
 
 ######################################################################
-if __name__=='__main__':
+if __name__ == '__main__':
     from optparse import OptionParser
-    parser = OptionParser(usage="%prog [options]",
-                          version="%prog "+__version__)
-    parser.add_option('--test','--doc-test',dest='doctest',default=False,action='store_true',
-                      help='run the documentation tests')
-    parser.add_option('-v','--verbose',dest='verbose',default=False,action='store_true',
-                      help='run the tests run in verbose mode')
-    (options,args) = parser.parse_args()
-
-    success=True
-
+    
+    parser = OptionParser(usage = "%prog [options]",
+                          version = "%prog " + __version__)
+    parser.add_option('--test', '--doc-test', dest = 'doctest', default = False, action = 'store_true',
+                      help = 'run the documentation tests')
+    parser.add_option('-v', '--verbose', dest = 'verbose', default = False, action = 'store_true',
+                      help = 'run the tests run in verbose mode')
+    (options, args) = parser.parse_args()
+    
+    success = True
+    
     if options.doctest:
         import os;
-
+        
         print
         os.path.basename(sys.argv[0]), 'doctests ...',
         argvOrig = sys.argv
-
-        sys.argv= [sys.argv[0]]
+        
+        sys.argv = [sys.argv[0]]
     if options.verbose:
         sys.argv.append('-v')
-
+    
     import doctest
-    numfail,numtests=doctest.testmod()
-    if numfail==0:
+    
+    numfail, numtests = doctest.testmod()
+    if numfail == 0:
         print('ok')
     else:
         print('FAILED')
-        success=False
-        sys.argv = argvOrig # Restore the original args
-        del argvOrig # hide from epydoc
-
+        success = False
+        sys.argv = argvOrig  # Restore the original args
+        del argvOrig  # hide from epydoc
+    
     if not success:
-	    sys.exit('Something Failed')
-
-    del success # Hide success from epydoc
+        sys.exit('Something Failed')
+    
+    del success  # Hide success from epydoc
