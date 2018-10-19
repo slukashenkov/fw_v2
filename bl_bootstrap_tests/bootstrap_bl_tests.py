@@ -5,12 +5,14 @@ import configparser
 import json
 import logging
 import os
+import glob
 import platform
 import re
 import shlex
 import signal
 import sys
 import time
+
 from builtins import Exception
 from pathlib import Path
 from subprocess import Popen, check_output
@@ -23,7 +25,6 @@ from scp import SCPClient
 logging.basicConfig(level = logging.DEBUG,
                     format = '%(asctime)-25s %(levelname)-6s %(name)-10s %(module)10s %(threadName)-10s %(funcName)-10s  %(message)s',
                     )
-
 
 class GetBuildTests():
     
@@ -76,17 +77,17 @@ class GetBuildTests():
         '''
         SETUP SSH
         '''
-        self.ssh_build_ip = self.bootstrap_cnf['SSH_PREFS']['SSH_HOST_BUILD']
+        self.ssh_build_ip   = self.bootstrap_cnf['SSH_PREFS']['SSH_HOST_BUILD']
         self.ssh_build_port = self.bootstrap_cnf['SSH_PREFS']['SSH_PORT_BUILD']
         self.ssh_build_user = self.bootstrap_cnf['SSH_PREFS']['SSH_USER_NAME_BUILD']
         self.ssh_build_pswd = self.bootstrap_cnf['SSH_PREFS']['SSH_PASSWD_BUILD']
         
-        self.ssh_tests_ip = self.bootstrap_cnf['SSH_PREFS']['SSH_HOST_TESTS']
+        self.ssh_tests_ip   = self.bootstrap_cnf['SSH_PREFS']['SSH_HOST_TESTS']
         self.ssh_tests_port = self.bootstrap_cnf['SSH_PREFS']['SSH_PORT_TESTS']
         self.ssh_tests_user = self.bootstrap_cnf['SSH_PREFS']['SSH_USER_NAME_TESTS']
         self.ssh_tests_pswd = self.bootstrap_cnf['SSH_PREFS']['SSH_PASSWD_TESTS']
         
-        self.ssh_sut_ip = self.bootstrap_cnf['SSH_PREFS']['SSH_HOST_SUT']
+        self.ssh_sut_ip   = self.bootstrap_cnf['SSH_PREFS']['SSH_HOST_SUT']
         self.ssh_sut_port = self.bootstrap_cnf['SSH_PREFS']['SSH_PORT_SUT']
         self.ssh_sut_user = self.bootstrap_cnf['SSH_PREFS']['SSH_USER_NAME_SUT']
         self.ssh_sut_pswd = self.bootstrap_cnf['SSH_PREFS']['SSH_PASSWD_SUT']
@@ -113,18 +114,59 @@ class GetBuildTests():
         
         '''System specific stuff'''
         if self.syst == 'Windows':
+
+            '''Build under test location'''
             self.ssh_scp_content_location_cntrl_build = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_CONTROL_HOST_BLD']
-            self.ssh_scp_content_location_cntrl_build = self.ssh_scp_content_location_cntrl_build + '\\' + self.ssh_scp_build_name_ptrn + str(self.build_id) + ".tar.gz"
+
+            '''When build id is not used find the latest file'''
+            if self.build_id != None:
+                self.ssh_scp_content_location_cntrl_build = self.ssh_scp_content_location_cntrl_build + '\\' \
+                                                            + self.ssh_scp_build_name_ptrn + str(self.build_id) + ".tar.gz"
+            else:
+                bld_ptrn = self.ssh_scp_build_name_ptrn
+                curr_build_file = self.find_latest_file(dir_path = self.ssh_scp_content_location_cntrl_build,
+                                                        f_name_ptrn = bld_ptrn)
+                self.ssh_scp_content_location_cntrl_build = curr_build_file
+
+
+            '''Tests specifics'''
             self.ssh_scp_content_location_cntrl_tests = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_CONTROL_HOST_TESTS']
 
-           
-            self.ssh_scp_content_location_cntrl_confs = self.ssh_scp_content_location_cntrl_tests + '\\' + self.ssh_scp_confs_name_ptrn + self.ssh_scp_confs_ver +  ".tar.gz"
+            '''Module configs are stored with the tests'''
+            bld_ptrn = self.ssh_scp_confs_name_ptrn
+            curr_conf_file = self.find_latest_file(dir_path=self.ssh_scp_content_location_cntrl_tests,
+                                                    f_name_ptrn=bld_ptrn)
+            self.ssh_scp_content_location_cntrl_confs = curr_conf_file
+
+            #self.ssh_scp_content_location_cntrl_confs = self.ssh_scp_content_location_cntrl_tests + '\\' + self.ssh_scp_confs_name_ptrn + self.ssh_scp_confs_ver +  ".tar.gz"
           
         
         elif self.syst == 'Linux':
+
+            '''Build under test location'''
             self.ssh_scp_content_location_cntrl_build = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_CONTROL_HOST_BLD_LUNUX']
-            self.ssh_scp_content_location_cntrl_build = self.ssh_scp_content_location_cntrl_build + '/' + self.ssh_scp_build_name_ptrn + str(self.build_id) + ".tar.gz"
+
+            '''When build id is not used find the latest file'''
+            if self.build_id != None:
+                self.ssh_scp_content_location_cntrl_build = self.ssh_scp_content_location_cntrl_build \
+                                                            + '/' + self.ssh_scp_build_name_ptrn + str(self.build_id) + ".tar.gz"
+            else:
+                bld_ptrn = self.ssh_scp_build_name_ptrn + '*.tar.gz'
+                curr_build_file = self.find_latest_file(dir_path = self.ssh_scp_content_location_cntrl_build,
+                                                        f_name_ptrn = bld_ptrn)
+
+                self.ssh_scp_content_location_cntrl_build = curr_build_file
+
+            '''Tests specifics'''
             self.ssh_scp_content_location_cntrl_tests = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_CONTROL_HOST_TESTS_LINUX']
+
+            '''Module configs are stored with the tests'''
+            bld_ptrn = self.ssh_scp_confs_name_ptrn
+            curr_conf_file = self.find_latest_file(dir_path=self.ssh_scp_content_location_cntrl_tests,
+                                                   f_name_ptrn=bld_ptrn)
+            self.ssh_scp_content_location_cntrl_confs = curr_conf_file
+
+            #self.ssh_scp_content_location_cntrl_confs = self.ssh_scp_content_location_cntrl_tests + '/' + self.ssh_scp_confs_name_ptrn + self.ssh_scp_confs_ver + ".tar.gz"
         
         '''-----------------------------------------------------------------------------------------------------------'''
         '''
@@ -173,8 +215,12 @@ class GetBuildTests():
         '''GET MAPPING OF TESTS TO BUILDS'''
         if self.syst == 'Windows':
             self.tests_to_builds_map = self.bootstrap_cnf['BUILD_TO_TEST_MAP']['MAP_LOCATION']
+            self.tests_to_builds_map =  os.path.join(self.proj_abs_path,
+                                                     self.tests_to_builds_map)
         if self.syst == 'Linux':
             self.tests_to_builds_map = self.bootstrap_cnf['BUILD_TO_TEST_MAP_LINUX']['MAP_LOCATION']
+            self.tests_to_builds_map = os.path.join(self.proj_abs_path,
+                                                    self.tests_to_builds_map)
         
         self.read_data = ReadData(self.tests_to_builds_map)
         self.read_data.read_json_to_map()
@@ -202,7 +248,15 @@ class GetBuildTests():
             self.ssh_commands_test_key = self.bootstrap_cnf['SUT_BUILD_INSTALL_TEST_KEY_LINUX']['TEST_SCRPT_KEY']
             self.ssh_commands_test_path = self.bootstrap_cnf['SUT_BUILD_INSTALL_TEST_KEY_LINUX']['TEST_SCRPT_PATH']
         return
-    
+
+    def find_latest_file(self,
+                         dir_path = None,
+                         f_name_ptrn = None):
+
+        files_path = os.path.join(dir_path, f_name_ptrn)
+        files = sorted(glob.iglob(files_path), key=os.path.getctime, reverse=True)
+        return files[0]
+
     
     def run_tests (self):
         self.scripts.script_exec = self.test_start_scrpt_exec
@@ -305,6 +359,8 @@ class GetBuildTests():
         
         '''GET FILE NAME OF THE CURRENT BUILD'''
         curr_build_file = self.ssh_scp_content_location_build + str(self.build_id) + self.ssh_scp_build_name_ptrn
+
+
         '''SET EVERYTHING FOR SCP BUILD TO CONTROL HOST'''
         '''Where first'''
         self.scripts.ssh_target_ip = self.ssh_build_ip
@@ -1186,7 +1242,7 @@ class ReadData:
         self.final_list = list
         return
     
-    
+
     def read_json_to_map (self):
         with open(self.data_location_map, "r") as read_file:
             map = json.load(read_file)
@@ -1207,9 +1263,10 @@ def test_this (build_id = None,
     curr_build_id = build_id
     curr_sect_name_blds = sect_name_blds
     curr_sect_name_tdir = sect_name_tdir
-    boot_str = GetBuildTests(curr_build_id,
-                             curr_sect_name_blds,
-                             curr_sect_name_tdir)
+
+    boot_str = GetBuildTests(build_id       = curr_build_id,
+                             sect_name_blds = curr_sect_name_blds,
+                             sect_name_tdir = curr_sect_name_tdir)
     
     print("--->>>>here should be log servers start<<<---")
     # boot_str.start_logserver()
@@ -1232,10 +1289,14 @@ if __name__ == "__main__":
     '''
     GET BUILD ID
     '''
+    test_this()
+    '''
     # build_id = sys.argv[1]
     build_id = 445
+ 
     sect_name_blds = 'builds_ids'
     sect_name_tdir = 'tests_dir'
     test_this(build_id,
               sect_name_blds,
               sect_name_tdir)
+    '''
