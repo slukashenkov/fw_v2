@@ -102,17 +102,23 @@ class GetBuildTests():
         self.ssh_source_dir = None
         self.ssh_target_dir = None
         '''-----------------------------------------------------------------------------------------------------------'''
-        ''' STUFF SPECIFIC FOR BOOTSTARP '''
+        ''' STUFF SPECIFIC FOR BOOTSTRAP '''
+        '''Directories for build, configs, install scripts'''
         self.ssh_scp_content_location_build = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_BUILD']
         self.ssh_scp_content_location_test = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_TESTS']
         self.ssh_scp_content_location_sut = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_SUT']
+
+
+        '''Patterns for the latest file search'''
         self.ssh_scp_build_name_ptrn = self.bootstrap_cnf['SCP_PREFS']['SCP_BUILD_NAME_PATTERN']
         self.ssh_scp_tests_name_ptrn = self.bootstrap_cnf['SCP_PREFS']['SCP_TESTS_NAME_PATTERN']
+        '''Modules configs'''
         self.ssh_scp_confs_name_ptrn = self.bootstrap_cnf['SCP_PREFS']['SCP_CONFIG_FILES_PATTERN']
-        self.ssh_scp_confs_ver = self.bootstrap_cnf['SCP_PREFS']['SCP_CONFIG_FILES_VER']
-        
-        
-        '''System specific stuff'''
+        self.ssh_scp_confs_ver       = self.bootstrap_cnf['SCP_PREFS']['SCP_CONFIG_FILES_VER']
+        '''Install script'''
+        self.ssh_scp_scrpt_name_ptrn = self.bootstrap_cnf['SCP_PREFS']['SCP_INSTALL_SCRPT_PATTERN']
+
+        '''System specific current build location'''
         if self.syst == 'Windows':
 
             '''Build under test location'''
@@ -130,16 +136,32 @@ class GetBuildTests():
 
 
             '''Tests specifics'''
+            '''TESTS location full path'''
             self.ssh_scp_content_location_cntrl_tests = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_CONTROL_HOST_TESTS']
 
-            '''Module configs are stored with the tests'''
-            bld_ptrn = self.ssh_scp_confs_name_ptrn
-            curr_conf_file = self.find_latest_file(dir_path=self.ssh_scp_content_location_cntrl_tests,
-                                                    f_name_ptrn=bld_ptrn)
-            self.ssh_scp_content_location_cntrl_confs = curr_conf_file
+            '''Modules configs'''
+            self.ssh_scp_content_location_mod_confs  = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_CONTROL_HOST_CONFS']
+            self.ssh_scp_content_location_mod_confs = os.path.join(self.proj_abs_path,
+                                                           self.ssh_scp_content_location_mod_confs)
+
+            '''Module configs are stored with the bootstrap scripts'''
+            '''use the latest'''
+            self.ssh_scp_content_location_cntrl_confs =  self.find_latest_file(dir_path=self.ssh_scp_content_location_mod_confs,
+                                                   f_name_ptrn=self.ssh_scp_confs_name_ptrn)
+
+            '''Installation script(s)'''
+            self.ssh_scp_content_location_inst_srpts = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_CONTROL_HOST_SCRIPTS']
+            self.ssh_scp_content_location_inst_srpts = os.path.join(self.proj_abs_path,
+                                                                       self.ssh_scp_content_location_inst_srpts)
+
+            '''Module configs are stored with the bootstrap scripts'''
+            '''use the latest'''
+            self.ssh_scp_content_location_inst_srpts = self.find_latest_file(dir_path=self.ssh_scp_content_location_inst_srpts,
+                                                                            f_name_ptrn=self.ssh_scp_scrpt_name_ptrn)
+
 
             #self.ssh_scp_content_location_cntrl_confs = self.ssh_scp_content_location_cntrl_tests + '\\' + self.ssh_scp_confs_name_ptrn + self.ssh_scp_confs_ver +  ".tar.gz"
-          
+
         
         elif self.syst == 'Linux':
 
@@ -177,7 +199,7 @@ class GetBuildTests():
         '''
         SETUP dict for sh commands to be executed remotely
         '''
-        self.ssh_commands_to_exec = {}
+        self.ssh_install_commands_to_exec = {}
         
         '''-----------------------------------------------------------------------------------------------------------'''
         '''SETUP a possibility to check commands execution of the remote host via dedicated script.
@@ -229,18 +251,33 @@ class GetBuildTests():
         '''-----------------------------------------------------------------------------------------------------------'''
         '''PASS PARAMS TO UTILITY SCRIPTS'''
         self.scripts = ExtScripts(self)
-        
-        self.ssh_commands_to_exec_keys = self.scripts.conf_key_to_arr(conf_parser = self.bootstrap_cnf,
-                                                                      section_key = 'SUT_BUILD_INSTALL_COMMANDS',
-                                                                      switch = 'keys')
-        self.ssh_commands_to_exec_values = self.scripts.conf_key_to_arr(conf_parser = self.bootstrap_cnf,
-                                                                        section_key = 'SUT_BUILD_INSTALL_COMMANDS',
-                                                                        switch = 'values')
-        
+
+        '''Collect commands for testing and distr directory'''
+        self.ssh_dir_commands_to_exec_keys = self.scripts.conf_key_to_arr(conf_parser=self.bootstrap_cnf,
+                                                                          section_key='SUT_BUILD_COPY_COMMANDS',
+                                                                              switch='keys')
+        self.ssh_dir_commands_to_exec_values = self.scripts.conf_key_to_arr(conf_parser=self.bootstrap_cnf,
+                                                                                section_key='SUT_BUILD_COPY_COMMANDS',
+                                                                                switch='values')
+
         '''Final MAP of commands for execution over SSH on tests start'''
-        self.ssh_commands_to_exec = self.scripts.zip_to_map(to_zip01 = self.ssh_commands_to_exec_keys,
-                                                            to_zip02 = self.ssh_commands_to_exec_values)
-        
+        self.ssh_dir_commands_to_exec = self.scripts.zip_to_map(to_zip01=self.ssh_dir_commands_to_exec_keys,
+                                                                    to_zip02=self.ssh_dir_commands_to_exec_values)
+
+
+        '''Collect commands for installation'''
+        self.ssh_install_commands_to_exec_keys = self.scripts.conf_key_to_arr(conf_parser = self.bootstrap_cnf,
+                                                                              section_key = 'SUT_BUILD_INSTALL_COMMANDS',
+                                                                              switch = 'keys')
+        self.ssh_install_commands_to_exec_values = self.scripts.conf_key_to_arr(conf_parser = self.bootstrap_cnf,
+                                                                                section_key = 'SUT_BUILD_INSTALL_COMMANDS',
+                                                                                switch = 'values')
+
+        '''Final MAP of commands for execution over SSH on tests start'''
+        self.ssh_install_commands_to_exec = self.scripts.zip_to_map(to_zip01 = self.ssh_install_commands_to_exec_keys,
+                                                                    to_zip02 = self.ssh_install_commands_to_exec_values)
+
+        '''Command to test execution of the previous installation steps'''
         if self.syst == 'Windows':
             self.ssh_commands_test_key = self.bootstrap_cnf['SUT_BUILD_INSTALL_TEST_KEY']['TEST_SCRPT_KEY']
             self.ssh_commands_test_path = self.bootstrap_cnf['SUT_BUILD_INSTALL_TEST_KEY']['TEST_SCRPT_PATH']
@@ -398,8 +435,11 @@ class GetBuildTests():
         #self.scripts.vm_shutdown()
         #self.scripts.vm_start()
         #self.logger.info("<------- WOW VBox HAS STARTED ------> ")
+
+        '''Check if dir for coping distr exists'''
+        self.create_build_dir()
         
-        '''Second'''
+        '''Copy build'''
         if self.syst == 'Windows':
             self.scripts.ssh_scp_content_location = self.ssh_scp_content_location_cntrl_build
             #C:\\data\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\workspace\\BL2_alt7_baselibraries_D_autotests\\BL2_alt7_baselibraries_D_build#445.tar.gz
@@ -417,7 +457,14 @@ class GetBuildTests():
         Copy module configs
         '''
         self.scripts.ssh_scp_content_location = self.ssh_scp_content_location_cntrl_confs
-        self.scripts.ssh_target_dir = self.ssh_install_dir_bin_sut
+        self.scripts.ssh_target_dir = self.ssh_scp_content_location_sut
+        self.scripts.scp_put_files()
+
+        '''
+        Copy install script
+        '''
+        self.scripts.ssh_scp_content_location = self.ssh_scp_content_location_inst_srpts
+        self.scripts.ssh_target_dir = self.ssh_scp_content_location_sut
         self.scripts.scp_put_files()
         
         
@@ -433,10 +480,22 @@ class GetBuildTests():
         self.scripts.scp_put_files()
         '''
         return
-    
+
+    def create_build_dir(self):
+        self.scripts.ssh_commands_to_exec = self.ssh_dir_commands_to_exec
+        '''SET EVERYTHING FOR SCP BUILD TO CONTROL HOST'''
+        '''Where first'''
+        self.scripts.ssh_target_ip = self.ssh_sut_ip
+        self.scripts.ssh_target_port = self.ssh_sut_port
+        self.scripts.ssh_target_user = self.ssh_sut_user
+        self.scripts.ssh_target_pswd = self.ssh_sut_pswd
+
+        self.scripts.ssh_ded_test_key = self.ssh_commands_test_key
+        self.scripts.create_build_dir()
+        return
     
     def install_new_build (self):
-        self.scripts.ssh_commands_to_exec = self.ssh_commands_to_exec
+        self.scripts.ssh_commands_to_exec = self.ssh_install_commands_to_exec
         '''SET EVERYTHING FOR SCP BUILD TO CONTROL HOST'''
         '''Where first'''
         self.scripts.ssh_target_ip = self.ssh_sut_ip
@@ -445,7 +504,6 @@ class GetBuildTests():
         self.scripts.ssh_target_pswd = self.ssh_sut_pswd
         
         self.scripts.ssh_ded_test_key = self.ssh_commands_test_key
-        
         self.scripts.install_build()
         return
 
@@ -459,7 +517,6 @@ class ExtScripts:
                   script_location = None,
                   script_type = "win"
                   ):
-        
         """
         :param commands_file:
         :param script_location:
@@ -619,6 +676,11 @@ class ExtScripts:
     
     
     def install_build (self):
+        self.set_fabric_connection()
+        self.fabric_run_commands()
+        return
+
+    def create_build_dir (self):
         self.set_fabric_connection()
         self.fabric_run_commands()
         return
@@ -1275,9 +1337,8 @@ def test_this (build_id = None,
     #boot_str.get_build_tests()
     boot_str.put_build_to_sut()
     boot_str.install_new_build()
-    boot_str.run_tests()
-    
-    boot_str.stop_logserver()
+    #boot_str.run_tests()
+    #boot_str.stop_logserver()
     
     return
 

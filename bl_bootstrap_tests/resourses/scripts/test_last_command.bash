@@ -10,7 +10,7 @@
 #SET SOME COMMON VARS
 
 PATH_TO_FILE='/usr/bin/dolphin/param'
-#PATH_TO_FILE='/home/vialuk/bl_framework/resources/testScripts/param'
+#PATH_TO_FILE='/home/vialuk/bl_framework/resources/scripts/param'
 PARAM=""
 #echo " Before funct param ${PARAM}"
 
