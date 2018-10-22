@@ -37,11 +37,13 @@ function create_inst_dirs {
 #Check if dir for bin files exists
         if [ ! -d ${bin_trgt_dir} ]; then
                 /bin/mkdir -v ${bin_trgt_dir}
+                chmod 777 ${bin_trgt_dir}
         fi
 
 #Check if dir for libs exists
         if [ ! -d ${lib_trgt_dir} ]; then
                 /bin/mkdir -v ${lib_trgt_dir}
+                 chmod 777 ${lib_trgt_dir}
         fi
 }
 
