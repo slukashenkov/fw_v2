@@ -148,7 +148,7 @@ class GetBuildTests():
             '''Module configs are stored with the bootstrap scripts'''
             '''use the latest'''
             self.ssh_scp_content_location_cntrl_confs =  self.find_latest_file(dir_path=self.ssh_scp_content_location_mod_confs,
-                                                   f_name_ptrn=self.ssh_scp_confs_name_ptrn)
+                                                                                f_name_ptrn=self.ssh_scp_confs_name_ptrn)
 
             '''Installation script(s)'''
             self.ssh_scp_content_location_inst_srpts = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_CONTROL_HOST_SCRIPTS']
@@ -172,7 +172,7 @@ class GetBuildTests():
             '''When build id is not used find the latest file'''
             if self.build_id != None:
                 self.ssh_scp_content_location_cntrl_build = self.ssh_scp_content_location_cntrl_build \
-                                                            + '/' + self.ssh_scp_build_name_ptrn + str(self.build_id) + ".tar.gz"
+                                                            + 'BL2_alt7_baselibraries_D_build#'  + str(self.build_id) + ".tar.gz"
             else:
                 bld_ptrn = self.ssh_scp_build_name_ptrn + '*.tar.gz'
                 curr_build_file = self.find_latest_file(dir_path = self.ssh_scp_content_location_cntrl_build,
@@ -181,15 +181,29 @@ class GetBuildTests():
                 self.ssh_scp_content_location_cntrl_build = curr_build_file
 
             '''Tests specifics'''
+            '''TESTS location full path'''
             self.ssh_scp_content_location_cntrl_tests = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_CONTROL_HOST_TESTS_LINUX']
 
-            '''Module configs are stored with the tests'''
-            bld_ptrn = self.ssh_scp_confs_name_ptrn
-            curr_conf_file = self.find_latest_file(dir_path=self.ssh_scp_content_location_cntrl_tests,
-                                                   f_name_ptrn=bld_ptrn)
-            self.ssh_scp_content_location_cntrl_confs = curr_conf_file
+            '''Modules configs'''
+            self.ssh_scp_content_location_mod_confs = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_CONTROL_HOST_CONFS_LIN']
+            self.ssh_scp_content_location_mod_confs = os.path.join(self.proj_abs_path,
+                                                                   self.ssh_scp_content_location_mod_confs)
 
-            #self.ssh_scp_content_location_cntrl_confs = self.ssh_scp_content_location_cntrl_tests + '/' + self.ssh_scp_confs_name_ptrn + self.ssh_scp_confs_ver + ".tar.gz"
+            '''Module configs are stored with the bootstrap scripts'''
+            '''use the latest'''
+            self.ssh_scp_content_location_cntrl_confs = self.find_latest_file(dir_path=self.ssh_scp_content_location_mod_confs,
+                                                                              f_name_ptrn=self.ssh_scp_confs_name_ptrn)
+
+            '''Installation script(s)'''
+            self.ssh_scp_content_location_inst_srpts = self.bootstrap_cnf['SCP_PREFS']['SCP_LOCATION_CONTROL_HOST_SCRIPTS_LIN']
+            self.ssh_scp_content_location_inst_srpts = os.path.join(self.proj_abs_path,
+                                                                    self.ssh_scp_content_location_inst_srpts)
+
+            '''Module configs are stored with the bootstrap scripts'''
+            '''use the latest'''
+            self.ssh_scp_content_location_inst_srpts = self.find_latest_file(
+                                                        dir_path=self.ssh_scp_content_location_inst_srpts,
+                                                        f_name_ptrn=self.ssh_scp_scrpt_name_ptrn)
         
         '''-----------------------------------------------------------------------------------------------------------'''
         '''
@@ -1347,7 +1361,7 @@ def test_this (build_id = None,
     #boot_str.get_build_tests()
     boot_str.put_build_to_sut()
     boot_str.install_new_build()
-    boot_str.run_tests()
+    #boot_str.run_tests()
     #boot_str.stop_logserver()
     
     return
