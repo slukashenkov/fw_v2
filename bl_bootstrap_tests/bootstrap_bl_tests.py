@@ -174,7 +174,7 @@ class GetBuildTests():
                 self.ssh_scp_content_location_cntrl_build = self.ssh_scp_content_location_cntrl_build \
                                                             + 'BL2_alt7_baselibraries_D_build#'  + str(self.build_id) + ".tar.gz"
             else:
-                bld_ptrn = self.ssh_scp_build_name_ptrn + '*.tar.gz'
+                bld_ptrn = self.ssh_scp_build_name_ptrn
                 curr_build_file = self.find_latest_file(dir_path = self.ssh_scp_content_location_cntrl_build,
                                                         f_name_ptrn = bld_ptrn)
 
