@@ -23,7 +23,7 @@
     "sut_ssh_prefs": {
       "sut_ssh_host": "10.10.201.80",
       "sut_ssh_port": "22",
-      "sut_ssh_user": "slon",
+      "sut_ssh_user": "root",
       "sut_ssh_passwd": "1ro3itta23",
       "sut_ssh_target_dir": "/usr/bin/dolphin"
     },

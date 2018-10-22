@@ -385,7 +385,7 @@ def test_this():
     s_sonata = SetupSonataSuite()
     s_sonata.setup_external_scripts()
     #s_sonata.start_logserver()
-    #s_sonata.setup_vir_env()
+    s_sonata.setup_vir_env(no_VM = True)
     t_case_name=["test_sonata_messages01","test_sonata_messages02"]
     s_sonata.send_receive_tdata(test_case_ids=t_case_name)
     s_sonata.compare_sent_received_tdata(test_case_ids=t_case_name)

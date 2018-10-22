@@ -10,19 +10,15 @@
                             },
 
     "sut_control_commands_start": {
-                      "test_exec":"./testScr_param.bash TESTING_LAST_COMMAND_SUCCESS_ON_SETUP",
-                      "com00":"cd /usr/bin/dolphin",
-                      "com01":"/bin/tar -xzf /usr/bin/dolphin/bl_tests_sonata.tar.gz",
-                      "com02":"cd /usr/bin/dolphin/bl_tests/",
-                      "com03":"./StartSonataOnly.bash",
-                      "com04":"cd /usr/bin/dolphin",
-                      "com05":"ps afx | egrep \".*./[W]atchDogServer --start .*\""
+                      "test_exec":":",
+                      "com00":"cd /usr/bin/dolphin; sleep 4; ./sonata_confs/StartSonataOnly.bash; sleep 4",
+                      "com01":"ps afx | egrep \".*./[W]atchDogServer --start .*\""
                       },
 
     "sut_control_commands_stop": {
                       "test_exec": "./testScr_param.bash TESTING_LAST_COMMAND_SUCCESS_ON_TEARINGDOWN",
-                      "com00": "cd /usr/bin/dolphin/bl_tests",
-                      "com01": " ./StopSonataOnly.bash"
+                      "com00": "cd /usr/bin/dolphin/",
+                      "com01": " ./sonata_confs/StopSonataOnly.bash"
                       },
 
       "send_receive_prefs": {
