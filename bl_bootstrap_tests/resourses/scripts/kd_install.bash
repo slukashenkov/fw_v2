@@ -21,16 +21,21 @@ install_conf_dir="install_confs/"
 start_test_app="install_confs/StartTestUDP.bash"
 stop_test_app="install_confs/StopTestUDP.bash"
 
+#lib registration conf
+lib_reg_conf="dolphin.so.conf"
+lib_reg_dest="/etc/ld.so.conf.d"
+
 #Logging conf
 logging_conf="log4cxx.properties"
 logging_test_conf="log4cxx.properties_file"
+logging_prod_conf="log4cxx.properties_tcp"
 
 
 #CREATE INSTALL DIRECTORIES
 function create_inst_dirs {
 
 #Check if dir for bin files exists
-        if [ ! -d ${bin_trg_dir} ]; then
+        if [ ! -d ${bin_trgt_dir} ]; then
                 /bin/mkdir -v ${bin_trgt_dir}
         fi
 
@@ -128,6 +133,8 @@ function inst_confs {
 	if [ -a ${cnf_file}  ]; then
 		alias cp='cp';  
 		/bin/tar -xzf ${cnf_file} -C ${bin_trgt_dir};
+		cp $(echo ${bin_trgt_dir}${install_conf_dir}${lib_reg_conf}) ${lib_reg_dest} 
+		/sbin/ldconfig 
 
 	else
 		echo "File does not exist"
@@ -137,6 +144,7 @@ function inst_confs {
 function start_app_test {
 	test_app_start_path=$(echo ${bin_trgt_dir}${start_test_app})
 	test_app_stop_path=$(echo ${bin_trgt_dir}${stop_test_app})
+
 	if [ -f ${test_app_start_path_path} ]; then
 		cp -f $(echo ${bin_trgt_dir}${install_conf_dir}${logging_test_conf}) $(echo ${bin_trgt_dir}${logging_conf}) 
 		eval $(echo ${test_app_start_path})	
@@ -157,7 +165,7 @@ function start_app_test {
 			fi
 		done
 
-		cp -f $(echo ${bin_trgt_dir}${install_conf_dir}${logging_conf}) ${bin_trgt_dir} 
+		cp -f $(echo ${bin_trgt_dir}${install_conf_dir}${logging_prod_conf}) $(echo ${bin_trgt_dir}${logging_conf})
 	else 
 		echo "Test conf file does not exist"
 	fi
