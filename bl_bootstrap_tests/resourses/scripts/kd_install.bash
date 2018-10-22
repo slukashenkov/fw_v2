@@ -148,7 +148,8 @@ function start_app_test {
 	test_app_stop_path=$(echo ${bin_trgt_dir}${stop_test_app})
 
 	if [ -f ${test_app_start_path_path} ]; then
-		cp -f $(echo ${bin_trgt_dir}${install_conf_dir}${logging_test_conf}) $(echo ${bin_trgt_dir}${logging_conf}) 
+		cp -f $(echo ${bin_trgt_dir}${install_conf_dir}${logging_test_conf}) $(echo ${bin_trgt_dir}${logging_conf})
+		cd  ${bin_trgt_dir}
 		eval $(echo ${test_app_start_path})	
 		
 		while :

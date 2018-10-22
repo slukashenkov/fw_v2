@@ -12,6 +12,7 @@ import shlex
 import signal
 import sys
 import time
+import argparse
 
 from builtins import Exception
 from pathlib import Path
@@ -127,7 +128,7 @@ class GetBuildTests():
             '''When build id is not used find the latest file'''
             if self.build_id != None:
                 self.ssh_scp_content_location_cntrl_build = self.ssh_scp_content_location_cntrl_build + '\\' \
-                                                            + self.ssh_scp_build_name_ptrn + str(self.build_id) + ".tar.gz"
+                                                            + 'BL2_alt7_baselibraries_D_build#' + str(self.build_id) + ".tar.gz"
             else:
                 bld_ptrn = self.ssh_scp_build_name_ptrn
                 curr_build_file = self.find_latest_file(dir_path = self.ssh_scp_content_location_cntrl_build,
@@ -227,8 +228,12 @@ class GetBuildTests():
             self.log_srv_dir = self.bootstrap_cnf['LOGGER_SRV_LINUX']['LOGGER_SRV_DIR']
         '''=========================================================================================================='''
         '''SETUP START UP SCRIPT FOR ACTUAL TESTS'''
-        self.test_start_scrpt_exec = self.bootstrap_cnf['TESTS_START_SCRPT']['START_CRPT_EXEC']
-        self.test_start_scrpt_dir = self.bootstrap_cnf['TESTS_START_SCRPT']['START_CRPT_DIR']
+        self.test_start_scrpt_dir = self.proj_abs_path
+        if self.syst == 'Windows':
+            self.test_start_scrpt_exec = self.bootstrap_cnf['TESTS_START_SCRPT']['START_CRPT_EXEC_WIN']
+            
+        elif self.syst == 'Linux':
+            self.test_start_scrpt_exec = self.bootstrap_cnf['TESTS_START_SCRPT']['START_CRPT_EXEC_LIN']
         
         self.ssh_remote_commands_conf_start = None
         self.ssh_remote_commands_conf_stop = None
@@ -285,7 +290,8 @@ class GetBuildTests():
             self.ssh_commands_test_key = self.bootstrap_cnf['SUT_BUILD_INSTALL_TEST_KEY_LINUX']['TEST_SCRPT_KEY']
             self.ssh_commands_test_path = self.bootstrap_cnf['SUT_BUILD_INSTALL_TEST_KEY_LINUX']['TEST_SCRPT_PATH']
         return
-
+    
+    '''UTILITY FUCTIONS'''
     def find_latest_file(self,
                          dir_path = None,
                          f_name_ptrn = None):
@@ -1275,8 +1281,8 @@ class ReadData:
     
     
     def __init__ (self,
-                  data_location_map = "C:\\data_from\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\bl_frame_work\\test_bl\\test_sonata_plugin\\resources_sonata\\sonata_fields",
-                  data_location_list = "C:\\data_from\\kronshtadt\\QA\\BL\\AutomationFrameworkDesign\\bl_frame_work\\test_bl\\test_sonata_plugin\\resources_sonata\\sonata_fields"
+                  data_location_map = None,
+                  data_location_list = None
                   ):
         self.data_location_map = data_location_map
         self.data_location_list = data_location_list
@@ -1315,6 +1321,10 @@ class ReadData:
     def read_json_to_list (self):
         return
 
+def create_parser ():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-id', help = 'Numerical ID of the build')
+    return parser
 
 def test_this (build_id = None,
                sect_name_blds = 'builds_ids',
@@ -1337,7 +1347,7 @@ def test_this (build_id = None,
     #boot_str.get_build_tests()
     boot_str.put_build_to_sut()
     boot_str.install_new_build()
-    #boot_str.run_tests()
+    boot_str.run_tests()
     #boot_str.stop_logserver()
     
     return
@@ -1345,19 +1355,16 @@ def test_this (build_id = None,
 
 if __name__ == "__main__":
     """
-    Have a chance to test above classes
+    To test above classes
     """
-    '''
-    GET BUILD ID
-    '''
-    test_this()
-    '''
-    # build_id = sys.argv[1]
-    build_id = 445
- 
-    sect_name_blds = 'builds_ids'
-    sect_name_tdir = 'tests_dir'
-    test_this(build_id,
-              sect_name_blds,
-              sect_name_tdir)
-    '''
+    # test_this()
+    parser = create_parser()
+    args = parser.parse_args()
+    print(args)
+    
+    if args.id != None:
+        print(args)
+        test_this(build_id = args.id)
+    else:
+        test_this()
+
