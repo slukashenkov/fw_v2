@@ -16,9 +16,8 @@
                       },
 
     "sut_control_commands_stop": {
-                      "test_exec": "./testScr_param.bash TESTING_LAST_COMMAND_SUCCESS_ON_TEARINGDOWN",
-                      "com00": "cd /usr/bin/dolphin/",
-                      "com01": " ./sonata_confs/StopSonataOnly.bash"
+                      "test_exec": ":",
+                      "com00": "cd /usr/bin/dolphin/; sleep 1;./sonata_confs/StopSonataOnly.bash; sleep 1 "
                       },
 
       "send_receive_prefs": {

@@ -462,8 +462,12 @@ class SetupTrassaSuite:
         return
     
     
-    def stop_test_env (self):
-        self.ext_scripts.tear_down_test_env()
+    def stop_test_env (self,
+                       no_VM = None):
+        if no_VM == None:
+            self.ext_scripts.tear_down_test_env()
+        else:
+            self.ext_scripts.tear_down_test_env(no_VM = True)
         return
     
     
@@ -490,8 +494,12 @@ class SetupTrassaSuite:
         return
     
     
-    def setup_vir_env (self):
-        self.ext_scripts.set_test_env()
+    def setup_vir_env (self,
+                       no_VM = None):
+        if no_VM == None:
+            self.ext_scripts.set_test_env()
+        else:
+            self.ext_scripts.set_test_env(no_VM = True)
         return
     
     
@@ -660,9 +668,10 @@ def test_this_aialr ():
     TODO:
     finish with setup
     '''
-    # s_trassa.setup_external_scripts()
-    # s_sonata.start_logserver()
-    # s_sonata.setup_vir_env()
+    s_trassa.setup_external_scripts()
+    # s_trassa.start_logserver()
+    # s_trassa.setup_vir_env()
+    s_trassa.setup_vir_env(no_VM = True)
     # t_case_name=["test_trassa_messages01","test_trassa_messages02"]
     # test_case_ids,
     udp_sender_id = None
@@ -696,8 +705,9 @@ def test_this_aialr ():
     print(str(result))
     s_trassa.stop_udp_server(udp_srv_name = server_id)
     
-    # s_trassa.stop_udp_sender()
-    # s_trassa.stop_test_env()
+    s_trassa.stop_udp_sender()
+    #s_trassa.stop_test_env()
+    s_trassa.stop_test_env(no_VM = True)
     # s_trassa.stop_logserver()
     return
 
@@ -759,4 +769,4 @@ if __name__ == "__main__":
     # test_this_paisd()
     # test_this_astd()
     test_this_aialr()
-# test_this_peist()
+    # test_this_peist()

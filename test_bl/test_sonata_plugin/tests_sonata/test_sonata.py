@@ -55,7 +55,7 @@ class SonataTests(unittest.TestCase):
         def tearDownClass(self):
             self.sonata_setup.stop_udp_server()
             self.sonata_setup.stop_udp_sender()
-            self.sonata_setup.stop_test_env()
+            self.sonata_setup.stop_test_env(no_VM = True)
             self.sonata_setup.stop_logserver()
 
             self.__tools__.build_test_banner(mod_name           = 'SONATA',

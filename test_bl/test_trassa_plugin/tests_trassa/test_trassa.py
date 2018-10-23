@@ -58,7 +58,7 @@ class TrassaTests(unittest.TestCase):
 		'''SETUP TEST ENV
 		'''
 		self.trassa_setup.start_logserver()
-		self.trassa_setup.setup_vir_env()
+		self.trassa_setup.setup_vir_env(no_VM = True)
 		return
 	
 	
@@ -72,7 +72,7 @@ class TrassaTests(unittest.TestCase):
 		#self.trassa_setup.stop_udp_sender(udp_snd_name = self.sender_id_01)
 		#self.trassa_setup.stop_udp_sender(udp_snd_name = self.sender_id_02)
 		
-		self.trassa_setup.stop_test_env()
+		self.trassa_setup.stop_test_env(no_VM = True)
 		self.trassa_setup.stop_logserver()
 		
 		self.__tools__.build_test_banner(mod_name = 'TRASSA',

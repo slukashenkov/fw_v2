@@ -330,8 +330,13 @@ class SetupSonataSuite:
     def stop_logserver(self):
         self.ext_scripts.stop_logserver()
         return
-    def stop_test_env(self):
-        self.ext_scripts.tear_down_test_env()
+    def stop_test_env(self,
+                      no_VM = None):
+        if no_VM ==  None:
+            self.ext_scripts.tear_down_test_env()
+        else:
+            self.ext_scripts.tear_down_test_env(no_VM = True)
+    
         return
 
 
@@ -391,7 +396,7 @@ def test_this():
     s_sonata.compare_sent_received_tdata(test_case_ids=t_case_name)
     s_sonata.stop_udp_server()
     s_sonata.stop_udp_sender()
-    #s_sonata.stop_test_env()
+    s_sonata.stop_test_env(no_VM = True)
     #s_sonata.stop_logserver()
 
     return
