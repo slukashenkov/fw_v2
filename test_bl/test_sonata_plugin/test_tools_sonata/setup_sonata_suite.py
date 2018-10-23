@@ -209,6 +209,8 @@ class SetupSonataSuite:
                         '''
                         TEST for ERROR MESSAGES IN LOG FILES
                         '''
+                        '''Lets wait a bit sometimes logs are added too slowly'''
+                        sleep(20)
                         parsed_data = self.proc_data.parse_sut_log(parser = self._s_parser,
                                                                    path_to_sut_log = self.g_prefs.get_sut_logging_log_file_dir(),
                                                                    data_sent=data_sent)
@@ -246,7 +248,6 @@ class SetupSonataSuite:
 
                 elif test_case_type == self.negative_test_kword:
                                 result = self.test_suite_parsed_data
-
                                 for comparison in result:
                                         self.logger.error(comparison + ":==> " + str(result[comparison]))
                                         self.logger.error('\n')

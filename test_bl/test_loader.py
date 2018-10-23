@@ -36,13 +36,13 @@ def run_test_suite (path_to_tests = None,
         date_now_str = date_now.strftime("%Y-%m-%d_%H-%M")
         loader = unittest.TestLoader()
         suite = loader.discover(path_to_curr_test)
-        runner = xmlrunner.XMLTestRunner(output= path_to_logs + date_now_str)
+        runner = xmlrunner.XMLTestRunner(output= path_to_logs + str(mod_name)+'_'+ date_now_str)
         result = runner.run(suite)
 
 if __name__ == '__main__':
 
     '''All or individual tests'''
-    path_logs = '/home/slon/jenkins/workspace/BL2_alt7_baselibraries_D_autotests/logs/sonata_xml_logs_'
+    path_logs = '/home/slon/jenkins/workspace/BL2_alt7_baselibraries_D_autotests/logs/xml_logs_'
     parser = create_parser()
     args = parser.parse_args()
     print(args)

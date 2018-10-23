@@ -547,6 +547,7 @@ class SonataTestParser:
                        msg_data_sent,
                        path_to_log
                        ):
+
         '''For each element sent test for substring'''
         if os.path.exists(path_to_log):
             pattern_in = []
