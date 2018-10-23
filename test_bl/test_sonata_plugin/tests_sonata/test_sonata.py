@@ -53,16 +53,17 @@ class SonataTests(unittest.TestCase):
 
         @classmethod
         def tearDownClass(self):
-            self.sonata_setup.stop_udp_server()
-            self.sonata_setup.stop_udp_sender()
-            self.sonata_setup.stop_test_env(no_VM = True)
-            self.sonata_setup.stop_logserver()
 
             self.__tools__.build_test_banner(mod_name           = 'SONATA',
                                               suit_name         = 'SUITE' + __name__,
                                               ending            = 'TEARS DOWN TEST CLASS',
                                               logging_level     = 'DEBUG',
                                               logger            = self.curr_logger)
+            self.sonata_setup.stop_udp_server()
+            self.sonata_setup.stop_udp_sender()
+            self.sonata_setup.stop_test_env(no_VM=True)
+            time.sleep(5)
+            self.sonata_setup.stop_logserver()
             return
 
         def setUp(self):
@@ -137,6 +138,8 @@ class SonataTests(unittest.TestCase):
             wrong_crc_res = self.sonata_setup.get_test_result(test_id=self.curr_test_id,
                                                               msg_n=0,
                                                               key="Wrong message CRC")
+
+            self.curr_logger.debug('FULL RESULTS: ==>>' + str(wrong_crc_res))
             if len(wrong_crc_res) == 0:
                 wrong_crc_res = False
             else:
@@ -145,14 +148,18 @@ class SonataTests(unittest.TestCase):
             msg_not_start = self.sonata_setup.get_test_result(test_id=self.curr_test_id,
                                                               msg_n=1,
                                                               key="Message does not start")
+
+            self.curr_logger.debug('MSG NOTSTART : ==>>' + str(msg_not_start))
             if len(msg_not_start) == 0:
-                msg_not_start = False
+               msg_not_start = False
             else:
                 msg_not_start = True
 
             msg_too_short = self.sonata_setup.get_test_result(test_id=self.curr_test_id,
                                                               msg_n=2,
                                                               key="Message too short")
+            self.curr_logger.debug('MSG TOO SHORT : ==>>' + str(msg_too_short))
+
             if len(msg_too_short) == 0:
                 msg_too_short = False
             else:
@@ -161,6 +168,8 @@ class SonataTests(unittest.TestCase):
             self.assertTrue(wrong_crc_res)
             self.assertTrue(msg_not_start)
             self.assertTrue(msg_too_short)
+
+            time.sleep(10)
 
         @unittest.skip("test_sonata_messages02 is not needed now")
         def test_sonata_messages03(self):

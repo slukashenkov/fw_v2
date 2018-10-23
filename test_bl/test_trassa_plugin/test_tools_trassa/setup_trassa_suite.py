@@ -11,7 +11,6 @@ from test_bl.test_trassa_plugin.test_tools_trassa import trassa_test_parser
 
 class SetupTrassaSuite:
     
-    
     def __init__ (self):
         """
         """
