@@ -1,0 +1,9 @@
+#!/bin/bash
+
+w_dog_dir=/usr/bin/dolphin/WatchDogServer
+conf_dir=/usr/bin/dolphin/trassa_confs/main_trassa.xml
+
+#./WatchDogServer --start --conf=./sonata_confs/main_sonata.xml >/dev/null
+#./WatchDogServer --start --conf=./trassa_confs/main_trassa.xml >/dev/null
+${w_dog_server} --start --conf=${conf_dir} >/dev/null
+

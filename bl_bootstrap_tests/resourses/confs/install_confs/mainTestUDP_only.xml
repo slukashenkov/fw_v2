@@ -1,0 +1,53 @@
+<configuration>
+
+    <global-parameters>
+        <path>MainApplication</path>
+    </global-parameters>
+    <plugin-parameters>
+        <module-path>/usr/lib/dolphin/</module-path>
+        <!--config-path>d:\Baselibraries\bin2\config\</config-path-->
+        <config-path>/etc/dolphin/xml/</config-path>
+    </plugin-parameters>
+ 
+    <plugins>
+
+    </plugins>
+		
+    	<objects>
+        <!-- #################### COMMON slots,etc #################### -->
+	</objects>
+
+<objects>
+	<!-- UDP in/out pointing to Local Host  -->
+	<udp-connection name="test-udp-from-VboxHost" mode="server">
+            <local-address>10.11.10.11</local-address>
+            <local-port>51113</local-port>
+        </udp-connection>
+		
+	<udp-connection name="test-udp-to-VboxHost"> 
+            <destination-address>10.11.10.12</destination-address>
+            <destination-port>51115</destination-port>
+        </udp-connection>
+		
+	<!-- logging config  -->
+	<file-output name="test-from-udp-log">
+            <filename>/var/log/dolphin/test-udp-in-VBoxHost</filename>
+            <rotate>true</rotate>
+            <max-files-index>0</max-files-index>
+        </file-output>
+		
+
+</objects>
+
+	<applications>	
+        <application name="udp-router">
+			<watchdog aliveTimeout="00:00:01:000" terminationTime="00:00:00:100" startupDuration="00:00:00:500" startOrder="40"/> 
+
+			<data-flow notifier="test-udp-from-VboxHost" subscriber="test-udp-to-VboxHost"/>
+			<data-flow notifier="test-udp-from-VboxHost" subscriber="test-from-udp-log"/>
+			
+
+        </application>
+    	</applications>
+
+</configuration>

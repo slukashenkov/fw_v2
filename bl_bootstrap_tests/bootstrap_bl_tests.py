@@ -114,7 +114,12 @@ class GetBuildTests():
         self.ssh_scp_build_name_ptrn = self.bootstrap_cnf['SCP_PREFS']['SCP_BUILD_NAME_PATTERN']
         self.ssh_scp_tests_name_ptrn = self.bootstrap_cnf['SCP_PREFS']['SCP_TESTS_NAME_PATTERN']
         '''Modules configs'''
-        self.ssh_scp_confs_name_ptrn = self.bootstrap_cnf['SCP_PREFS']['SCP_CONFIG_FILES_PATTERN']
+        '''Assume different ip addresses in KD confs'''
+        if self.syst == 'Windows':
+            self.ssh_scp_confs_name_ptrn = self.bootstrap_cnf['SCP_PREFS']['SCP_CONFIG_FILES_PATTERN']
+        elif self.syst == 'Linux':
+            self.ssh_scp_confs_name_ptrn = self.bootstrap_cnf['SCP_PREFS']['SCP_CONFIG_FILES_PATTERN_LIN']
+
         self.ssh_scp_confs_ver       = self.bootstrap_cnf['SCP_PREFS']['SCP_CONFIG_FILES_VER']
         '''Install script'''
         self.ssh_scp_scrpt_name_ptrn = self.bootstrap_cnf['SCP_PREFS']['SCP_INSTALL_SCRPT_PATTERN']
