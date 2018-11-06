@@ -162,7 +162,6 @@ class ChecksumError(ParseError):
 class NMEASentenceType(type):
     sentence_types = {}
     
-    
     def __init__ (cls,
                   name,
                   bases,
@@ -442,7 +441,6 @@ class QuerySentence(NMEASentence):
 
 class ProprietarySentence(NMEASentence):
     sentence_types = {}
-    
     
     def __init__ (self,
                   manufacturer,

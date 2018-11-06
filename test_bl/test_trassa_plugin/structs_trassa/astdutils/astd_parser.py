@@ -5,7 +5,6 @@ from test_bl.test_bl_tools import send_receive
 
 class astd_meta(type):
     
-    
     def __new__ (cls_to_create,
                  name_of_the_cr_cls,
                  bases,

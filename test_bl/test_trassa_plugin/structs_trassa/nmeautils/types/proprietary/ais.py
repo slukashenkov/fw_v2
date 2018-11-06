@@ -6,7 +6,6 @@ from ... import nmea
 class AIS(nmea.ProprietarySentence):
     sentence_types = {}
     
-    
     def __new__ (_cls,
                  manufacturer,
                  datatype,
@@ -14,7 +13,6 @@ class AIS(nmea.ProprietarySentence):
         name = datatype
         cls = _cls.sentence_types.get(name,
                                       _cls)
-        
         return super(AIS, cls).__new__(cls)
     
     

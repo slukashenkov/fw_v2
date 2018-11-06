@@ -26,24 +26,24 @@
       },
       "res_ptrn": "^.*PAIDD.*$",
       "fields": {
-        "MessageID": 1,
-        "RepeatIndicator": 1,
-        "MMSI": 1193046,
-        "NavigationStatus": 3,
-        "ROT": -2,
-        "SOG": 101.9,
-        "PositionAccuracy": 1,
-        "longitude": -122.99958333,
-        "latitude": 89.9997222,
-        "COG": 34.5,
-        "TrueHeading": 41,
-        "TimeStamp": 35,
-        "RegionalReserved": 0,
-        "Spare": 0,
-        "RAIM": false,
-        "state_syncstate": 2,
-        "state_slottimeout": 0,
-        "state_slotoffset": 1221
+              "MessageID": 1,
+              "RepeatIndicator": 1,
+              "MMSI": 1193046,
+              "NavigationStatus": 3,
+              "ROT": -2,
+              "SOG": 101.9,
+              "PositionAccuracy": 1,
+              "longitude": -122.99958333,
+              "latitude": 89.9997222,
+              "COG": 34.5,
+              "TrueHeading": 41,
+              "TimeStamp": 35,
+              "RegionalReserved": 0,
+              "Spare": 0,
+              "RAIM": false,
+              "state_syncstate": 2,
+              "state_slottimeout": 0,
+              "state_slotoffset": 1221
       }
     }
   },
@@ -322,7 +322,7 @@
       }
     }
   },
-  "test_trassa_messages09": {"skip": false,
+  "test_trassa_messages09": {"skip": true,
     "t03_ais_type01": {
       "msg_type": "ais_type01",
       "test_conditions": {

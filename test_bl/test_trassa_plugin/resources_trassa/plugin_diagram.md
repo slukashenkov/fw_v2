@@ -13,7 +13,7 @@ end
 
 autonumber stop
 group exchange_2
-KD -> TRASSA: PEIST(A/V)\nnevery 1 sec
+KD -> TRASSA: PEIST(A/V)\n every 1 sec
 end
 autonumber 01
 group exchange_3
